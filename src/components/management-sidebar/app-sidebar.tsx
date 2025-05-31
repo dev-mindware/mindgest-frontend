@@ -14,10 +14,10 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
-import { NavMain } from "@/components/sidebar/nav-main"
-import { NavProjects } from "@/components/sidebar/nav-projects"
-import { NavUser } from "@/components/sidebar/nav-user"
-import { TeamSwitcher } from "@/components/sidebar/team-switcher"
+import { NavMain } from "@/components/management-sidebar/nav-main"
+import { NavProjects } from "@/components/management-sidebar/nav-projects"
+import { NavUser } from "@/components/management-sidebar/nav-user"
+import { TeamSwitcher } from "@/components/management-sidebar/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -52,86 +52,70 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Gestão de Stock",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Análise",
           url: "#",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
+          title: "Gestão de Produtos",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Gestão de Documentos",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "Faturação",
           url: "#",
         },
         {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
+          title: "Outros",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Relatórios",
       url: "#",
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
+          title: "Controle de Acesso",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Controle de Stock",
           url: "#",
         },
         {
-          title: "Tutorials",
+          title: "Controle de Vendas",
           url: "#",
         },
         {
-          title: "Changelog",
+          title: "Fiscalidade",
           url: "#",
         },
       ],
     },
     {
-      title: "Settings",
+      title: "Definições",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "Geral",
           url: "#",
         },
         {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
+          title: "Exportação",
           url: "#",
         },
       ],
@@ -139,19 +123,29 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Dashboard",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
+      name: "Gestão Financeira",
       url: "#",
       icon: Map,
+    },
+    {
+      name: "Recursos Humanos",
+      url: "#",
+      icon: Map,
+    },
+    {
+      name: "GestAI",
+      url: "#",
+      icon: Map,
+    },
+    {
+      name: "Gestão de POS",
+      url: "#",
+      icon: PieChart,
     },
   ],
 }
@@ -162,9 +156,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+      <SidebarContent className="p-2">
+        <NavProjects projects={[data.projects[0]]} />
+        <NavMain items={data.navMain.filter((_, i) => i !== 3)} />
+        <NavProjects projects={data.projects.slice(1)} />
+        <NavMain items={[data.navMain[3]]}/>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
