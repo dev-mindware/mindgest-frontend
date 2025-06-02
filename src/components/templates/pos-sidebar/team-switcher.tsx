@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -11,13 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+  Icon,
+} from "@/components"
 
 export function PosTeamSwitcher({
   teams,
@@ -51,7 +49,7 @@ export function PosTeamSwitcher({
                 <span className="font-medium truncate">{activeTeam.name}</span>
                 <span className="text-xs truncate">{activeTeam.plan}</span>
               </div>
-              <ChevronsUpDown className="ml-auto" />
+              <Icon name="ChevronsUpDown" className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -79,7 +77,7 @@ export function PosTeamSwitcher({
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2">
               <div className="flex items-center justify-center bg-transparent border rounded-md size-6">
-                <Plus className="size-4" />
+                <Icon name="Plus" className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">Add team</div>
             </DropdownMenuItem>

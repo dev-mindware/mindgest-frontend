@@ -1,32 +1,8 @@
 "use client"
 
 import * as React from "react"
-import {
-  Activity,
-  AudioWaveform,
-  BotIcon,
-  University,
-  Dessert,
-  GalleryVerticalEnd,
-  LayoutDashboard,
-  MessageSquareWarning,
-  ScrollText,
-  Settings2,
-  ShoppingBasket,
-  TextSelect,
-} from "lucide-react"
-
-import { ManagementNavMenu } from "@/components/management-sidebar"
-import { ManagementNavUser } from "@/components/management-sidebar"
-import { ManagementTeamSwitcher } from "@/components/management-sidebar"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar"
-
+import { ManagementNavMenu, ManagementNavUser, ManagementTeamSwitcher, Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, Icon } from "@/components"
+import { GalleryVerticalEnd, AudioWaveform, University } from "lucide-react";
 // This is sample data.
 const data = {
   user: {
@@ -55,12 +31,12 @@ const data = {
     {
       name: "Dashboard",
       url: "/management/dashboard",
-      icon: LayoutDashboard,
+      icon: <Icon name="LayoutDashboard"/>,
     },
     {
       title: "Gestão de Stock",
       url: "#",
-      icon: ShoppingBasket,
+      icon: <Icon name="ShoppingBasket"/>,
       isActive: true,
       items: [
         {
@@ -76,7 +52,7 @@ const data = {
     {
       title: "Gestão de Documentos",
       url: "#",
-      icon: ScrollText,
+      icon: <Icon name="ScrollText"/>,
       items: [
         {
           title: "Faturação",
@@ -91,7 +67,7 @@ const data = {
     {
       title: "Relatórios",
       url: "#",
-      icon: MessageSquareWarning,
+      icon: <Icon name="MessageSquareWarning"/>,
       items: [
         {
           title: "Controle de Acesso",
@@ -114,27 +90,30 @@ const data = {
     {
       name: "Gestão Financeira",
       url: "#",
-      icon: Activity,
+      icon: <Icon name="Activity"/>,
+      showMoreIcon: true,
     },
     {
       name: "Recursos Humanos",
       url: "#",
-      icon: Dessert,
+      icon: <Icon name="Dessert"/>,
+      showMoreIcon: true,
     },
     {
       name: "GestAI",
       url: "#",
-      icon: BotIcon,
+      icon: <Icon name="Bot"/>,
+      showMoreIcon: true,
     },
     {
       name: "Gestão de POS",
       url: "#",
-      icon: TextSelect,
+      icon: <Icon name="TextSelect"/>,
     },
     {
       title: "Definições",
       url: "#",
-      icon: Settings2,
+      icon: <Icon name="Settings2"/>,
       items: [
         {
           title: "Geral",
@@ -155,7 +134,7 @@ export function ManagementAppSidebar({ ...props }: React.ComponentProps<typeof S
       <SidebarHeader>
         <ManagementTeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent className="p-2">
+      <SidebarContent>
         <ManagementNavMenu items={data.menuItems} />
       </SidebarContent>
       <SidebarFooter>

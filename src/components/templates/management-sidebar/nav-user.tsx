@@ -1,20 +1,10 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react"
-
-import {
+  Icon,
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -22,16 +12,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components"
 import Link from "next/link"
 
-export function PosNavUser({
+export function ManagementNavUser({
   user,
 }: {
   user: {
@@ -59,7 +47,7 @@ export function PosNavUser({
                 <span className="font-medium truncate">{user.name}</span>
                 <span className="text-xs truncate">{user.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <Icon name="ChevronsUpDown" className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -83,29 +71,29 @@ export function PosNavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
+                <Icon name="Sparkles" />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
+                <Icon name="BadgeCheck" />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <Icon name="CreditCard" />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
+                <Icon name="Bell" />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-             <Link href="/">
+            <Link href="/">
             <DropdownMenuItem>
-              <LogOut />
+              <Icon name="LogOut" />
               Log out
             </DropdownMenuItem>
             </Link>

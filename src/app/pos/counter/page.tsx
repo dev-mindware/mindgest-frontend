@@ -2,13 +2,11 @@ import React from 'react'
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+  Separator,
+  SidebarTrigger,
+} from "@/components"
 const Page = () => {
   return (
     <div>
@@ -21,19 +19,14 @@ const Page = () => {
             />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Gestão de Stock
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Gestão de Produtos</BreadcrumbPage>
+                  <BreadcrumbPage>Movimentos</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
+        
     </div>
   )
 }

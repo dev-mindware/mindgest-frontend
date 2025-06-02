@@ -2,8 +2,10 @@ import React from 'react'
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
   Separator,
   SidebarTrigger,
 } from "@/components"
@@ -19,14 +21,19 @@ const Page = () => {
             />
             <Breadcrumb>
               <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                    Gestão de Stock
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                  <BreadcrumbPage>Análise</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        
     </div>
   )
 }

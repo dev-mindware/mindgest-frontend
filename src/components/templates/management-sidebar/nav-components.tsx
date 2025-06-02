@@ -1,13 +1,8 @@
 "use client"
 
-import { ChevronRight, MoreHorizontal, type LucideIcon } from "lucide-react"
-
+import Link from "next/link"
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import {
+  Icon,
   SidebarGroup,
   SidebarMenu,
   SidebarMenuAction,
@@ -16,17 +11,21 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components"
 
-export function PosNavMenu({
+export function ManagementNavMenu({
   items,
 }: {
   items: {
     title?: string
     name?: string
     url: string
-    icon?: LucideIcon
+    icon?: React.ReactNode
     isActive?: boolean
+    showMoreIcon?: boolean // 👈 nova propriedade
     items?: {
       title: string
       url: string
@@ -34,10 +33,9 @@ export function PosNavMenu({
   }[]
 }) {
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
-          // Se tem subitems, usa layout expansível
           if (item.items && item.items.length > 0) {
             return (
               <Collapsible
@@ -49,9 +47,9 @@ export function PosNavMenu({
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title || item.name}>
-                      {item.icon && <item.icon />}
+                      {item.icon && item.icon}
                       <span>{item.title || item.name}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      <Icon name="ChevronRight" className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -59,9 +57,9 @@ export function PosNavMenu({
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <Link href={subItem.url}>
                               <span>{subItem.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -72,18 +70,21 @@ export function PosNavMenu({
             )
           }
 
-          // Se não tem subitems, usa layout simples
           return (
             <SidebarMenuItem key={item.title || item.name}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  {item.icon && <item.icon />}
+              <SidebarMenuButton asChild tooltip={item.title || item.name}>
+                <Link href={item.url}>
+                  {item.icon && item.icon}
                   <span>{item.title || item.name}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
-              <SidebarMenuAction showOnHover>
-                <MoreHorizontal />
-              </SidebarMenuAction>
+
+              {/* 👇 Só aparece se showMoreIcon for true */}
+              {item.showMoreIcon && (
+                <SidebarMenuAction>
+                  <Icon name="Loader" className="text-primary"/>
+                </SidebarMenuAction>
+              )}
             </SidebarMenuItem>
           )
         })}

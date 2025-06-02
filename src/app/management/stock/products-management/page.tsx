@@ -6,9 +6,9 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+  Separator,
+  SidebarTrigger,
+} from "@/components"
 const Page = () => {
   return (
     <div>
@@ -28,7 +28,7 @@ const Page = () => {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Análise</BreadcrumbPage>
+                  <BreadcrumbPage>Gestão de Produtos</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

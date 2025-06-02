@@ -1,27 +1,9 @@
 "use client"
 
 import * as React from "react"
-import {
-  Activity,
-  AudioWaveform,
-  GalleryVerticalEnd,
-  ReceiptText,
-  Settings2,
-  University,
-} from "lucide-react"
+import { GalleryVerticalEnd, AudioWaveform, University } from "lucide-react"
+import { PosNavMenu, PosNavUser, PosTeamSwitcher, Icon, Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, } from "@/components"
 
-import { PosNavMenu } from "@/components/pos-sidebar"
-import { PosNavUser } from "@/components/pos-sidebar"
-import { PosTeamSwitcher } from "@/components/pos-sidebar"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui"
-
-// This is sample data.
 const data = {
   user: {
     name: "shadcn",
@@ -49,17 +31,17 @@ const data = {
     {
       name: "Caixa",
       url: "#",
-      icon: ReceiptText,
+      icon: <Icon name="ReceiptText"/>,
     },
     {
       name: "Movimentos",
       url: "#",
-      icon: Activity,
+      icon: <Icon name="Activity"/>,
     },
     {
       name: "Definições",
       url: "#",
-      icon: Settings2,
+      icon: <Icon name="Settings2"/>,
     },
   ],
 }
@@ -70,7 +52,7 @@ export function PosAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
       <SidebarHeader>
         <PosTeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent className="p-2">
+      <SidebarContent>
         <PosNavMenu items={data.menuItems} />
       </SidebarContent>
       <SidebarFooter>
