@@ -25,7 +25,7 @@ export function ManagementNavMenu({
     url: string
     icon?: React.ReactNode
     isActive?: boolean
-    showMoreIcon?: boolean // 👈 nova propriedade
+    showMoreIcon?: boolean
     items?: {
       title: string
       url: string
@@ -78,8 +78,6 @@ export function ManagementNavMenu({
                   <span>{item.title || item.name}</span>
                 </Link>
               </SidebarMenuButton>
-
-              {/* 👇 Só aparece se showMoreIcon for true */}
               {item.showMoreIcon && (
                 <SidebarMenuAction>
                   <Icon name="Loader" className="text-primary"/>

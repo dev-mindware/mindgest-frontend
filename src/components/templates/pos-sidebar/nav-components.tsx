@@ -30,10 +30,9 @@ export function PosNavMenu({
   }[]
 }) {
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
-          // Se tem subitems, usa layout expansível
           if (item.items && item.items.length > 0) {
             return (
               <Collapsible
@@ -67,11 +66,9 @@ export function PosNavMenu({
               </Collapsible>
             )
           }
-
-          // Se não tem subitems, usa layout simples
           return (
             <SidebarMenuItem key={item.title || item.name}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild tooltip={item.title || item.name}>
                 <a href={item.url}>
                   {item.icon && item.icon}
                   <span>{item.title || item.name}</span>

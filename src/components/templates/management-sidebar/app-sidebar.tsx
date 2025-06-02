@@ -3,7 +3,6 @@
 import * as React from "react"
 import { ManagementNavMenu, ManagementNavUser, ManagementTeamSwitcher, Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, Icon } from "@/components"
 import { GalleryVerticalEnd, AudioWaveform, University } from "lucide-react";
-// This is sample data.
 const data = {
   user: {
     name: "shadcn",
