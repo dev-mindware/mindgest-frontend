@@ -1,8 +1,12 @@
+"use client"
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
+import { useBreadcrumbTitle } from "./breadcrumb-context"
+
 
 import { cn } from "@/lib/utils"
+import { useEffect } from "react"
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
@@ -49,7 +53,15 @@ function BreadcrumbLink({
   )
 }
 
-function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
+function BreadcrumbPage({ className, children, ...props }: React.ComponentProps<"span">) {
+  const { setTitle } = useBreadcrumbTitle()
+
+  useEffect(() => {
+    if (typeof children === "string") {
+      setTitle(children)
+    }
+  }, [children, setTitle])
+
   return (
     <span
       data-slot="breadcrumb-page"
@@ -58,7 +70,9 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       aria-current="page"
       className={cn("text-foreground font-normal", className)}
       {...props}
-    />
+    >
+      {children}
+    </span>
   )
 }
 

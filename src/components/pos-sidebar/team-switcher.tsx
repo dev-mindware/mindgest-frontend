@@ -19,7 +19,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function ManagementTeamSwitcher({
+export function PosTeamSwitcher({
   teams,
 }: {
   teams: {

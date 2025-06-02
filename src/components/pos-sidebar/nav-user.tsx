@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 
-export function ManagementNavUser({
+export function PosNavUser({
   user,
 }: {
   user: {
@@ -103,7 +103,7 @@ export function ManagementNavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <Link href="/">
+             <Link href="/">
             <DropdownMenuItem>
               <LogOut />
               Log out

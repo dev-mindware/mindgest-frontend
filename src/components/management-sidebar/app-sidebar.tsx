@@ -2,22 +2,23 @@
 
 import * as React from "react"
 import {
+  Activity,
   AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
+  BotIcon,
+  University,
+  Dessert,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
+  LayoutDashboard,
+  MessageSquareWarning,
+  ScrollText,
   Settings2,
-  SquareTerminal,
+  ShoppingBasket,
+  TextSelect,
 } from "lucide-react"
 
-import { NavMain } from "@/components/management-sidebar/nav-main"
-import { NavProjects } from "@/components/management-sidebar/nav-projects"
-import { NavUser } from "@/components/management-sidebar/nav-user"
-import { TeamSwitcher } from "@/components/management-sidebar/team-switcher"
+import { ManagementNavMenu } from "@/components/management-sidebar"
+import { ManagementNavUser } from "@/components/management-sidebar"
+import { ManagementTeamSwitcher } from "@/components/management-sidebar"
 import {
   Sidebar,
   SidebarContent,
@@ -35,42 +36,47 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Mindware, Lda",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Empresa",
     },
     {
-      name: "Acme Corp.",
+      name: "Mindware Studio",
       logo: AudioWaveform,
       plan: "Startup",
     },
     {
-      name: "Evil Corp.",
-      logo: Command,
+      name: "MindSchool",
+      logo: University,
       plan: "Free",
     },
   ],
-  navMain: [
+  menuItems: [
+    {
+      name: "Dashboard",
+      url: "/management/dashboard",
+      icon: LayoutDashboard,
+    },
     {
       title: "Gestão de Stock",
       url: "#",
-      icon: SquareTerminal,
+      icon: ShoppingBasket,
       isActive: true,
       items: [
         {
           title: "Análise",
-          url: "#",
+          url: "/management/stock/analysis",
         },
         {
           title: "Gestão de Produtos",
-          url: "#",
+          url: "/management/stock/products-management",
         },
       ],
     },
     {
       title: "Gestão de Documentos",
       url: "#",
-      icon: Bot,
+      icon: ScrollText,
       items: [
         {
           title: "Faturação",
@@ -85,7 +91,7 @@ const data = {
     {
       title: "Relatórios",
       url: "#",
-      icon: BookOpen,
+      icon: MessageSquareWarning,
       items: [
         {
           title: "Controle de Acesso",
@@ -106,6 +112,26 @@ const data = {
       ],
     },
     {
+      name: "Gestão Financeira",
+      url: "#",
+      icon: Activity,
+    },
+    {
+      name: "Recursos Humanos",
+      url: "#",
+      icon: Dessert,
+    },
+    {
+      name: "GestAI",
+      url: "#",
+      icon: BotIcon,
+    },
+    {
+      name: "Gestão de POS",
+      url: "#",
+      icon: TextSelect,
+    },
+    {
       title: "Definições",
       url: "#",
       icon: Settings2,
@@ -121,49 +147,19 @@ const data = {
       ],
     },
   ],
-  projects: [
-    {
-      name: "Dashboard",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Gestão Financeira",
-      url: "#",
-      icon: Map,
-    },
-    {
-      name: "Recursos Humanos",
-      url: "#",
-      icon: Map,
-    },
-    {
-      name: "GestAI",
-      url: "#",
-      icon: Map,
-    },
-    {
-      name: "Gestão de POS",
-      url: "#",
-      icon: PieChart,
-    },
-  ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function ManagementAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <ManagementTeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent className="p-2">
-        <NavProjects projects={[data.projects[0]]} />
-        <NavMain items={data.navMain.filter((_, i) => i !== 3)} />
-        <NavProjects projects={data.projects.slice(1)} />
-        <NavMain items={[data.navMain[3]]}/>
+        <ManagementNavMenu items={data.menuItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <ManagementNavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
