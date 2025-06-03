@@ -72,22 +72,22 @@ export function ManagementNavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Icon name="Sparkles" />
-                Upgrade to Pro
+                Sobe para o Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Icon name="BadgeCheck" />
-                Account
+                <Icon name="SquarePen" />
+                Aparência
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Icon name="CreditCard" />
-                Billing
+                <Icon name="User" />
+                Perfil
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Icon name="Bell" />
-                Notifications
+                Notificações
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

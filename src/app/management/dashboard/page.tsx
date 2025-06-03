@@ -26,7 +26,8 @@ const Page = () => {
             </Breadcrumb>
           </div>
         </header>
-        
+        <div>
+        </div>
     </div>
   )
 }

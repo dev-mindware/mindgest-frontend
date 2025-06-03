@@ -6,7 +6,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export default function Component() {
+export default function InputPassword() {
   const id = useId()
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
