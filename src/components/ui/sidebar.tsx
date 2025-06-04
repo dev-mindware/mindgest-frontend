@@ -4,7 +4,6 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, VariantProps } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
-
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -40,6 +39,9 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  // Novo estado para controlar submenus
+  activeSubmenu: string | null
+  setActiveSubmenu: (id: string | null) => void
 }
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
@@ -68,6 +70,9 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
+  
+  // Novo estado para controlar qual submenu está ativo
+  const [activeSubmenu, setActiveSubmenu] = React.useState<string | null>(null)
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -109,8 +114,6 @@ function SidebarProvider({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [toggleSidebar])
 
-  // We add a state so that we can do data-state="expanded" or "collapsed".
-  // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? "expanded" : "collapsed"
 
   const contextValue = React.useMemo<SidebarContextProps>(
@@ -122,8 +125,10 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      activeSubmenu,
+      setActiveSubmenu,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, activeSubmenu, setActiveSubmenu]
   )
 
   return (
@@ -474,7 +479,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-primary data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -494,7 +499,6 @@ const sidebarMenuButtonVariants = cva(
     },
   }
 )
-
 function SidebarMenuButton({
   asChild = false,
   isActive = false,
@@ -637,14 +641,48 @@ function SidebarMenuSkeleton({
   )
 }
 
-function SidebarMenuSub({ className, ...props }: React.ComponentProps<"ul">) {
+// Novo hook para controlar submenus
+function useSubMenu(submenuId: string) {
+  const { activeSubmenu, setActiveSubmenu } = useSidebar()
+  
+  const isOpen = activeSubmenu === submenuId
+  
+  const toggle = React.useCallback(() => {
+    setActiveSubmenu(isOpen ? null : submenuId)
+  }, [isOpen, submenuId, setActiveSubmenu])
+  
+  const open = React.useCallback(() => {
+    setActiveSubmenu(submenuId)
+  }, [submenuId, setActiveSubmenu])
+  
+  const close = React.useCallback(() => {
+    if (isOpen) {
+      setActiveSubmenu(null)
+    }
+  }, [isOpen, setActiveSubmenu])
+  
+  return { isOpen, toggle, open, close }
+}
+
+function SidebarMenuSub({ 
+  className, 
+  submenuId,
+  ...props 
+}: React.ComponentProps<"ul"> & {
+  submenuId?: string
+}) {
+  const { activeSubmenu } = useSidebar()
+  const isVisible = submenuId ? activeSubmenu === submenuId : true
+
   return (
     <ul
       data-slot="sidebar-menu-sub"
       data-sidebar="menu-sub"
       className={cn(
-        "border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5",
+        "border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5 transition-all duration-200 ease-in-out",
         "group-data-[collapsible=icon]:hidden",
+        !isVisible && "max-h-0 overflow-hidden opacity-0",
+        isVisible && "max-h-96 opacity-100",
         className
       )}
       {...props}
@@ -723,4 +761,5 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
+  useSubMenu,
 }

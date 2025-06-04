@@ -11,10 +11,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
 } from "@/components"
+import { useState } from "react"
 
 export function ManagementNavMenu({
   items,
@@ -32,55 +30,61 @@ export function ManagementNavMenu({
     }[]
   }[]
 }) {
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
+  const toggleSubmenu = (id: string) => {
+    setOpenSubmenu((prev) => (prev === id ? null : id))
+  }
+
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
+          const id = item.title || item.name || item.url
+
           if (item.items && item.items.length > 0) {
+            const isOpen = openSubmenu === id
+
             return (
-              <Collapsible
-                key={item.title || item.name}
-                asChild
-                defaultOpen={item.isActive}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title || item.name}>
-                      {item.icon && item.icon}
-                      <span>{item.title || item.name}</span>
-                      <Icon name="ChevronRight" className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
-                            <Link href={subItem.url}>
-                              <span>{subItem.title}</span>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+              <SidebarMenuItem key={id}>
+                <SidebarMenuButton onClick={() => toggleSubmenu(id)} tooltip={id}>
+                  {item.icon && item.icon}
+                  <span>{id}</span>
+                  <Icon
+                    name="ChevronRight"
+                    className={`ml-auto transition-transform duration-200 ${
+                      isOpen ? "rotate-90" : ""
+                    }`}
+                  />
+                </SidebarMenuButton>
+
+                {isOpen && (
+                  <SidebarMenuSub>
+                    {item.items.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <Link href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                )}
+              </SidebarMenuItem>
             )
           }
 
           return (
-            <SidebarMenuItem key={item.title || item.name}>
-              <SidebarMenuButton asChild tooltip={item.title || item.name}>
+            <SidebarMenuItem key={id}>
+              <SidebarMenuButton asChild tooltip={id}>
                 <Link href={item.url}>
                   {item.icon && item.icon}
-                  <span>{item.title || item.name}</span>
+                  <span>{id}</span>
                 </Link>
               </SidebarMenuButton>
               {item.showMoreIcon && (
                 <SidebarMenuAction>
-                  <Icon name="Loader" className="text-primary"/>
+                  <Icon name="Loader" className="text-primary" />
                 </SidebarMenuAction>
               )}
             </SidebarMenuItem>
