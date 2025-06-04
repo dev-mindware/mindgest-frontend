@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import { InputPassword, InputEmail, Label, Button } from "@/components"
 import IconGoogle from '@/assets/IconGoogle.svg'
 import Image from "next/image"
+import Link from "next/link"
 
 export function LoginForm({
   className,
@@ -44,9 +45,9 @@ export function LoginForm({
       </div>
       <div className="text-sm text-center">
        Não tem uma conta?{" "}
-        <a href="#" className="font-medium text-primary hover:underline underline-offset-4">
+        <Link href="/auth/register" className="font-medium text-primary hover:underline underline-offset-4">
           Crie nova
-        </a>
+        </Link>
       </div>
     </form>
   )

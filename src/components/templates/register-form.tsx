@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components"
 import RequiredInput from "../custom/required-input"
 import { IdCardIcon, Building2, User, MessageCircle } from "lucide-react"
+import Link from "next/link"
 
 export function RegisterForm({
   className,
@@ -56,9 +57,9 @@ export function RegisterForm({
       </div>
       <div className="text-sm text-center">
        Já tens uma conta?{" "}
-        <a href="#" className="font-medium text-primary hover:underline underline-offset-4">
+        <Link href="/auth/login" className="font-medium text-primary hover:underline underline-offset-4">
           Entre
-        </a>
+        </Link>
       </div>
     </form>
   )
