@@ -30,9 +30,11 @@ export function LoginForm({
           </div>
           <InputPassword placeholder="Insira a senha" />
         </div>
+        <Link href="/management/dashboard">
         <Button type="submit" className="w-full">
           Login
         </Button>
+        </Link>
         <div className="relative text-sm text-center after:border-border after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="relative z-10 px-2 bg-background text-muted-foreground">
             Ou
