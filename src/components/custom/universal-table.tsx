@@ -212,7 +212,7 @@ const columns: ColumnDef<Item>[] = [
   },
 ]
 
-export default function UniversalTable() {
+export function UniversalTable() {
   const id = useId()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -597,7 +597,7 @@ export default function UniversalTable() {
         {/* Results per page */}
         <div className="flex items-center gap-3">
           <Label htmlFor={id} className="max-sm:sr-only">
-            Rows per page
+            Linhas por página
           </Label>
           <Select
             value={table.getState().pagination.pageSize.toString()}
@@ -638,7 +638,7 @@ export default function UniversalTable() {
                 table.getRowCount()
               )}
             </span>{" "}
-            of{" "}
+            de{" "}
             <span className="text-foreground">
               {table.getRowCount().toString()}
             </span>
@@ -705,17 +705,6 @@ export default function UniversalTable() {
           </Pagination>
         </div>
       </div>
-      <p className="mt-4 text-sm text-center text-muted-foreground">
-        Example of a more complex table made with{" "}
-        <a
-          className="underline hover:text-foreground"
-          href="https://tanstack.com/table"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          TanStack Table
-        </a>
-      </p>
     </div>
   )
 }
