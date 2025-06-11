@@ -39,7 +39,7 @@ const Page = () => {
                 </div>
               </header>
         <div className="flex flex-col flex-1">
-                  <div className="@container/main flex flex-1 p-4 flex-col gap-2 bg-accent">
+                  <div className="@container/main flex flex-1 p-4 flex-col gap-2">
                  
 <Tabs defaultValue="tab-1">
   {/* Tabs List na esquerda */}
