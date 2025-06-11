@@ -39,11 +39,11 @@ const data = {
       items: [
         {
           title: "Faturação",
-          url: "#",
+          url: "/admin/doc-management/billing",
         },
         {
           title: "Outros",
-          url: "#",
+          url: "/admin/doc-management/other",
         },
       ],
     },
