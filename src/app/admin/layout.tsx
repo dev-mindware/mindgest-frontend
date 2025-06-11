@@ -1,8 +1,8 @@
-import { ManagementAppSidebar, BreadcrumbProvider, SidebarInset, SidebarProvider, } from "@/components"
+import { AdminAppSidebar, BreadcrumbProvider, SidebarInset, SidebarProvider, } from "@/components"
 export default function ManagementLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <ManagementAppSidebar />
+      <AdminAppSidebar />
       <SidebarInset>
         <BreadcrumbProvider>
         {children}
