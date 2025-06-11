@@ -10,6 +10,7 @@ import {
   ChartAreaInteractive,
   SectionCards,
 } from "@/components"
+import { PrimaryColorPicker } from '../../../components/templates/color-switcher'
 const Page = () => {
   return (
     <div>
@@ -36,6 +37,7 @@ const Page = () => {
               <div className="px-4 space-y-5 lg:px-6">
                 <ChartAreaInteractive />
               <UniversalTable />
+              <PrimaryColorPicker />
               </div>
             </div>
           </div>

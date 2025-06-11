@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
 import { ModalProvider } from "@/contexts";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -25,13 +26,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${outfit.variable} ${outfit.className} antialiased`}
       >
+        <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        themes={["light", "dark", "system"]}
+        storageKey="mindware-theme"
+        >
         <ModalProvider>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>
         </ModalProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
