@@ -84,7 +84,7 @@ export default function Page() {
     </div>
   </div>
   
-  <div className="flex justify-end gap-5">
+  <div className="flex items-center justify-center gap-5 mt-5 md:justify-end">
     <Button
       variant="outline"
       className="w-32"
