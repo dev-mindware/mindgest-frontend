@@ -7,11 +7,8 @@ import {
   BreadcrumbSeparator,
   Separator,
   SidebarTrigger,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from "@/components"
+import { TabsNContent } from "@/components/templates/tabs-n-content"
 
 const Page = () => {
   return (
@@ -39,33 +36,8 @@ const Page = () => {
                 </div>
               </header>
         <div className="flex flex-col flex-1">
-                  <div className="@container/main flex flex-1 p-4 flex-col gap-2">
-                 
-<Tabs defaultValue="tab-1">
-  {/* Tabs List na esquerda */}
-  <TabsList>
-    <TabsTrigger value="tab-1">Fatura Normal</TabsTrigger>
-    <TabsTrigger value="tab-2">Fatura Recibo</TabsTrigger>
-    <TabsTrigger value="tab-3">Fatura Proforma</TabsTrigger>
-  </TabsList>
-
-  {/* Conteúdo sempre à direita */}
-  <div className="flex justify-end flex-1">
-    <div className="w-full max-w-md">
-      <TabsContent value="tab-1" className="p-6 rounded-md shadow-md bg-primary">
-        <p className="text-sm text-right text-muted-foreground">Content for Tab 1</p>
-      </TabsContent>
-      <TabsContent value="tab-2" className="p-6 rounded-md shadow-md bg-primary">
-        <p className="text-sm text-right text-muted-foreground">Content for Tab 2</p>
-      </TabsContent>
-      <TabsContent value="tab-3" className="p-6 rounded-md shadow-md bg-primary">
-        <p className="text-sm text-right text-muted-foreground">Content for Tab 3</p>
-      </TabsContent>
-    </div>
-  </div>
-</Tabs>
-
-                      
+                  <div className="@container/main flex flex-1 p-4 flex-col gap-2">     
+                <TabsNContent/>
                     </div>
                   </div>
                 </div>    
