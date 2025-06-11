@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
+import { ModalProvider } from "@/contexts";
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -24,8 +25,9 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${outfit.variable} ${outfit.style} ${outfit.className} antialiased`}
-      >
+      ><ModalProvider>
         <ReactQueryProvider>{children}</ReactQueryProvider>
+      </ModalProvider>
       </body>
     </html>
   );

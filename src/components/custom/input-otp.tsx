@@ -5,13 +5,11 @@ import { OTPInput, SlotProps } from "input-otp"
 import { MinusIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
 
-export default function InputOTP() {
+export function InputOTP() {
   const id = useId()
   return (
     <div className="*:not-first:mt-2">
-      <Label htmlFor={id}>OTP input double</Label>
       <OTPInput
         id={id}
         containerClassName="flex items-center gap-3 has-disabled:opacity-50"
@@ -36,21 +34,6 @@ export default function InputOTP() {
           </>
         )}
       />
-      <p
-        className="mt-2 text-xs text-muted-foreground"
-        role="region"
-        aria-live="polite"
-      >
-        Built with{" "}
-        <a
-          className="underline hover:text-foreground"
-          href="https://github.com/guilhermerodz/input-otp"
-          target="_blank"
-          rel="noopener nofollow"
-        >
-          Input OTP
-        </a>
-      </p>
     </div>
   )
 }
@@ -59,7 +42,7 @@ function Slot(props: SlotProps) {
   return (
     <div
       className={cn(
-        "border-input bg-background text-foreground relative -ms-px flex size-9 items-center justify-center border font-medium shadow-xs transition-[color,box-shadow] first:ms-0 first:rounded-s-md last:rounded-e-md",
+        "border-input bg-background text-foreground relative -ms-px flex size-14 items-center justify-center border font-medium shadow-xs transition-[color,box-shadow] first:ms-0 first:rounded-s-md last:rounded-e-md",
         { "border-ring ring-ring/50 z-10 ring-[3px]": props.isActive }
       )}
     >

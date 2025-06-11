@@ -1,7 +1,8 @@
 "use client"
 
 import { forwardRef, useId } from "react"
-import { Input, Icon } from "@/components"
+import { Input } from "@/components"
+import { Icon } from "@/components"
 
 import type { InputHTMLAttributes } from "react"
 

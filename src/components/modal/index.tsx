@@ -20,7 +20,7 @@ interface ModalProps {
   title?: string | ReactNode
   description?: string
   canClose?: boolean
-  children: ReactNode
+  children?: ReactNode
   footer?: ReactNode
   className?: string
   sucess?: boolean
@@ -58,32 +58,41 @@ export function GlobalModal({
         {canClose && (
           <button
             onClick={() => closeModal(id)}
-            className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200"
+            className="absolute p-1 rounded-full top-2 right-2 hover:bg-gray-200"
           >
             <Icon name="X" size={20} />
           </button>
         )}
 
         <DialogHeader className={cn("flex space-x-4 relative")}>
-          <div className={cn("flex space-x-4 items-center", {
-            "flex-col": sucess
-          })}>
-
+          <div
+            className={cn("flex space-x-4 items-center", {
+              "flex-col": sucess,
+            })}
+          >
             {sucess && <IconCheckSucessfull />}
             {warning && <IconWarning />}
 
-            <div className={cn("space-y-2", {
-              "flex flex-col items-center ": sucess
-            })}>
+            <div
+              className={cn("space-y-2", {
+                "flex flex-col items-center": sucess,
+              })}
+            >
               <DialogTitle className="w-max">{title}</DialogTitle>
-              {description && <DialogDescription className={cn("", {
-                "text-center": sucess
-              })}>{description}</DialogDescription>}
+              {description && (
+                <DialogDescription
+                  className={cn("", {
+                    "text-center": sucess,
+                  })}
+                >
+                  {description}
+                </DialogDescription>
+              )}
             </div>
           </div>
         </DialogHeader>
 
-        {children}
+        {children && <div>{children}</div>}
         {footer && <DialogFooter>{footer}</DialogFooter>}
       </DialogContent>
     </Dialog>

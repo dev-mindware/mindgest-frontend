@@ -42,7 +42,7 @@ export default function Page() {
   
   return (
     <div className="relative grid min-h-svh lg:grid-cols-2">
-      <div className="flex items-center justify-center h-screen lg:flex">
+      <div className="items-center justify-center hidden h-screen md:flex lg:flex">
         <Image
           src={RegisterIllustration}
           alt="Image"
