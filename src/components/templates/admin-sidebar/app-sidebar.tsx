@@ -95,11 +95,11 @@ const data = {
       items: [
         {
           title: "Geral",
-          url: "#",
+          url: "/admin/definitions/general",
         },
         {
           title: "Exportação",
-          url: "#",
+          url: "/admin/definitions/export",
         },
       ],
     },
