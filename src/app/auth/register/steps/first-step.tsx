@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components"
 import RequiredInput from "../../../../components/custom/required-input"
 import { IdCardIcon, Building2, User, MessageCircle } from "lucide-react"
 import Link from "next/link"
@@ -50,9 +50,6 @@ export function FirstStep({
         </div>
       </TabsContent>
     </Tabs>
-        <Button type="submit" className="w-full">
-          Próximo
-        </Button>
         
       </div>
       <div className="text-sm text-center">

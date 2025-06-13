@@ -87,7 +87,7 @@ export default function Page() {
   <div className="flex items-center justify-center gap-5 mt-5 md:justify-end">
     <Button
       variant="outline"
-      className="w-32 dark:bg-yellow-500"
+      className="w-32"
       onClick={handlePrevStep}
       disabled={currentStep === 1}
     >
