@@ -5,12 +5,13 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  DefSetup,
   Separator,
   SidebarTrigger,
 } from "@/components"
-import { GeneralDefinitions } from "@/components/templates/general-definitions"
 
 const Page = () => {
+
   return (
     <div>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -37,7 +38,7 @@ const Page = () => {
               </header>
         <div className="flex flex-col flex-1">
                   <div className="@container/main flex flex-1 p-4 flex-col gap-2">     
-                    <GeneralDefinitions/>
+                    <DefSetup/>
                     </div>
                   </div>
                 </div>    

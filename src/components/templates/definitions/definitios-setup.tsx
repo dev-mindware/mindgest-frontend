@@ -1,15 +1,14 @@
-
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Icon,
-} from "@/components"
-
-export function GeneralDefinitions() {
-  return (
-    <div>
+} from "@/components/ui/tabs"
+import { Icon } from "@/components"
+import { Appearance } from "./contents/appearance"
+export function DefSetup() {
+  return( 
+  <div>
         <h1 className="text-2xl font-semibold">Definições da Conta</h1>
     <div className="hidden md:block">
     <Tabs
@@ -103,9 +102,7 @@ export function GeneralDefinitions() {
       </div>
       <div className="border rounded-md grow text-start">
         <TabsContent value="tab-1">
-          <p className="px-4 py-3 text-xs text-muted-foreground">
-            Content for Tab 1a
-          </p>
+            <Appearance/>
         </TabsContent>
         <TabsContent value="tab-2">
           <p className="px-4 py-3 text-xs text-muted-foreground">
@@ -201,9 +198,7 @@ export function GeneralDefinitions() {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="tab-1">
-        <p className="p-4 text-xs text-center text-muted-foreground">
-          Content for Tab 1
-        </p>
+        <Appearance/>
       </TabsContent>
       <TabsContent value="tab-2">
         <p className="p-4 text-xs text-center text-muted-foreground">

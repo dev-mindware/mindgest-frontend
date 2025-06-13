@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
 import { ModalProvider } from "@/contexts";
 import { ThemeProvider } from "@/components/theme-provider";
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: "Mindgest",
@@ -27,22 +19,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Outfit&family=Roboto&family=Inter&family=Poppins&family=Open+Sans&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
-        className={`${outfit.variable} ${outfit.className} antialiased`}
+        className="antialiased"
+        style={{ fontFamily: 'var(--font-family)' }}
       >
         <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-        themes={["light", "dark", "system"]}
-        storageKey="mindware-theme"
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          themes={["light", "dark", "system"]}
+          storageKey="mindware-theme"
         >
-        <ModalProvider>
-          <ReactQueryProvider>
-            {children}
-          </ReactQueryProvider>
-        </ModalProvider>
+          <ModalProvider>
+            <ReactQueryProvider>
+              {children}
+            </ReactQueryProvider>
+          </ModalProvider>
         </ThemeProvider>
       </body>
     </html>
