@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/tabs"
 import { Icon } from "@/components"
 import { Appearance } from "./contents/appearance"
+import { Profile } from "./contents/profile"
 export function DefSetup() {
   return( 
   <div>
@@ -105,9 +106,7 @@ export function DefSetup() {
             <Appearance/>
         </TabsContent>
         <TabsContent value="tab-2">
-          <p className="px-4 py-3 text-xs text-muted-foreground">
-            Content for Tab 2
-          </p>
+          <Profile/>
         </TabsContent>
         <TabsContent value="tab-3">
           <p className="px-4 py-3 text-xs text-muted-foreground">
@@ -201,9 +200,7 @@ export function DefSetup() {
         <Appearance/>
       </TabsContent>
       <TabsContent value="tab-2">
-        <p className="p-4 text-xs text-center text-muted-foreground">
-          Content for Tab 2
-        </p>
+        <Profile/>
       </TabsContent>
       <TabsContent value="tab-3">
         <p className="p-4 text-xs text-center text-muted-foreground">

@@ -14,6 +14,7 @@ import {
   SelectItem,
   Input,
   Label,
+  Separator,
 } from "@/components"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -97,7 +98,7 @@ if (!isMounted) return null;
           Personalize o MindGest para se adaptar ao teu negócio.
         </p>
       </div>
-        <div className="h-px bg-border"/>
+        <Separator/>
       <div className="grid items-end grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <Label className="text-lg">Cor Primária</Label>
@@ -132,12 +133,12 @@ if (!isMounted) return null;
               <SelectItem value="Roboto">Roboto</SelectItem>
               <SelectItem value="Inter">Inter</SelectItem>
               <SelectItem value="Poppins">Poppins</SelectItem>
-              <SelectItem value="Open Sans">Open Sans</SelectItem>
+              <SelectItem value="Plus Jakarta Sans">Jakarta</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
-      <div className="h-px bg-border"/>
+      <Separator/>
       <div>
         <Label className="text-lg">Tema</Label>
         <p className="mb-4 text-sm text-muted-foreground">
@@ -171,7 +172,7 @@ if (!isMounted) return null;
           ))}
         </div>
       </div>
-    <div className="h-px bg-border"/>
+    <Separator/>
       <div className="pt-4">
         <Button variant="outline" onClick={restoreDefaults}>
           Restaurar Padrão
