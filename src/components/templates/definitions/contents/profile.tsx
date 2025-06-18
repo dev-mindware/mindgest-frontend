@@ -152,7 +152,7 @@ export function Profile() {
             <Input
                 disabled
                 defaultValue="cea.co@gmail.com"
-                className="w-155"
+                className="w-[50%]"
             />
             <Button className="whitespace-nowrap">Alterar Email</Button>
             </div>
@@ -161,7 +161,7 @@ export function Profile() {
           <div>
             <Label>Senha</Label>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <Input type="password" value="************" disabled className="w-155"/>
+              <Input type="password" value="************" disabled className="w-[50%]"/>
               <Button>Alterar Senha</Button>
             </div>
           </div>

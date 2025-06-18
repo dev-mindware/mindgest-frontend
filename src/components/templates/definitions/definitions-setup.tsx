@@ -7,17 +7,19 @@ import {
 import { Icon } from "@/components"
 import { Appearance } from "./contents/appearance"
 import { Profile } from "./contents/profile"
+import { Notification } from "./contents/notifications"
 export function DefSetup() {
   return( 
   <div>
+
         <h1 className="text-2xl font-semibold">Definições da Conta</h1>
     <div className="hidden md:block">
     <Tabs
       defaultValue="tab-1"
-      className="flex-row w-full mt-5"
+      className="flex-row w-full mt-5 "
     >
         <div className="h-screen bg-sidebar">
-      <TabsList className="top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
+      <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
         <div className="p-4 space-y-5">
             <p className="text-sm text-muted-foreground">Definições Gerais</p>
             <div>
@@ -109,9 +111,7 @@ export function DefSetup() {
           <Profile/>
         </TabsContent>
         <TabsContent value="tab-3">
-          <p className="px-4 py-3 text-xs text-muted-foreground">
-            Content for Tab 3
-          </p>
+          <Notification/>
         </TabsContent>
         <TabsContent value="tab-4">
           <p className="px-4 py-3 text-xs text-muted-foreground">
@@ -203,9 +203,7 @@ export function DefSetup() {
         <Profile/>
       </TabsContent>
       <TabsContent value="tab-3">
-        <p className="p-4 text-xs text-center text-muted-foreground">
-          Content for Tab 3
-        </p>
+        <Notification/>
       </TabsContent>
       <TabsContent value="tab-4">
         <p className="p-4 text-xs text-center text-muted-foreground">
