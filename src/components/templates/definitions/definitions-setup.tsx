@@ -8,6 +8,7 @@ import { Icon } from "@/components"
 import { Appearance } from "./contents/appearance"
 import { Profile } from "./contents/profile"
 import { Notification } from "./contents/notifications"
+import { Entities } from "./contents/entities"
 export function DefSetup() {
   return( 
   <div>
@@ -114,9 +115,7 @@ export function DefSetup() {
           <Notification/>
         </TabsContent>
         <TabsContent value="tab-4">
-          <p className="px-4 py-3 text-xs text-muted-foreground">
-            Content for Tab 4
-          </p>
+          <Entities/>
         </TabsContent>
         <TabsContent value="tab-5">
           <p className="px-4 py-3 text-xs text-muted-foreground">
@@ -206,9 +205,7 @@ export function DefSetup() {
         <Notification/>
       </TabsContent>
       <TabsContent value="tab-4">
-        <p className="p-4 text-xs text-center text-muted-foreground">
-          Content for Tab 4
-        </p>
+        <Entities/>
       </TabsContent>
       <TabsContent value="tab-5">
         <p className="p-4 text-xs text-center text-muted-foreground">

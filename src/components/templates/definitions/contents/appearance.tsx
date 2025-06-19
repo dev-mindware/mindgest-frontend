@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { SelectGroup } from "@radix-ui/react-select"
 
 export function Appearance() {
   const { setTheme, theme } = useTheme()
@@ -126,14 +127,16 @@ if (!isMounted) return null;
           </p>
           <Select value={font} onValueChange={handleFontChange}>
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Fonte" />
+              <SelectValue defaultValue="Outfit"/>
             </SelectTrigger>
             <SelectContent>
+            <SelectGroup>
               <SelectItem value="Outfit">Outfit</SelectItem>
               <SelectItem value="Roboto">Roboto</SelectItem>
               <SelectItem value="Inter">Inter</SelectItem>
               <SelectItem value="Poppins">Poppins</SelectItem>
               <SelectItem value="Plus Jakarta Sans">Jakarta</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
