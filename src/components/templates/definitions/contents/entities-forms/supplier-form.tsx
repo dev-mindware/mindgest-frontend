@@ -1,4 +1,5 @@
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components";
+import { UniTable } from "@/components/custom/universal-table/table";
 import InnerTagsInput from "@/components/custom/ínner-tags-input";
 
 
@@ -83,6 +84,9 @@ export function SupplierForm () {
             <div className="flex justify-end">
                 <Button variant={"default"}>Adicionar</Button>
             </div>
+        <div>
+            <UniTable/>
+        </div>
         </div>
     )
 }

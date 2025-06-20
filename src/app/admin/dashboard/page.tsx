@@ -6,10 +6,10 @@ import {
   BreadcrumbPage,
   Separator,
   SidebarTrigger,
-  UniversalTable,
   ChartAreaInteractive,
   SectionCards,
 } from "@/components"
+import { UniTable } from '@/components/custom/universal-table/table'
 const Page = () => {
   return (
     <div>
@@ -35,7 +35,7 @@ const Page = () => {
               <SectionCards />
               <div className="px-4 space-y-5 lg:px-6">
                 <ChartAreaInteractive />
-              <UniversalTable />
+              <UniTable />
               </div>
             </div>
           </div>
