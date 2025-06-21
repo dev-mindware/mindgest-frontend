@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { MoreVertical, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MoreVertical, Plus, Search } from "lucide-react";
 import { useState } from "react";
-import { Separator } from "@/components/ui";
+import { Separator } from "@/components/ui/separator";
 
 const subscriptions = [
   {
@@ -86,14 +87,30 @@ const subscriptions = [
 export function Subscriptions() {
   const [showMoreTabs, setShowMoreTabs] = useState(false);
   const [activeTab, setActiveTab] = useState("todos");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filterSubscriptions = (status: string) => {
-    if (status === "todos") return subscriptions;
-    if (status === "ativos") return subscriptions.filter(sub => sub.status === "Ativo");
-    if (status === "inativos") return subscriptions.filter(sub => sub.status === "Inativo");
-    if (status === "experimental") return subscriptions.filter(sub => sub.status === "Em período experimental");
-    if (status === "promocao") return subscriptions.filter(sub => sub.status === "Em Promoção");
-    return subscriptions;
+    let filtered = subscriptions;
+    
+    // Filter by status
+    if (status !== "todos") {
+      if (status === "ativos") filtered = filtered.filter(sub => sub.status === "Ativo");
+      if (status === "inativos") filtered = filtered.filter(sub => sub.status === "Inativo");
+      if (status === "experimental") filtered = filtered.filter(sub => sub.status === "Em período experimental");
+      if (status === "promocao") filtered = filtered.filter(sub => sub.status === "Em Promoção");
+    }
+    
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(sub => 
+        sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.plan.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.type.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return filtered;
   };
 
   const getStatusBadgeColor = (status: string) => {
@@ -180,6 +197,17 @@ export function Subscriptions() {
             </TabsList>
           </div>
 
+          {/* Search Input */}
+          <div className="relative max-w-sm mt-6">
+            <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Pesquisar subscrições..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
           {["todos", "ativos", "inativos", "experimental", "promocao"].map((tabValue) => (
             <TabsContent key={tabValue} value={tabValue} className="mt-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
@@ -253,13 +281,20 @@ export function Subscriptions() {
 
               {filterSubscriptions(tabValue).length === 0 && (
                 <div className="py-12 text-center">
-                  <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full">
+                  <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 rounded-full bg-muted">
                     <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
-                  <h3 className="mb-2 text-lg font-medium text-gray-900">Nenhuma subscrição encontrada</h3>
-                  <p className="text-gray-500">Não há subscrições nesta categoria no momento.</p>
+                  <h3 className="mb-2 text-lg font-medium text-foreground">
+                    {searchTerm ? "Nenhuma subscrição encontrada para a pesquisa" : "Nenhuma subscrição encontrada"}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {searchTerm 
+                      ? `Não foram encontradas subscrições que correspondam a "${searchTerm}".`
+                      : "Não há subscrições nesta categoria no momento."
+                    }
+                  </p>
                 </div>
               )}
             </TabsContent>
