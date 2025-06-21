@@ -9,6 +9,7 @@ import {
 import { Separator } from "@/components/ui/separator" // E este também!
 import { ClientForm } from "./entities-forms/client-form"
 import { SupplierForm } from "./entities-forms/supplier-form"
+import { StoreForm } from "./entities-forms/store-form"
 
 export function Entities() {
   return (
@@ -36,9 +37,7 @@ export function Entities() {
           <SupplierForm/>
         </TabsContent>
         <TabsContent value="tab-3">
-          <p className="p-4 text-xs text-center text-muted-foreground">
-            Content for Tab 3
-          </p>
+          <StoreForm/>
         </TabsContent>
       </Tabs>
     </div>

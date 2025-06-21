@@ -9,6 +9,7 @@ import { Appearance } from "./contents/appearance"
 import { Profile } from "./contents/profile"
 import { Notification } from "./contents/notifications"
 import { Entities } from "./contents/entities"
+import { Collaborators } from "./contents/collaborators"
 export function DefSetup() {
   return( 
   <div>
@@ -118,9 +119,7 @@ export function DefSetup() {
           <Entities/>
         </TabsContent>
         <TabsContent value="tab-5">
-          <p className="px-4 py-3 text-xs text-muted-foreground">
-            Content for Tab 5
-          </p>
+          <Collaborators/>
         </TabsContent>
         <TabsContent value="tab-6">
           <p className="px-4 py-3 text-xs text-muted-foreground">
@@ -208,9 +207,7 @@ export function DefSetup() {
         <Entities/>
       </TabsContent>
       <TabsContent value="tab-5">
-        <p className="p-4 text-xs text-center text-muted-foreground">
-          Content for Tab 5
-        </p>
+        <Collaborators/>
       </TabsContent>
       <TabsContent value="tab-6">
         <p className="p-4 text-xs text-center text-muted-foreground">
