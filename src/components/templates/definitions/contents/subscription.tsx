@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { MoreVertical, Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { AddSubscriptionModal } from "./subscription-form/form";
 
 const subscriptions = [
   {
@@ -88,6 +89,12 @@ export function Subscriptions() {
   const [showMoreTabs, setShowMoreTabs] = useState(false);
   const [activeTab, setActiveTab] = useState("todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddSubscription = (data: unknown) => {
+    console.log("Nova subscrição adicionada:", data);
+    // Aqui você pode adicionar a lógica para processar os dados da nova subscrição
+  };
 
   const filterSubscriptions = (status: string) => {
     let filtered = subscriptions;
@@ -138,7 +145,7 @@ export function Subscriptions() {
               Faça a gestão da subscrição dos usuários aqui
             </p>
           </div>
-          <Button variant={"default"}>
+          <Button variant={"default"} onClick={() => setIsModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Adicionar Subscrição
           </Button>
@@ -301,6 +308,13 @@ export function Subscriptions() {
           ))}
         </Tabs>
       </div>
+
+      {/* Add Subscription Modal */}
+      <AddSubscriptionModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddSubscription}
+      />
     </div>
   );
 }
