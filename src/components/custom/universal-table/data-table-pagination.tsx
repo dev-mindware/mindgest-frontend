@@ -1,5 +1,3 @@
-"use client"
-
 import { useId } from "react"
 import { Table } from "@tanstack/react-table"
 import {
@@ -24,11 +22,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-interface TablePaginationProps<T> {
-  table: Table<T>
+interface DataTablePaginationProps<TData> {
+  table: Table<TData>
+  pageSizeOptions?: number[]
 }
 
-export function TablePagination<T>({ table }: TablePaginationProps<T>) {
+export function DataTablePagination<TData>({
+  table,
+  pageSizeOptions = [5, 10, 25, 50],
+}: DataTablePaginationProps<TData>) {
   const id = useId()
 
   return (
@@ -36,7 +38,7 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
       {/* Results per page */}
       <div className="flex items-center gap-3">
         <Label htmlFor={id} className="max-sm:sr-only">
-          Linhas por página
+          Rows per page
         </Label>
         <Select
           value={table.getState().pagination.pageSize.toString()}
@@ -45,10 +47,10 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
           }}
         >
           <SelectTrigger id={id} className="w-fit whitespace-nowrap">
-            <SelectValue placeholder="Select number of results" />
+            <SelectValue placeholder="Select page size" />
           </SelectTrigger>
-          <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
-            {[5, 10, 25, 50].map((pageSize) => (
+          <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
+            {pageSizeOptions.map((pageSize) => (
               <SelectItem key={pageSize} value={pageSize.toString()}>
                 {pageSize}
               </SelectItem>
@@ -59,29 +61,21 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
 
       {/* Page number information */}
       <div className="flex justify-end text-sm text-muted-foreground grow whitespace-nowrap">
-        <p
-          className="text-sm text-muted-foreground whitespace-nowrap"
-          aria-live="polite"
-        >
+        <p className="text-sm text-muted-foreground whitespace-nowrap" aria-live="polite">
           <span className="text-foreground">
-            {table.getState().pagination.pageIndex *
-              table.getState().pagination.pageSize +
-              1}
+            {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
             -
             {Math.min(
               Math.max(
-                table.getState().pagination.pageIndex *
-                  table.getState().pagination.pageSize +
+                table.getState().pagination.pageIndex * table.getState().pagination.pageSize +
                   table.getState().pagination.pageSize,
                 0
               ),
               table.getRowCount()
             )}
           </span>{" "}
-          de{" "}
-          <span className="text-foreground">
-            {table.getRowCount().toString()}
-          </span>
+          of{" "}
+          <span className="text-foreground">{table.getRowCount().toString()}</span>
         </p>
       </div>
 
@@ -89,7 +83,6 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
       <div>
         <Pagination>
           <PaginationContent>
-            {/* First page button */}
             <PaginationItem>
               <Button
                 size="icon"
@@ -102,7 +95,6 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
                 <ChevronFirstIcon size={16} aria-hidden="true" />
               </Button>
             </PaginationItem>
-            {/* Previous page button */}
             <PaginationItem>
               <Button
                 size="icon"
@@ -115,7 +107,6 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
                 <ChevronLeftIcon size={16} aria-hidden="true" />
               </Button>
             </PaginationItem>
-            {/* Next page button */}
             <PaginationItem>
               <Button
                 size="icon"
@@ -128,7 +119,6 @@ export function TablePagination<T>({ table }: TablePaginationProps<T>) {
                 <ChevronRightIcon size={16} aria-hidden="true" />
               </Button>
             </PaginationItem>
-            {/* Last page button */}
             <PaginationItem>
               <Button
                 size="icon"
