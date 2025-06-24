@@ -1,14 +1,13 @@
-import { Icon } from "@/components"
-
-import { Badge } from "@/components/ui/badge"
 import {
+  Icon,
   Card,
   CardAction,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+  Badge,
+} from "@/components";
 
 export function SectionCards() {
   return (
@@ -92,11 +91,12 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="flex gap-2 font-medium line-clamp-1">
-            Steady performance increase <Icon name="TrendingUp" className="size-4" />
+            Steady performance increase{" "}
+            <Icon name="TrendingUp" className="size-4" />
           </div>
           <div className="text-muted-foreground">Meets growth projections</div>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
