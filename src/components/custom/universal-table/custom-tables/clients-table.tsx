@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DataTableRowActions } from "../data-table-row-actions";
 import { DataTable } from "../data-table";
@@ -72,13 +71,24 @@ export function ClientsTable() {
       accessorKey: "nome",
       header: "Nome",
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("nome")}</div>
+        <div className="min-w-0 font-medium">
+          <div className="truncate">{row.getValue("nome")}</div>
+          <div className="text-xs truncate text-muted-foreground md:hidden">
+            {row.getValue("email")}
+          </div>
+        </div>
       ),
+      minSize: 120,
       size: 180,
     },
     {
       accessorKey: "email",
       header: "Email",
+      cell: ({ row }) => (
+        <div className="hidden min-w-0 md:block">
+          <div className="truncate">{row.getValue("email")}</div>
+        </div>
+      ),
       size: 220,
     },
     {
@@ -87,20 +97,27 @@ export function ClientsTable() {
       cell: ({ row }) => {
         const categoria = row.getValue("categoria") as string;
         return (
-          <Badge
-            className={cn(
-              categoria === "VIP" &&
-                "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-              categoria === "Regular" &&
-                "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-              categoria === "Comum" &&
-                "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-            )}
-          >
-            {categoria}
-          </Badge>
+          <div className="flex flex-col gap-1">
+            <Badge
+              className={cn(
+                "w-fit text-xs",
+                categoria === "VIP" &&
+                  "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+                categoria === "Regular" &&
+                  "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+                categoria === "Comum" &&
+                  "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+              )}
+            >
+              {categoria}
+            </Badge>
+            <div className="font-mono text-xs text-muted-foreground lg:hidden">
+              NIF: {row.getValue("nif")}
+            </div>
+          </div>
         );
       },
+      minSize: 80,
       size: 120,
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
@@ -110,7 +127,9 @@ export function ClientsTable() {
       accessorKey: "nif",
       header: "NIF",
       cell: ({ row }) => (
-        <div className="font-mono">{row.getValue("nif")}</div>
+        <div className="hidden font-mono lg:block">
+          {row.getValue("nif")}
+        </div>
       ),
       size: 120,
     },
@@ -144,6 +163,7 @@ export function ClientsTable() {
         />
       ),
       size: 60,
+      minSize: 60,
       enableHiding: false,
     },
   ];
@@ -161,7 +181,7 @@ export function ClientsTable() {
   };
 
   return (
-    <div className=" bg-background">
+    <div className="bg-background">
       <DataTable
         data={clients}
         columns={clientColumns}
@@ -177,22 +197,10 @@ export function ClientsTable() {
         toolbar={{
           title: "Gestão de Clientes",
           description: "Gerencie seus clientes com filtros avançados e ações.",
-          actions: (
-            <Button>
-              <Icon name="Plus" size={16} className="mr-2" />
-              Adicionar Cliente
-            </Button>
-          ),
         }}
         emptyState={{
           title: "Nenhum cliente encontrado",
           description: "Comece criando uma nova conta de cliente.",
-          action: (
-            <Button>
-              <Icon name="Plus" size={16} className="mr-2" />
-              Adicionar Primeiro Cliente
-            </Button>
-          ),
         }}
       />
     </div>

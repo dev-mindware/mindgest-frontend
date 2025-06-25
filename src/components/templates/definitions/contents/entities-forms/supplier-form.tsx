@@ -1,9 +1,10 @@
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components";
+import { SuppliersTable } from "@/components/custom/universal-table/custom-tables/supliers-table";
 import InnerTagsInput from "@/components/custom/ínner-tags-input";
 
 export function SupplierForm() {
   return (
-    <div className="space-y-8 md:p-8">
+    <div className="p-4 space-y-8 md:p-8">
       <div className="grid gap-6 md:grid-cols-3">
         <div>
           <Label>Nome</Label>
@@ -81,6 +82,9 @@ export function SupplierForm() {
       </div>
       <div className="flex justify-end">
         <Button variant={"default"}>Adicionar</Button>
+      </div>
+      <div className="hidden w-full md:block">
+        <SuppliersTable/>
       </div>
     </div>
   );

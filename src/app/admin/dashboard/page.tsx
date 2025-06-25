@@ -35,7 +35,7 @@ export default function DashboardPage() {
             <SectionCards />
             <div className="px-4 space-y-5 lg:px-6">
               <ChartAreaInteractive />
-              <UsersTable />
+              <UsersTable/>
             </div>
           </div>
         </div>

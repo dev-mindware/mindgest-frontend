@@ -150,7 +150,7 @@ export function UsersTable() {
   };
 
   return (
-    <div className="p-8 bg-background">
+    <div className="bg-background">
       <DataTable
         data={users}
         columns={userColumns}

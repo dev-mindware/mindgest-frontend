@@ -1,9 +1,10 @@
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components";
+import { StoresTable } from "@/components/custom/universal-table/custom-tables/stores-table";
 
 
 export function StoreForm () {
     return (
-        <div className="space-y-8 md:p-8">
+        <div className="p-4 space-y-8 md:p-8">
          <div className="grid gap-6 md:grid-cols-3">
             <div>
                 <Label>Nome</Label>
@@ -62,6 +63,9 @@ export function StoreForm () {
          </div>
             <div className="flex justify-end">
                 <Button variant={"default"}>Adicionar</Button>
+            </div>
+            <div className="hidden w-full md:block">
+            <StoresTable/>
             </div>
         </div>
     )
