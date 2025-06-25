@@ -1,5 +1,6 @@
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components";
 import DatePickerInput from "@/components/custom/date-picker-input";
+import { ClientsTable } from "@/components/custom/universal-table/custom-tables/clients-table";
 
 
 export function ClientForm () {
@@ -86,7 +87,7 @@ export function ClientForm () {
                 <Button variant={"default"}>Adicionar</Button>
             </div>
             <div>
-                
+                <ClientsTable/>
             </div>
         </div>
     )

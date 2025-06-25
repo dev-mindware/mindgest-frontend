@@ -148,7 +148,7 @@ export function DataTable<TData>({
       />
 
       <div className="overflow-hidden border rounded-md bg-background">
-        <Table className="table-fixed">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
@@ -218,7 +218,7 @@ export function DataTable<TData>({
                   className="h-24 text-center"
                 >
                   <div className="flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-gray-300 rounded-full border-t-blue-600 animate-spin"></div>
                     <span className="ml-2">Loading...</span>
                   </div>
                 </TableCell>

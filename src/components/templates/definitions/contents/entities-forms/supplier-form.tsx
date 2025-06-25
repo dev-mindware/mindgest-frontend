@@ -1,19 +1,4 @@
-<<<<<<< HEAD
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components";
-=======
-import {
-  Button,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components";
-import { UsersTable } from "@/components/custom/universal-table/users-table";
->>>>>>> cf2a035 (refator - refatored generic table)
 import InnerTagsInput from "@/components/custom/ínner-tags-input";
 
 export function SupplierForm() {
@@ -84,39 +69,18 @@ export function SupplierForm() {
           </Select>
         </div>
 
-<<<<<<< HEAD
-            <div>
-                <Label>Prazo de Entrega</Label>  
-                <Input type="text" placeholder="Ex: 2 dias"/>
-            </div>
-
-            <div className="*:not-first:mt-2">
-            <Label>Produtos ou Categorias</Label>
-            <InnerTagsInput
-            />
-            </div>
-            
-         </div>
-            <div className="flex justify-end">
-                <Button variant={"default"}>Adicionar</Button>
-            </div>
-=======
         <div>
-          <Label>Prazo de Entrega</Label>
-          <Input type="text" placeholder="Ex: 2 dias" />
+          <Label>Prazo de Entrega</Label>  
+          <Input type="text" placeholder="Ex: 2 dias"/>
         </div>
 
         <div className="*:not-first:mt-2">
           <Label>Produtos ou Categorias</Label>
           <InnerTagsInput />
->>>>>>> cf2a035 (refator - refatored generic table)
         </div>
       </div>
       <div className="flex justify-end">
         <Button variant={"default"}>Adicionar</Button>
-      </div>
-      <div>
-        <UsersTable />
       </div>
     </div>
   );

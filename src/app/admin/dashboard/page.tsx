@@ -8,7 +8,7 @@ import {
   ChartAreaInteractive,
   SectionCards, 
 } from "@/components";
-import { UsersTable } from "@/components/custom/universal-table/users-table";
+import { UsersTable } from "@/components/custom/universal-table/custom-tables/users-table";
 
 export default function DashboardPage() {
   return (

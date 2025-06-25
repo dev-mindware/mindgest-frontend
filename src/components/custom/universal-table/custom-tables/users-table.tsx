@@ -4,8 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { DataTableRowActions } from "./data-table-row-actions";
-import { DataTable } from "./data-table";
+import { DataTableRowActions } from "../data-table-row-actions";
+import { DataTable } from "../data-table";
 import { Icon } from "@/components/icon";
 
 interface User {
@@ -137,6 +137,7 @@ export function UsersTable() {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDeleteUsers = (selectedRows: any[]) => {
     const updatedUsers = users.filter(
       (user) => !selectedRows.some((row) => row.original.id === user.id)
@@ -149,7 +150,7 @@ export function UsersTable() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="p-8 bg-background">
       <DataTable
         data={users}
         columns={userColumns}
