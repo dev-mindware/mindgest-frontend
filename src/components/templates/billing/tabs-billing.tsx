@@ -1,7 +1,11 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProductCards from "./cards/product-cards";
 
 export function TabsBilling() {
   return (
+    <div>
     <Tabs defaultValue="tab-1">
       <div className="flex flex-col w-full gap-6 lg:flex-row lg:items-start">
         <div className="w-full lg:w-auto">
@@ -52,5 +56,9 @@ export function TabsBilling() {
         </div>
       </div>
     </Tabs>
+    <div className="flex items-start justify-start">
+    <ProductCards/>
+    </div>
+    </div>
   );
 }
