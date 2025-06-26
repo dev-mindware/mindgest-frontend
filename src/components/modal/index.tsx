@@ -7,9 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogClose,
 } from "@/components"
 
-import { Icon } from "../icon"
 import { IconCheckSucessfull } from "./icon-sucess"
 import { IconWarning } from "./icon-warning"
 import { cn } from "@/lib/utils"
@@ -56,12 +56,9 @@ export function GlobalModal({
         }}
       >
         {canClose && (
-          <button
+          <DialogClose
             onClick={() => closeModal(id)}
-            className="absolute p-1 rounded-full top-2 right-2 hover:bg-gray-200"
-          >
-            <Icon name="X" size={20} />
-          </button>
+          />
         )}
 
         <DialogHeader className={cn("flex space-x-4 relative")}>

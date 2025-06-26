@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
-import { Icon } from '@/components';
-import { MoreHorizontal } from 'lucide-react';
+import { Icon, DeleteProduct, SeeProduct, EditProduct } from '@/components';
+import { useModal } from "@/contexts"
 
 interface ProductCard {
   id: string;
@@ -287,6 +287,7 @@ const formatPrice = (price: number): string => {
   }).format(price);
 };
 
+
 const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderItem) => void }> = ({ product, onAddToOrder }) => {
   const handleAddToOrder = () => {
     if (onAddToOrder) {
@@ -299,6 +300,8 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
       onAddToOrder(orderItem);
     }
   };
+
+  const { openModal } = useModal()
 
   return (
     <Card className="relative overflow-hidden transition-shadow duration-200 border border-border bg-card hover:shadow-lg">
@@ -335,7 +338,7 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
             size="sm" 
             className="flex-shrink-0 w-8 h-8 p-0 hover:bg-primary/10"
             onClick={handleAddToOrder}
-            title="Adicionar ao pedido"
+            title="Adicionar ao template"
           >
             <Icon name='Plus' className="w-4 h-4 text-primary" />
           </Button>
@@ -351,11 +354,11 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>Detalhes</DropdownMenuItem>
-        <DropdownMenuItem>Editar</DropdownMenuItem>
-        <DropdownMenuItem className='text-destructive'>Deletar</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openModal('see')}>Detalhes</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openModal('edit')}>Editar</DropdownMenuItem>
+        <DropdownMenuItem className='text-destructive' onClick={() => openModal('delete')}>Deletar</DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>
+          </DropdownMenu> 
         </div>
         </div>
       </CardHeader>
@@ -401,6 +404,7 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
   const [sortBy, setSortBy] = useState<'az' | 'za' | 'price-max' | 'price-min'>('az');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  
 
   const filteredProducts = initialProducts.filter(p => {
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
@@ -517,6 +521,9 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
           </div>
         )}
       </div>
+      <DeleteProduct/>
+      <SeeProduct/>
+      <EditProduct/>
     </div>
   );
 };
