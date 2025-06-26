@@ -8,7 +8,7 @@ import {
 } from "../ui";
 
 interface Props {
-  route: string;
+  route?: string;
   subRoute: string;
 }
 

@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox, Input, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
+import { Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
 import { Icon } from '@/components';
+import { MoreHorizontal } from 'lucide-react';
 
 interface ProductCard {
   id: string;
@@ -36,6 +37,7 @@ export interface OrderItem {
 
 interface ProductCardsProps {
   onAddToOrder?: (item: OrderItem) => void;
+  className?: string;
 }
 
 const initialProducts: ProductCard[] = [
@@ -327,6 +329,7 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
               </div>
             </div>
           </div>
+          <div className='flex gap-1'>
           <Button 
             variant="ghost" 
             size="sm" 
@@ -336,6 +339,24 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
           >
             <Icon name='Plus' className="w-4 h-4 text-primary" />
           </Button>
+          <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="rounded-full shadow-none"
+          aria-label="Open edit menu"
+        >
+          <Icon name="Ellipsis" size={16} aria-hidden="true" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>Detalhes</DropdownMenuItem>
+        <DropdownMenuItem>Editar</DropdownMenuItem>
+        <DropdownMenuItem className='text-destructive'>Deletar</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+        </div>
         </div>
       </CardHeader>
 
@@ -372,7 +393,7 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
   );
 };
 
-const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder }) => {
+const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) => {
   const [search, setSearch] = useState('');
   const [showActive, setShowActive] = useState(true);
   const [showInactive, setShowInactive] = useState(true);
@@ -473,9 +494,8 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder }) => {
           <div className="text-sm text-muted-foreground">
             {filteredProducts.length} resultados encontrados
           </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          
+        <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${className ?? ''}`}>
           {paginatedProducts.map(product => (
             <ProductCard key={product.id} product={product} onAddToOrder={onAddToOrder} />
           ))}

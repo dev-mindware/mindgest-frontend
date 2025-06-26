@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProductCards from "./cards/product-cards";
+import ProductCards from "../product-cards";
 
 export function TabsBilling() {
   return (
@@ -57,7 +57,7 @@ export function TabsBilling() {
       </div>
     </Tabs>
     <div className="flex items-start justify-start">
-    <ProductCards/>
+    <ProductCards />
     </div>
     </div>
   );

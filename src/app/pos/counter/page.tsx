@@ -1,9 +1,6 @@
 import React from 'react'
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
+  DinamicBreadcrumb,
   Separator,
   SidebarTrigger,
 } from "@/components"
@@ -17,13 +14,7 @@ const Page = () => {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Movimentos</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <DinamicBreadcrumb subRoute="Caixa" />
           </div>
         </header>
         

@@ -1,12 +1,9 @@
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
   Separator,
   SidebarTrigger,
   ChartAreaInteractive,
-  SectionCards, 
+  SectionCards,
+  DinamicBreadcrumb, 
 } from "@/components";
 import { UsersTable } from "@/components/custom/universal-table/custom-tables/users-table";
 
@@ -20,13 +17,7 @@ export default function DashboardPage() {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <DinamicBreadcrumb subRoute="Dashboard" />
         </div>
       </header>
       <div className="flex flex-col flex-1">
