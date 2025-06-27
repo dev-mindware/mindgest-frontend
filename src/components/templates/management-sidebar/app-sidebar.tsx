@@ -55,11 +55,11 @@ const data = {
       items: [
         {
           title: "Faturação",
-          url: "#",
+          url: "/management/doc-management/billing",
         },
         {
           title: "Outros",
-          url: "#",
+          url: "/management/doc-management/other",
         },
       ],
     },
@@ -116,11 +116,11 @@ const data = {
       items: [
         {
           title: "Geral",
-          url: "#",
+          url: "/management/definitions/general",
         },
         {
           title: "Exportação",
-          url: "#",
+          url: "/management/definitions/export",
         },
       ],
     },

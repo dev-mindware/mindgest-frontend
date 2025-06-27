@@ -15,7 +15,7 @@ export function DefSetup() {
   return( 
   <div>
 
-        <h1 className="text-2xl font-semibold">Definições da Conta</h1>
+    <h1 className="text-2xl font-semibold">Definições da Conta</h1>
     <div className="hidden md:block">
     <Tabs
       defaultValue="tab-1"

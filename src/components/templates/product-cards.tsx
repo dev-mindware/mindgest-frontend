@@ -430,6 +430,8 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
       <div className="mx-auto space-y-4 max-w-7xl">
         <div className="flex flex-wrap items-center gap-4">
           {/* Search Input */}
+          <div className="flex justify-between w-full">
+            <div className="flex items-center gap-2">
           <div className="relative w-full sm:max-w-xs">
             <Input
               type="search"
@@ -442,7 +444,6 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
               <Icon name="Search" size={16} />
             </div>
           </div>
-
           {/* Category Filter */}
           <Popover>
             <PopoverTrigger asChild>
@@ -494,6 +495,19 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
             <option value="price-max">Max preço</option>
             <option value="price-min">Min preço</option>
             </select>
+          </div>
+          
+          <div className='flex gap-2 rounded-md bg-muted'>
+            <Button>
+              <Icon name="Grid2x2" size={16}/>
+            </Button>
+            <Button>
+              <Icon name="Table" size={16}/>
+            </Button>
+          </div>  
+          </div>
+
+          
         </div>
           <div className="text-sm text-muted-foreground">
             {filteredProducts.length} resultados encontrados

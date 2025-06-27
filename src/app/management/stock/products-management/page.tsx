@@ -4,6 +4,7 @@ import {
   Separator,
   SidebarTrigger,
 } from "@/components"
+import { Management } from '@/components/templates/stock-managment/management'
 const Page = () => {
   return (
     <div>
@@ -18,6 +19,11 @@ const Page = () => {
               
           </div>
         </header>
+        <div className="flex flex-col flex-1">
+        <div className="@container/main flex flex-1 flex-col gap-2 p-4">
+            <Management/>
+          </div>
+        </div>
     </div>
   )
 }
