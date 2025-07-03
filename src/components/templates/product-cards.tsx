@@ -1,10 +1,9 @@
-// Enhanced ProductCards with working filters and diversified product data + category filter and sorting
 "use client"
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
+import { Checkbox, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popover, PopoverContent, PopoverTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { Icon, DeleteProduct, SeeProduct, EditProduct } from '@/components';
 import { useModal } from "@/contexts"
 
@@ -277,7 +276,6 @@ const initialProducts: ProductCard[] = [
   }
 ];
 
-
 const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('pt-AO', {
     style: 'currency',
@@ -287,19 +285,7 @@ const formatPrice = (price: number): string => {
   }).format(price);
 };
 
-
-const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderItem) => void }> = ({ product, onAddToOrder }) => {
-  const handleAddToOrder = () => {
-    if (onAddToOrder) {
-      const orderItem: OrderItem = {
-        id: product.id,
-        title: product.title,
-        price: product.retailPrice.min,
-        quantity: 1
-      };
-      onAddToOrder(orderItem);
-    }
-  };
+const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderItem) => void }> = ({ product,}) => {
 
   const { openModal } = useModal()
 
@@ -333,31 +319,22 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
             </div>
           </div>
           <div className='flex gap-1'>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="flex-shrink-0 w-8 h-8 p-0 hover:bg-primary/10"
-            onClick={handleAddToOrder}
-            title="Adicionar ao template"
-          >
-            <Icon name='Plus' className="w-4 h-4 text-primary" />
-          </Button>
           <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="rounded-full shadow-none"
-          aria-label="Open edit menu"
-        >
-          <Icon name="Ellipsis" size={16} aria-hidden="true" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => openModal('see')}>Detalhes</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => openModal('edit')}>Editar</DropdownMenuItem>
-        <DropdownMenuItem className='text-destructive' onClick={() => openModal('delete')}>Deletar</DropdownMenuItem>
-      </DropdownMenuContent>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="rounded-full shadow-none"
+                aria-label="Open edit menu"
+              >
+                <Icon name="Ellipsis" size={16} aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => openModal('see')}>Detalhes</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => openModal('edit')}>Editar</DropdownMenuItem>
+              <DropdownMenuItem className='text-destructive' onClick={() => openModal('delete')}>Deletar</DropdownMenuItem>
+            </DropdownMenuContent>
           </DropdownMenu> 
         </div>
         </div>
@@ -396,6 +373,91 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
   );
 };
 
+const ProductTable: React.FC<{ products: ProductCard[]; onAddToOrder?: (item: OrderItem) => void }> = ({ products, onAddToOrder }) => {
+  const { openModal } = useModal();
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Produto</TableHead>
+          <TableHead>SKU</TableHead>
+          <TableHead>Categoria</TableHead>
+          <TableHead>Subcategoria</TableHead>
+          <TableHead>Retalho</TableHead>
+          <TableHead>Atacado</TableHead>
+          <TableHead>Stock</TableHead>
+          <TableHead>Localização</TableHead>
+          <TableHead>Variantes</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Ações</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {products.map(product => (
+          <TableRow key={product.id}>
+            <TableCell className="font-medium">{product.title}</TableCell>
+            <TableCell>{product.sku}</TableCell>
+            <TableCell>{product.category}</TableCell>
+            <TableCell>{product.subcategory}</TableCell>
+            <TableCell>
+              {formatPrice(product.retailPrice.min)} - {formatPrice(product.retailPrice.max)}
+            </TableCell>
+            <TableCell>
+              {formatPrice(product.wholesalePrice.min)} - {formatPrice(product.wholesalePrice.max)}
+            </TableCell>
+            <TableCell>{product.stock}</TableCell>
+            <TableCell>{product.location}</TableCell>
+            <TableCell>{product.variants}</TableCell>
+            <TableCell>
+              <Badge variant="secondary" className={product.isActive ? "text-green-700 bg-green-100 border-green-200" : "text-red-700 bg-red-100 border-red-200"}>
+                {product.isActive ? "Ativo" : "Inactivo"}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <div className="flex gap-1">
+                {onAddToOrder && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-8 h-8 p-0 hover:bg-primary/10"
+                    onClick={() => onAddToOrder({
+                      id: product.id,
+                      title: product.title,
+                      price: product.retailPrice.min,
+                      quantity: 1
+                    })}
+                    title="Adicionar ao template"
+                  >
+                    <Icon name="Plus" className="w-4 h-4 text-primary" />
+                  </Button>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="rounded-full shadow-none"
+                      aria-label="Open edit menu"
+                    >
+                      <Icon name="Ellipsis" size={16} aria-hidden="true" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => openModal('see')}>Detalhes</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => openModal('edit')}>Editar</DropdownMenuItem>
+                    <DropdownMenuItem className='text-destructive' onClick={() => openModal('delete')}>Deletar</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
 const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) => {
   const [search, setSearch] = useState('');
   const [showActive, setShowActive] = useState(true);
@@ -403,8 +465,8 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'az' | 'za' | 'price-max' | 'price-min'>('az');
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const itemsPerPage = 6;
-  
 
   const filteredProducts = initialProducts.filter(p => {
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
@@ -412,14 +474,14 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
     const matchCategory = !categoryFilter || p.category === categoryFilter;
     return matchSearch && matchStatus && matchCategory;
   }).sort((a, b) => {
-  switch (sortBy) {
-    case 'az': return a.title.localeCompare(b.title);
-    case 'za': return b.title.localeCompare(a.title);
-    case 'price-max': return b.retailPrice.max - a.retailPrice.max;
-    case 'price-min': return a.retailPrice.min - b.retailPrice.min;
-    default: return 0;
-  }
-});
+    switch (sortBy) {
+      case 'az': return a.title.localeCompare(b.title);
+      case 'za': return b.title.localeCompare(a.title);
+      case 'price-max': return b.retailPrice.max - a.retailPrice.max;
+      case 'price-min': return a.retailPrice.min - b.retailPrice.min;
+      default: return 0;
+    }
+  });
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -429,97 +491,97 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
     <div className="justify-start mt-10 bg-background">
       <div className="mx-auto space-y-4 max-w-7xl">
         <div className="flex flex-wrap items-center gap-4">
-          {/* Search Input */}
           <div className="flex justify-between w-full">
             <div className="flex items-center gap-2">
-          <div className="relative w-full sm:max-w-xs">
-            <Input
-              type="search"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Pesquisar produtos..."
-              className="h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
-            />
-            <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
-              <Icon name="Search" size={16} />
+              <div className="relative w-full sm:max-w-xs">
+                <Input
+                  type="search"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Pesquisar produtos..."
+                  className="h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
+                />
+                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
+                  <Icon name="Search" size={16} />
+                </div>
+              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Icon name="ListFilter" className="w-4 h-4" />
+                    Categoria
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56 space-y-2">
+                  <p className="text-sm text-muted-foreground">Selecionar categoria</p>
+                  {uniqueCategories.map(cat => (
+                    <div key={cat} className='flex items-center gap-2'>
+                      <Checkbox checked={categoryFilter === cat} onCheckedChange={() => setCategoryFilter(categoryFilter === cat ? null : cat)} />
+                      <p>{cat}</p>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Icon name="Tag" className="w-4 h-4" />
+                    Status
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56 space-y-2">
+                  <p className="mb-2 text-sm text-muted-foreground">Filtrar por status</p>
+                  <div className='flex items-center gap-2'>
+                    <Checkbox checked={showActive} onCheckedChange={val => setShowActive(val as boolean)} /> <p>Ativo</p>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <Checkbox checked={showInactive} onCheckedChange={val => setShowInactive(val as boolean)} /> <p>Inativo</p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <select
+                className="h-10 px-3 text-sm border rounded-md border-input bg-background"
+                value={sortBy}
+                onChange={e =>
+                  setSortBy(e.target.value as 'az' | 'za' | 'price-max' | 'price-min')
+                }
+              >
+                <option value="az">Ordenar em A-Z</option>
+                <option value="za">Ordenar em Z-A</option>
+                <option value="price-max">Max preço</option>
+                <option value="price-min">Min preço</option>
+              </select>
+            </div>
+            <div className='flex gap-2 p-1 rounded-md bg-muted'>
+              <Button
+                variant={viewMode === 'card' ? 'default' : 'ghost'}
+                className={viewMode === 'card' ? 'bg-sidebar' : ''}
+                onClick={() => setViewMode('card')}
+              >
+                <Icon name="LayoutGrid" size={16}/>
+              </Button>
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                className={viewMode === 'table' ? 'bg-sidebar' : ''}
+                onClick={() => setViewMode('table')}
+              >
+                <Icon name="Table" size={16}/>
+              </Button>
             </div>
           </div>
-          {/* Category Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Icon name="ListFilter" className="w-4 h-4" />
-                Categoria
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 space-y-2">
-              <p className="text-sm text-muted-foreground">Selecionar categoria</p>
-              {uniqueCategories.map(cat => (
-                <div key={cat} className='flex items-center gap-2'>
-                  <Checkbox checked={categoryFilter === cat} onCheckedChange={() => setCategoryFilter(categoryFilter === cat ? null : cat)} />
-                  <p>{cat}</p>
-                </div>
-              ))}
-            </PopoverContent>
-          </Popover>
-
-          {/* Status Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Icon name="Tag" className="w-4 h-4" />
-                Status
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 space-y-2">
-              <p className="mb-2 text-sm text-muted-foreground">Filtrar por status</p>
-              <div className='flex items-center gap-2'>
-                <Checkbox checked={showActive} onCheckedChange={val => setShowActive(val as boolean)} /> <p>Ativo</p>
-              </div>
-              <div className='flex items-center gap-2'>
-                <Checkbox checked={showInactive} onCheckedChange={val => setShowInactive(val as boolean)} /> <p>Inativo</p>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* Sorting Select */}
-          <select
-            className="h-10 px-3 text-sm border rounded-md border-input bg-background"
-            value={sortBy}
-            onChange={e =>
-                setSortBy(e.target.value as 'az' | 'za' | 'price-max' | 'price-min')
-            }
-            >
-            <option value="az">Ordenar em A-Z</option>
-            <option value="za">Ordenar em Z-A</option>
-            <option value="price-max">Max preço</option>
-            <option value="price-min">Min preço</option>
-            </select>
-          </div>
-          
-          <div className='flex gap-2 rounded-md bg-muted'>
-            <Button>
-              <Icon name="Grid2x2" size={16}/>
-            </Button>
-            <Button>
-              <Icon name="Table" size={16}/>
-            </Button>
-          </div>  
-          </div>
-
-          
         </div>
-          <div className="text-sm text-muted-foreground">
-            {filteredProducts.length} resultados encontrados
-          </div>
-          
-        <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${className ?? ''}`}>
-          {paginatedProducts.map(product => (
-            <ProductCard key={product.id} product={product} onAddToOrder={onAddToOrder} />
-          ))}
+        <div className="text-sm text-muted-foreground">
+          {filteredProducts.length} resultados encontrados
         </div>
-
-        {/* Pagination Controls */}
+        {viewMode === 'card' ? (
+          <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${className ?? ''}`}>
+            {paginatedProducts.map(product => (
+              <ProductCard key={product.id} product={product} onAddToOrder={onAddToOrder} />
+            ))}
+          </div>
+        ) : (
+          <ProductTable products={paginatedProducts} onAddToOrder={onAddToOrder} />
+        )}
         {totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-8">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
