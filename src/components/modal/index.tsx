@@ -1,4 +1,5 @@
 "use client"
+
 import { type ReactNode } from "react"
 import {
   Dialog,
@@ -22,6 +23,7 @@ interface ModalProps {
   canClose?: boolean
   children?: ReactNode
   footer?: ReactNode
+  custom?: ReactNode
   className?: string
   sucess?: boolean
   warning?: boolean
@@ -36,6 +38,7 @@ export function GlobalModal({
   canClose,
   children,
   footer,
+  custom,
   className,
 }: ModalProps) {
   const { open, closeModal } = useModal()
@@ -49,49 +52,52 @@ export function GlobalModal({
         }
       }}
     >
-      <DialogContent
-        className={className}
-        onInteractOutside={(event) => {
-          event.preventDefault()
-        }}
-      >
-        {canClose && (
-          <DialogClose
-            onClick={() => closeModal(id)}
-          />
-        )}
+      {custom ? (
+        <DialogContent className={className}>
+          <DialogTitle className="w-max">{title}</DialogTitle>
+          {custom}
+        </DialogContent>
+      ) : (
+        <DialogContent
+          className={className}
+          onInteractOutside={(event) => {
+            event.preventDefault()
+          }}
+        >
+          {canClose && <DialogClose onClick={() => closeModal(id)} />}
 
-        <DialogHeader className={cn("flex space-x-4 relative")}>
-          <div
-            className={cn("flex space-x-4 items-center", {
-              "flex-col": sucess,
-            })}
-          >
-            {sucess && <IconCheckSucessfull />}
-            {warning && <IconWarning />}
-
+          <DialogHeader className={cn("flex space-x-4 relative")}>
             <div
-              className={cn("space-y-2", {
-                "flex flex-col items-center": sucess,
+              className={cn("flex space-x-4 items-center", {
+                "flex-col": sucess,
               })}
             >
-              <DialogTitle className="w-max">{title}</DialogTitle>
-              {description && (
-                <DialogDescription
-                  className={cn("", {
-                    "text-center": sucess,
-                  })}
-                >
-                  {description}
-                </DialogDescription>
-              )}
-            </div>
-          </div>
-        </DialogHeader>
+              {sucess && <IconCheckSucessfull />}
+              {warning && <IconWarning />}
 
-        {children && <div>{children}</div>}
-        {footer && <DialogFooter>{footer}</DialogFooter>}
-      </DialogContent>
+              <div
+                className={cn("space-y-2", {
+                  "flex flex-col items-center": sucess,
+                })}
+              >
+                <DialogTitle className="w-max">{title}</DialogTitle>
+                {description && (
+                  <DialogDescription
+                    className={cn({
+                      "text-center": sucess,
+                    })}
+                  >
+                    {description}
+                  </DialogDescription>
+                )}
+              </div>
+            </div>
+          </DialogHeader>
+
+          {children && <div>{children}</div>}
+          {footer && <DialogFooter>{footer}</DialogFooter>}
+        </DialogContent>
+      )}
     </Dialog>
   )
 }

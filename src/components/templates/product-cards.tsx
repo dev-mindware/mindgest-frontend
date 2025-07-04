@@ -490,86 +490,87 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
   return (
     <div className="justify-start mt-10 bg-background">
       <div className="mx-auto space-y-4 max-w-7xl">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex justify-between w-full">
-            <div className="flex items-center gap-2">
-              <div className="relative w-full sm:max-w-xs">
-                <Input
-                  type="search"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Pesquisar produtos..."
-                  className="h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
-                />
-                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
-                  <Icon name="Search" size={16} />
-                </div>
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Icon name="ListFilter" className="w-4 h-4" />
-                    Categoria
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56 space-y-2">
-                  <p className="text-sm text-muted-foreground">Selecionar categoria</p>
-                  {uniqueCategories.map(cat => (
-                    <div key={cat} className='flex items-center gap-2'>
-                      <Checkbox checked={categoryFilter === cat} onCheckedChange={() => setCategoryFilter(categoryFilter === cat ? null : cat)} />
-                      <p>{cat}</p>
-                    </div>
-                  ))}
-                </PopoverContent>
-              </Popover>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Icon name="Tag" className="w-4 h-4" />
-                    Status
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56 space-y-2">
-                  <p className="mb-2 text-sm text-muted-foreground">Filtrar por status</p>
-                  <div className='flex items-center gap-2'>
-                    <Checkbox checked={showActive} onCheckedChange={val => setShowActive(val as boolean)} /> <p>Ativo</p>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <Checkbox checked={showInactive} onCheckedChange={val => setShowInactive(val as boolean)} /> <p>Inativo</p>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <select
-                className="h-10 px-3 text-sm border rounded-md border-input bg-background"
-                value={sortBy}
-                onChange={e =>
-                  setSortBy(e.target.value as 'az' | 'za' | 'price-max' | 'price-min')
-                }
-              >
-                <option value="az">Ordenar em A-Z</option>
-                <option value="za">Ordenar em Z-A</option>
-                <option value="price-max">Max preço</option>
-                <option value="price-min">Min preço</option>
-              </select>
-            </div>
-            <div className='flex gap-2 p-1 rounded-md bg-muted'>
-              <Button
-                variant={viewMode === 'card' ? 'default' : 'ghost'}
-                className={viewMode === 'card' ? 'bg-sidebar' : ''}
-                onClick={() => setViewMode('card')}
-              >
-                <Icon name="LayoutGrid" size={16}/>
-              </Button>
-              <Button
-                variant={viewMode === 'table' ? 'default' : 'ghost'}
-                className={viewMode === 'table' ? 'bg-sidebar' : ''}
-                onClick={() => setViewMode('table')}
-              >
-                <Icon name="Table" size={16}/>
-              </Button>
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+      <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
+          <div className="relative w-full">
+            <Input
+              type="search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Pesquisar produtos..."
+              className="w-full h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
+            />
+            <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
+              <Icon name="Search" size={16} />
             </div>
           </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="w-full h-10 gap-2 sm:w-auto">
+                <Icon name="ListFilter" className="w-4 h-4" />
+                Categoria
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 space-y-2">
+              <p className="text-sm text-muted-foreground">Selecionar categoria</p>
+              {uniqueCategories.map(cat => (
+                <div key={cat} className="flex items-center gap-2">
+                  <Checkbox checked={categoryFilter === cat} onCheckedChange={() => setCategoryFilter(categoryFilter === cat ? null : cat)} />
+                  <p>{cat}</p>
+                </div>
+              ))}
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="w-full h-10 gap-2 sm:w-auto">
+                <Icon name="Tag" className="w-4 h-4" />
+                Status
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 space-y-2">
+              <p className="mb-2 text-sm text-muted-foreground">Filtrar por status</p>
+              <div className="flex items-center gap-2">
+                <Checkbox checked={showActive} onCheckedChange={val => setShowActive(val as boolean)} /> <p>Ativo</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox checked={showInactive} onCheckedChange={val => setShowInactive(val as boolean)} /> <p>Inativo</p>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <select
+            className="w-full h-10 px-3 text-sm border rounded-md border-input bg-background sm:w-auto"
+            value={sortBy}
+            onChange={e =>
+              setSortBy(e.target.value as 'az' | 'za' | 'price-max' | 'price-min')
+            }
+          >
+            <option value="az">Ordenar em A-Z</option>
+            <option value="za">Ordenar em Z-A</option>
+            <option value="price-max">Max preço</option>
+            <option value="price-min">Min preço</option>
+          </select>
         </div>
+        <div className="flex w-24 gap-2 p-1 rounded-md bg-muted">
+          <Button
+            variant={viewMode === 'card' ? 'default' : 'ghost'}
+            className={`h-10 w-10 ${viewMode === 'card' ? 'bg-sidebar' : ''}`}
+            onClick={() => setViewMode('card')}
+          >
+            <Icon name="LayoutGrid" size={16} />
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'ghost'}
+            className={`h-10 w-10 ${viewMode === 'table' ? 'bg-sidebar' : ''}`}
+            onClick={() => setViewMode('table')}
+          >
+            <Icon name="Table" size={16} />
+          </Button>
+        </div>
+      </div>
+    </div>
+
         <div className="text-sm text-muted-foreground">
           {filteredProducts.length} resultados encontrados
         </div>
