@@ -11,208 +11,149 @@ import { Notification } from "./contents/notifications"
 import { Entities } from "./contents/entities"
 import { Collaborators } from "./contents/collaborators"
 import { Subscriptions } from "./contents/subscription"
-export function DefSetup() {
+
+interface DefSetupProps {
+  disabledTabs?: string[]
+}
+
+export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
+  const tabs = [
+    {
+      id: "tab-1",
+      label: "Aparência",
+      icon: "Pencil",
+      component: <Appearance />,
+      category: "general"
+    },
+    {
+      id: "tab-2",
+      label: "Perfil",
+      icon: "User",
+      component: <Profile />,
+      category: "general"
+    },
+    {
+      id: "tab-3",
+      label: "Notificações",
+      icon: "Bell",
+      component: <Notification />,
+      category: "general"
+    },
+    {
+      id: "tab-4",
+      label: "Entidades",
+      icon: "Users",
+      component: <Entities />,
+      category: "workplace"
+    },
+    {
+      id: "tab-5",
+      label: "Colaboradores",
+      icon: "BriefcaseBusiness",
+      component: <Collaborators />,
+      category: "workplace"
+    },
+    {
+      id: "tab-6",
+      label: "Subscrição",
+      icon: "Sparkles",
+      component: <Subscriptions />,
+      category: "workplace"
+    }
+  ]
+
+  const enabledTabs = tabs.filter(tab => !disabledTabs.includes(tab.id))
+  const generalTabs = enabledTabs.filter(tab => tab.category === "general")
+  const workplaceTabs = enabledTabs.filter(tab => tab.category === "workplace")
+
+  if (enabledTabs.length === 0) {
+    return null
+  }
+
+  const defaultTab = enabledTabs[0]?.id || "tab-1"
+
+  const renderTabTrigger = (tab: typeof tabs[0], isDesktop: boolean = true) => {
+    const baseClasses = isDesktop
+      ? "hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+      : "data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
+
+    return (
+      <TabsTrigger
+        key={tab.id}
+        value={tab.id}
+        className={baseClasses}
+      >
+        <Icon 
+          name={tab.icon as "User" | "Bell" | "Users" | "BriefcaseBusiness" | "Sparkles"}
+          className={isDesktop ? "-ms-0.5 me-1.5 opacity-60" : ""}
+          size={16}
+          aria-hidden="true"
+        />
+        {isDesktop && <p className="font-normal">{tab.label}</p>}
+      </TabsTrigger>
+    )
+  }
+
   return( 
-  <div>
-
-    <h1 className="text-2xl font-semibold">Definições da Conta</h1>
-    <div className="hidden md:block">
-    <Tabs
-      defaultValue="tab-1"
-      className="flex-row w-full mt-5 "
-    >
-        <div className="h-screen bg-sidebar">
-      <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
-        <div className="p-4 space-y-5">
-            <p className="text-sm text-muted-foreground">Definições Gerais</p>
-            <div>
-        <TabsTrigger
-          value="tab-1"
-          className="hover:bg-accent hover:text-foreground  data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+    <div>
+      <h1 className="text-2xl font-semibold">Definições da Conta</h1>
+      
+      <div className="hidden md:block">
+        <Tabs
+          defaultValue={defaultTab}
+          className="flex-row w-full mt-5 "
         >
-          <Icon 
-            name="Pencil"
-            className="-ms-0.5 me-1.5 opacity-60"
-            size={16}
-            aria-hidden="true"
-          />
-          <p className="font-normal">Aparência</p>
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-2"
-          className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-        >
-          <Icon
-            name="User"
-            className="-ms-0.5 me-1.5 opacity-60"
-            size={16}
-            aria-hidden="true"
-          />
-          <p className="font-normal">Perfil</p>
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-3"
-          className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-        >
-          <Icon
-            name="Bell"
-            className="-ms-0.5 me-1.5 opacity-60"
-            size={16}
-            aria-hidden="true"
-          />
-          <p className="font-normal">Notificações</p>
-        </TabsTrigger>
-            </div>
-            <div className="h-px bg-border"/>
-            <p className="text-sm text-muted-foreground">Definições de Ambiente de Trabalho</p>
-            <div>
-        <TabsTrigger
-          value="tab-4"
-          className="hover:bg-accent hover:text-foreground  data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-        >
-          <Icon
-            name="Users"
-            className="-ms-0.5 me-1.5 opacity-60"
-            size={16}
-            aria-hidden="true"
-          />
-          <p className="font-normal">Entidades</p>
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-5"
-          className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-        >
-          <Icon
-            name="BriefcaseBusiness"
-            className="-ms-0.5 me-1.5 opacity-60"
-            size={16}
-            aria-hidden="true"
-          />
-          <p className="font-normal">Colaboradores</p>
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-6"
-          className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-        >
-          <Icon
-            name="Sparkles"
-            className="-ms-0.5 me-1.5 opacity-60"
-            size={16}
-            aria-hidden="true"
-          />
-          <p className="font-normal">Subscrição</p>
-        </TabsTrigger>
-            </div>
-        </div>
-      </TabsList>
+          <div className="h-screen bg-sidebar">
+            <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
+              <div className="p-4 space-y-5">
+                {generalTabs.length > 0 && (
+                  <>
+                    <p className="text-sm text-muted-foreground">Definições Gerais</p>
+                    <div>
+                      {generalTabs.map(tab => renderTabTrigger(tab, true))}
+                    </div>
+                  </>
+                )}
+                
+                {generalTabs.length > 0 && workplaceTabs.length > 0 && (
+                  <div className="h-px bg-border"/>
+                )}
+                
+                {workplaceTabs.length > 0 && (
+                  <>
+                    <p className="text-sm text-muted-foreground">Definições de Ambiente de Trabalho</p>
+                    <div>
+                      {workplaceTabs.map(tab => renderTabTrigger(tab, true))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </TabsList>
+          </div>
+          
+          <div className="border rounded-md grow text-start">
+            {enabledTabs.map(tab => (
+              <TabsContent key={tab.id} value={tab.id}>
+                {tab.component}
+              </TabsContent>
+            ))}
+          </div>
+        </Tabs>
       </div>
-      <div className="border rounded-md grow text-start">
-        <TabsContent value="tab-1">
-            <Appearance/>
-        </TabsContent>
-        <TabsContent value="tab-2">
-          <Profile/>
-        </TabsContent>
-        <TabsContent value="tab-3">
-          <Notification/>
-        </TabsContent>
-        <TabsContent value="tab-4">
-          <Entities/>
-        </TabsContent>
-        <TabsContent value="tab-5">
-          <Collaborators/>
-        </TabsContent>
-        <TabsContent value="tab-6">
-          <Subscriptions/>
-        </TabsContent>
-      </div>
-    </Tabs>
-    </div>
 
-    <div className="block mt-10 md:hidden">
-        <Tabs defaultValue="tab-1" className="items-center">
-      <TabsList className="h-auto p-0 -space-x-px shadow-xs bg-background rtl:space-x-reverse">
-        <TabsTrigger
-          value="tab-1"
-          className="data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
-        >
-          <Icon 
-            name="Pencil"
-            size={16}
-            aria-hidden="true"
-          />
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-2"
-          className="data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
-        >
-          <Icon
-            name="User"
-            size={16}
-            aria-hidden="true"
-          />
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-3"
-          className="data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
-        >
-          <Icon
-            name="Bell"
-            size={16}
-            aria-hidden="true"
-          />
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-4"
-          className="data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
-        >
-          <Icon
-            name="Users"
-            size={16}
-            aria-hidden="true"
-          />
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-5"
-          className="data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
-        >
-        <Icon
-            name="BriefcaseBusiness"
-            size={16}
-            aria-hidden="true"
-          />
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-6"
-          className="data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e"
-        >
-          <Icon
-            name="Sparkles"
-            size={16}
-            aria-hidden="true"
-          />
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="tab-1">
-        <Appearance/>
-      </TabsContent>
-      <TabsContent value="tab-2">
-        <Profile/>
-      </TabsContent>
-      <TabsContent value="tab-3">
-        <Notification/>
-      </TabsContent>
-      <TabsContent value="tab-4">
-        <Entities/>
-      </TabsContent>
-      <TabsContent value="tab-5">
-        <Collaborators/>
-      </TabsContent>
-      <TabsContent value="tab-6">
-        <Subscriptions/>
-      </TabsContent>
-    </Tabs>
-    </div>
+      <div className="block mt-10 md:hidden">
+        <Tabs defaultValue={defaultTab} className="items-center">
+          <TabsList className="h-auto p-0 -space-x-px shadow-xs bg-background rtl:space-x-reverse">
+            {enabledTabs.map(tab => renderTabTrigger(tab, false))}
+          </TabsList>
+          
+          {enabledTabs.map(tab => (
+            <TabsContent key={tab.id} value={tab.id}>
+              {tab.component}
+            </TabsContent>
+          ))}
+        </Tabs>
+      </div>
     </div>
   )
 }

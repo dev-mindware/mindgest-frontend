@@ -1,3 +1,4 @@
+// file: components/DatePickerInput.tsx
 "use client"
 
 import { CalendarIcon } from "lucide-react"
@@ -11,12 +12,16 @@ import {
 
 import { Calendar, DateInput } from "@/components"
 
-export default function DatePickerInput() {
+interface DatePickerInputProps {
+  id?: string
+}
+
+export default function DatePickerInput({ id = "" }: DatePickerInputProps) {
   return (
     <DatePicker className="*:not-first:mt-2">
       <div className="flex">
         <Group className="w-full">
-          <DateInput className="pe-9" />
+          <DateInput id={id} className="pe-9" />
         </Group>
         <Button className="text-muted-foreground/80 hover:text-foreground data-focus-visible:border-ring data-focus-visible:ring-ring/50 z-10 -ms-9 -me-px flex w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none data-focus-visible:ring-[3px]">
           <CalendarIcon size={16} />

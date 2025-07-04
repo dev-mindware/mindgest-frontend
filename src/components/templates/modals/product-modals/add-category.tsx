@@ -1,3 +1,4 @@
+"use client"
 import { Button, GlobalModal, Input, Label, Icon } from "@/components"
 import { useState } from "react"
 import Image from "next/image"

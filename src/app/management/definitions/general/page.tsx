@@ -20,7 +20,7 @@ export default function Page() {
       </header>
       <div className="flex flex-col flex-1">
         <div className="@container/main flex flex-1 p-4 flex-col gap-2">
-          <DefSetup />
+          <DefSetup disabledTabs={["tab-6"]}/>
         </div>
       </div>
     </div>

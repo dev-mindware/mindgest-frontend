@@ -332,7 +332,7 @@ const ProductCard: React.FC<{ product: ProductCard; onAddToOrder?: (item: OrderI
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => openModal('see')}>Detalhes</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openModal('edit')}>Editar</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => openModal('edit-product')}>Editar</DropdownMenuItem>
               <DropdownMenuItem className='text-destructive' onClick={() => openModal('delete')}>Deletar</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu> 

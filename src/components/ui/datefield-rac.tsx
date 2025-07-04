@@ -1,3 +1,4 @@
+// file: components/DateFields.tsx
 "use client"
 
 import {
@@ -66,6 +67,7 @@ const dateInputStyle =
 
 interface DateInputProps extends DateInputPropsRac {
   className?: string
+  id: string
   unstyled?: boolean
 }
 

@@ -1,8 +1,10 @@
+"use client"
 import { Button, GlobalModal, Icon, Textarea, Label, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components"
 import { useState } from "react"
 import Image from "next/image"
 import { useModal } from "@/contexts"
 import { AddCategory } from "./add-category"
+import DatePickerInput from "@/components/custom/date-picker-input"
 
 export function AddProduct() {
   const [productImage, setProductImage] = useState<string | null>(null)
@@ -261,8 +263,7 @@ export function AddProduct() {
                   <div>
                     <Label htmlFor="expiry-date">Data de Expiração</Label>
                     <div className="relative mt-1">
-                      <Input id="expiry-date" placeholder="DD/MM/YYYY" />
-                      <Icon name="Calendar" className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 right-3 top-1/2" />
+                      <DatePickerInput id="expiry-date" />
                     </div>
                   </div>
                   <div>
