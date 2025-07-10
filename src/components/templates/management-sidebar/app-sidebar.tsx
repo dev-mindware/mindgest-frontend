@@ -106,7 +106,7 @@ const data = {
     },
     {
       name: "Gestão de POS",
-      url: "#",
+      url: "/management/pos-management",
       icon: <Icon name="TextSelect"/>,
     },
     {

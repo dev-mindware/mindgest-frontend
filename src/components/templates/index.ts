@@ -5,3 +5,4 @@ export * from "./login-form"
 export * from "./definitions";
 export * from "./billing/tabs-billing";
 export * from "./modals"
+export * from "./pos"
