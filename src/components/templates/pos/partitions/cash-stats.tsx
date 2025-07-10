@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components";
 
 export function CashStats (){
     return (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="hidden grid-cols-1 gap-4 md:grid md:grid-cols-4">
                       <Card>
                         <CardContent className="p-6">
                           <div className="flex items-start justify-between mb-2">
