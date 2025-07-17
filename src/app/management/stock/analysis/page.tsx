@@ -3,8 +3,8 @@ import {
   DinamicBreadcrumb,
   Separator,
   SidebarTrigger,
+  InventoryDashboard,
 } from "@/components"
-import  {InventoryDashboard}  from '@/components/templates/stock-managment/dashboard'
 const Page = () => {
   return (
     <div>

@@ -71,8 +71,8 @@ export const ProductList: React.FC<ProductListProps> = ({ onAddToOrder, classNam
 
   
   const switcherClasses = showSwitcherOnMobile
-    ? "flex self-center w-24 gap-2 p-1 rounded-md shrink-0 bg-muted"
-    : "hidden sm:flex self-center w-24 gap-2 p-1 rounded-md shrink-0 bg-muted";
+    ? "flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border"
+    : "hidden sm:flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border";
 
   const sizeClasses = 
   size === 'medium' ? 'max-w-screen-sm mx-auto space-y-4 md:max-w-screen-lg' 
@@ -156,17 +156,17 @@ export const ProductList: React.FC<ProductListProps> = ({ onAddToOrder, classNam
             <div className={switcherClasses}>
               <Button
                 variant={viewMode === 'card' ? 'default' : 'ghost'}
-                className={`h-10 w-10 ${viewMode === 'card' ? 'bg-sidebar' : ''}`}
+                className={`h-8 w-8 ${viewMode === 'card' ? 'bg-sidebar border hover:bg-sidebar' : ''}`}
                 onClick={() => setViewMode('card')}
               >
-                <Icon name="LayoutGrid" size={16} />
+                <Icon name="LayoutGrid" size={16} className={`text-muted-foreground ${viewMode === 'card' ? 'text-primary' : ''}`} />
               </Button>
               <Button
                 variant={viewMode === 'table' ? 'default' : 'ghost'}
-                className={`h-10 w-10 ${viewMode === 'table' ? 'bg-sidebar' : ''}`}
+                className={`h-8 w-8 ${viewMode === 'table' ? 'bg-sidebar border hover:bg-sidebar' : ''}`}
                 onClick={() => setViewMode('table')}
               >
-                <Icon name="Table" size={16} />
+                <Icon name="Grid3x3" size={16} className={`text-muted-foreground ${viewMode === 'table' ? 'text-primary' : ''}`}/>
               </Button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image'
-import Ai from '@/assets/ai.gif'
+import Ai from '@/assets/AI.png'
 import { useModal } from "@/contexts"
 import { ProductList, AddProduct, Button } from "@/components";
 export function Management() {
@@ -14,8 +14,8 @@ export function Management() {
         </div>
         <Button onClick={() => openModal('add-product')} className="hidden md:block">Novo Produto</Button>
     </div>
-    <div className="flex items-center justify-center p-4">
-        <Image src={Ai} alt="Image" width={100}/>
+    <div className="flex items-center justify-center p-4 ">
+        <Image src={Ai.src} alt="Image" width={100} height={100} className='animate-pulse'/>
     </div>
     <ProductList size="large"/>
     <AddProduct/>
