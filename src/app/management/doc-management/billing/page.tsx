@@ -1,5 +1,4 @@
-import { DinamicBreadcrumb, Separator, SidebarTrigger } from "@/components";
-import { TabsBilling } from "@/components/templates";
+import { TabsBilling, ProductList, DinamicBreadcrumb, Separator, SidebarTrigger } from "@/components";
 
 export default function Page() {
   return (
@@ -20,6 +19,9 @@ export default function Page() {
       <div className="flex flex-col flex-1">
         <div className="@container/main flex flex-1 p-4 flex-col gap-2">
           <TabsBilling />
+        <div className="flex items-start justify-start w-full ">
+      <ProductList showSwitcherOnMobile={false} size="medium" />
+      </div>
         </div>
       </div>
     </div>

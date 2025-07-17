@@ -6,3 +6,5 @@ export * from "./definitions";
 export * from "./billing/tabs-billing";
 export * from "./modals"
 export * from "./pos"
+export * from "./products-n-services"
+export * from "./stock-managment"

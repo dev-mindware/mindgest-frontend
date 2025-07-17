@@ -4,8 +4,8 @@ import {
   SectionCards,
   ChartAreaInteractive,
   DinamicBreadcrumb,
+  UniversalTable,
 } from "@/components";
-import { UniversalTable } from "@/components/custom/universal-table";
 
 export default function Page() {
   return (

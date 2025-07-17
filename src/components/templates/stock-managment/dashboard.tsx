@@ -15,7 +15,7 @@ import {
 import { TopTenProds } from './charts/top-ten-prods';
 import { TrendTime } from './charts/trend-time';
 import { TopTrend } from './charts/top-trend';
-import { AIAlerts } from './cards/ai-alerts';
+import { AIAlerts } from './ai-alerts';
 
 
 export function InventoryDashboard() {

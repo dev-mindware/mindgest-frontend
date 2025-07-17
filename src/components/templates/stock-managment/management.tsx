@@ -1,10 +1,8 @@
 "use client"
-import { Button } from "@/components/ui";
-import ProductCards from "../product-cards";
 import Image from 'next/image'
 import Ai from '@/assets/ai.gif'
 import { useModal } from "@/contexts"
-import { AddProduct } from "../modals/product-modals/add-product";
+import { ProductList, AddProduct, Button } from "@/components";
 export function Management() {
   const { openModal } = useModal()
   return( 
@@ -19,7 +17,7 @@ export function Management() {
     <div className="flex items-center justify-center p-4">
         <Image src={Ai} alt="Image" width={100}/>
     </div>
-    <ProductCards className='lg:grid-cols-3'/>
+    <ProductList size="large"/>
     <AddProduct/>
     </div>
   )

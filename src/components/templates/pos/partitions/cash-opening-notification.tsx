@@ -1,5 +1,4 @@
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@/components";
-import { Bell, MoreVertical } from "lucide-react";
+import { Icon, Button, Card, CardContent, CardHeader, CardTitle } from "@/components";
 
 export function CashOpeningNotification (){
 
@@ -20,14 +19,14 @@ export function CashOpeningNotification (){
                 {notifications.map(notification => (
                   <div key={notification.id} className="flex items-start gap-3 p-3 rounded-lg bg-background">
                     <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-accent">
-                      <Bell className="w-4 h-4 text-primary" />
+                      <Icon name="Bell" className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm text-foreground">{notification.message}</p>
                       <p className="mt-1 text-xs text-muted-foreground">{notification.time}</p>
                     </div>
                     <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                      <MoreVertical className="w-4 h-4" />
+                      <Icon name='Ellipsis' className="w-4 h-4" />
                     </Button>
                   </div>
                 ))}

@@ -3,8 +3,8 @@ import {
   DinamicBreadcrumb,
   Separator,
   SidebarTrigger,
+  Management
 } from "@/components"
-import { Management } from '@/components/templates/stock-managment/management'
 const Page = () => {
   return (
     <div>

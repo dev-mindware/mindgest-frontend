@@ -1,4 +1,4 @@
-import { Cashier } from "../types/types";
+import { Cashier } from "@/types/types";
 
 export const getStatusColor = (status: Cashier["status"]): string => {
   switch (status) {
@@ -28,4 +28,14 @@ export const getStatusDot = (status: Cashier["status"]): string => {
     default:
       return "bg-gray-500";
   }
+};
+
+
+export const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('pt-AO', {
+    style: 'currency',
+    currency: 'AOA',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(price);
 };

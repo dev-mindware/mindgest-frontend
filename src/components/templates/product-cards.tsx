@@ -491,7 +491,7 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onAddToOrder, className }) 
     <div className="justify-start mt-10 bg-background">
       <div className="mx-auto space-y-4 max-w-7xl">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-      <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
           <div className="relative w-full">
             <Input

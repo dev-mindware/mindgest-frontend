@@ -1,7 +1,6 @@
 "use client"
 
-import { Icon } from "@/components/icon"
-import { Card, CardContent } from "@/components/ui"
+import { Icon, Card, CardContent } from "@/components"
 import { useState } from "react"
 
 
