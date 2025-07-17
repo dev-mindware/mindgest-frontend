@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useId, useMemo, useRef } from "react"
 import { Table } from "@tanstack/react-table"
@@ -247,9 +248,9 @@ function FilterDropdown<TData>({
   const id = useId()
   const column = table.getColumn(filterConfig.id)
 
-  if (!column) return null
-
   const uniqueValues = useMemo(() => {
+    if (!column) return []
+    
     if (filterConfig.options) {
       return filterConfig.options
     }
@@ -262,9 +263,12 @@ function FilterDropdown<TData>({
   }, [column, filterConfig.options])
 
   const selectedValues = useMemo(() => {
+    if (!column) return []
     const filterValue = column.getFilterValue() as string[]
     return filterValue ?? []
   }, [column])
+
+  if (!column) return null
 
   const handleValueChange = (checked: boolean, value: string) => {
     const filterValue = column.getFilterValue() as string[]

@@ -3,6 +3,13 @@ import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
 import { ModalProvider } from "@/contexts";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Inter, Poppins, Roboto, Outfit, Plus_Jakarta_Sans } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" });
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-roboto" });
+const outfit = Outfit({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-outfit" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "600", "800"], variable: "--font-jakarta" });
 
 export const metadata: Metadata = {
   title: "Mindgest",
@@ -18,10 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
-      </head>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable} ${roboto.variable} ${outfit.variable} ${jakarta.variable}`}
+    >
       <body
         className="antialiased"
         style={{ fontFamily: 'var(--font-family)' }}

@@ -4,7 +4,7 @@ import {
   SectionCards,
   ChartAreaInteractive,
   DinamicBreadcrumb,
-  UniversalTable,
+  UsersTable
 } from "@/components";
 
 export default function Page() {
@@ -26,7 +26,7 @@ export default function Page() {
             <SectionCards />
             <div className="px-4 space-y-5 lg:px-6">
               <ChartAreaInteractive />
-              <UniversalTable />
+              <UsersTable/>
             </div>
           </div>
         </div>

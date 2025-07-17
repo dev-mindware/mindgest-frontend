@@ -4,6 +4,7 @@ import { CircleUserRoundIcon, XIcon } from "lucide-react"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { Input, Button, Switch, Label, Separator, Avatar, AvatarFallback, AvatarImage, Icon  } from "@/components"
 import { useRef, useState } from "react"
+import Image from "next/image"
 export function Profile() {
   const [{ files }, { removeFile, openFileDialog, getInputProps }] = useFileUpload({
     accept: "image/*",
@@ -86,7 +87,7 @@ export function Profile() {
               aria-label={previewUrl ? "Change image" : "Upload image"}
             >
               {previewUrl ? (
-                <img
+                <Image
                   className="object-cover size-full"
                   src={previewUrl}
                   alt="Preview"
