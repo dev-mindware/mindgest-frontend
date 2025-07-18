@@ -1,10 +1,12 @@
-import { Icon } from "@/components";
+"use client";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function Home() {
-  return (
-    <div className="flex items-center justify-center bg-wb">
-      <p className="text-mindware-primary">Wabalaba Dub Dub</p>
-      <Icon name="ZoomOut" />
-    </div>
-  );
+  const router = useRouter();
+  React.useEffect(() => {
+    router.push("/auth/login");
+  }, [router]);
+
+  return null;
 }
