@@ -1,13 +1,18 @@
 import { InputPassword, Label, Button } from "@/components"
 import Link from "next/link"
 import { useModal } from "@/contexts"
+import Image from "next/image"
+import Logo from "@/assets/brand.png"
 export function UpdatePassword (){
     const { openModal } = useModal()
     return (
         <div className="flex items-center justify-center flex-1">
       <div className="w-full max-w-xs">
         <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Recuperar Senha</h1>
+          <div className="flex items-center justify-center">
+          <Image src={Logo} alt="Logo" className="size-20" />
+          </div>
+        <h1 className="text-2xl font-bold text-center">Recuperar Senha</h1>
         </div>
         <div className="mt-4">
         <div className="space-y-4">
