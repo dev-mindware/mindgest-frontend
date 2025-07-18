@@ -3,6 +3,7 @@ import { InputPassword, InputEmail, Label, Button } from "@/components"
 import IconGoogle from '@/assets/IconGoogle.svg'
 import Image from "next/image"
 import Link from "next/link"
+import Logo from "@/assets/brand.png"
 
 export function LoginForm({
   className,
@@ -11,6 +12,7 @@ export function LoginForm({
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
+        <Image src={Logo} alt="Logo" className="size-20" />
         <h1 className="text-2xl font-bold">Bem-vindo de volta</h1>
       </div>
       <div className="grid gap-6">
