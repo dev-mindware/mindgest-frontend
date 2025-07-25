@@ -1,9 +1,12 @@
 import { cn } from "@/lib/utils"
+import { ElementType } from "react"
+import { Icon } from "../layout"
+import { icons } from "lucide-react"
 
-interface Option {
+export interface Option {
   value: string
   label: string
-  icon?: React.ComponentType<{ className?: string }>
+  icon?: keyof typeof icons
 }
 
 interface QuizSelectProps {
@@ -21,21 +24,21 @@ export function QuizSelect({
 }: QuizSelectProps) {
   return (
     <div className={cn("space-y-3", className)}>
-      {options.map((opt) => (
+      {options.map((option) => (
         <button
-          key={opt.value}
+          key={option.value}
           type="button"
-          onClick={() => onChange?.(opt.value)}
+          onClick={() => onChange?.(option.value)}
           className={cn(
             "w-full flex items-center gap-3 px-4 py-3 rounded-md border transition-all text-left",
-            value === opt.value
+            value === option.value
               ? "border-primary bg-background"
               : "border-transparent bg-sidebar",
             "hover:border-muted-foreground/20"
           )}
         >
-          {opt.icon && <opt.icon className="w-5 h-5 text-foreground" />}
-          <span className="text-sm text-muted-foreground">{opt.label}</span>
+          {option.icon && <Icon name={option.icon} className="w-5 h-5 text-foreground" />}
+          <span className="text-sm text-muted-foreground">{option.label}</span>
         </button>
       ))}
     </div>

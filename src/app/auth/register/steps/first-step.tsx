@@ -1,63 +1,66 @@
-import { cn } from "@/lib/utils"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components"
-import RequiredInput from "../../../../components/custom/required-input"
-import { IdCardIcon, Building2, User, MessageCircle } from "lucide-react"
-import Link from "next/link"
+import { cn } from "@/lib/utils";
+import { Input } from "@/components";
+import Link from "next/link";
+import { RegisterFormData } from "@/schemas";
+import { useFormContext } from "react-hook-form";
 
-export function FirstStep({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+export function FirstStep() {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<RegisterFormData>();
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6")}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Crie sua conta</h1>
       </div>
       <div className="grid gap-6">
-        <div className="grid gap-3">
-          <RequiredInput label="Nº de Contribuente" placeholder="558442018" type="number" icon={<IdCardIcon size={16}/>}/>
-        </div>
-        <div className="grid gap-3">
-          <RequiredInput label="Empresa" placeholder="Mindware" type="text" icon={<Building2 size={16}/>}/>
-        </div>
-        <div className="grid gap-3">
-          <RequiredInput label="Seu nome" placeholder="Insira seu nome" type="text" icon={<User size={16}/>}/>
-        </div>
-
-          <Tabs defaultValue="tab-1" className="items-center">
-      <TabsList className="gap-1 bg-transparent">
-        <TabsTrigger
-          value="tab-1"
-          className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-        >
-          Telefone
-        </TabsTrigger>
-        <TabsTrigger
-          value="tab-2"
-          className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none"
-        >
-          Email
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="tab-1">
-        <div className="grid gap-3">
-          <RequiredInput label="Telefone" placeholder="9XX-XXX-XXX" type="number" icon={<User size={16}/>}/>
-        </div>
-      </TabsContent>
-      <TabsContent value="tab-2">
-        <div className="grid gap-3">
-          <RequiredInput label="Email" placeholder="seunome@email.com" type="email" icon={<MessageCircle size={16}/>}/>
-        </div>
-      </TabsContent>
-    </Tabs>
-        
+        <Input
+          startIcon="IdCard"
+          label="Nº de Contribuente"
+          placeholder="558442018"
+          {...register("step1.nif")}
+          error={errors?.step1?.nif && errors?.step1?.nif?.message}
+        />
+        <Input
+          label="Empresa"
+          startIcon="Building2"
+          placeholder="Mindware"
+          {...register("step1.company")}
+          error={errors?.step1?.company && errors?.step1?.company?.message}
+        />
+        <Input
+          label="Seu nome"
+          startIcon="User"
+          placeholder="Insira seu nome"
+          {...register("step1.name")}
+          error={errors?.step1?.name && errors?.step1?.name?.message}
+        />
+        <Input
+          label="Telefone"
+          startIcon="Phone"
+          placeholder="Insira seu telefone"
+          {...register("step1.phone")}
+          error={errors?.step1?.phone && errors?.step1?.phone?.message}
+        />
+        <Input
+          label="Email"
+          startIcon="Mail"
+          placeholder="Insira seu email"
+          {...register("step1.email")}
+          error={errors?.step1?.email && errors?.step1?.email?.message}
+        />
       </div>
       <div className="text-sm text-center">
-       Já tens uma conta?{" "}
-        <Link href="/auth/login" className="font-medium text-primary hover:underline underline-offset-4">
+        Já tens uma conta?{" "}
+        <Link
+          href="/auth/login"
+          className="font-medium text-primary hover:underline underline-offset-4"
+        >
           Entre
         </Link>
       </div>
-    </form>
-  )
+    </div>
+  );
 }

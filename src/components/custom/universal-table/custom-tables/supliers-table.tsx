@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { DataTableRowActions } from "../data-table-row-actions";
 import { DataTable } from "../data-table";
-import { Icon } from "@/components/icon";
+import { Icon } from "@/components/layout/icon";
 
 interface Supplier {
   id: string;

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Icon } from "../icon";
+import { Icon } from "../layout/icon";
 
 export function IconCheckSucessfull({ className }: { className?: string }) {
   return (
