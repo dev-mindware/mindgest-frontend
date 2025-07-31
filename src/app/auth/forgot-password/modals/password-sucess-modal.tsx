@@ -1,5 +1,5 @@
 import { GlobalModal, Button } from "@/components";
-import { useModal } from "@/contexts";
+import { useModal } from "@/stores/use-modal-store";
 import { useRouter } from "next/navigation";
 
 export function PasswordSucessModal() {

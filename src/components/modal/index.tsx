@@ -11,10 +11,10 @@ import {
   DialogClose,
 } from "@/components"
 
+import { cn } from "@/lib/utils"
 import { IconCheckSucessfull } from "./icon-sucess"
 import { IconWarning } from "./icon-warning"
-import { cn } from "@/lib/utils"
-import { useModal } from "@/contexts"
+import { useModal } from "@/stores/use-modal-store"
 
 interface ModalProps {
   id: string

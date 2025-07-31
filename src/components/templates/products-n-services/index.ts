@@ -1,3 +1,3 @@
-export * from "./product-card"
-export * from "./product-table"
 export * from "./product-list"
+export * from "./product-card-view"
+export * from "./product-horizontal-view"

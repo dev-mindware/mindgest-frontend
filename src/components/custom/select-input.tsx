@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils"
-import { ElementType } from "react"
 import { Icon } from "../layout"
 import { icons } from "lucide-react"
 

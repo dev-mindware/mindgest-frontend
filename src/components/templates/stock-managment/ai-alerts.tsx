@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import { Icon, Card, CardContent } from "@/components"
-import { useState } from "react"
-
+import { Icon, Card, CardContent } from "@/components";
+import { useState } from "react";
 
 const initialNotifications = [
   {
@@ -35,7 +34,7 @@ const initialNotifications = [
     timestamp: "2 days ago",
     unread: false,
   },
-]
+];
 
 function Dot({ className }: { className?: string }) {
   return (
@@ -50,12 +49,12 @@ function Dot({ className }: { className?: string }) {
     >
       <circle cx="3" cy="3" r="3" />
     </svg>
-  )
+  );
 }
 
 export function AIAlerts() {
-  const [notifications, setNotifications] = useState(initialNotifications)
-  const unreadCount = notifications.filter((n) => n.unread).length
+  const [notifications, setNotifications] = useState(initialNotifications);
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   const handleMarkAllAsRead = () => {
     setNotifications(
@@ -63,8 +62,8 @@ export function AIAlerts() {
         ...notification,
         unread: false,
       }))
-    )
-  }
+    );
+  };
 
   const handleNotificationClick = (id: number) => {
     setNotifications(
@@ -73,8 +72,8 @@ export function AIAlerts() {
           ? { ...notification, unread: false }
           : notification
       )
-    )
-  }
+    );
+  };
 
   return (
     <Card>
@@ -101,8 +100,7 @@ export function AIAlerts() {
             className="px-3 py-2 text-sm transition-colors rounded-md hover:bg-accent"
           >
             <div className="relative flex items-start gap-3 pe-3">
-              <Icon name="Sparkles" size={16} className="text-primary"
-              />
+              <Icon name="Sparkles" size={16} className="text-primary" />
               <div className="flex-1 space-y-1">
                 <button
                   className="text-left text-foreground/80 after:absolute after:inset-0"
@@ -127,5 +125,5 @@ export function AIAlerts() {
         ))}
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -60,7 +60,6 @@ export function RegisterSteps() {
     setIsLoading(true);
     try {
       console.log("DADOS A ENVIAR NO BACKEND", data);
-      
     } catch (error) {
       console.error("Erro ao enviar dados", error);
     } finally {
@@ -107,7 +106,11 @@ export function RegisterSteps() {
                   </StepperItem>
                 ))}
               </Stepper>
-              <p className="mt-2 text-xs text-muted-foreground" role="region" aria-live="polite">
+              <p
+                className="mt-2 text-xs text-muted-foreground"
+                role="region"
+                aria-live="polite"
+              >
                 Passo {currentStep} de {steps.length}
               </p>
             </div>

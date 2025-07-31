@@ -1,7 +1,7 @@
-import { InputEmail, Label, Button } from "@/components";
-import Link from "next/link";
-import { useModal } from "@/contexts";
 import Image from "next/image";
+import Link from "next/link";
+import { InputEmail, Label, Button } from "@/components";
+import { useModal } from "@/stores/use-modal-store";
 import Logo from "@/assets/brand.png";
 
 export function SentEmail() {
