@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
 import { TOKEN_COOKIE_KEY } from "@/constants";
-import { authService } from "./auth/auth-service";
+import { refresh } from "@/actions/login";
 
 export const api = axios.create({
   baseURL:
@@ -35,7 +35,7 @@ api.interceptors.response.use(
       original._retry = true;
 
       try {
-        const { accessToken } = await authService.refresh();
+        const { accessToken } = await refresh();
 
         if (accessToken) {
           setAuthToken(accessToken); 

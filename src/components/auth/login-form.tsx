@@ -7,7 +7,7 @@ import { GoogleButton, OrLine } from "../auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoginFormData, loginSchema } from "@/schemas";
-import { authService } from "@/services/auth/auth-service";
+import { loginAction } from "@/actions/login";
 
 export function LoginForm() {
   const {
@@ -20,7 +20,7 @@ export function LoginForm() {
 
   async function handleLogin({ email, password }: LoginFormData) {
     try {
-      const res =await authService.login({ email, password });
+      const res = await loginAction({ email, password });
 
       if(res.user) {
         window.location.replace(res.redirectPath);
