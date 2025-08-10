@@ -1,11 +1,11 @@
 import {
   Separator,
   SidebarTrigger,
-  ChartAreaInteractive,
   SectionCards,
-  DinamicBreadcrumb, 
+  DinamicBreadcrumb,
+  UsersTable,
+  ChartAreaInteractive,
 } from "@/components";
-import { UsersTable } from "@/components/custom/universal-table/custom-tables/users-table";
 
 export default function DashboardPage() {
   return (
@@ -26,11 +26,11 @@ export default function DashboardPage() {
             <SectionCards />
             <div className="px-4 space-y-5 lg:px-6">
               <ChartAreaInteractive />
-              <UsersTable/>
+              <UsersTable />
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}

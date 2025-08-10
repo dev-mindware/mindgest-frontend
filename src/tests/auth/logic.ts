@@ -1,4 +1,4 @@
-// Features permitidas por plano
+/* // Features permitidas por plano
 export const planFeatures = {
   BASE: ["simpleReports", "basicBilling", "clientCRUD"],
   TSUNAMI: [
@@ -20,3 +20,4 @@ export const roleFeatures = {
   CLIENTE: [], // cliente final não acessa backoffice
   AFILIADO: ["affiliateReports", "affiliateSales"]
 } as const;
+ */

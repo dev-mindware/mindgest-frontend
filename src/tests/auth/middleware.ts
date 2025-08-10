@@ -1,4 +1,4 @@
-function getAllowedFeatures(role, plan) {
+/* function getAllowedFeatures(role, plan) {
   const rolePerms = roleFeatures[role] || [];
   const planPerms = planFeatures[plan] || [];
 
@@ -13,3 +13,4 @@ function getAllowedFeatures(role, plan) {
 // Exemplo de uso:
 const allowed = getAllowedFeatures("CASHIER", "TSUNAMI");
 // ["basicBilling", "posWeb"]
+ */
