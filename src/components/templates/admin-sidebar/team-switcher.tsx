@@ -1,6 +1,4 @@
-"use client"
-
-import * as React from "react"
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,22 +12,20 @@ import {
   SidebarMenuItem,
   useSidebar,
   Icon,
-} from "@/components"
+} from "@/components";
+import { icons } from "lucide-react";
+import { useState } from "react";
 
-export function AdminTeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+type Props = {
+  teams: { name: string; logo: keyof typeof icons; plan: string }[];
+};
+
+export function AdminTeamSwitcher({ teams }: Props) {
+  const { isMobile } = useSidebar();
+  const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   if (!activeTeam) {
-    return null
+    return null;
   }
 
   return (
@@ -42,7 +38,7 @@ export function AdminTeamSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground aspect-square size-8">
-                <activeTeam.logo className="size-4" />
+                <Icon name={activeTeam.logo} className="size-4" />
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">
                 <span className="font-medium truncate">{activeTeam.name}</span>
@@ -67,7 +63,7 @@ export function AdminTeamSwitcher({
                 className="gap-2 p-2"
               >
                 <div className="flex items-center justify-center border rounded-md size-6">
-                  <team.logo className="size-3.5 shrink-0" />
+                  <Icon name={team.logo} className="size-3.5 shrink-0" />
                 </div>
                 {team.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
@@ -84,5 +80,5 @@ export function AdminTeamSwitcher({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

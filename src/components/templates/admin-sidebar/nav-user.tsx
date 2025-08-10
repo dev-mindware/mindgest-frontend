@@ -17,18 +17,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components"
+import { useAuthStore } from "@/stores/auth/auth-store";
 import Link from "next/link"
 
-export function AdminNavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
-  const { isMobile } = useSidebar()
+export function AdminNavUser() {
+  const { user } = useAuthStore();
+  const { isMobile } = useSidebar();
+
 
   return (
     <SidebarMenu>

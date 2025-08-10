@@ -1,9 +1,5 @@
 # ERP Comercial - Funcionalidades Essenciais
 
-> Documento oficial do roadmap funcional do ERP da empresa. A ser compartilhado com time de desenvolvimento, produto e QA.
-
----
-
 ## 📌 Visão Geral
 
 ERP flexível e modular, adaptável a vários tipos de negócios: varejo, restauração, prestadores de serviço, atacado e distribuidores. Arquitetura multi-empresa, multi-loja, multi-perfil. Totalmente online (Web + App), com suporte a ponto de venda (POS), fiscalidade nacional (AGT), vendas, estoque, faturação e relatórios.
@@ -114,7 +110,7 @@ ERP flexível e modular, adaptável a vários tipos de negócios: varejo, restau
 
 **Completo:**
 
-* Gestão por plano (Base, Flex, Pro)
+* Gestão por plano 
 * Idioma, moeda, timezone
 * Personalizações por loja e POS
 
@@ -125,28 +121,3 @@ ERP flexível e modular, adaptável a vários tipos de negócios: varejo, restau
 **MVP:**
 
 * Painel Web responsivo com POS incluso
-
-**Completo:**
-
-* App mobile Android/iOS
-* POS Touch dedicado
-* Sincronização offline
-
----
-
-## 📦 Roadmap Extensível
-
-**MVP:**
-
-* Sem plugins
-
-**Completo:**
-
-* Plugins por plano
-* Webhooks + API pública REST
-
----
-
-**CTM:** Este documento deve guiar os devs e product sobre o escopo funcional mínimo esperado. Modularidade e escalabilidade são prioridade.
-
-**Versão:** 1.0 - Agosto 2025
