@@ -7,7 +7,7 @@ import { GoogleButton, OrLine } from "../auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoginFormData, loginSchema } from "@/schemas";
-import { loginAction } from "@/actions/login";
+// import { loginAction } from "@/actions/login";
 
 export function LoginForm() {
   const {
@@ -20,11 +20,11 @@ export function LoginForm() {
 
   async function handleLogin({ email, password }: LoginFormData) {
     try {
-      const res = await loginAction({ email, password });
+      // const res = await loginAction({ email, password });
+      window.location.replace("/management/dashboard");
 
-      if(res.user) {
-        window.location.replace(res.redirectPath);
-      }
+      /* if(res.user) {
+      } */
     } catch (error: any) {
       if (error?.res) {
         console.log(
