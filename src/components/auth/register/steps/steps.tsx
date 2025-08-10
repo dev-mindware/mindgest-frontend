@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, registerSchema } from "@/schemas";
 import { HeroImageSide, SeparatorLine } from "@/components/auth";
 import { ThirdStep } from "./third-step";
-import { toast } from "sonner";
+import { SucessMessage } from "@/utils/messages";
 
 export function RegisterForm() {
   const steps = [1, 2, 3];
@@ -60,7 +60,10 @@ export function RegisterForm() {
 
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toast.success("Conta criada com sucesso!");
+      SucessMessage("Conta criada com sucesso!");
+
+      window.location.replace("/management/dashboard");
+
     } catch (error) {
       console.error("Erro ao enviar dados", error);
     } finally {

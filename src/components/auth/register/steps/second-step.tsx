@@ -61,7 +61,7 @@ export function SecondStep() {
         />
         <Input
           label="Endereço"
-          startIcon="Locate"
+          startIcon="MapPin"
           placeholder="Insira seu endereço"
           {...register("step2.company.address")}
           error={
