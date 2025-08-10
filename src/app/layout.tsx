@@ -9,6 +9,7 @@ import {
   Outfit,
   Plus_Jakarta_Sans,
 } from "next/font/google";
+import { CustomToaster } from "@/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -64,6 +65,7 @@ export default function RootLayout({
           storageKey="mindware-theme"
         >
           <ReactQueryProvider>{children}</ReactQueryProvider>
+          <CustomToaster />
         </ThemeProvider>
       </body>
     </html>

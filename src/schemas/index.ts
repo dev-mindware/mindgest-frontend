@@ -1,3 +1,5 @@
 export * from "./login"
 export * from "./register"
 export * from "./add-product"
+export * from "./forgot-password"
+export * from "./change-password"

@@ -54,7 +54,7 @@ export function NavigationButtons({
           {isLoading ? (
             <Icon name="LoaderCircle" className="w-5 h-5 animate-spin" />
           ) : (
-            "Enviar"
+            "Criar conta"
           )}
         </Button>
       )}

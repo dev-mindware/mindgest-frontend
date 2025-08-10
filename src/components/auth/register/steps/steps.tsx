@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { FirstStep } from "./first-step";
 import { SecondStep } from "./second-step";
-import { ThirdStep } from "./third-step";
-import { FourthStep } from "./fourth-step";
 import {
   Stepper,
   StepperIndicator,
@@ -16,9 +14,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, registerSchema } from "@/schemas";
 import { HeroImageSide, SeparatorLine } from "@/components/auth";
+import { ThirdStep } from "./third-step";
+import { toast } from "sonner";
 
-export function RegisterSteps() {
-  const steps = [1, 2, 3, 4];
+export function RegisterForm() {
+  const steps = [1, 2, 3];
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,10 +33,6 @@ export function RegisterSteps() {
         return await form.trigger("step1");
       case 2:
         return await form.trigger("step2");
-      case 3:
-        return await form.trigger("step3");
-      case 4:
-        return await form.trigger("step4");
       default:
         return false;
     }
@@ -59,7 +55,12 @@ export function RegisterSteps() {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      console.log("DADOS A ENVIAR NO BACKEND", data);
+      const { passwordConfirmation, ...rest } = data.step1;
+      const finalData = { ...rest, ...data.step2 };
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      toast.success("Conta criada com sucesso!");
     } catch (error) {
       console.error("Erro ao enviar dados", error);
     } finally {
@@ -75,8 +76,6 @@ export function RegisterSteps() {
         return <SecondStep />;
       case 3:
         return <ThirdStep />;
-      case 4:
-        return <FourthStep />;
       default:
         return null;
     }

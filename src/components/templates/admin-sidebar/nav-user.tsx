@@ -24,7 +24,6 @@ export function AdminNavUser() {
   const { user } = useAuthStore();
   const { isMobile } = useSidebar();
 
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>

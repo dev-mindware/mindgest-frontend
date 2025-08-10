@@ -1,0 +1,149 @@
+
+// Company-Owner
+
+{
+  "email": "user@mindgest.com",
+  "full_name": "João Silva Santos",
+  "password": "SecurePass123!",
+  "phone": "+244 922 691 189",
+  "role": "OWNER",
+  "company": {
+	"taxNumber": "",
+	"name": "",
+	"address": "", 
+	"phone": "",
+	"email": "",
+	"taxNumber": "123456789",
+  "website": "https://www.mindgest.com",
+  "logo": "https://storage.mindgest.com/logos/company-logo.png"
+}
+
+// Login
+
+{
+  "email": "user@mindgest.com",
+  "password": "SecurePass123!"
+}
+
+// User Management
+
+{
+  "email": "user@mindgest.com",
+  "name": "João Silva Santos",
+  "password": "SecurePass123!",
+  "phone": "+244 922 691 189",
+  "role": "CASHIER",
+  "companyId": "test-company-id",
+  "storeId"?: "test-store-id"
+}
+
+
+// Items Management - Rename product to "items"
+// - Base
+{
+  "name": "iPhone 15 Pro Max",
+  "description": "Smartphone Apple iPhone 15 Pro Max 256GB com câmera de 48MP",
+  "sku"?: "IPH15PM256",
+  "barcode"?: "1234567890123",
+  "price": 1299.99,
+  "cost": 899.99,
+  "type": ["SERVICE", "PRODUCT"],
+  "minStock"?: 5,
+  "maxStock"?: 100,
+  "unit"?: "un",
+  "weight"?: 0.238,
+  "dimensions"?: "16.0 x 7.7 x 0.8 cm",
+  "image"?: "https://storage.mindgest.com/products/iphone15-pro-max.jpg",
+  "companyId": "clm0abcd1234efgh5678",
+  "storeId": "clm0wxyz9876mnop5432",
+  "categoryId": "clm0cat1234category567",
+  "hasExpiry"?: true,
+  "expiryDate": "2024-12-31T23:59:59.000Z",
+  "daysToExpiry"?: 365 
+}
+
+Base - optional (daysToExpiry, unit, weight, dimensions, image)
+General - optional (sku, barcode, image)
+
+
+// Invoice Management
+// Creation
+{
+  "number": "string",
+  "subtotal": 0,
+  "taxAmount": 0,
+  "discountAmount": 0,
+  "total": 0,
+  "storeId": "string",
+  "clientId": "string",
+  "discountId": "string",
+  "notes": "string",
+  "dueDate": "string",
+  "paymentMethod"?: array["CASH", "BANK", "CARD"],
+  "status": "DRAFT",
+  "type": ["INVOICE", "PROFORMA", "RECEIPT"],
+  "companyId": "string",
+  "items": [
+    {
+      "productId": "string",
+      "quantity": 0,
+      "price": 0,
+      "taxId": "string"
+    }
+  ]
+}
+
+invoice proforma - optional (paymentMethod, )
+invoice receipt- required (paymentMethod, )
+
+// Read
+
+{
+  "id": "string",
+  "number": "string",
+  "status": "DRAFT",
+  "subtotal": 0,
+  "taxAmount": 0,
+  "discountAmount": 0,
+  "total": 0,
+  "companyId": "string",
+  "storeId": "string",
+  "userId": "string",
+  "clientId": "string",
+  "discountId": "string",
+  "notes": "string",
+  "dueDate": "2025-08-09T13:27:30.774Z",
+  "paidAt": "2025-08-09T13:27:30.774Z",
+  "items": [
+    {
+      "id": "string",
+      "quantity": 0,
+      "price": 0,
+      "total": 0,
+      "productId": "string",
+      "taxId": "string"
+    }
+  ],
+  "createdAt": "2025-08-09T13:27:30.774Z",
+  "updatedAt": "2025-08-09T13:27:30.774Z"
+}
+
+
+// Client Creation
+
+{
+  "name": "João Silva",
+  "email": "joao.silva@example.com",
+  "phone": "+351 912 345 678",
+  "address": "Rua das Flores, 123, Lisboa",
+  "type": ["INDIVIDUAL", "COMPANY"],
+  "taxNumber": "123456789",
+  "companyId": "clm1abc123def456"
+}
+
+company - required (taxNumber)
+individual - optional (taxNumber)
+
+
+
+Implement subscription table

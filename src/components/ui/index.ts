@@ -8,6 +8,7 @@ export * from "./tooltip";
 export * from "./button";
 export * from "./label";
 export * from "./input";
+export * from "./input-otp";
 export * from "./separator";
 export * from "./avatar";
 export * from "./breadcrumb-context";

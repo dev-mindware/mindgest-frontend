@@ -1,9 +1,10 @@
+"use client"
 import { RegisterFormData } from "@/schemas";
 import { useFormContext, Controller } from "react-hook-form";
 import { Label, Checkbox } from "@/components/ui";
 import { AlertError } from "@/components/layout";
 
-export function FourthStep() {
+export function ThirdStep() {
   const { control } = useFormContext<RegisterFormData>();
 
   return (
@@ -47,7 +48,7 @@ export function FourthStep() {
         </p>
 
         <Controller
-          name="step4.terms"
+          name="step3.terms"
           control={control}
           rules={{ required: "Você precisa aceitar os termos para continuar." }}
           render={({ field, fieldState }) => (
