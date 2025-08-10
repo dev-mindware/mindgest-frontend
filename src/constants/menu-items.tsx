@@ -2,7 +2,6 @@ import { Icon } from "@/components";
 import { icons } from "lucide-react";
 import { ReactNode } from "react";
 
-// Tipos para submenus
 type SubMenuItem = {
   name: string;
   url: string;
@@ -13,7 +12,7 @@ type MenuItem = {
   url: string;
   icon: ReactNode;
   showMoreIcon?: boolean;
-  items?: SubMenuItem[]; // para submenus opcionais
+  items?: SubMenuItem[];
 };
 
 type Team = {

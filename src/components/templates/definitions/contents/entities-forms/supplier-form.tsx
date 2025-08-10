@@ -1,6 +1,6 @@
 import { Button, Input, Label, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components";
 import { SuppliersTable } from "@/components/custom/universal-table/custom-tables/supliers-table";
-import InnerTagsInput from "@/components/custom/ínner-tags-input";
+import InnerTagsInput from "@/components/custom/inner-tags-input";
 
 export function SupplierForm() {
   return (

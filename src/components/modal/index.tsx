@@ -12,7 +12,7 @@ import {
 } from "@/components"
 
 import { cn } from "@/lib/utils"
-import { IconCheckSucessfull } from "./icon-sucess"
+import { IconCheckSucessfull } from "./icon-success"
 import { IconWarning } from "./icon-warning"
 import { useModal } from "@/stores/use-modal-store"
 
