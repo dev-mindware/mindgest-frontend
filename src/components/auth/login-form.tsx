@@ -7,9 +7,11 @@ import { GoogleButton, OrLine } from "../auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoginFormData, loginSchema } from "@/schemas";
-// import { loginAction } from "@/actions/login";
+import { useAuthStore } from "@/stores/auth";
+import { loginAction } from "@/app/actions/login";
 
 export function LoginForm() {
+  const { setUser, setAccessToken } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -20,11 +22,11 @@ export function LoginForm() {
 
   async function handleLogin({ email, password }: LoginFormData) {
     try {
-      // const res = await loginAction({ email, password });
-      window.location.replace("/management/dashboard");
-
-      /* if(res.user) {
-      } */
+      const res = await loginAction({ email, password });
+      if (!res.user || !res.accessToken) return;
+      setAccessToken(res.accessToken);
+      setUser(res.user);
+      window.location.replace(res.redirectPath || "/");
     } catch (error: any) {
       if (error?.res) {
         console.log(
@@ -38,10 +40,7 @@ export function LoginForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(handleLogin)}
-      className="flex flex-col gap-6"
-    >
+    <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 text-center">
         <Image src={Logo} alt="Logo" className="size-20" />
         <h1 className="text-2xl font-bold">Bem-vindo de volta</h1>

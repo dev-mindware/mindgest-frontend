@@ -1,27 +1,30 @@
-export interface LoginResponse {
-  message: string;
-  user: User;
-  tokens: Tokens;
-}
+import { Plan } from "@/lib/features";
 
-interface Tokens {
+export interface LoginResponse {
+  user: User;
+  message: string;
   accessToken: string;
   refreshToken: string;
-  expiresIn: string;
 }
+
+export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | 'SELLER' | "CASHIER"
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
-  companyId: string;
-  storeId: string;
+  role: Role;
   company: Company;
-  store: Company;
+  stores: Store[];
+}
+
+interface Store {
+  id: string;
+  name: string;
 }
 
 interface Company {
   id: string;
   name: string;
+  plan: Plan;
 }

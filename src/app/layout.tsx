@@ -10,6 +10,7 @@ import {
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import { CustomToaster } from "@/utils";
+import { AuthProvider } from "@/contexts/auth-context";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -57,15 +58,19 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-family)" }}
       >
         <ThemeProvider
+          enableSystem
           attribute="class"
           defaultTheme="system"
-          enableSystem
           disableTransitionOnChange
           themes={["light", "dark", "system"]}
           storageKey="mindware-theme"
         >
-          <ReactQueryProvider>{children}</ReactQueryProvider>
-          <CustomToaster />
+          <ReactQueryProvider>
+            <AuthProvider>
+              {children}
+              <CustomToaster />
+            </AuthProvider>
+          </ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

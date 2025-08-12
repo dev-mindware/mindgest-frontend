@@ -1,50 +1,64 @@
 import axios from "axios";
-import { getCookie, setCookie } from "cookies-next";
-import { TOKEN_COOKIE_KEY } from "@/constants";
-import { refresh } from "@/actions/login";
+import { getCookie, setCookie, deleteCookie } from "cookies-next"; 
+import { TOKEN_COOKIE_KEY, REFRESH_TOKEN_COOKIE_KEY } from "@/constants"; 
 
 export const api = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://mindgest-api.onrender.com",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export function setAuthToken(token?: string) {
+export function setAuthToken(token?: string | null) {
   if (token) {
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    setCookie(TOKEN_COOKIE_KEY, token, { path: "/" }); 
+    setCookie(TOKEN_COOKIE_KEY, token, { path: "/" });
   } else {
     delete api.defaults.headers.common["Authorization"];
+    deleteCookie(TOKEN_COOKIE_KEY, { path: "/" });
   }
 }
 
-const savedToken = getCookie(TOKEN_COOKIE_KEY) as string | undefined;
-if (savedToken) {
-  console.log("TOKEN SALVO:"+savedToken)
-  api.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
-}
+const refreshAuthToken = async (): Promise<string | null> => {
+  try {
+    const refreshToken = getCookie(REFRESH_TOKEN_COOKIE_KEY) as string | undefined;
+
+    if (!refreshToken) {
+      throw new Error("Refresh token não encontrado");
+    }
+
+    const response = await axios.post<{ accessToken: string }>(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+      { refreshToken }
+    );
+
+    const newAccessToken = response.data.accessToken;
+    setAuthToken(newAccessToken);
+    return newAccessToken;
+  } catch (error) {
+    console.error("Erro ao renovar token:", error);
+    setAuthToken(null);
+    deleteCookie(REFRESH_TOKEN_COOKIE_KEY, { path: "/" });
+    return null;
+  }
+};
 
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
     const original = err.config;
+    
+    if (original.url.includes("/auth/") || original._retry) {
+      return Promise.reject(err);
+    }
 
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true;
-
-      try {
-        const { accessToken } = await refresh();
-
-        if (accessToken) {
-          setAuthToken(accessToken); 
-
-          original.headers.Authorization = `Bearer ${accessToken}`;
-          return api(original); 
-        }
-      } catch (refreshError) {
-        console.error("Erro ao tentar refresh token:", refreshError);
+      const newToken = await refreshAuthToken();
+      
+      if (newToken) {
+        original.headers.Authorization = `Bearer ${newToken}`;
+        return api(original);
       }
     }
 
@@ -52,4 +66,9 @@ api.interceptors.response.use(
   }
 );
 
-export default api
+const savedToken = getCookie(TOKEN_COOKIE_KEY) as string | undefined;
+if (savedToken) {
+  setAuthToken(savedToken);
+}
+
+export default api;

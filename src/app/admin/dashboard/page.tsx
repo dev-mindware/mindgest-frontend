@@ -1,3 +1,4 @@
+"use client"
 import {
   Separator,
   SidebarTrigger,
@@ -6,8 +7,10 @@ import {
   UsersTable,
   ChartAreaInteractive,
 } from "@/components";
+import { useAuthStore } from "@/stores/auth";
 
 export default function DashboardPage() {
+  const { user } = useAuthStore()
   return (
     <div>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -17,7 +20,10 @@ export default function DashboardPage() {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <DinamicBreadcrumb subRoute="Dashboard" />
+          <code>
+            {JSON.stringify(user, null, 2)}
+          </code>
+          {/* <DinamicBreadcrumb subRoute="Dashboard" /> */}
         </div>
       </header>
       <div className="flex flex-col flex-1">
