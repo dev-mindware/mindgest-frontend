@@ -1,6 +1,6 @@
 import { LoginResponse, User } from "@/types";
 import { setCookie, deleteCookie } from "cookies-next"; 
-import { PLAN_COOKIE_KEY, REFRESH_TOKEN_COOKIE_KEY, TOKEN_COOKIE_KEY } from "@/constants";
+import { PLAN_COOKIE_KEY, REFRESH_TOKEN_COOKIE_KEY, ROLE_COOKIE_KEY, TOKEN_COOKIE_KEY } from "@/constants";
 import api from "../api";
 import axios from "axios";
 
@@ -36,6 +36,8 @@ export const authService = {
     } finally {
       deleteCookie(TOKEN_COOKIE_KEY, { path: "/" });
       deleteCookie(REFRESH_TOKEN_COOKIE_KEY, { path: "/" });
+      deleteCookie(ROLE_COOKIE_KEY, { path: "/" });
+      deleteCookie(PLAN_COOKIE_KEY, { path: "/" });
       delete api.defaults.headers.common["Authorization"];
     }
   },

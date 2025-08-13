@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   PLAN_COOKIE_KEY,
   REFRESH_TOKEN_COOKIE_KEY,
+  ROLE_COOKIE_KEY,
   TOKEN_COOKIE_KEY,
 } from "@/constants";
 import { roleRedirects } from "@/utils";
@@ -45,6 +46,12 @@ export async function loginAction({
     });
 
     authCookies.set(PLAN_COOKIE_KEY, user.company.plan, {
+      secure: true,
+      path: "/",
+      maxAge: 60 * 60 * 8,
+    });
+
+    authCookies.set(ROLE_COOKIE_KEY, user.role, {
       secure: true,
       path: "/",
       maxAge: 60 * 60 * 8,

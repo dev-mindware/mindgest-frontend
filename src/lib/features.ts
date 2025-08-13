@@ -1,4 +1,4 @@
-export type Plan = "BASE" | "TSUNAMI" | "SMART PRO"
+import { Plan } from "@/types";
 
 export const featuresByPlan: Record<Plan, string[]> = {
   "BASE": [
@@ -17,7 +17,7 @@ export const featuresByPlan: Record<Plan, string[]> = {
     'filtered_sales_reports',
     'print_settings'
   ],
-  "SMART PRO": [
+  "SMART_PRO": [
     'dashboard_access',
     'billing_documents',
     'client_management',
@@ -37,7 +37,7 @@ export const featuresByPlan: Record<Plan, string[]> = {
 export const planHierarchy: Record<Plan, number> = {
   "BASE": 1,
   "TSUNAMI": 2,
-  "SMART PRO": 3
+  "SMART_PRO": 3
 };
 
 export function hasPlanAccess(userPlan: Plan, requiredPlan: Plan): boolean {
@@ -46,7 +46,7 @@ export function hasPlanAccess(userPlan: Plan, requiredPlan: Plan): boolean {
 /* export const featuresByPlan: Record<Plan, string[]> = {
   "BASE": ["billing", "services"],
   "TSUNAMI": ["billing", "services", "pos", "inventory"],
-  "SMART PRO": ["billing", "services", "pos", "inventory", "reports"]
+  "SMART_PRO": ["billing", "services", "pos", "inventory", "reports"]
 };
 
 

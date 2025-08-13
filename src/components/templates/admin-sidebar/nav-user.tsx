@@ -1,4 +1,5 @@
 "use client";
+import { logoutAction } from "@/app/actions/login";
 import {
   Icon,
   Avatar,
@@ -16,18 +17,17 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components";
-import { authService } from "@/services/auth/auth";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useAuth } from "@/hooks/auth";
 
 export function AdminNavUser() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { isMobile } = useSidebar();
 
   if (!user) return null;
 
   async function onLogout() {
     try {
-      await authService.logout();
+      await logoutAction();
     } catch (error) {}
   }
 

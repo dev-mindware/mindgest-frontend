@@ -36,11 +36,11 @@ export const ROUTE_FEATURE_MAPPING: RouteFeatureMapping[] = [
   { pathPrefix: '/reports/filtered-sales', feature: 'filtered_sales_reports', minPlan: 'TSUNAMI' },
   { pathPrefix: '/billing/print-settings', feature: 'print_settings', minPlan: 'TSUNAMI' },
   
-  { pathPrefix: '/admin', feature: 'admin_dashboard', minPlan: 'SMART PRO' },
-  { pathPrefix: '/management/suppliers', feature: 'supplier_management', minPlan: 'SMART PRO' },
-  { pathPrefix: '/management/ai', feature: 'ai_management', minPlan: 'SMART PRO' },
-  { pathPrefix: '/reports/advanced', feature: 'advanced_reports', minPlan: 'SMART PRO' },
-  { pathPrefix: '/pos/management', feature: 'pos_management', minPlan: 'SMART PRO' }
+  { pathPrefix: '/admin', feature: 'admin_dashboard', minPlan: 'SMART_PRO' },
+  { pathPrefix: '/management/suppliers', feature: 'supplier_management', minPlan: 'SMART_PRO' },
+  { pathPrefix: '/management/ai', feature: 'ai_management', minPlan: 'SMART_PRO' },
+  { pathPrefix: '/reports/advanced', feature: 'advanced_reports', minPlan: 'SMART_PRO' },
+  { pathPrefix: '/pos/management', feature: 'pos_management', minPlan: 'SMART_PRO' }
 ];
 
 export const API_AUTH_PREFIX = '/api/auth';
@@ -75,7 +75,7 @@ export const ROUTE_FEATURE_MAPPING: RouteFeatureMapping[] = [
   { pathPrefix: '/admin', feature: 'admin_access', minPlan: 'BASE' },
   { pathPrefix: '/billing', feature: 'billing_access', minPlan: 'BASE' },
   { pathPrefix: '/inventory', feature: 'inventory_access', minPlan: 'TSUNAMI' },
-  { pathPrefix: '/management', feature: 'management_access', minPlan: 'SMART PRO' },
+  { pathPrefix: '/management', feature: 'management_access', minPlan: 'SMART_PRO' },
   { pathPrefix: '/pos', feature: 'pos_access', minPlan: 'TSUNAMI' }
 ];
 

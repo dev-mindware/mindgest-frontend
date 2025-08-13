@@ -25,10 +25,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadUser();
-  }, [refetchUser, hasAccessToken, setUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // executa apenas uma vez
 
   if (loading) {
-    return <div>Carregando dados do Usuário...</div>; 
+    return <div>Carregando dados do Usuário...</div>;
   }
 
   return <>{children}</>;

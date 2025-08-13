@@ -11,7 +11,7 @@
 ### Semana 1 (11-17 Ago): Autenticação & Cadastros
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
-| Página de login com validação       | Você        | Alta       | [ ]    |
+| Página de login com validação       | Você        | Alta       | [X]    |
 | Dashboard inicial (placeholders)    | John        | Média      | [ ]    |
 | CRUD clientes (listagem/formulário) | Você        | Alta       | [ ]    |
 | CRUD produtos (listagem básica)     | John        | Alta       | [ ]    |

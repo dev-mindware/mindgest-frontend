@@ -1,4 +1,3 @@
-// lib/auth.ts
 import { jwtVerify } from "jose";
 import { Plan } from "./features";
 

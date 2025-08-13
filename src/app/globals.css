@@ -77,7 +77,7 @@
   --chart-4: #7341B9;
   --chart-5: #5C3494;
 
-  --sidebar: hsl(0 0% 98%);
+  --sidebar: #FFF/* hsl(0 0% 98%) */;
   --sidebar-foreground: hsl(0 0% 10%);
   --sidebar-primary: #9956F6;
   --sidebar-primary-foreground: #FFFFFF;

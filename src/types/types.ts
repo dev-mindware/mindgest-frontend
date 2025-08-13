@@ -52,3 +52,5 @@ export interface OrderItem {
   price: number;
   quantity: number;
 }
+
+export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"

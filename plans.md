@@ -27,7 +27,7 @@
 #### 
 
 
-## Smart Pro -- 14.899,22 kz
+## SMART_PRO -- 14.899,22 kz
 
 * #### Tudo do **Tsunami**
 * #### Fornecedores e lojas

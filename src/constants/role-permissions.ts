@@ -14,7 +14,7 @@ export const rolePermissions = {
       "/owner/documents",
       "/owner/reports",
     ],
-    "SMART PRO": [
+    "SMART_PRO": [
       "/owner/dashboard",
       "/owner/users",
       "/owner/settings",
