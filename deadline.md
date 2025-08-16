@@ -11,10 +11,10 @@
 ### Semana 1 (11-17 Ago): Autenticação & Cadastros
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
-| Página de login com validação       | Você        | Alta       | [ ]    |
-| Dashboard inicial (placeholders)    | John        | Média      | [ ]    |
+| Página de login com validação       | Você        | Alta       | [ V ]    |
+| Dashboard inicial (placeholders)    | John        | Média      | [ V ]    |
 | CRUD clientes (listagem/formulário) | Você        | Alta       | [ ]    |
-| CRUD produtos (listagem básica)     | John        | Alta       | [ ]    |
+| CRUD produtos (listagem básica)     | John        | Alta       | [ V ]    |
 | Validação de formulários genéricos  | John        | Baixa      | [ ]    |
 
 ### Semana 2 (18-24 Ago): Faturação Core
