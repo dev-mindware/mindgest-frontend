@@ -1,17 +1,24 @@
 "use client"
+import { DinamicBreadcrumb, OwnerDashContent } from "@/components";
 import { useAuth } from "@/hooks/auth";
 import { Role } from "@/types";
 
 function OwnerDashboard() {
-  return <h1>DASHBOARD DO PROPRIETARIO</h1>;
+  return <div>
+    <OwnerDashContent />
+  </div>;
 }
 
 function ManagerDashboard() {
-  return <h1>DASHBOARD DO GERENTE</h1>;
+  return <div>
+    <DinamicBreadcrumb subRoute="Dashboard do Gerente" showSeparator={false} />
+  </div>;
 }
 
 function SellerDashboard() {
-  return <h1>DASHBOARD DO VENDEDOR</h1>;
+  return <div>
+    <DinamicBreadcrumb subRoute="Dashboard do Vendedor" showSeparator={false} />
+  </div>;
 }
 
 const dashboardByRole: Record<Role, React.FC> = {
@@ -32,7 +39,6 @@ export default function DashboardContent() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
       <RoleDashboard />
     </div>
   );

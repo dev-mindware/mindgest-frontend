@@ -1,5 +1,5 @@
 "use client"
-import { Button, GlobalModal, Input, Label, Icon } from "@/components"
+import { Button, GlobalModal, Input, Label, Icon, TsunamiOnly } from "@/components"
 import { useState } from "react"
 import Image from "next/image"
 
@@ -81,6 +81,7 @@ export function AddCategory() {
           </div>
 
           {/* Icon Upload */}
+          <TsunamiOnly>
           <div className="space-y-2">
             <Label className="text-sm font-medium">
               Ícone
@@ -143,7 +144,7 @@ export function AddCategory() {
               </Button>
             )}
           </div>
-
+          </TsunamiOnly>
           {/* Action Buttons */}
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button 

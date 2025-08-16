@@ -74,14 +74,14 @@ export const menuItems: MenuStructure = {
   menuItems: [
     {
       name: "Dashboard",
-      url: "/admin/dashboard",
+      url: "/client/dashboard",
       icon: <Icon name="LayoutDashboard" />,
       roles: ["MANAGER", "OWNER", "SELLER"],
       minPlan: "BASE",
     },
     {
       name: "GestIA",
-      url: "/admin/dashboard",
+      url: "/client/dashboard",
       icon: <Icon name="Sparkles" />,
       roles: ["MANAGER", "OWNER", "SELLER"],
       minPlan: "BASE",
@@ -89,19 +89,14 @@ export const menuItems: MenuStructure = {
     },
     {
       name: "Documentos",
-      url: "#",
+      url: "/client/documents",
       icon: <Icon name="ScrollText" />,
       roles: ["ADMIN", "MANAGER", "OWNER"],
       minPlan: "BASE",
-      items: [
-        { name: "Fatura", url: "/admin/documents/invoice" },
-        { name: "Proforma", url: "/admin/documents/proforma" },
-        { name: "Recibo", url: "/admin/documents/receipt" },
-      ],
     },
     {
       name: "Clientes",
-      url: "/admin/customers",
+      url: "/client/customers",
       icon: <Icon name="Users" />,
       roles: ["ADMIN", "MANAGER", "OWNER"],
       minPlan: "BASE",
