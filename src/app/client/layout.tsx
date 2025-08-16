@@ -1,13 +1,21 @@
-import { ManagementAppSidebar, BreadcrumbProvider, SidebarInset, SidebarProvider, } from "@/components"
-export default function ManagementLayout({ children }: { children: React.ReactNode }) {
+import {
+  AdminAppSidebar,
+  BreadcrumbProvider,
+  SidebarInset,
+  SidebarProvider,
+} from "@/components";
+
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function ManagementLayout({ children }: Props) {
   return (
     <SidebarProvider>
-      <ManagementAppSidebar />
+      <AdminAppSidebar />
       <SidebarInset>
-        <BreadcrumbProvider>
-        {children}
-        </BreadcrumbProvider>
+        <BreadcrumbProvider>{children}</BreadcrumbProvider>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

@@ -95,6 +95,13 @@ export const menuItems: MenuStructure = {
       minPlan: "BASE",
     },
     {
+      name: "Items",
+      url: "/client/items",
+      icon: <Icon name="Users" />,
+      roles: ["ADMIN", "MANAGER", "OWNER"],
+      minPlan: "BASE",
+    },
+    {
       name: "Clientes",
       url: "/client/customers",
       icon: <Icon name="Users" />,

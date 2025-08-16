@@ -10,7 +10,8 @@ type InputType =
   | "email"
   | "number"
   | "quantidade"
-  | "file";
+  | "file"
+  | "search";
 
 type InputProps = {
   label?: string;

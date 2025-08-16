@@ -1,4 +1,4 @@
-import { TabsBilling, ProductList, DinamicBreadcrumb, Separator, SidebarTrigger } from "@/components";
+import { TabsBilling, DinamicBreadcrumb, Separator, SidebarTrigger } from "@/components";
 
 export default function Page() {
   return (
@@ -11,17 +11,14 @@ export default function Page() {
             className="mr-2 data-[orientation=vertical]:h-4"
           />
           <DinamicBreadcrumb
-            route="Gestão de Documentos"
-            subRoute="Faturação"
+            showSeparator={false}
+            subRoute="Documentos"
           />
         </div>
       </header>
       <div className="flex flex-col flex-1">
         <div className="@container/main flex flex-1 p-4 flex-col gap-2">
           <TabsBilling />
-        <div className="flex items-start justify-start w-full ">
-      <ProductList showSwitcherOnMobile={false} size="medium" />
-      </div>
         </div>
       </div>
     </div>

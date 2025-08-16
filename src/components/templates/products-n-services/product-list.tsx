@@ -15,7 +15,7 @@ import {
 import { OrderItem, Product } from "@/types";
 import { initialProducts } from "./data";
 import { ProductCardView } from "./product-card-view"
-import { ProductHorizontalView } from "./product-horizontal-view"
+import { ProductTableView } from "./product-table-view"
 
 interface ProductListProps {
   onAddToOrder?: (item: OrderItem) => void;
@@ -275,7 +275,7 @@ export function ProductList({
             ))}
           </div>
         ) : (
-          <ProductHorizontalView
+          <ProductTableView
             products={paginatedProducts}
             onAddToOrder={onAddToOrder}
           />

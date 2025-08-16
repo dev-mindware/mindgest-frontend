@@ -13,6 +13,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TsunamiOnly,
 } from "@/components";
 import { Product, OrderItem } from "@/types/types";
 import { formatPrice } from "@/utils/format-price";
@@ -23,7 +24,7 @@ interface ProductTableProps {
   onAddToOrder?: (item: OrderItem) => void;
 }
 
-export function ProductHorizontalView({ products, onAddToOrder }: ProductTableProps) {
+export function ProductTableView({ products, onAddToOrder }: ProductTableProps) {
   const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } = useProductActions()
 
   return (
@@ -33,10 +34,12 @@ export function ProductHorizontalView({ products, onAddToOrder }: ProductTablePr
           <TableHead>Produto</TableHead>
           <TableHead>SKU</TableHead>
           <TableHead>Categoria</TableHead>
+          <TsunamiOnly>
           <TableHead>Retalho</TableHead>
           <TableHead>Atacado</TableHead>
           <TableHead>Stock</TableHead>
           <TableHead>Status</TableHead>
+          </TsunamiOnly>
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -46,6 +49,7 @@ export function ProductHorizontalView({ products, onAddToOrder }: ProductTablePr
             <TableCell className="font-medium">{product.title}</TableCell>
             <TableCell>{product.sku}</TableCell>
             <TableCell>{product.category}</TableCell>
+            <TsunamiOnly>
             <TableCell>
               {formatPrice(product.retailPrice.min)} -{" "}
               {formatPrice(product.retailPrice.max)}
@@ -55,6 +59,7 @@ export function ProductHorizontalView({ products, onAddToOrder }: ProductTablePr
               {formatPrice(product.wholesalePrice.max)}
             </TableCell>
             <TableCell>{product.stock}</TableCell>
+            
             <TableCell>
               <Badge
                 variant="secondary"
@@ -67,6 +72,7 @@ export function ProductHorizontalView({ products, onAddToOrder }: ProductTablePr
                 {product.isActive ? "Ativo" : "Inactivo"}
               </Badge>
             </TableCell>
+            </TsunamiOnly>
             <TableCell>
               <div className="flex gap-1">
                 {onAddToOrder && (
