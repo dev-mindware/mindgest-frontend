@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator" // E este também!
 import { ClientForm } from "./entities-forms/client-form"
 import { SupplierForm } from "./entities-forms/supplier-form"
 import { StoreForm } from "./entities-forms/store-form"
+import { Tsunami } from "@/componentes"
 
 export function Entities() {
   return (
@@ -26,8 +27,11 @@ export function Entities() {
       <Tabs defaultValue="tab-1" className="w-full">
         <TabsList className="flex justify-center md:justify-start">
           <TabsTrigger value="tab-1">Cliente</TabsTrigger>
+          <TsunamiOnly>
           <TabsTrigger value="tab-2">Fornecedor</TabsTrigger>
           <TabsTrigger value="tab-3">Loja</TabsTrigger>
+          </TsunamiOnly>
+
         </TabsList>
 
         <TabsContent value="tab-1">
