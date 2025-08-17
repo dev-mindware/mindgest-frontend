@@ -1,10 +1,9 @@
 import {
-  DefSetup,
   Separator,
   SidebarTrigger,
   DinamicBreadcrumb,
-  Entities,
 } from "@/components";
+import { Entities } from "@/components/templates/definitions/contents/entities";
 
 export default function Page() {
   return (

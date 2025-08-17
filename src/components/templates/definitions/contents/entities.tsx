@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator" // E este também!
 import { ClientForm } from "./entities-forms/client-form"
 import { SupplierForm } from "./entities-forms/supplier-form"
 import { StoreForm } from "./entities-forms/store-form"
-import { Tsunami } from "@/componentes"
+import { TsunamiOnly } from "@/components"
 
 export function Entities() {
   return (

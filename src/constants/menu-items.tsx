@@ -97,7 +97,7 @@ export const menuItems: MenuStructure = {
     {
       name: "Items",
       url: "/client/items",
-      icon: <Icon name="Users" />,
+      icon: <Icon name="ShoppingBasket" />,
       roles: ["ADMIN", "MANAGER", "OWNER"],
       minPlan: "BASE",
     },
