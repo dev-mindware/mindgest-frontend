@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { DataTableRowActions } from "../data-table-row-actions";
-import { DataTable } from "../data-table";
 import { Icon } from "@/components/layout/icon";
+import { DataTable, DataTableRowActions } from "@/components/custom";
 
 interface Store {
   id: string;
@@ -27,36 +26,36 @@ export function StoresTable() {
         nome: "Loja Central",
         gerente: "António Pereira",
         status: "Ativa",
-        endereco: "Rua da Independência, 123, Luanda"
+        endereco: "Rua da Independência, 123, Luanda",
       },
       {
         id: "2",
         nome: "Loja Talatona",
         gerente: "Maria Fernanda",
         status: "Ativa",
-        endereco: "Condomínio Jardim de Rosas, Talatona"
+        endereco: "Condomínio Jardim de Rosas, Talatona",
       },
       {
         id: "3",
         nome: "Loja Viana",
         gerente: "João Manuel",
         status: "Manutenção",
-        endereco: "Estrada de Viana, Km 9, Viana"
+        endereco: "Estrada de Viana, Km 9, Viana",
       },
       {
         id: "4",
         nome: "Loja Cacuaco",
         gerente: "Esperança Silva",
         status: "Ativa",
-        endereco: "Rua Principal, Cacuaco"
+        endereco: "Rua Principal, Cacuaco",
       },
       {
         id: "5",
         nome: "Loja Belas",
         gerente: "Fernando Costa",
         status: "Inativa",
-        endereco: "Urbanização Nova Vida, Belas"
-      }
+        endereco: "Urbanização Nova Vida, Belas",
+      },
     ];
 
     setIsLoading(true);
@@ -190,10 +189,6 @@ export function StoresTable() {
         ]}
         onDelete={handleDeleteStores}
         isLoading={isLoading}
-        toolbar={{
-          title: "Gestão de Lojas",
-          description: "Gerencie suas lojas com filtros avançados e ações.",
-        }}
         emptyState={{
           title: "Nenhuma loja encontrada",
           description: "Comece criando um novo registro de loja.",

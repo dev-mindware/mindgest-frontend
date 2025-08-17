@@ -38,7 +38,7 @@ export function DataTablePagination<TData>({
       {/* Results per page */}
       <div className="flex items-center gap-3">
         <Label htmlFor={id} className="max-sm:sr-only">
-          Rows per page
+          Linhas por página
         </Label>
         <Select
           value={table.getState().pagination.pageSize.toString()}

@@ -1,14 +1,11 @@
-import { ProductList } from '@/components'
-import Link from 'next/link'
-import React from 'react'
+import { PageWrapper, ProductList } from "@/components";
+import Link from "next/link";
 
 export default function Page() {
   return (
-    <div>
-      <Link href="/client/documents/new">
-        Novo
-      </Link>
-      <ProductList/>
-    </div>
-  )
+    <PageWrapper subRoute="Documentos">
+      <Link href="/client/documents/new">Novo</Link>
+      <ProductList />
+    </PageWrapper>
+  );
 }

@@ -10,7 +10,7 @@ type InputType =
   | "email"
   | "number"
   | "quantity"
-  | "file"
+  | "date"
   | "search";
 
 type InputProps = {
@@ -30,7 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = React.useState(false);
     const isPassword = type === "password";
     const isQuantidade = type === "quantity";
-    const isFile = type === "file";
+    const isDate = type === "date";
 
     const [quantity, setQuantidade] = React.useState<number>(
       Number(props.defaultValue) || 0
@@ -42,8 +42,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         : "password"
       : isQuantidade
       ? "number"
-      : isFile
-      ? "file"
+      : isDate
+      ? "date"
       : type;
 
     const handleDecrement = () => {
@@ -63,7 +63,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {isQuantidade ? (
-          // Layout especial para quantity
           <div className="flex items-center w-full gap-2">
             <button
               type="button"
@@ -107,29 +106,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <Plus className="w-5 h-5 text-foreground" />
             </button>
           </div>
-        ) : isFile ? (
-          // Layout especial para upload de ficheiros
-          <div
-            className={cn(
-              "flex items-center rounded-md border px-3 py-2 text-sm transition-colors duration-200 w-full bg-background",
-              error
-                ? "border-red-500 ring-1 ring-red-400"
-                : "border-input focus-within:border-purple-500 focus-within:ring-[3px] focus-within:ring-ring/50",
-              className
-            )}
-          >
-            <input
-              ref={ref}
-              type="file"
-              className={cn(
-                "flex-1 text-sm text-foreground outline-none file:mr-3 file:rounded-md file:border-0 file:bg-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground hover:file:bg-muted/80",
-                "disabled:cursor-not-allowed disabled:opacity-50"
-              )}
-              {...props}
-            />
-          </div>
         ) : (
-          // Layout normal para os outros tipos
           <div
             className={cn(
               "flex items-center rounded-md border px-3 py-2 text-sm transition-colors duration-200 w-full",

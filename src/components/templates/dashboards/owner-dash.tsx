@@ -6,7 +6,6 @@ import {
   DinamicBreadcrumb, 
 } from "@/components";
 import { UsersTable } from "@/components";
-import TestForm from "@/components/test-form";
 
 export function OwnerDashContent() {
   return (
@@ -28,7 +27,6 @@ export function OwnerDashContent() {
             <div className="px-4 space-y-5 lg:px-6">
               <ChartAreaInteractive />
               <UsersTable />
-              <TestForm />
             </div>
           </div>
         </div>

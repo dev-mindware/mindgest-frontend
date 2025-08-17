@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { DataTableRowActions } from "../data-table-row-actions";
-import { DataTable } from "../data-table";
 import { Icon } from "@/components/layout/icon";
+import { DataTable, DataTableRowActions } from "@/components/custom";
 
 interface Client {
   id: string;
@@ -194,10 +193,6 @@ export function ClientsTable() {
         ]}
         onDelete={handleDeleteClients}
         isLoading={isLoading}
-        toolbar={{
-          title: "Gestão de Clientes",
-          description: "Gerencie seus clientes com filtros avançados e ações.",
-        }}
         emptyState={{
           title: "Nenhum cliente encontrado",
           description: "Comece criando uma nova conta de cliente.",

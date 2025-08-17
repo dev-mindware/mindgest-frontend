@@ -25,29 +25,3 @@ export function getSidebarForUser(
       }),
     }));
 }
-
-
-/* import { MenuItem } from "@/constants/menu-items";
-import { Role, Plan } from "@/types";
-
-export function getSidebarForUser(
-  items: MenuItem[],
-  userRole: Role,
-  userPlan: Plan
-) {
-  return items
-    .filter(
-      (item) =>
-        (!item.roles || item.roles.includes(userRole)) &&
-        (!item.minPlan || userPlan >= item.minPlan)
-    )
-    .map((item) => ({
-      ...item,
-      items: item.items?.filter(
-        (sub) =>
-          (!sub.roles || sub.roles.includes(userRole)) &&
-          (!sub.minPlan || userPlan >= sub.minPlan)
-      ),
-    }));
-}
- */

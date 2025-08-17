@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { DataTableRowActions } from "../data-table-row-actions";
-import { DataTable } from "../data-table";
 import { Icon } from "@/components/layout/icon";
+import { DataTable, DataTableRowActions } from "@/components/custom";
 
 interface Supplier {
   id: string;
@@ -180,10 +179,6 @@ export function SuppliersTable() {
         ]}
         onDelete={handleDeleteSuppliers}
         isLoading={isLoading}
-        toolbar={{
-          title: "Gestão de Fornecedores",
-          description: "Gerencie seus fornecedores com filtros avançados e ações.",
-        }}
         emptyState={{
           title: "Nenhum fornecedor encontrado",
           description: "Comece criando um novo registro de fornecedor.",
