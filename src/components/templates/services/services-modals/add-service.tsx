@@ -14,7 +14,6 @@ import {
   TsunamiOnly,
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
-import { AddCategory } from "./add-category";
 import DatePickerInput from "@/components/custom/date-picker-input";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +21,7 @@ import { AddProductFormData, addProductSchema } from "@/schemas";
 import Image from "next/image";
 import { useState } from "react";
 
-export function AddProduct() {
+export function AddService() {
   const { openModal } = useModal();
   const [productImage, setProductImage] = useState<string | null>(null);
 
@@ -366,7 +365,6 @@ export function AddProduct() {
               </div>
             </div>
           </div>
-          <AddCategory />
         </div>
       }
     />

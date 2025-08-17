@@ -9,7 +9,7 @@ type InputType =
   | "password"
   | "email"
   | "number"
-  | "quantidade"
+  | "quantity"
   | "file"
   | "search";
 
@@ -29,10 +29,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const isPassword = type === "password";
-    const isQuantidade = type === "quantidade";
+    const isQuantidade = type === "quantity";
     const isFile = type === "file";
 
-    const [quantidade, setQuantidade] = React.useState<number>(
+    const [quantity, setQuantidade] = React.useState<number>(
       Number(props.defaultValue) || 0
     );
 
@@ -63,7 +63,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {isQuantidade ? (
-          // Layout especial para quantidade
+          // Layout especial para quantity
           <div className="flex items-center w-full gap-2">
             <button
               type="button"
@@ -88,7 +88,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 inputMode="numeric"
                 min={0}
                 step={1}
-                value={quantidade}
+                value={quantity}
                 onChange={(e) => setQuantidade(Number(e.target.value))}
                 className={cn(
                   "w-full bg-transparent placeholder:text-muted-foreground text-foreground outline-none text-center",

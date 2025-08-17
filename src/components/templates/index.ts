@@ -5,7 +5,7 @@ export * from "./definitions";
 export * from "./billing/tabs-billing";
 export * from "./pos";
 export * from "./products";
-export * from "./services";
 export * from "./stock-managment";
 export * from "./dashboards";
 export * from "./items";
+export * from "./services"

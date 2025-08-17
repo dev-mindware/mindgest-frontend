@@ -2,7 +2,7 @@ import { Button, GlobalModal } from "@/components";
 import { currentProductStore } from "@/stores";
 import { useModal } from "@/stores/use-modal-store";
 
-export function DeleteProduct() {
+export function DeleteService() {
   const { closeModal } = useModal();
   const { currentProduct } = currentProductStore();
 

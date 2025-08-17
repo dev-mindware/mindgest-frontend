@@ -19,7 +19,6 @@ export default function TestForm() {
       </SmartProOnly>
       <Button
         onClick={() => openModal("add-product")}
-        className="hidden md:block"
       >
         Novo Produto
       </Button>

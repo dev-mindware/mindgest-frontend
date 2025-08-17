@@ -1,7 +1,7 @@
 import { useModal } from "@/stores/use-modal-store";
 import { Button, GlobalModal } from "@/components"; 
 import { currentProductStore } from "@/stores";
-export function SeeProduct() {
+export function SeeService() {
   const { closeModal } = useModal();
   const { currentProduct } = currentProductStore();
 

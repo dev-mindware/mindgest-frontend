@@ -23,7 +23,6 @@ interface ModalProps {
   canClose?: boolean
   children?: ReactNode
   footer?: ReactNode
-  custom?: ReactNode
   className?: string
   sucess?: boolean
   warning?: boolean
@@ -38,7 +37,6 @@ export function GlobalModal({
   canClose,
   children,
   footer,
-  custom,
   className,
 }: ModalProps) {
   const { open, closeModal } = useModal()
@@ -52,12 +50,6 @@ export function GlobalModal({
         }
       }}
     >
-      {custom ? (
-        <DialogContent className={className}>
-          <DialogTitle className="w-max">{title}</DialogTitle>
-          {custom}
-        </DialogContent>
-      ) : (
         <DialogContent
           className={className}
           onInteractOutside={(event) => {
@@ -80,7 +72,7 @@ export function GlobalModal({
                   "flex flex-col items-center": sucess,
                 })}
               >
-                <DialogTitle className="w-max">{title}</DialogTitle>
+                {title && <DialogTitle className=" w-max">{title}</DialogTitle>}
                 {description && (
                   <DialogDescription
                     className={cn({
@@ -97,7 +89,6 @@ export function GlobalModal({
           {children && <div>{children}</div>}
           {footer && <DialogFooter>{footer}</DialogFooter>}
         </DialogContent>
-      )}
     </Dialog>
   )
 }
