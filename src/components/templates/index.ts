@@ -3,8 +3,9 @@ export * from "./pos-sidebar";
 export * from "./admin-sidebar";
 export * from "./definitions";
 export * from "./billing/tabs-billing";
-export * from "./modals"
-export * from "./pos"
-export * from "./products-n-services"
-export * from "./stock-managment"
-export * from "./dashboards"
+export * from "./pos";
+export * from "./products";
+export * from "./services";
+export * from "./stock-managment";
+export * from "./dashboards";
+export * from "./items";

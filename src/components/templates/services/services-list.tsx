@@ -13,9 +13,9 @@ import {
   PopoverTrigger,
 } from "@/components";
 import { OrderItem, Product } from "@/types";
-import { initialProducts } from "./data";
-import { ProductCardView } from "./product-card-view"
-import { ProductTableView } from "./product-table-view"
+import { initialProducts } from "../../../types/data";
+import { ServiceCardView } from "./service-card-view"
+import { ServiceTableView } from "./service-table-view"
 
 interface ProductListProps {
   onAddToOrder?: (item: OrderItem) => void;
@@ -26,7 +26,7 @@ interface ProductListProps {
 
 type SortByType = "az" | "za" | "price-max" | "price-min";
 
-export function ProductList({
+export function ServiceList({
   onAddToOrder,
   className,
   showSwitcherOnMobile = true,
@@ -271,11 +271,11 @@ export function ProductList({
             }`}
           >
             {paginatedProducts.map((product) => (
-              <ProductCardView key={product.id} product={product} />
+              <ServiceCardView key={product.id} product={product} />
             ))}
           </div>
         ) : (
-          <ProductTableView
+          <ServiceTableView
             products={paginatedProducts}
             onAddToOrder={onAddToOrder}
           />
