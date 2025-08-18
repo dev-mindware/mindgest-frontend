@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { measurement, category, } from "./constant-data";
@@ -10,7 +8,6 @@ import { measurement, category, } from "./constant-data";
 import {
   Button,
   GlobalModal,
-  Icon,
   Textarea,
   Label,
   Input,
@@ -23,7 +20,6 @@ import { AddProductFormData, addProductSchema } from "@/schemas";
 
 export function AddProduct() {
   const { openModal } = useModal();
-  const [productImage, setProductImage] = useState<string | null>(null);
 
   const {
     register,
@@ -42,87 +38,22 @@ export function AddProduct() {
     },
   });
 
-  const removeImage = () => setProductImage(null);
 
   const onSubmit = (data: AddProductFormData) => {
     alert(JSON.stringify(data, null, 2));
   };
 
   return (
-    <GlobalModal id="add-product" title="Adicionar Produto" className="!h-[85vh]">
+    <GlobalModal id="add-product" title="Adicionar Produto" className="!h-[85vh] !w-max">
       <div className="flex justify-end">
       <Button variant="outline" size="sm" onClick={() => openModal("category")}>
         Adicionar Categoria
       </Button>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
-        {/* Coluna da imagem */}
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr">
+        {/* Coluna da esquerda */}
         <TsunamiOnly>
           <div className="space-y-6">
-            {/* Upload da Imagem */}
-            <div className="rounded-lg bg-sidebar">
-              <div className="lg:p-6">
-                <h3 className="mb-4 font-semibold">Imagem do Produto</h3>
-                <div className="p-6 space-y-4">
-                  <div>
-                    <Label htmlFor="image-tag">Tag</Label>
-                    <Input
-                      id="image-tag"
-                      placeholder="Escreva algo que representa a imagem..."
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Imagem</Label>
-                    <div className="relative mt-2">
-                      {productImage ? (
-                        <div>
-                          <Image
-                            src={productImage}
-                            alt="Product"
-                            width={400}
-                            height={200}
-                            className="object-cover w-full h-48 rounded-lg"
-                          />
-                          <div className="absolute flex gap-2 bottom-2 left-2 right-2">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() =>
-                                document.getElementById("image-upload")?.click()
-                              }
-                            >
-                              Substituir
-                            </Button>
-                            <Button variant="destructive" size="sm" onClick={removeImage}>
-                              Eliminar
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center h-48 border-2 border-dashed rounded-lg border-muted-foreground bg-sidebar">
-                          <div className="text-center">
-                            <Icon name="Upload" className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                            <p className="text-sm text-gray-500">Clique para carregar imagem</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      className="w-full mt-2"
-                      onClick={() => document.getElementById("image-upload")?.click()}
-                    >
-                      <Icon name="Upload" className="w-4 h-4 mr-2" />
-                      Adicionar Imagem
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Código de barras */}
             <div className="rounded-lg bg-sidebar">
               <div className="p-6">
@@ -148,12 +79,12 @@ export function AddProduct() {
           </div>
         </TsunamiOnly>
 
-        {/* Coluna das informações gerais */}
-        <div className="w-full">
+        {/* Coluna da direita */}
+        <div className="">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Informação Geral</h3>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 sm:w-[35rem]">
             {/* Nome e SKU */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
