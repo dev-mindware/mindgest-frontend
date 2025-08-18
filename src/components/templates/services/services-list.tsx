@@ -12,12 +12,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components";
-import { OrderItem, Product } from "@/types";
+import { OrderItem, Service } from "@/types";
 import { initialProducts } from "../../../types/data";
 import { ServiceCardView } from "./service-card-view"
-import { ServiceTableView } from "./service-table-view"
+import { ServiceTableView } from "./service-table-view";
 
-interface ProductListProps {
+interface ServiceListProps {
   onAddToOrder?: (item: OrderItem) => void;
   className?: string;
   showSwitcherOnMobile?: boolean;
@@ -31,7 +31,7 @@ export function ServiceList({
   className,
   showSwitcherOnMobile = true,
   size,
-}: ProductListProps) {
+}: ServiceListProps) {
   const [search, setSearch] = useState("");
   const [showActive, setShowActive] = useState(true);
   const [showInactive, setShowInactive] = useState(true);
@@ -40,15 +40,15 @@ export function ServiceList({
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
 
-  const itemsPerPage = viewMode === "card" ? 6 : 10;
+  const itemsPerPage = viewMode === "card" ? 8 : 6;
   const uniqueCategories = [...new Set(initialProducts.map((p) => p.category))];
 
   useEffect(() => {
     setCurrentPage(1);
   }, [search, showActive, showInactive, categoryFilter, sortBy, viewMode]);
 
-  const filteredProducts = initialProducts
-    .filter((p: Product) => {
+  const filteredServices = initialProducts
+    .filter((p: Service) => {
       const matchSearch =
         p.title.toLowerCase().includes(search.toLowerCase()) ||
         p.sku.toLowerCase().includes(search.toLowerCase());
@@ -74,8 +74,8 @@ export function ServiceList({
       }
     });
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice(
+  const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
+  const paginatedServices = filteredServices.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -262,21 +262,21 @@ export function ServiceList({
           </div>
         </div>
         <div className="text-sm text-muted-foreground">
-          {filteredProducts.length} resultados encontrados
+          {filteredServices.length} resultados encontrados
         </div>
         {viewMode === "card" ? (
           <div
-            className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${
+            className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 ${
               className ?? ""
             }`}
           >
-            {paginatedProducts.map((product) => (
-              <ServiceCardView key={product.id} product={product} />
+            {paginatedServices.map((service) => (
+              <ServiceCardView key={service.id} service={service} />
             ))}
           </div>
         ) : (
           <ServiceTableView
-            products={paginatedProducts}
+            services={paginatedServices}
             onAddToOrder={onAddToOrder}
           />
         )}

@@ -1,4 +1,4 @@
-import { ProductCard } from "@/types/product";
+import { ProductCard } from "@/types";
 import { create } from "zustand";
 
 interface ProductStore {

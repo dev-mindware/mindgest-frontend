@@ -1,5 +1,5 @@
 import { useCustomMutation } from '@/hooks/common';
-import { ProductCard } from '@/types/product';
+import { ProductCard } from '@/types';
 
 export const useAddProduct = () =>
   useCustomMutation<ProductCard, Partial<ProductCard>>("post", "/products", "products");

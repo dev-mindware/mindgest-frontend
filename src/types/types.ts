@@ -46,6 +46,26 @@ export interface Product {
   isActive: boolean;
 }
 
+export interface Service {
+  id: string;
+  title: string;
+  sku: string;
+  category: string;
+  subcategory: string;
+  retailPrice: {
+    min: number;
+    max: number;
+  };
+  wholesalePrice: {
+    min: number;
+    max: number;
+  };
+  stock: number;
+  location: string;
+  variants: number;
+  isActive: boolean;
+}
+
 export interface OrderItem {
   id: string;
   title: string;
@@ -54,3 +74,50 @@ export interface OrderItem {
 }
 
 export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"
+
+export interface ProductCard {
+  id: string;
+  title: string;
+  sku: string;
+  category: string;
+  subcategory: string;
+  retailPrice: {
+    min: number;
+    max: number;
+  };
+  wholesalePrice: {
+    min: number;
+    max: number;
+  };
+  stock: number;
+  location: string;
+  variants: number;
+  isActive: boolean;
+}
+
+export interface ServiceCard {
+  id: string;
+  title: string;
+  sku: string;
+  category: string;
+  subcategory: string;
+  retailPrice: {
+    min: number;
+    max: number;
+  };
+  wholesalePrice: {
+    min: number;
+    max: number;
+  };
+  stock: number;
+  location: string;
+  variants: number;
+  isActive: boolean;
+}
+
+export interface OrderItem {
+  id: string;
+  title: string;
+  price: number;
+  quantity: number;
+}

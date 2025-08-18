@@ -13,7 +13,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TsunamiOnly,
 } from "@/components";
 import { Product, OrderItem } from "@/types/types";
 import { formatPrice } from "@/utils/format-price";
@@ -28,18 +27,16 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
   const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } = useProductActions()
 
   return (
+    <div className="border rounded-md">
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Produto</TableHead>
           <TableHead>SKU</TableHead>
           <TableHead>Categoria</TableHead>
-          <TsunamiOnly>
-          <TableHead>Retalho</TableHead>
-          <TableHead>Atacado</TableHead>
+          <TableHead>Varianção de Preço</TableHead>
           <TableHead>Stock</TableHead>
           <TableHead>Status</TableHead>
-          </TsunamiOnly>
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -49,17 +46,11 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
             <TableCell className="font-medium">{product.title}</TableCell>
             <TableCell>{product.sku}</TableCell>
             <TableCell>{product.category}</TableCell>
-            <TsunamiOnly>
             <TableCell>
               {formatPrice(product.retailPrice.min)} -{" "}
               {formatPrice(product.retailPrice.max)}
             </TableCell>
-            <TableCell>
-              {formatPrice(product.wholesalePrice.min)} -{" "}
-              {formatPrice(product.wholesalePrice.max)}
-            </TableCell>
             <TableCell>{product.stock}</TableCell>
-            
             <TableCell>
               <Badge
                 variant="secondary"
@@ -72,7 +63,6 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
                 {product.isActive ? "Ativo" : "Inactivo"}
               </Badge>
             </TableCell>
-            </TsunamiOnly>
             <TableCell>
               <div className="flex gap-1">
                 {onAddToOrder && (
@@ -128,5 +118,6 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
