@@ -50,6 +50,11 @@ export function AddProduct() {
 
   return (
     <GlobalModal id="add-product" title="Adicionar Produto" className="!h-[85vh]">
+      <div className="flex justify-end">
+      <Button variant="outline" size="sm" onClick={() => openModal("category")}>
+        Adicionar Categoria
+      </Button>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
         {/* Coluna da imagem */}
         <TsunamiOnly>
@@ -147,11 +152,7 @@ export function AddProduct() {
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Informação Geral</h3>
-            <Button variant="outline" size="sm" onClick={() => openModal("category")}>
-              Adicionar Categoria
-            </Button>
           </div>
-
           <div className="space-y-4">
             {/* Nome e SKU */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
