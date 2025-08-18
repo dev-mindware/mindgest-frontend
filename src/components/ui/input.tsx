@@ -86,6 +86,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 type="number"
                 inputMode="numeric"
                 min={0}
+                max={999999}
                 step={1}
                 value={quantity}
                 onChange={(e) => setQuantidade(Number(e.target.value))}

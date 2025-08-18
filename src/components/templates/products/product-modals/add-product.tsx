@@ -149,12 +149,14 @@ export function AddProduct() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
-                <RHFSelect
-                    name="selectedMeasurement"
-                    options={measurement}
-                    control={control}
-                    label="Tipo de Medida"
-                  />
+                <Input
+                  type="quantity"
+                  id="daily-sales"
+                  label="Venda Por Dia"
+                  className="text-center"
+                  error={errors.salesPerDay?.message}
+                  {...register("salesPerDay", { valueAsNumber: true })}
+                />
                 <Input
                   type="quantity"
                   id="stock-initial"
@@ -184,15 +186,14 @@ export function AddProduct() {
                 />
                 <div>
                   <div className="relative mt-1">
-                    <Input
-                      id="tax"
-                      type="number"
-                      label="Imposto"
-                      placeholder="0.00"
-                      startIcon="Percent"
-                      error={errors.tax?.message}
-                      {...register("tax", { valueAsNumber: true })}
-                    />
+                  <Input
+                  type="quantity"
+                  id="restock-time"
+                  className="text-center"
+                  label="Tempo Médio de Reposição"
+                  error={errors.repositionTime?.message}
+                  {...register("repositionTime", { valueAsNumber: true })}
+                />
                   </div>
                 </div>
                 <Input
@@ -207,21 +208,20 @@ export function AddProduct() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Input
-                  type="quantity"
-                  id="restock-time"
-                  className="text-center"
-                  label="Tempo Médio de Reposição"
-                  error={errors.repositionTime?.message}
-                  {...register("repositionTime", { valueAsNumber: true })}
-                />
-                <Input
-                  type="quantity"
-                  id="daily-sales"
-                  label="Venda Por Dia"
-                  className="text-center"
-                  error={errors.salesPerDay?.message}
-                  {...register("salesPerDay", { valueAsNumber: true })}
-                />
+                      id="tax"
+                      type="number"
+                      label="Imposto"
+                      placeholder="0.00"
+                      startIcon="Percent"
+                      error={errors.tax?.message}
+                      {...register("tax", { valueAsNumber: true })}
+                    />
+                <RHFSelect
+                    name="selectedMeasurement"
+                    options={measurement}
+                    control={control}
+                    label="Tipo de Medida"
+                  />
               </div>
 
               <div>
