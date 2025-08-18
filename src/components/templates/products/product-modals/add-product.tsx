@@ -44,7 +44,7 @@ export function AddProduct() {
   };
 
   return (
-    <GlobalModal id="add-product" title="Adicionar Produto" className="!h-[85vh] !w-max">
+    <GlobalModal id="add-product" title="Adicionar Produto" className="!max-h-[85vh] !w-max">
       <div className="flex justify-end">
       <Button variant="outline" size="sm" onClick={() => openModal("category")}>
         Adicionar Categoria
