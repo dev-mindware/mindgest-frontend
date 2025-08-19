@@ -12,10 +12,10 @@
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
 | Página de login com validação       | Você        | Alta       | [X]    |
-| Dashboard inicial (placeholders)    | John        | Média      | [ ]    |
-| CRUD clientes (listagem/formulário) | Você        | Alta       | [ ]    |
-| CRUD produtos (listagem básica)     | John        | Alta       | [ ]    |
-| Validação de formulários genéricos  | John        | Baixa      | [ ]    |
+| Dashboard inicial (placeholders)    | John        | Média      | [X]    |
+| CRUD clientes (listagem/formulário) | Você        | Alta       | [X]    |
+| CRUD produtos (listagem básica)     | John        | Alta       | [X]    |
+| Validação de formulários genéricos  | John        | Baixa      | [X]    |
 
 ### Semana 2 (18-24 Ago): Faturação Core
 | Tarefa                              | Responsável | Prioridade | Status |
@@ -25,7 +25,7 @@
 | Adição dinâmica de itens            | Você        | Alta       | [ ]    |
 | Cálculos automáticos (totais)       | Você        | Crítica    | [ ]    |
 | Header contextual dinâmico          | John        | Média      | [ ]    |
-| Integração Sidebar com rotas        | John        | Alta       | [ ]    |
+| Integração Sidebar com rotas        | John        | Alta       | [X]    |
 
 ### Semana 3 (25-31 Ago): Visualização & Relatórios
 | Tarefa                              | Responsável | Prioridade | Status |
@@ -34,7 +34,7 @@
 | Pré-visualização em tempo real      | John        | Média      | [ ]    |
 | Histórico de documentos (listagem)  | John        | Alta       | [ ]    |
 | Painel de relatórios mensais        | Você        | Alta       | [ ]    |
-| Gráficos básicos (Chart.js)         | John        | Média      | [ ]    |
+| Gráficos básicos (Chart.js)         | John        | Média      | [X]    |
 | Exportação CSV                      | Você        | Baixa      | [ ]    |
 
 ### Semana 4 (1-7 Set): Mobile & Polimento
