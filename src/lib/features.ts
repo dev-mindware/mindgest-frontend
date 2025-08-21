@@ -43,18 +43,3 @@ export const planHierarchy: Record<Plan, number> = {
 export function hasPlanAccess(userPlan: Plan, requiredPlan: Plan): boolean {
   return planHierarchy[userPlan] >= planHierarchy[requiredPlan];
 }
-/* export const featuresByPlan: Record<Plan, string[]> = {
-  "BASE": ["billing", "services"],
-  "TSUNAMI": ["billing", "services", "pos", "inventory"],
-  "SMART_PRO": ["billing", "services", "pos", "inventory", "reports"]
-};
-
-
-export function getFeaturesForPlan(plan: Plan): string[] {
-  return featuresByPlan[plan] || [];
-}
-
-export function canAccess(plan: Plan, feature: string): boolean {
-  return getFeaturesForPlan(plan).includes(feature);
-}
- */

@@ -94,7 +94,7 @@ export function SupplierForm() {
             name="products"
             control={control}
             render={({ field }) => (
-              <InnerTagsInput value={field.value} onChange={field.onChange} />
+              <InnerTagsInput value={field.value as any} onChange={field.onChange} />
             )}
           />
           {errors.products && (

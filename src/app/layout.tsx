@@ -10,7 +10,9 @@ import {
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import { CustomToaster } from "@/utils";
-import { AuthProvider } from "@/contexts/auth-context";
+import { SessionProvider } from "@/providers/session-provider";
+import { getSession } from "@/lib/auth";
+import { User } from "@/types";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -18,11 +20,13 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
 });
+
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-roboto",
 });
+
 const outfit = Outfit({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
@@ -42,11 +46,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
+  const user = (session?.user as User) || null;
+
   return (
     <html
       lang="en"
@@ -66,10 +73,10 @@ export default function RootLayout({
           storageKey="mindware-theme"
         >
           <ReactQueryProvider>
-            <AuthProvider>
+            <SessionProvider user={user}>
               {children}
-              <CustomToaster />
-            </AuthProvider>
+            </SessionProvider>
+            <CustomToaster />
           </ReactQueryProvider>
         </ThemeProvider>
       </body>

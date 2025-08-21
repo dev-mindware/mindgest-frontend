@@ -2,8 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { measurement, category, } from "./constant-data";
-
+import { measurement, category } from "./constant-data";
 
 import {
   Button,
@@ -38,19 +37,29 @@ export function AddProduct() {
     },
   });
 
-
   const onSubmit = (data: AddProductFormData) => {
     alert(JSON.stringify(data, null, 2));
   };
 
   return (
-    <GlobalModal id="add-product" title="Adicionar Produto" className="!max-h-[85vh] !w-max">
+    <GlobalModal
+      id="add-product"
+      title="Adicionar Produto"
+      className="!max-h-[85vh] !w-max"
+    >
       <div className="flex justify-end">
-      <Button variant="outline" size="sm" onClick={() => openModal("category")}>
-        Adicionar Categoria
-      </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => openModal("category")}
+        >
+          Adicionar Categoria
+        </Button>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
+      >
         {/* Coluna da esquerda */}
         <TsunamiOnly>
           <div className="space-y-6">
@@ -109,20 +118,20 @@ export function AddProduct() {
 
             {/* Categoria e Medida */}
             <div className="grid gap-4 sm:grid-cols-2">
-                <RHFSelect
-                    name="selectedCategory"
-                    options={category}
-                    control={control}
-                    label="Categoria"
-                  />
-                  <Input
-                  id="price"
-                  type="number"
-                  startIcon="Coins"
-                  label="Preço de Venda"
-                  error={errors.price?.message}
-                  {...register("price", { valueAsNumber: true })}
-                />
+              <RHFSelect
+                name="selectedCategory"
+                options={category}
+                control={control}
+                label="Categoria"
+              />
+              <Input
+                id="price"
+                type="number"
+                startIcon="Coins"
+                label="Preço de Venda"
+                error={errors.price?.message}
+                {...register("price", { valueAsNumber: true })}
+              />
             </div>
 
             {/* Fornecedor, Localização, Preço, Estoque */}
@@ -186,14 +195,14 @@ export function AddProduct() {
                 />
                 <div>
                   <div className="relative mt-1">
-                  <Input
-                  type="quantity"
-                  id="restock-time"
-                  className="text-center"
-                  label="Tempo Médio de Reposição"
-                  error={errors.repositionTime?.message}
-                  {...register("repositionTime", { valueAsNumber: true })}
-                />
+                    <Input
+                      type="quantity"
+                      id="restock-time"
+                      className="text-center"
+                      label="Tempo Médio de Reposição"
+                      error={errors.repositionTime?.message}
+                      {...register("repositionTime", { valueAsNumber: true })}
+                    />
                   </div>
                 </div>
                 <Input
@@ -208,20 +217,20 @@ export function AddProduct() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Input
-                      id="tax"
-                      type="number"
-                      label="Imposto"
-                      placeholder="0.00"
-                      startIcon="Percent"
-                      error={errors.tax?.message}
-                      {...register("tax", { valueAsNumber: true })}
-                    />
+                  id="tax"
+                  type="number"
+                  label="Imposto"
+                  placeholder="0.00"
+                  startIcon="Percent"
+                  error={errors.tax?.message}
+                  {...register("tax", { valueAsNumber: true })}
+                />
                 <RHFSelect
-                    name="selectedMeasurement"
-                    options={measurement}
-                    control={control}
-                    label="Tipo de Medida"
-                  />
+                  name="selectedMeasurement"
+                  options={measurement}
+                  control={control}
+                  label="Tipo de Medida"
+                />
               </div>
 
               <div>

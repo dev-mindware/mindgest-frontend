@@ -1,38 +1,10 @@
-import { jwtVerify } from "jose";
-import { Plan } from "./features";
+import { cookies } from 'next/headers';
+import { decrypt, SessionPayload } from './session';
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "super-secret"
-);
-
-export type DecodedPayload = {
-  userId: string;
-  email: string;
-  role: string;
-  companyId: string;
-  plan: string; // Plano vem direto do JWT
-  storeId?: string;
-  iat?: number;
-  exp?: number;
-};
-
-export async function decodeToken(token: string): Promise<DecodedPayload | null> {
-  try {
-    const { payload } = await jwtVerify(token, SECRET);
-
-    // Garantir tipagem segura
-    return {
-      userId: payload.userId as string,
-      email: payload.email as string,
-      role: payload.role as string,
-      companyId: payload.companyId as string,
-      plan: payload.plan as Plan,
-      storeId: payload.storeId as string | undefined,
-      iat: payload.iat as number | undefined,
-      exp: payload.exp as number | undefined,
-    };
-  } catch (err) {
-    console.error("Invalid or expired token:", err);
+export async function getSession(): Promise<SessionPayload | null> {
+  const sessionCookie = (await cookies()).get('session')?.value;
+  if (!sessionCookie) {
     return null;
   }
+  return await decrypt(sessionCookie);
 }

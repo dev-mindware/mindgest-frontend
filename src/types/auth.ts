@@ -1,4 +1,4 @@
-import { Plan } from "@/lib/features";
+import { Plan } from "./types";
 
 export interface LoginResponse {
   user: User;

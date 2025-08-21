@@ -23,8 +23,7 @@ export function LoginForm() {
   async function handleLogin({ email, password }: LoginFormData) {
     try {
       const res = await loginAction({ email, password });
-      if (!res.user || !res.accessToken) return;
-      setAccessToken(res.accessToken);
+      if (!res.user) return;
       setUser(res.user);
       window.location.replace(res.redirectPath || "/");
     } catch (error: any) {

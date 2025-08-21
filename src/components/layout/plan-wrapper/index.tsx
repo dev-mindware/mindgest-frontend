@@ -1,25 +1,21 @@
-// components/PlanWrapper.tsx
 "use client";
 
 import React from "react";
 import { Plan } from "@/types";
-import { PLAN_COOKIE_KEY } from "@/constants";
+import { useAuth } from "@/hooks/auth";
 
 type WrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
   minPlan: Plan;
-  /** opcional: força um plano (útil em testes/SSR) */
   planOverride?: string | Plan;
 };
 
-// hierarquia simples
 const order: Record<Plan, number> = {
   BASE: 1,
   TSUNAMI: 2,
   SMART_PRO: 3,
 };
 
-// normaliza qualquer variação para os três valores canónicos
 function normalizePlan(raw: unknown): Plan | null {
   if (typeof raw !== "string") return null;
   const x = raw.toUpperCase().replace(/[-\s]/g, "_");
@@ -29,18 +25,12 @@ function normalizePlan(raw: unknown): Plan | null {
   return null;
 }
 
-// lê cookie no cliente
-function readCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return m ? decodeURIComponent(m[1]) : null;
-}
-
-// obtém plano do utilizador; por default assume BASE até ler o cookie
 function useUserPlan(): Plan {
+  const { user } = useAuth();
   const [plan, setPlan] = React.useState<Plan>("BASE");
+  
   React.useEffect(() => {
-    const raw = readCookie(PLAN_COOKIE_KEY);
+    const raw = user?.company.plan! 
     const norm = normalizePlan(raw);
     if (norm) setPlan(norm);
   }, []);
@@ -58,7 +48,6 @@ export function PlanWrapper({ children, minPlan, planOverride, ...rest }: Wrappe
   return <div {...rest}>{children}</div>;
 }
 
-// Conveniências “como div”
 export function BaseOnly(props: Omit<WrapperProps, "minPlan">) {
   return <PlanWrapper minPlan="BASE" {...props} />;
 }

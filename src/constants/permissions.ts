@@ -1,11 +1,11 @@
-import { Role } from "@/types";
-import { hasPlanAccess, Plan } from "@/lib/features";
+import { Plan, Role } from "@/types";
+import { hasPlanAccess } from "@/lib/features";
 
 export type MenuItem = {
   label: string;
   path: string;
   minPlan?: Plan;
-  feature?: string; 
+  feature?: string;
 };
 
 type SidebarPermissions = Record<Role, MenuItem[]>;
@@ -19,7 +19,12 @@ export const sidebarPermissions: SidebarPermissions = {
   MANAGER: [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Estoque", path: "/inventory", minPlan: "BASE" },
-    { label: "Relatórios Avançados", path: "/reports", minPlan: "SMART_PRO", feature: "ADVANCED_REPORTS" },
+    {
+      label: "Relatórios Avançados",
+      path: "/reports",
+      minPlan: "SMART_PRO",
+      feature: "ADVANCED_REPORTS",
+    },
   ],
   SELLER: [
     { label: "Dashboard", path: "/dashboard" },
@@ -44,7 +49,7 @@ export function getSidebarForUser(
   activeFeatures: string[] = []
 ) {
   const menu = sidebarPermissions[role] || [];
-  return menu.filter(item => {
+  return menu.filter((item) => {
     if (item.minPlan && !hasPlanAccess(plan, item.minPlan)) return false;
     if (item.feature && !activeFeatures.includes(item.feature)) return false;
     return true;

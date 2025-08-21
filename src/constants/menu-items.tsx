@@ -1,7 +1,6 @@
-// src/constants/menu-items.ts
 import { Icon } from "@/components";
 import { icons } from "lucide-react";
-import { Role, Plan } from "@/types"; // enums: ADMIN, MANAGER, CASHIER, OWNER, etc. e BASE, TSUNAMI, SMART_PRO
+import { Role, Plan } from "@/types";
 
 type SubMenuItem = {
   name: string;
@@ -17,7 +16,7 @@ export type MenuItem = {
   roles?: Role[];
   minPlan?: Plan;
   showMoreIcon?: boolean;
-  showUpgrade?: boolean; // marketing
+  showUpgrade?: boolean;
   items?: SubMenuItem[];
 };
 
@@ -58,10 +57,15 @@ export const adminMenu: MenuItem[] = [
     roles: ["ADMIN"],
   },
   {
-    name: "Configurações Globais",
-    url: "/super/settings",
-    icon: <Icon name="Settings" />,
+    name: "Configurações",
+    url: "/settings",
+    icon: <Icon name="Settings2" />,
     roles: ["ADMIN"],
+    minPlan: "BASE",
+    items: [
+      { name: "Geral", url: "/settings/general" },
+      { name: "Exportação", url: "/settings/export" },
+    ],
   },
 ];
 
@@ -81,7 +85,7 @@ export const menuItems: MenuStructure = {
     },
     {
       name: "GestIA",
-      url: "/client/dashboard",
+      url: "/client/gestia",
       icon: <Icon name="Sparkles" />,
       roles: ["MANAGER", "OWNER", "SELLER"],
       minPlan: "BASE",
@@ -98,57 +102,40 @@ export const menuItems: MenuStructure = {
       name: "Items",
       url: "/client/items",
       icon: <Icon name="ShoppingBasket" />,
-      roles: ["ADMIN", "MANAGER", "OWNER"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "BASE",
     },
     {
       name: "Entidades",
       url: "/client/entities",
       icon: <Icon name="Users" />,
-      roles: ["ADMIN", "MANAGER", "OWNER"],
-      minPlan: "BASE",
-    },
-    {
-      name: "Exportações",
-      url: "/admin/export",
-      icon: <Icon name="FileDown" />,
-      roles: ["ADMIN"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "BASE",
     },
     {
       name: "Relatórios",
       url: "#",
       icon: <Icon name="ChartBar" />,
-      roles: ["ADMIN", "MANAGER"],
+      roles: ["OWNER", "MANAGER"],
       minPlan: "BASE",
       items: [
         {
           name: "Vendas simplificadas (mês/ano)",
-          url: "/admin/reports/simple",
+          url: "/client/reports/simple",
         },
         {
           name: "Vendas filtradas por data",
-          url: "/admin/reports/by-date",
+          url: "/client/reports/by-date",
           minPlan: "TSUNAMI",
         },
         {
           name: "Controle de Acesso",
-          url: "/admin/reports/access-control",
+          url: "/client/reports/access-control",
           minPlan: "SMART_PRO",
         },
         {
           name: "Controle de Estoque",
-          url: "/admin/reports/stock-control",
-          minPlan: "SMART_PRO",
-        },
-        {
-          name: "Controle de Vendas",
-          url: "/admin/reports/sales-control",
-          minPlan: "SMART_PRO",
-        },
-        {
-          name: "Fiscalidade",
-          url: "/admin/reports/fiscal",
+          url: "/client/reports/stock-control",
           minPlan: "SMART_PRO",
         },
       ],
@@ -216,193 +203,5 @@ export const menuItems: MenuStructure = {
       roles: ["OWNER"],
       minPlan: "SMART_PRO",
     },
-
-    // Configurações gerais
-    {
-      name: "Definições",
-      url: "/settings",
-      icon: <Icon name="Settings2" />,
-      roles: ["ADMIN"],
-      minPlan: "BASE",
-      items: [
-        { name: "Geral", url: "/settings/general" },
-        { name: "Exportação", url: "/settings/export" },
-      ],
-    },
   ],
 };
-/* // src/constants/menu-items.ts
-import { Icon } from "@/components";
-import { icons } from "lucide-react";
-import { Role, Plan } from "@/types"; // enums que definem roles e planos
-
-type SubMenuItem = {
-  name: string;
-  url: string;
-  roles?: Role[];
-  minPlan?: Plan;
-};
-
-export type MenuItem = {
-  name: string;
-  url: string;
-  icon?: React.ReactNode;
-  roles?: Role[];
-  minPlan?: Plan;
-  showMoreIcon?: boolean;
-  items?: SubMenuItem[];
-};
-
-type Team = {
-  name: string;
-  logo: keyof typeof icons;
-  plan: string;
-};
-
-export type MenuStructure = {
-  teams: Team[];
-  menuItems: MenuItem[];
-};
-
-export const menuItems: MenuStructure = {
-  teams: [
-    { name: "Mindware, Lda", logo: "GalleryVerticalEnd", plan: "Empresa" },
-    { name: "Mindware Studio", logo: "AudioWaveform", plan: "Startup" },
-    { name: "MindSchool", logo: "University", plan: "Free" },
-  ],
-  menuItems: [
-    {
-      name: "Dashboard",
-      url: "/admin/dashboard",
-      icon: <Icon name="LayoutDashboard" />,
-      roles: ["ADMIN", "MANAGER", "OWNER"],
-      minPlan: "BASE",
-    },
-    {
-      name: "POS",
-      url: "/mindgest/pos",
-      icon: <Icon name="Monitor" />,
-      roles: ["ADMIN", "CASHIER"],
-      minPlan: "BASE",
-      items: [
-        { name: "Novo ponto de Venda", url: "/mindgest/pos/new" },
-        { name: "Movimentos de Caixa", url: "/mindgest/pos/moviments-box" },
-        { name: "Configurações", url: "/mindgest/pos/settings", roles: ["ADMIN"] },
-      ],
-    },
-  ],
-};
- */
-
-/* import { Icon } from "@/components";
-import { icons } from "lucide-react";
-import { ReactNode } from "react";
-
-type SubMenuItem = {
-  name: string;
-  url: string;
-};
-
-type MenuItem = {
-  name: string;
-  url: string;
-  icon: ReactNode;
-  showMoreIcon?: boolean;
-  items?: SubMenuItem[];
-};
-
-type Team = {
-  name: string;
-  logo: keyof typeof icons;
-  plan: string;
-};
-
-type MenuStructure = {
-  teams: Team[];
-  menuItems: MenuItem[];
-};
-
-export const menuItems: MenuStructure = {
-  teams: [
-    {
-      name: "Mindware, Lda",
-      logo: "GalleryVerticalEnd",
-      plan: "Empresa",
-    },
-    {
-      name: "Mindware Studio",
-      logo: "AudioWaveform",
-      plan: "Startup",
-    },
-    {
-      name: "MindSchool",
-      logo: "University",
-      plan: "Free",
-    },
-  ],
-  menuItems: [
-    {
-      name: "Dashboard",
-      url: "/admin/dashboard",
-      icon: <Icon name="LayoutDashboard" />,
-    },
-    {
-      name: "Documentos",
-      url: "#",
-      icon: <Icon name="ScrollText" />,
-      items: [
-        { name: "Faturação", url: "/admin/doc-management/billing" },
-        { name: "Outros", url: "/admin/doc-management/other" },
-      ],
-    },
-    {
-      name: "Relatórios",
-      url: "#",
-      icon: <Icon name="MessageSquareWarning" />,
-      items: [
-        { name: "Controle de Acesso", url: "#" },
-        { name: "Controle de Stock", url: "#" },
-        { name: "Controle de Vendas", url: "#" },
-        { name: "Fiscalidade", url: "#" },
-      ],
-    },
-    {
-      name: "Finanças",
-      url: "/money",
-      icon: <Icon name="Activity" />,
-      showMoreIcon: true,
-    },
-    {
-      name: "Recursos Humanos",
-      url: "/human-resources",
-      icon: <Icon name="Dessert" />,
-      showMoreIcon: true,
-    },
-    {
-      name: "GestAI",
-      url: "/mindgest/gestai",
-      icon: <Icon name="Bot" />,
-      showMoreIcon: true,
-    },
-    {
-      name: "POS",
-      url: "/mindgest/pos",
-      icon: <Icon name="Monitor" />,
-      items: [
-        { name: "Novo ponto de Venda", url: "/new" },
-        { name: "Movimentos de Caixa", url: "/moviments-box" },
-        { name: "Configurações", url: "/pos/settings" },
-      ],
-    },
-    {
-      name: "Definições",
-      url: "/settings",
-      icon: <Icon name="Settings2" />,
-      items: [
-        { name: "Geral", url: "/admin/definitions/general" },
-        { name: "Exportação", url: "/admin/definitions/export" },
-      ],
-    },
-  ],
-};
- */
