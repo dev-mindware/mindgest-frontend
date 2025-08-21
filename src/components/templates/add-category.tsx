@@ -50,7 +50,7 @@ export function AddCategory() {
       title="Adicionar Categoria"
       canClose
       className="!max-w-md !w-[90vw] md:!w-full"
-      custom={
+      >
         <div className="p-6 space-y-6 overflow-auto max-h-[80vh]">
           {/* Category Name */}
           <div className="space-y-2">
@@ -157,7 +157,6 @@ export function AddCategory() {
             </Button>
           </div>
         </div>
-      }
-    />
+        </GlobalModal>
   )
 }

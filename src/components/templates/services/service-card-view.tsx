@@ -51,7 +51,7 @@ export function ServiceCardView({ service }: ServiceCardProps) {
 
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">
-                  SKU - {service.sku}
+                {service.category}
                 </span>
                 <Badge
                   variant="secondary"
@@ -96,15 +96,9 @@ export function ServiceCardView({ service }: ServiceCardProps) {
       <CardContent>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p className="mb-1 text-xs text-muted-foreground">Preço Inicial</p>
+          <p className="mb-1 text-xs text-muted-foreground">Preço do serviço</p>
           <p className="text-sm font-semibold text-foreground">
-            {formatPrice(service.retailPrice.min)}
-          </p>
-        </div>
-        <div>
-          <p className="mb-1 text-xs text-muted-foreground">Preço Final</p>
-          <p className="text-sm font-semibold text-foreground">
-            {formatPrice(service.wholesalePrice.max)}
+            {formatPrice(service.price)}
           </p>
         </div>
       </div>

@@ -32,7 +32,6 @@ export function ServiceTableView({ services, onAddToOrder }: ServiceTableProps) 
       <TableHeader>
         <TableRow>
           <TableHead>Produto</TableHead>
-          <TableHead>SKU</TableHead>
           <TableHead>Categoria</TableHead>
           <TableHead>Preço</TableHead>
           <TableHead>Status</TableHead>
@@ -43,11 +42,9 @@ export function ServiceTableView({ services, onAddToOrder }: ServiceTableProps) 
         {services.map((service) => (
           <TableRow key={service.id}>
             <TableCell className="font-medium">{service.title}</TableCell>
-            <TableCell>{service.sku}</TableCell>
             <TableCell>{service.category}</TableCell>
             <TableCell>
-              {formatPrice(service.wholesalePrice.min)} -{" "}
-              {formatPrice(service.wholesalePrice.max)}
+              {formatPrice(service.price)}
             </TableCell>
             
             <TableCell>
@@ -73,7 +70,7 @@ export function ServiceTableView({ services, onAddToOrder }: ServiceTableProps) 
                       onAddToOrder({
                         id: service.id,
                         title: service.title,
-                        price: service.retailPrice.min,
+                        price: service.price,
                         quantity: 1,
                       })
                     }

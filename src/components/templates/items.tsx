@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { AddProduct, DinamicBreadcrumb, Separator, SidebarTrigger, Tabs, TabsList, TabsTrigger, TabsContent, ProductList, Button, ServiceList } from "@/components";
+import { AddProduct, AddService, DinamicBreadcrumb, Separator, SidebarTrigger, Tabs, TabsList, TabsTrigger, TabsContent, ProductList, Button, ServiceList } from "@/components";
 import { useModal } from "@/stores";
 export function Items() {
   const { openModal } = useModal();
@@ -48,7 +48,6 @@ export function Items() {
                     <div className="flex justify-end mb-4">
                       <Button
                         onClick={() => openModal("add-product")}
-                        className="hidden md:block"
                       >
                         Novo Produto
                       </Button>
@@ -65,7 +64,11 @@ export function Items() {
                     </p>
                     <Separator className="my-4" />
                     <div className="flex justify-end mb-4">
-                      <Button>Novo Serviço</Button>
+                      <Button
+                        onClick={() => openModal("add-service")}
+                      >
+                        Novo Serviço
+                      </Button>
                     </div>
                     <ServiceList />
                   </TabsContent>
@@ -76,6 +79,7 @@ export function Items() {
         </div>
       </div>
       <AddProduct />
+      <AddService />
     </div>
   )
 }

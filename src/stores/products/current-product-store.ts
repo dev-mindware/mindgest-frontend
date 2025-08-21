@@ -1,9 +1,9 @@
-import { ProductCard } from "@/types";
+import { Product } from "@/types";
 import { create } from "zustand";
 
 interface ProductStore {
-  currentProduct: ProductCard | undefined,
-  setCurrentProduct: (product: ProductCard) => void
+  currentProduct: Product | undefined,
+  setCurrentProduct: (product: Product) => void
 }
 
 export const currentProductStore = create<ProductStore>((set) => ({

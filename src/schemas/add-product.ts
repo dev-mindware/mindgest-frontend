@@ -5,7 +5,6 @@ export const addProductSchema = z.object({
   selectedCategory: z.string().nonempty("Campo obrigatório"),
   sku: z.string().nonempty("Campo obrigatório"),
   price: z.coerce.number().min(0, "Preço deve ser maior ou igual a 0"),
-
   selectedMeasurement: z.string().optional(),
   supplier: z.string().optional(),
   location: z.string().optional(),

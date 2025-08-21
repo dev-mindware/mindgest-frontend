@@ -34,7 +34,7 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
           <TableHead>Produto</TableHead>
           <TableHead>SKU</TableHead>
           <TableHead>Categoria</TableHead>
-          <TableHead>Varianção de Preço</TableHead>
+          <TableHead>Preço</TableHead>
           <TableHead>Stock</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Ações</TableHead>
@@ -47,8 +47,7 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
             <TableCell>{product.sku}</TableCell>
             <TableCell>{product.category}</TableCell>
             <TableCell>
-              {formatPrice(product.retailPrice.min)} -{" "}
-              {formatPrice(product.retailPrice.max)}
+              {formatPrice(product.price)}
             </TableCell>
             <TableCell>{product.stock}</TableCell>
             <TableCell>
@@ -74,7 +73,7 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
                       onAddToOrder({
                         id: product.id,
                         title: product.title,
-                        price: product.retailPrice.min,
+                        price: product.price,
                         quantity: 1,
                       })
                     }

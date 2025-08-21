@@ -16,7 +16,7 @@ import { useState } from "react";
 import DatePickerInput from "@/components/custom/date-picker-input";
 import { currentProductStore } from "@/stores";
 
-export function EditProduct() {
+export function EditService() {
   const { currentProduct } = currentProductStore();
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");

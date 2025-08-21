@@ -9,3 +9,4 @@ export * from "./stock-managment";
 export * from "./dashboards";
 export * from "./items";
 export * from "./services"
+export * from "./add-category";

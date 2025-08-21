@@ -60,7 +60,7 @@ export function ProductCardView({ product }: ProductCardProps) {
                 variant="ghost"
                 className="rounded-full shadow-none"
               >
-                <Icon name="Ellipsis" size={16} />
+                <Icon name="Settings2" size={16} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -96,15 +96,9 @@ export function ProductCardView({ product }: ProductCardProps) {
         </TsunamiOnly>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="mb-1 text-xs text-muted-foreground">Preço Inicial</p>
+            <p className="mb-1 text-xs text-muted-foreground">Preço do produto</p>
             <p className="text-sm font-semibold text-foreground">
-              {formatPrice(product.retailPrice.min)}
-            </p>
-          </div>
-          <div>
-            <p className="mb-1 text-xs text-muted-foreground">Preço Final</p>
-            <p className="text-sm font-semibold text-foreground">
-              {formatPrice(product.wholesalePrice.max)}
+              {formatPrice(product.price)}
             </p>
           </div>
         </div>

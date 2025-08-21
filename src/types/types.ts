@@ -1,3 +1,4 @@
+
 export interface Cashier {
   id: number;
   name: string;
@@ -32,14 +33,7 @@ export interface Product {
   sku: string;
   category: string;
   subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
+  price: number;
   stock: number;
   location: string;
   variants: number;
@@ -49,21 +43,10 @@ export interface Product {
 export interface Service {
   id: string;
   title: string;
-  sku: string;
   category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
-  stock: number;
-  location: string;
-  variants: number;
+  price: number;
   isActive: boolean;
+  description?: string;
 }
 
 export interface OrderItem {
@@ -74,46 +57,6 @@ export interface OrderItem {
 }
 
 export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"
-
-export interface ProductCard {
-  id: string;
-  title: string;
-  sku: string;
-  category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
-  stock: number;
-  location: string;
-  variants: number;
-  isActive: boolean;
-}
-
-export interface ServiceCard {
-  id: string;
-  title: string;
-  sku: string;
-  category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
-  stock: number;
-  location: string;
-  variants: number;
-  isActive: boolean;
-}
 
 export interface OrderItem {
   id: string;

@@ -12,13 +12,14 @@ import {
   Input,
   TsunamiOnly,
   RHFSelect,
+  AddCategory
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
-import { AddCategory } from "./add-category";
 import { AddProductFormData, addProductSchema } from "@/schemas";
 
 export function AddProduct() {
   const { openModal } = useModal();
+  const { closeModal } = useModal();
 
   const {
     register,
@@ -46,6 +47,15 @@ export function AddProduct() {
       id="add-product"
       title="Adicionar Produto"
       className="!max-h-[85vh] !w-max"
+      canClose
+      footer={
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" onClick={() => closeModal("add-product")}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit(onSubmit)}>Salvar</Button>
+        </div>
+      }
     >
       <div className="flex justify-end">
         <Button
@@ -243,11 +253,6 @@ export function AddProduct() {
                 />
               </div>
             </TsunamiOnly>
-          </div>
-
-          <div className="flex items-center justify-end gap-4 mt-4">
-            <Button variant="outline">Cancelar</Button>
-            <Button type="submit">Salvar</Button>
           </div>
         </div>
       </form>
