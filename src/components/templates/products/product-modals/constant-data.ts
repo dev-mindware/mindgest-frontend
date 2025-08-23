@@ -11,3 +11,9 @@ export const category = [
   { label: "Alimentos", value: "alc"},
   { label: "Cosméticos", value: "cosm"}
 ]
+
+export const status = [
+  { label: "Pendente", value: "Pendente"},
+  { label: "Esgotado", value: "Esgotado"},
+  { label: "Disponível", value: "Disponível"}
+]

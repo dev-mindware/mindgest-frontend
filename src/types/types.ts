@@ -29,15 +29,22 @@ export interface CashOpeningFormProps {
 
 export interface Product {
   id: string;
-  title: string;
-  sku: string;
+  name: string;
   category: string;
-  subcategory: string;
+  sku: string;
   price: number;
+  measurement?: string;
   stock: number;
-  location: string;
-  variants: number;
-  isActive: boolean;
+  minstock?: number;
+  supplier?: string;
+  location?: string;
+  expirydate?: Date;
+  tax?: number;
+  warranty?: number;
+  status?: "Disponível" | "Pendente" | "Esgotado";
+  salesperday?: number;
+  repositiontime?: number;
+  description?: string;
 }
 
 export interface Service {

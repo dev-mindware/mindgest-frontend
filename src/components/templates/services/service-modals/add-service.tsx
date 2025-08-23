@@ -39,12 +39,18 @@ export function AddService() {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = useForm<AddServiceFormData>({
     resolver: zodResolver(addServiceSchema),
   });
 
   const onSubmit = (data: AddServiceFormData) => {
     alert(JSON.stringify(data, null, 2));
+  };
+  
+  const handleCancel = () => {
+    reset();
+    closeModal("add-service");
   };
 
   return (
@@ -55,7 +61,7 @@ export function AddService() {
       canClose
       footer={
         <div className="flex justify-end gap-4">
-          <Button variant="outline" onClick={() => closeModal("add-service")}>
+          <Button variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
           <Button onClick={handleSubmit(onSubmit)}>Salvar</Button>

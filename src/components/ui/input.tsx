@@ -24,7 +24,7 @@ type InputProps = {
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, error, startIcon, endIcon, className, type = "text", ...props },
+    { label, error, startIcon, endIcon, className, type = "text", onChange, value, name, ...props },
     ref
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -32,9 +32,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const isQuantidade = type === "quantity";
     const isDate = type === "date";
 
-    const [quantity, setQuantidade] = React.useState<number>(
-      Number(props.defaultValue) || 0
+    const [quantity, setQuantity] = React.useState<number>(
+      Number(value ?? props.defaultValue) || 0
     );
+
+    // Mantém sincronizado com RHF
+    React.useEffect(() => {
+      if (typeof value !== "undefined") {
+        setQuantity(Number(value));
+      }
+    }, [value]);
 
     const inputType = isPassword
       ? showPassword
@@ -46,12 +53,27 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ? "date"
       : type;
 
+    const propagateChange = (newValue: number) => {
+      setQuantity(newValue);
+      if (onChange && name) {
+        const syntheticEvent = {
+          target: { name, value: newValue },
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+        onChange(syntheticEvent);
+      }
+    };
+
     const handleDecrement = () => {
-      setQuantidade((prev) => Math.max(0, prev - 1));
+      propagateChange(Math.max(0, quantity - 1));
     };
 
     const handleIncrement = () => {
-      setQuantidade((prev) => prev + 1);
+      propagateChange(quantity + 1);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = Number(e.target.value);
+      propagateChange(isNaN(newValue) ? 0 : newValue);
     };
 
     return (
@@ -83,13 +105,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             >
               <input
                 ref={ref}
+                name={name}
                 type="number"
                 inputMode="numeric"
                 min={0}
                 max={999999}
                 step={1}
                 value={quantity}
-                onChange={(e) => setQuantidade(Number(e.target.value))}
+                onChange={handleChange}
                 className={cn(
                   "w-full bg-transparent placeholder:text-muted-foreground text-foreground outline-none text-center",
                   "disabled:cursor-not-allowed disabled:opacity-50",
@@ -127,6 +150,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <input
               ref={ref}
               type={inputType}
+              name={name}
+              value={value}
+              onChange={onChange}
               className={cn(
                 "flex-1 bg-transparent placeholder:text-muted-foreground text-foreground outline-none text-left",
                 "disabled:cursor-not-allowed disabled:opacity-50"

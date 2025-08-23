@@ -1,429 +1,318 @@
 "use client";
+
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { measurement, category, status } from "./constant-data";
+import { currentProductStore } from "@/stores";
 import {
   Button,
   GlobalModal,
-  Icon,
   Textarea,
   Label,
   Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  TsunamiOnly,
+  RHFSelect,
+  AddCategory
 } from "@/components";
-import { useState } from "react";
-import DatePickerInput from "@/components/custom/date-picker-input";
-import { currentProductStore } from "@/stores";
+import { useModal } from "@/stores/use-modal-store";
+import { AddProductFormData, addProductSchema } from "@/schemas";
+import { useEffect } from "react";
 
+
+function parseCurrency(value: string): number {
+  const numericValue = value.replace(/\D/g, "");
+  return numericValue ? parseFloat(numericValue) / 100 : 0;
+}
+
+function formatCurrency(value: string | number): string {
+  if (!value) return "";
+  const number = typeof value === "number" ? value : parseCurrency(value.toString());
+  return new Intl.NumberFormat("pt-BR", {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number);
+}
 export function EditProduct() {
+  const { openModal, closeModal } = useModal();
   const { currentProduct } = currentProductStore();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm<AddProductFormData>({
+    resolver: zodResolver(addProductSchema),
+    defaultValues: {
+      stock: 1,
+      minStock: null,
+      warranty: null,
+      selectedStatus: "Disponível",
+      repositionTime: null,
+      salesPerDay: null,
+      tax: null,
+      price: 0,
+      expiryDate: null,
+    },
+  });
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedMeasurement, setSelectedMeasurement] = useState<string>("");
-  const [stockInitial, setStockInitial] = useState<number>(0);
-  const [stockMinimum, setStockMinimum] = useState<number>(0);
-  const [warranty, setWarranty] = useState<number>(0);
-  const [restockTime, setRestockTime] = useState<number>(0);
-  const [dailySales, setDailySales] = useState<number>(0);
+
+ useEffect(() => {
+    if (currentProduct) {
+      reset({
+        ...currentProduct,
+        price: currentProduct.price ?? 0,
+        expiryDate: currentProduct.expirydate
+          ? new Date(currentProduct.expirydate)
+          : null,
+        selectedCategory: currentProduct.category ?? "",
+        selectedMeasurement: currentProduct.measurement ?? "",
+        selectedStatus: currentProduct.status ?? "Disponível",
+      });
+    }
+  }, [currentProduct, reset]);
+
+  const onSubmit: SubmitHandler<AddProductFormData> = (data) => {
+    alert(JSON.stringify(data, null, 2));
+  };
+
+  const handleCancel = () => {
+    reset();
+    closeModal("edit-product");
+  };
 
   return (
     <GlobalModal
-      canClose
       id="edit-product"
       title="Editar Produto"
-      className="lg:!max-w-7xl md:!max-w-3xl"
-      custom={
-        <div className="max-h-[80vh] overflow-auto">
-          <div className="grid gap-6 mt-5 md:grid-cols-1 lg:grid-cols-2">
-            {/* <div className="space-y-6">
-              <div className="rounded-lg bg-sidebar">
-                <div className="lg:p-6">
-                  <h3 className="mb-4 font-semibold">Imagem do Produto</h3>
-
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <Label htmlFor="image-tag">Tag</Label>
-                      <Input
-                        id="image-tag"
-                        placeholder="Escreva algo que representa a imagem..."
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label>Imagem</Label>
-                      <div className="mt-2">
-                        {productImage ? (
-                          <div>
-                            <Image
-                              src={productImage}
-                              alt="Product"
-                              width={300}
-                              height={192}
-                              className="object-cover w-full h-48 rounded-lg"
-                            />
-                            <div className="absolute flex gap-2 bottom-2 left-2 right-2">
-                              <Button
-                                variant="secondary"
-                                size="sm"
-                                onClick={() =>
-                                  document
-                                    .getElementById("image-upload")
-                                    ?.click()
-                                }
-                              >
-                                Substituir
-                              </Button>
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={removeImage}
-                              >
-                                Eliminar
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center h-48 border-2 border-dashed rounded-lg border-muted-foreground md:w-full bg-sidebar sm:w-25">
-                            <div className="text-center">
-                              <Icon
-                                name="Upload"
-                                className="w-8 h-8 mx-auto mb-2 text-gray-400"
-                              />
-                              <p className="text-sm text-gray-500">
-                                Clique para carregar imagem
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                        <Input
-                          id="image-upload"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageUpload}
-                        />
-                      </div>
-
-                      <Button
-                        variant="outline"
-                        className="w-full mt-2"
-                        onClick={() =>
-                          document.getElementById("image-upload")?.click()
-                        }
-                      >
-                        <Icon name="Upload" className="w-4 h-4 mr-2" />
-                        Adicionar Imagem
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-sidebar">
-                <div className="p-6">
-                  <h3 className="mb-4 font-semibold">Código de Barras</h3>
-
-                  <div className="flex justify-center mb-4">
-                    <div className="flex space-x-1">
-                      {[...Array(5)].map((_, i) => (
-                        <div key={i} className="w-4 h-16 bg-black"></div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1">
-                      Adicionar Novo
-                    </Button>
-                    <Button variant="secondary" className="flex-1">
-                      Selecionar código existente
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-
-            <div>
-              <div>
-                <div className="p-6 rounded-lg bg-sidebar">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold">Informação Geral</h3>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <Label htmlFor="product-name">Nome do Produto</Label>
-                        <Input
-                          id="product-name"
-                          placeholder="Escreva aqui..."
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="product-sku">
-                          SKU ou ID do Produto
-                        </Label>
-                        <Input
-                          id="product-sku"
-                          placeholder="Escreva aqui..."
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <Label htmlFor="category">Categoria</Label>
-                        <Select
-                          value={selectedCategory}
-                          onValueChange={setSelectedCategory}
-                        >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="bebidas">Bebidas</SelectItem>
-                            <SelectItem value="alimentos">Alimentos</SelectItem>
-                            <SelectItem value="limpeza">Limpeza</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="measurement">Tipo de Medida</Label>
-                        <Select
-                          value={selectedMeasurement}
-                          onValueChange={setSelectedMeasurement}
-                        >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="unidade">Unidade</SelectItem>
-                            <SelectItem value="kg">Quilograma</SelectItem>
-                            <SelectItem value="litro">Litro</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <Label htmlFor="supplier">Fornecedor Padrão</Label>
-                        <Input
-                          id="supplier"
-                          placeholder="Escreva aqui..."
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="location">
-                          Armazém ou Localização Física
-                        </Label>
-                        <Input
-                          id="location"
-                          placeholder="Escreva aqui..."
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-3">
-                      <div>
-                        <Label htmlFor="price">Preço de Venda</Label>
-                        <div className="relative mt-1">
-                          <Input id="price" placeholder="0" />
-                          <span className="absolute text-sm text-gray-500 transform -translate-y-1/2 right-3 top-1/2">
-                            Kz
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="stock-initial">Stock Inicial</Label>
-                        <div className="flex items-center mt-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setStockInitial(Math.max(0, stockInitial - 1))
-                            }
-                          >
-                            <Icon name="Minus" className="w-4 h-4" />
-                          </Button>
-                          <Input
-                            value={stockInitial}
-                            onChange={(e) =>
-                              setStockInitial(parseInt(e.target.value) || 0)
-                            }
-                            className="mx-2 text-center"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setStockInitial(stockInitial + 1)}
-                          >
-                            <Icon name="Plus" className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="stock-minimum">Stock Mínimo</Label>
-                        <div className="flex items-center mt-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setStockMinimum(Math.max(0, stockMinimum - 1))
-                            }
-                          >
-                            <Icon name="Minus" className="w-4 h-4" />
-                          </Button>
-                          <Input
-                            value={stockMinimum}
-                            onChange={(e) =>
-                              setStockMinimum(parseInt(e.target.value) || 0)
-                            }
-                            className="mx-2 text-center"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setStockMinimum(stockMinimum + 1)}
-                          >
-                            <Icon name="Plus" className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-3">
-                      <div>
-                        <Label htmlFor="expiry-date">Data de Expiração</Label>
-                        <div className="relative mt-1">
-                          <DatePickerInput id="expiry-date" />
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="tax">Imposto (IVA)</Label>
-                        <div className="relative mt-1">
-                          <Input id="tax" placeholder="0" />
-                          <span className="absolute text-sm text-gray-500 transform -translate-y-1/2 right-3 top-1/2">
-                            %
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="warranty">Garantia</Label>
-                        <div className="flex items-center mt-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setWarranty(Math.max(0, warranty - 1))
-                            }
-                          >
-                            <Icon name="Minus" className="w-4 h-4" />
-                          </Button>
-                          <Input
-                            value={warranty}
-                            onChange={(e) =>
-                              setWarranty(parseInt(e.target.value) || 0)
-                            }
-                            className="mx-2 text-center"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setWarranty(warranty + 1)}
-                          >
-                            <Icon name="Plus" className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <Label htmlFor="restock-time">
-                          Tempo Médio de Reposição
-                        </Label>
-                        <div className="flex items-center mt-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setRestockTime(Math.max(0, restockTime - 1))
-                            }
-                          >
-                            <Icon name="Minus" className="w-4 h-4" />
-                          </Button>
-                          <Input
-                            value={restockTime}
-                            onChange={(e) =>
-                              setRestockTime(parseInt(e.target.value) || 0)
-                            }
-                            className="mx-2 text-center"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setRestockTime(restockTime + 1)}
-                          >
-                            <Icon name="Plus" className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="daily-sales">Venda Por Dia</Label>
-                        <div className="flex items-center mt-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setDailySales(Math.max(0, dailySales - 1))
-                            }
-                          >
-                            <Icon name="Minus" className="w-4 h-4" />
-                          </Button>
-                          <Input
-                            value={dailySales}
-                            onChange={(e) =>
-                              setDailySales(parseInt(e.target.value) || 0)
-                            }
-                            className="mx-2 text-center"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setDailySales(dailySales + 1)}
-                          >
-                            <Icon name="Plus" className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="description">Descrição</Label>
-                      <Textarea
-                        id="description"
-                        placeholder="Text"
-                        className="mt-1 min-h-[100px]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-end gap-4 p-6 mt-4">
-                <Button>Salvar</Button>
-              </div>
-              <code>{JSON.stringify(currentProduct, null, 2)}</code>
-            </div>
-          </div>
+      className="!max-h-[85vh] !w-max"
+      canClose
+      footer={
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit(onSubmit)}>Salvar</Button>
         </div>
       }
-    />
+    >
+      <div className="flex justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => openModal("category")}
+        >
+          Adicionar Categoria
+        </Button>
+      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
+      >
+        {/* Coluna da esquerda */}
+        <TsunamiOnly>
+          <div className="space-y-6">
+            {/* Código de barras */}
+            <div className="rounded-lg bg-sidebar">
+              <div className="p-6">
+                <h3 className="mb-4 font-semibold">Código de Barras</h3>
+                <div className="flex justify-center mb-4">
+                  <div className="flex space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-4 h-16 bg-black"></div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1">
+                    Adicionar Novo
+                  </Button>
+                  <Button variant="secondary" className="flex-1">
+                    Selecionar código existente
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TsunamiOnly>
+
+        {/* Coluna da direita */}
+        <div className="">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Informação Geral</h3>
+          </div>
+          <div className="space-y-4 sm:w-[35rem]">
+            {/* Nome e SKU */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Input
+                className="mt-1"
+                id="product-name"
+                {...register("name")}
+                startIcon="User"
+                label="Nome do Produto"
+                placeholder="Escreva aqui..."
+                error={errors.name?.message}
+              />
+              <Input
+                id="product-sku"
+                className="mt-1"
+                startIcon="IdCard"
+                {...register("sku")}
+                error={errors.sku?.message}
+                label="SKU ou ID do Produto"
+                placeholder="Escreva aqui..."
+              />
+            </div>
+
+            {/* Categoria e Medida */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <RHFSelect
+                name="selectedCategory"
+                options={category}
+                control={control}
+                label="Categoria"
+              />
+              <Controller
+                control={control}
+                name="price"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    id="price"
+                    type="text"
+                    startIcon="Coins"
+                    label="Preço de Venda"
+                    error={errors.price?.message}
+                    value={formatCurrency(value)}
+                    onChange={(e) => {
+                      const rawNumber = parseCurrency(e.target.value);
+                      onChange(rawNumber);
+                    }}
+                  />
+                )}
+              />
+            </div>
+
+            {/* Fornecedor, Localização, Preço, Estoque */}
+             <TsunamiOnly className="space-y-4"> 
+              <div className="grid gap-4 md:grid-cols-2">
+                <Input
+                  id="supplier"
+                  className="mt-1"
+                  startIcon="Truck"
+                  {...register("supplier")}
+                  label="Fornecedor Padrão"
+                  placeholder="Escreva aqui..."
+                  error={errors.supplier?.message}
+                />
+                <Input
+                  id="location"
+                  className="mt-1"
+                  startIcon="MapPin"
+                  {...register("location")}
+                  placeholder="Escreva aqui..."
+                  error={errors.location?.message}
+                  label="Armazém ou Localização Física"
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <Input
+                  type="quantity"
+                  id="daily-sales"
+                  label="Venda Por Dia"
+                  className="text-center"
+                  error={errors.salesPerDay?.message}
+                  {...register("salesPerDay", { valueAsNumber: true })}
+                />
+                <Input
+                  type="quantity"
+                  id="stock-initial"
+                  label="Stock Inicial"
+                  className="text-center"
+                  error={errors.stock?.message}
+                  {...register("stock", { valueAsNumber: true })}
+                />
+                <Input
+                  type="quantity"
+                  id="stock-minimum"
+                  label="Stock Mínimo"
+                  className="text-center"
+                  error={errors.minStock?.message}
+                  {...register("minStock", { valueAsNumber: true })}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <Input
+                  type="date"
+                  id="expiration-date"
+                  label="Data de Validade"
+                  className="text-center"
+                  {...register("expiryDate", { valueAsDate: true })}
+                  error={errors.expiryDate?.message}
+                />
+                <div>
+                  <div className="relative mt-1">
+                    <Input
+                      type="quantity"
+                      id="restock-time"
+                      className="text-center"
+                      label="Tempo Médio de Reposição"
+                      error={errors.repositionTime?.message}
+                      {...register("repositionTime", { valueAsNumber: true })}
+                    />
+                  </div>
+                </div>
+                <Input
+                  id="warranty"
+                  type="quantity"
+                  label="Garantia"
+                  className="text-center"
+                  error={errors.warranty?.message}
+                  {...register("warranty", { valueAsNumber: true })}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <Input
+                  id="tax"
+                  type="number"
+                  label="Imposto"
+                  placeholder="0.00"
+                  startIcon="Percent"
+                  error={errors.tax?.message}
+                  {...register("tax", { valueAsNumber: true })}
+                />
+                <RHFSelect
+                  name="selectedMeasurement"
+                  options={measurement}
+                  control={control}
+                  label="Tipo de Medida"
+                />
+                <RHFSelect
+                  name="selectedStatus"
+                  options={status}
+                  control={control}
+                  label="Estado do Produto"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Text"
+                  className="mt-1 min-h-[100px]"
+                  {...register("description")}
+                />
+              </div>
+             </TsunamiOnly> 
+          </div>
+        </div>
+      </form>
+      <AddCategory />
+    </GlobalModal>
   );
 }

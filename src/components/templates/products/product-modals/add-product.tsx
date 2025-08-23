@@ -1,8 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { measurement, category } from "./constant-data";
+import { measurement, category, status } from "./constant-data";
 
 import {
   Button,
@@ -17,6 +17,20 @@ import {
 import { useModal } from "@/stores/use-modal-store";
 import { AddProductFormData, addProductSchema } from "@/schemas";
 
+function parseCurrency(value: string): number {
+  const numericValue = value.replace(/\D/g, "");
+  return numericValue ? parseFloat(numericValue) / 100 : 0;
+}
+
+function formatCurrency(value: string | number): string {
+  if (!value) return "";
+  const number = typeof value === "number" ? value : parseCurrency(value.toString());
+  return new Intl.NumberFormat("pt-BR", {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number);
+}
 export function AddProduct() {
   const { openModal } = useModal();
   const { closeModal } = useModal();
@@ -26,20 +40,30 @@ export function AddProduct() {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = useForm<AddProductFormData>({
     resolver: zodResolver(addProductSchema),
     defaultValues: {
-      initialStock: 1,
-      minStock: 0,
-      warranty: 0,
-      repositionTime: 0,
-      salesPerDay: 0,
-      tax: 0,
+      stock: 1,
+      minStock: null,
+      warranty: null,
+      selectedStatus: "Disponível",
+      repositionTime: null,
+      salesPerDay: null,
+      tax: null,
+      price: 0,
+      expiryDate: null,
     },
   });
 
-  const onSubmit = (data: AddProductFormData) => {
+
+  const onSubmit: SubmitHandler<AddProductFormData> = (data) => {
     alert(JSON.stringify(data, null, 2));
+  };
+
+  const handleCancel = () => {
+    reset();
+    closeModal("add-product");
   };
 
   return (
@@ -50,7 +74,7 @@ export function AddProduct() {
       canClose
       footer={
         <div className="flex justify-end gap-4">
-          <Button variant="outline" onClick={() => closeModal("add-product")}>
+          <Button variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
           <Button onClick={handleSubmit(onSubmit)}>Salvar</Button>
@@ -134,13 +158,23 @@ export function AddProduct() {
                 control={control}
                 label="Categoria"
               />
-              <Input
-                id="price"
-                type="number"
-                startIcon="Coins"
-                label="Preço de Venda"
-                error={errors.price?.message}
-                {...register("price", { valueAsNumber: true })}
+              <Controller
+                control={control}
+                name="price"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    id="price"
+                    type="text"
+                    startIcon="Coins"
+                    label="Preço de Venda"
+                    error={errors.price?.message}
+                    value={formatCurrency(value)}
+                    onChange={(e) => {
+                      const rawNumber = parseCurrency(e.target.value);
+                      onChange(rawNumber);
+                    }}
+                  />
+                )}
               />
             </div>
 
@@ -181,8 +215,8 @@ export function AddProduct() {
                   id="stock-initial"
                   label="Stock Inicial"
                   className="text-center"
-                  error={errors.initialStock?.message}
-                  {...register("initialStock", { valueAsNumber: true })}
+                  error={errors.stock?.message}
+                  {...register("stock", { valueAsNumber: true })}
                 />
                 <Input
                   type="quantity"
@@ -200,7 +234,7 @@ export function AddProduct() {
                   id="expiration-date"
                   label="Data de Validade"
                   className="text-center"
-                  {...register("expiryDate")}
+                  {...register("expiryDate", { valueAsDate: true })}
                   error={errors.expiryDate?.message}
                 />
                 <div>
@@ -225,7 +259,7 @@ export function AddProduct() {
                 />
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-3">
                 <Input
                   id="tax"
                   type="number"
@@ -240,6 +274,12 @@ export function AddProduct() {
                   options={measurement}
                   control={control}
                   label="Tipo de Medida"
+                />
+                <RHFSelect
+                  name="selectedStatus"
+                  options={status}
+                  control={control}
+                  label="Estado do Produto"
                 />
               </div>
 
