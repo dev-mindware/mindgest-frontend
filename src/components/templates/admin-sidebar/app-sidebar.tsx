@@ -8,17 +8,16 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarSkeleton,
 } from "@/components";
 import { adminMenu, menuItems } from "@/constants/menu-items";
 import { getSidebarForUser } from "@/lib/get-sidebar-for-user";
 import { useAuthStore } from "@/stores/auth";
 
-export function AdminAppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar() {
   const user = useAuthStore((state) => state.user);
 
-  if (!user) return null;
+  if (!user) return <SidebarSkeleton />;
 
   const filteredMenu =
     user.role === "ADMIN"
@@ -26,7 +25,7 @@ export function AdminAppSidebar({
       : getSidebarForUser(menuItems.menuItems, user.role, user.company.plan);
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <AdminTeamSwitcher teams={menuItems.teams} />
       </SidebarHeader>

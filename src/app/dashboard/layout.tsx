@@ -1,8 +1,7 @@
 import {
-  AdminAppSidebar,
+  AppSidebar,
   BreadcrumbProvider,
   SidebarInset,
-  SidebarProvider,
 } from "@/components";
 
 type Props = {
@@ -11,11 +10,12 @@ type Props = {
 
 export default function ManagementLayout({ children }: Props) {
   return (
-    <SidebarProvider>
-      <AdminAppSidebar />
+    <>
+      <AppSidebar />
+      <h1>ola eu sou o layout</h1>
       <SidebarInset>
         <BreadcrumbProvider>{children}</BreadcrumbProvider>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

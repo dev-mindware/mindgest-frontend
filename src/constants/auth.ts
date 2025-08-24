@@ -1,5 +1,1 @@
-export const TOKEN_COOKIE_KEY="_mg_t"
-export const REFRESH_TOKEN_COOKIE_KEY="_mg_refresh_t"
-export const PLAN_COOKIE_KEY="_mg_plan"
-export const ROLE_COOKIE_KEY="_mg_role"
 export const SESSION_COOKIE_KEY="_m_session"

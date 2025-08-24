@@ -13,6 +13,7 @@ import { CustomToaster } from "@/utils";
 import { SessionProvider } from "@/providers/session-provider";
 import { getSession } from "@/lib/auth";
 import { User } from "@/types";
+import { SidebarProvider } from "@/components";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -74,7 +75,7 @@ export default async function RootLayout({
         >
           <ReactQueryProvider>
             <SessionProvider user={user}>
-              {children}
+              <SidebarProvider>{children}</SidebarProvider>
             </SessionProvider>
             <CustomToaster />
           </ReactQueryProvider>

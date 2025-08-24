@@ -120,7 +120,7 @@ export const menuItems: MenuStructure = {
       minPlan: "BASE",
       items: [
         {
-          name: "Vendas simplificadas (mês/ano)",
+          name: "Vendas simplificadas",
           url: "/client/reports/simple",
         },
         {

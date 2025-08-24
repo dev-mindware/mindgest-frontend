@@ -11,7 +11,7 @@ import { useAuthStore } from "@/stores/auth";
 import { loginAction } from "@/app/actions/login";
 
 export function LoginForm() {
-  const { setUser, setAccessToken } = useAuthStore();
+  const { setUser } = useAuthStore();
   const {
     register,
     handleSubmit,

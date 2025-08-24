@@ -1,9 +1,4 @@
-import {
-  AdminAppSidebar,
-  BreadcrumbProvider,
-  SidebarInset,
-  SidebarProvider,
-} from "@/components";
+import { AppSidebar, BreadcrumbProvider, SidebarInset } from "@/components";
 
 type Props = {
   children: React.ReactNode;
@@ -11,11 +6,11 @@ type Props = {
 
 export default function ClientLayout({ children }: Props) {
   return (
-    <SidebarProvider>
-      <AdminAppSidebar />
+    <>
+      <AppSidebar />
       <SidebarInset>
         <BreadcrumbProvider>{children}</BreadcrumbProvider>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }
