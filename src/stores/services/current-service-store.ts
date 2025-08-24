@@ -1,9 +1,9 @@
-import { ServiceCard } from "@/types";
+import { Service } from "@/types";
 import { create } from "zustand";
 
 interface ServiceStore {
-  currentService: ServiceCard | undefined,
-  setCurrentService: (service: ServiceCard) => void
+  currentService: Service | undefined,
+  setCurrentService: (service: Service) => void
 }
 
 export const currentServiceStore = create<ServiceStore>((set) => ({

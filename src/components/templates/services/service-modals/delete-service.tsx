@@ -2,7 +2,7 @@ import { Button, GlobalModal } from "@/components";
 import { currentProductStore } from "@/stores";
 import { useModal } from "@/stores/use-modal-store";
 
-export function DeleteProduct() {
+export function DeleteService() {
   const { closeModal } = useModal();
   const { currentProduct } = currentProductStore();
 
@@ -11,7 +11,6 @@ export function DeleteProduct() {
       id="delete-product"
       title="Tem certeza que deseja apagar o produto?"
       description="Lembre-se que esta ação não pode ser desfeita."
-      className="!w-max "
       warning
       canClose
       footer={
@@ -22,16 +21,10 @@ export function DeleteProduct() {
           >
             Fechar
           </Button>
-          <Button
-            onClick={() => closeModal("delete-product")}
-            variant="destructive"
-          >
-            Apagar
-          </Button>
         </div>
       }
     >
-      <h1 className="text-center">{currentProduct?.name}</h1>
+      <pre>{JSON.stringify(currentProduct, null, 2)}</pre>
     </GlobalModal>
   );
 }

@@ -6,14 +6,14 @@ import {
   Button,
   Popover,
   Checkbox,
-  SeeProduct,
-  EditProduct,
-  DeleteProduct,
+  SeeService,
+  EditService,
+  DeleteService,
   PopoverContent,
   PopoverTrigger,
 } from "@/components";
 import { OrderItem, Service } from "@/types";
-import { initialProducts } from "../../../types/data";
+import { initialServices } from "@/types/data";
 import { ServiceCardView } from "./service-card-view"
 import { ServiceTableView } from "./service-table-view";
 
@@ -41,17 +41,16 @@ export function ServiceList({
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
 
   const itemsPerPage = viewMode === "card" ? 8 : 6;
-  const uniqueCategories = [...new Set(initialProducts.map((p) => p.category))];
+  const uniqueCategories = [...new Set(initialServices.map((p) => p.category))];
 
   useEffect(() => {
     setCurrentPage(1);
   }, [search, showActive, showInactive, categoryFilter, sortBy, viewMode]);
 
-  const filteredServices = initialProducts
+  const filteredServices = initialServices
     .filter((p: Service) => {
       const matchSearch =
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
-        p.sku.toLowerCase().includes(search.toLowerCase());
+        p.title.toLowerCase().includes(search.toLowerCase())
       const matchStatus =
         (showActive && p.isActive) || (showInactive && !p.isActive);
       const matchCategory =
@@ -65,10 +64,6 @@ export function ServiceList({
           return a.title.localeCompare(b.title);
         case "za":
           return b.title.localeCompare(a.title);
-        case "price-max":
-          return b.retailPrice.max - a.retailPrice.max;
-        case "price-min":
-          return a.retailPrice.min - b.retailPrice.min;
         default:
           return 0;
       }
@@ -296,9 +291,9 @@ export function ServiceList({
           </div>
         )}
       </div>
-      <DeleteProduct />
-      <SeeProduct />
-      <EditProduct />
+      <DeleteService />
+      <SeeService />
+      <EditService />
     </div>
   );
 }

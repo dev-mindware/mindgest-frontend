@@ -7,17 +7,20 @@ export const addProductSchema = z.object({
   price: z.coerce.number().min(0, "Preço deve ser maior ou igual a 0"),
 
   selectedMeasurement: z.string().optional(),
+
+  stock: z.number().min(0, "Estoque inicial deve ser maior ou igual a 0"),
+  minStock: z.number().min(0, "Estoque mínimo deve ser maior ou igual a 0").nullable().optional(),
+  tax: z.number().min(0, "Imposto deve ser maior ou igual a 0").nullable().optional(),
+  warranty: z.number().nullable().optional(),
+  repositionTime: z.number().min(0, "Tempo de reposição deve ser maior ou igual a 0").nullable().optional(),
+  salesPerDay: z.number().min(0, "Vendas por dia deve ser maior ou igual a 0").nullable().optional(),
+
   supplier: z.string().optional(),
   location: z.string().optional(),
 
-  initialStock: z.coerce.number().min(0, "Estoque inicial deve ser maior ou igual a 0").optional().nullable(),
-  minStock: z.coerce.number().min(0, "Estoque mínimo deve ser maior ou igual a 0").optional().nullable(),
+  expiryDate: z.coerce.date().nullable().optional(),
 
-  expiryDate: z.string().optional().nullable(),
-  tax: z.coerce.number().min(0, "Imposto deve ser maior ou igual a 0").optional().nullable(),
-  warranty: z.coerce.number().optional().nullable(),
-  repositionTime: z.coerce.number().min(0, "Tempo de reposição deve ser maior ou igual a 0").optional().nullable(),
-  salesPerDay: z.coerce.number().min(0, "Vendas por dia deve ser maior ou igual a 0").optional().nullable(),
+  selectedStatus: z.enum(["Disponível", "Esgotado", "Pendente"]),
 
   description: z.string().max(500, "Descrição deve ter no máximo 500 caracteres").optional(),
 });

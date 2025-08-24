@@ -1,3 +1,4 @@
+
 export interface Cashier {
   id: number;
   name: string;
@@ -28,42 +29,31 @@ export interface CashOpeningFormProps {
 
 export interface Product {
   id: string;
-  title: string;
-  sku: string;
+  name: string;
   category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
+  sku: string;
+  price: number;
+  measurement?: string;
   stock: number;
-  location: string;
-  variants: number;
-  isActive: boolean;
+  minstock?: number;
+  supplier?: string;
+  location?: string;
+  expirydate?: Date;
+  tax?: number;
+  warranty?: number;
+  status?: "Disponível" | "Pendente" | "Esgotado";
+  salesperday?: number;
+  repositiontime?: number;
+  description?: string;
 }
 
 export interface Service {
   id: string;
   title: string;
-  sku: string;
   category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
-  stock: number;
-  location: string;
-  variants: number;
+  price: number;
   isActive: boolean;
+  description?: string;
 }
 
 export interface OrderItem {
@@ -74,46 +64,6 @@ export interface OrderItem {
 }
 
 export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"
-
-export interface ProductCard {
-  id: string;
-  title: string;
-  sku: string;
-  category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
-  stock: number;
-  location: string;
-  variants: number;
-  isActive: boolean;
-}
-
-export interface ServiceCard {
-  id: string;
-  title: string;
-  sku: string;
-  category: string;
-  subcategory: string;
-  retailPrice: {
-    min: number;
-    max: number;
-  };
-  wholesalePrice: {
-    min: number;
-    max: number;
-  };
-  stock: number;
-  location: string;
-  variants: number;
-  isActive: boolean;
-}
 
 export interface OrderItem {
   id: string;

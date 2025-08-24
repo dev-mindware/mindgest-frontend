@@ -34,7 +34,7 @@ export function ProductCardView({ product }: ProductCardProps) {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold leading-tight truncate text-foreground">
-                {product.title} 
+                {product.name}
               </h3>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">
@@ -43,13 +43,16 @@ export function ProductCardView({ product }: ProductCardProps) {
                 <Badge
                   variant="secondary"
                   className={
-                    product.isActive
+                    product.status === "Disponível"
                       ? "text-xs text-green-700 bg-green-100 border-green-200"
-                      : "text-xs text-red-700 bg-red-100 border-red-200"
+                      : product.status === "Pendente"
+                        ? "text-xs text-yellow-700 bg-yellow-100 border-yellow-200"
+                        : "text-xs text-red-700 bg-red-100 border-red-200"
                   }
                 >
-                  {product.isActive ? "Ativo" : "Inactivo"}
+                  {product.status}
                 </Badge>
+
               </div>
             </div>
           </div>
@@ -60,7 +63,7 @@ export function ProductCardView({ product }: ProductCardProps) {
                 variant="ghost"
                 className="rounded-full shadow-none"
               >
-                <Icon name="Ellipsis" size={16} />
+                <Icon name="Settings2" size={16} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -82,42 +85,36 @@ export function ProductCardView({ product }: ProductCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <TsunamiOnly>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="px-2 py-1 rounded-md bg-muted">
-            {product.category}
-          </span>
-          <span className="px-2 py-1 rounded-md bg-muted">
-            {product.subcategory}
-          </span>
-          <span className="px-2 py-1 rounded-md bg-muted">
-            +{product.variants}
-          </span>
-        </div>
-        </TsunamiOnly>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="px-2 py-1 rounded-md bg-muted">
+              {product.category}
+            </span>
+            <span className="px-2 py-1 rounded-md bg-muted">
+              {product.measurement}
+            </span>
+            <span className="px-2 py-1 rounded-md bg-muted">
+              {product.warranty} dias de garantia
+            </span>
+          </div>
+       </TsunamiOnly>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="mb-1 text-xs text-muted-foreground">Preço Inicial</p>
+            <p className="mb-1 text-xs text-muted-foreground">Preço do produto</p>
             <p className="text-sm font-semibold text-foreground">
-              {formatPrice(product.retailPrice.min)}
-            </p>
-          </div>
-          <div>
-            <p className="mb-1 text-xs text-muted-foreground">Preço Final</p>
-            <p className="text-sm font-semibold text-foreground">
-              {formatPrice(product.wholesalePrice.max)}
+              {formatPrice(product.price)}
             </p>
           </div>
         </div>
-        <TsunamiOnly>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">
-            {product.stock} no Stock - {product.location}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            Variantes ({product.variants})
-          </span>
-        </div>
-        </TsunamiOnly>
+         <TsunamiOnly> 
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {product.stock} no Stock - {product.location}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Expira em: ({product.expirydate})
+            </span>
+          </div>
+         </TsunamiOnly>
       </CardContent>
     </Card>
   );

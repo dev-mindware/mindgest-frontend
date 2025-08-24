@@ -34,7 +34,7 @@ export function RHFSelect<T extends FieldValues>({
   label,
   control,
   options,
-  placeholder = "Selecione uma opção",
+  placeholder = "Escolhe uma opção",
   disabled = false,
 }: RHFSelectProps<T>) {
   return (

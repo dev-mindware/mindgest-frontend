@@ -14,8 +14,8 @@ import {
 } from "@/components";
 import { OrderItem, Product } from "@/types";
 import { initialProducts } from "../../../types/data";
-import { ProductCardView } from "./product-card-view"
-import { ProductTableView } from "./product-table-view"
+import { ProductCardView } from "./product-card-view";
+import { ProductTableView } from "./product-table-view";
 
 interface ProductListProps {
   onAddToOrder?: (item: OrderItem) => void;
@@ -26,6 +26,9 @@ interface ProductListProps {
 
 type SortByType = "az" | "za" | "price-max" | "price-min";
 
+// ✅ lista de status possíveis
+const ALL_STATUSES = ["Disponível", "Pendente", "Esgotado"] as const;
+
 export function ProductList({
   onAddToOrder,
   className,
@@ -33,9 +36,8 @@ export function ProductList({
   size,
 }: ProductListProps) {
   const [search, setSearch] = useState("");
-  const [showActive, setShowActive] = useState(true);
-  const [showInactive, setShowInactive] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([...ALL_STATUSES]);
   const [sortBy, setSortBy] = useState<SortByType>("az");
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
@@ -45,15 +47,16 @@ export function ProductList({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, showActive, showInactive, categoryFilter, sortBy, viewMode]);
+  }, [search, categoryFilter, statusFilter, sortBy, viewMode]);
 
   const filteredProducts = initialProducts
     .filter((p: Product) => {
       const matchSearch =
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.sku.toLowerCase().includes(search.toLowerCase());
-      const matchStatus =
-        (showActive && p.isActive) || (showInactive && !p.isActive);
+
+     const matchStatus = statusFilter.includes(p.status as "Disponível" | "Pendente" | "Esgotado");
+
       const matchCategory =
         categoryFilter.length === 0 || categoryFilter.includes(p.category);
 
@@ -62,13 +65,9 @@ export function ProductList({
     .sort((a, b) => {
       switch (sortBy) {
         case "az":
-          return a.title.localeCompare(b.title);
+          return a.name.localeCompare(b.name);
         case "za":
-          return b.title.localeCompare(a.title);
-        case "price-max":
-          return b.retailPrice.max - a.retailPrice.max;
-        case "price-min":
-          return a.retailPrice.min - b.retailPrice.min;
+          return b.name.localeCompare(a.name);
         default:
           return 0;
       }
@@ -88,16 +87,25 @@ export function ProductList({
     );
   };
 
+  const handleStatusChange = (status: string) => {
+    setStatusFilter((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  };
+
   const clearFilters = () => {
     setSearch("");
     setCategoryFilter([]);
-    setShowActive(true);
-    setShowInactive(true);
+    setStatusFilter([...ALL_STATUSES]); // ✅ reset
     setSortBy("az");
   };
 
   const areFiltersActive =
-    search !== "" || categoryFilter.length > 0 || !showActive || !showInactive;
+    search !== "" ||
+    categoryFilter.length > 0 ||
+    statusFilter.length < ALL_STATUSES.length;
 
   const switcherClasses = showSwitcherOnMobile
     ? "flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border"
@@ -114,6 +122,7 @@ export function ProductList({
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
+              {/* Pesquisa */}
               <div className="relative w-full">
                 <Input
                   type="search"
@@ -126,6 +135,8 @@ export function ProductList({
                   <Icon name="Search" size={16} />
                 </div>
               </div>
+
+              {/* Categoria */}
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -162,11 +173,15 @@ export function ProductList({
                   ))}
                 </PopoverContent>
               </Popover>
+
+              {/* Status */}
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant={
-                      !showActive || !showInactive ? "default" : "outline"
+                      statusFilter.length < ALL_STATUSES.length
+                        ? "default"
+                        : "outline"
                     }
                     size="sm"
                     className="w-full h-10 gap-2 sm:w-auto"
@@ -179,28 +194,25 @@ export function ProductList({
                   <p className="text-sm text-muted-foreground">
                     Filtrar por status
                   </p>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="status-active"
-                      checked={showActive}
-                      onCheckedChange={(val) => setShowActive(val as boolean)}
-                    />
-                    <label htmlFor="status-active" className="cursor-pointer">
-                      Ativo
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="status-inactive"
-                      checked={showInactive}
-                      onCheckedChange={(val) => setShowInactive(val as boolean)}
-                    />
-                    <label htmlFor="status-inactive" className="cursor-pointer">
-                      Inativo
-                    </label>
-                  </div>
+                  {ALL_STATUSES.map((st) => (
+                    <div key={st} className="flex items-center gap-2">
+                      <Checkbox
+                        id={`status-${st}`}
+                        checked={statusFilter.includes(st)}
+                        onCheckedChange={() => handleStatusChange(st)}
+                      />
+                      <label
+                        htmlFor={`status-${st}`}
+                        className="cursor-pointer"
+                      >
+                        {st}
+                      </label>
+                    </div>
+                  ))}
                 </PopoverContent>
               </Popover>
+
+              {/* Ordenação */}
               <select
                 className="w-full h-10 px-3 text-sm border rounded-md border-input bg-background sm:w-auto"
                 value={sortBy}
@@ -208,9 +220,8 @@ export function ProductList({
               >
                 <option value="az">Ordenar em A-Z</option>
                 <option value="za">Ordenar em Z-A</option>
-                <option value="price-max">Maior Preço</option>
-                <option value="price-min">Menor Preço</option>
               </select>
+
               {areFiltersActive && (
                 <Button
                   variant="ghost"
@@ -223,6 +234,8 @@ export function ProductList({
                 </Button>
               )}
             </div>
+
+            {/* Switcher */}
             <div className={switcherClasses}>
               <Button
                 variant={viewMode === "card" ? "default" : "ghost"}
@@ -261,9 +274,11 @@ export function ProductList({
             </div>
           </div>
         </div>
+
         <div className="text-sm text-muted-foreground">
           {filteredProducts.length} resultados encontrados
         </div>
+
         {viewMode === "card" ? (
           <div
             className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${
