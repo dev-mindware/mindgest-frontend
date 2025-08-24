@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function UnauthorizedPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950 text-white p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-4">
       <div className="text-center space-y-6">
         <div className="relative inline-block">
           <svg
@@ -11,7 +11,7 @@ export default function UnauthorizedPage() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-24 h-24 text-red-500 mx-auto animate-pulse"
+            className="w-24 h-24 text-destructive mx-auto animate-pulse"
           >
             <path
               strokeLinecap="round"
@@ -24,19 +24,25 @@ export default function UnauthorizedPage() {
           </span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
           Acesso Não Autorizado
         </h1>
-        <p className="text-gray-400 max-w-lg mx-auto">
+        <p className="text-muted-foreground max-w-lg mx-auto">
           Parece que você não tem permissão para visualizar esta página.
           Verifique se sua conta tem o plano e as permissões necessárias para acessar este recurso.
         </p>
 
         <div className="flex justify-center space-x-4">
-          <Link href="/dashboard" className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-md font-medium transition-colors">
+          <Link 
+            href="/dashboard" 
+            className="px-6 py-3 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md font-medium transition-colors"
+          >
             Voltar para o Dashboard
           </Link>
-          <Link href="/auth/logout" className="px-6 py-3 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 rounded-md font-medium transition-colors">
+          <Link 
+            href="/auth/logout" 
+            className="px-6 py-3 border border-border text-foreground hover:text-accent-foreground hover:border-border/80 rounded-md font-medium transition-colors"
+          >
             Sair
           </Link>
         </div>
