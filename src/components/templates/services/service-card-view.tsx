@@ -25,7 +25,7 @@ interface ServiceCardProps {
 export function ServiceCardView({ service }: ServiceCardProps) {
   const { handlerDeleteService, handlerDetailsService, handlerEditService } =
     useServiceActions();
-  const truncateTitle = (title: string, maxLength: number = 15) => {
+  const truncateTitle = (title: string, maxLength: number = 23) => {
     return title.length > maxLength ? title.substring(0, maxLength) + "..." : title;
   };
 
@@ -41,11 +41,11 @@ export function ServiceCardView({ service }: ServiceCardProps) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <h3 className="text-sm font-semibold leading-tight truncate cursor-default text-foreground">
-                    {truncateTitle(service.title)}
+                    {truncateTitle(service.name)}
                   </h3>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{service.title}</p>
+                  <p>{service.name}</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -56,12 +56,14 @@ export function ServiceCardView({ service }: ServiceCardProps) {
                 <Badge
                   variant="secondary"
                   className={
-                    service.isActive
-                      ? "text-xs text-green-700 bg-green-100 border-green-200"
-                      : "text-xs text-red-700 bg-red-100 border-red-200"
+                    service.status === "Activo"
+                      ? "text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                      : service.status === "Pendente"
+                        ? "text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        : "text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                   }
                 >
-                  {service.isActive ? "Ativo" : "Inactivo"}
+                  {service.status}
                 </Badge>
               </div>
             </div>

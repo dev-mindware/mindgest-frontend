@@ -1,99 +1,32 @@
 "use client";
-import { useState, useEffect } from "react";
 import {
-  Icon,
-  Input,
-  Button,
-  Popover,
-  Checkbox,
-  SeeService,
-  EditService,
-  DeleteService,
-  PopoverContent,
-  PopoverTrigger,
+  Icon, Input, Button, Popover, Checkbox, SeeService,
+  EditService, DeleteService, PopoverContent, PopoverTrigger,
 } from "@/components";
-import { OrderItem, Service } from "@/types";
-import { initialServices } from "@/types/data";
-import { ServiceCardView } from "./service-card-view"
+import { ServiceStatus, initialServices } from "@/types";
+import { ServiceCardView } from "./service-card-view";
 import { ServiceTableView } from "./service-table-view";
+import { useServiceFilters } from "@/hooks";
 
 interface ServiceListProps {
-  onAddToOrder?: (item: OrderItem) => void;
   className?: string;
   showSwitcherOnMobile?: boolean;
   size?: "medium" | "large";
 }
 
-type SortByType = "az" | "za" | "price-max" | "price-min";
-
 export function ServiceList({
-  onAddToOrder,
   className,
   showSwitcherOnMobile = true,
   size,
 }: ServiceListProps) {
-  const [search, setSearch] = useState("");
-  const [showActive, setShowActive] = useState(true);
-  const [showInactive, setShowInactive] = useState(true);
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<SortByType>("az");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<"card" | "table">("card");
+  const {
+    search, setSearch, sortBy, setSortBy, viewMode, setViewMode, currentPage, setCurrentPage,
+    categoryFilter, handleCategoryChange, statusFilter, handleStatusChange,
+    paginatedServices, uniqueCategories, totalResults, totalPages,
+    clearFilters, areFiltersActive,
+  } = useServiceFilters(initialServices, "card");
 
-  const itemsPerPage = viewMode === "card" ? 8 : 6;
-  const uniqueCategories = [...new Set(initialServices.map((p) => p.category))];
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search, showActive, showInactive, categoryFilter, sortBy, viewMode]);
-
-  const filteredServices = initialServices
-    .filter((p: Service) => {
-      const matchSearch =
-        p.title.toLowerCase().includes(search.toLowerCase())
-      const matchStatus =
-        (showActive && p.isActive) || (showInactive && !p.isActive);
-      const matchCategory =
-        categoryFilter.length === 0 || categoryFilter.includes(p.category);
-
-      return matchSearch && matchStatus && matchCategory;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "az":
-          return a.title.localeCompare(b.title);
-        case "za":
-          return b.title.localeCompare(a.title);
-        default:
-          return 0;
-      }
-    });
-
-  const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
-  const paginatedServices = filteredServices.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const handleCategoryChange = (category: string) => {
-    setCategoryFilter((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
-  };
-
-  const clearFilters = () => {
-    setSearch("");
-    setCategoryFilter([]);
-    setShowActive(true);
-    setShowInactive(true);
-    setSortBy("az");
-  };
-
-  const areFiltersActive =
-    search !== "" || categoryFilter.length > 0 || !showActive || !showInactive;
-
+  // --- Classes de Estilo (sem alteração) ---
   const switcherClasses = showSwitcherOnMobile
     ? "flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border"
     : "hidden sm:flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border";
@@ -106,174 +39,109 @@ export function ServiceList({
   return (
     <div className="justify-start mt-10 bg-background">
       <div className={sizeClasses}>
+        {/* === PAINEL DE FILTROS E CONTROLES === */}
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-            <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
-              <div className="relative w-full">
-                <Input
-                  type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Pesquisar produtos..."
-                  className="w-full h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
-                />
-                <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
-                  <Icon name="Search" size={16} />
-                </div>
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={categoryFilter.length > 0 ? "default" : "outline"}
-                    size="sm"
-                    className="w-full h-10 gap-2 sm:w-auto"
-                  >
-                    <Icon name="ListFilter" className="w-4 h-4" />
-                    Categoria{" "}
-                    {categoryFilter.length > 0 && `(${categoryFilter.length})`}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56 space-y-2">
-                  <p className="p-1 text-sm font-medium">
-                    Selecionar categoria
-                  </p>
-                  {uniqueCategories.map((cat) => (
-                    <div
-                      key={cat}
-                      className="flex items-center gap-2 p-1 rounded hover:bg-muted"
-                    >
-                      <Checkbox
-                        id={`cat-${cat}`}
-                        checked={categoryFilter.includes(cat)}
-                        onCheckedChange={() => handleCategoryChange(cat)}
-                      />
-                      <label
-                        htmlFor={`cat-${cat}`}
-                        className="text-sm cursor-pointer"
-                      >
-                        {cat}
-                      </label>
+            <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+                <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
+                    {/* Pesquisa */}
+                    <div className="relative w-full">
+                        <Input
+                            type="search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Pesquisar serviços..."
+                            className="w-full h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
+                        />
+                        <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
+                            <Icon name="Search" size={16} />
+                        </div>
                     </div>
-                  ))}
-                </PopoverContent>
-              </Popover>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={
-                      !showActive || !showInactive ? "default" : "outline"
-                    }
-                    size="sm"
-                    className="w-full h-10 gap-2 sm:w-auto"
-                  >
-                    <Icon name="Tag" className="w-4 h-4" />
-                    Status
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56 p-4 space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    Filtrar por status
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="status-active"
-                      checked={showActive}
-                      onCheckedChange={(val) => setShowActive(val as boolean)}
-                    />
-                    <label htmlFor="status-active" className="cursor-pointer">
-                      Ativo
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="status-inactive"
-                      checked={showInactive}
-                      onCheckedChange={(val) => setShowInactive(val as boolean)}
-                    />
-                    <label htmlFor="status-inactive" className="cursor-pointer">
-                      Inativo
-                    </label>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <select
-                className="w-full h-10 px-3 text-sm border rounded-md border-input bg-background sm:w-auto"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortByType)}
-              >
-                <option value="az">Ordenar em A-Z</option>
-                <option value="za">Ordenar em Z-A</option>
-                <option value="price-max">Maior Preço</option>
-                <option value="price-min">Menor Preço</option>
-              </select>
-              {areFiltersActive && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="h-10 text-destructive hover:text-destructive"
-                >
-                  <Icon name="X" className="w-4 h-4 mr-2" />
-                  Limpar
-                </Button>
-              )}
+
+                    {/* Filtro de Categoria */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant={categoryFilter.length > 0 ? "default" : "outline"} size="sm" className="w-full h-10 gap-2 sm:w-auto">
+                                <Icon name="ListFilter" className="w-4 h-4" />
+                                Categoria {categoryFilter.length > 0 && `(${categoryFilter.length})`}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 space-y-2">
+                            <p className="p-1 text-sm font-medium">Selecionar categoria</p>
+                            {uniqueCategories.map((cat) => (
+                                <div key={cat} className="flex items-center gap-2 p-1 rounded hover:bg-muted">
+                                    <Checkbox id={`cat-${cat}`} checked={categoryFilter.includes(cat)} onCheckedChange={() => handleCategoryChange(cat)} />
+                                    <label htmlFor={`cat-${cat}`} className="text-sm cursor-pointer">{cat}</label>
+                                </div>
+                            ))}
+                        </PopoverContent>
+                    </Popover>
+
+                    {/* Filtro de Status (Atualizado) */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant={areFiltersActive ? "default" : "outline"} size="sm" className="w-full h-10 gap-2 sm:w-auto">
+                                <Icon name="Tag" className="w-4 h-4" />
+                                Status
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-4 space-y-3">
+                           <p className="text-sm text-muted-foreground">Filtrar por status</p>
+                           {Object.values(ServiceStatus).map((status) => (
+                             <div key={status} className="flex items-center gap-2">
+                               <Checkbox id={`status-${status}`} checked={statusFilter.includes(status)} onCheckedChange={() => handleStatusChange(status)} />
+                               <label htmlFor={`status-${status}`} className="cursor-pointer">{status}</label>
+                             </div>
+                           ))}
+                        </PopoverContent>
+                    </Popover>
+
+                    {/* Ordenação */}
+                    <select
+                        className="w-full h-10 px-3 text-sm border rounded-md border-input bg-background sm:w-auto"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                    >
+                        <option value="az">Ordenar de A-Z</option>
+                        <option value="za">Ordenar de Z-A</option>
+                        <option value="price-max">Maior Preço</option>
+                        <option value="price-min">Menor Preço</option>
+                    </select>
+
+                    {/* Botão Limpar Filtros */}
+                    {areFiltersActive && (
+                        <Button variant="ghost" size="sm" onClick={clearFilters} className="h-10 text-destructive hover:text-destructive">
+                            <Icon name="X" className="w-4 h-4 mr-2" />
+                            Limpar
+                        </Button>
+                    )}
+                </div>
+
+                {/* Seletor de Visualização (Card/Tabela) */}
+                 <div className={switcherClasses}>
+                    <Button variant={viewMode === 'card' ? 'default' : 'ghost'} className={`h-8 w-8 ${viewMode === 'card' ? 'bg-sidebar border hover:bg-sidebar' : ''}`} onClick={() => setViewMode('card')}>
+                        <Icon name="LayoutGrid" size={16} className={`text-muted-foreground ${viewMode === 'card' ? 'text-primary' : ''}`} />
+                    </Button>
+                    <Button variant={viewMode === 'table' ? 'default' : 'ghost'} className={`h-8 w-8 ${viewMode === 'table' ? 'bg-sidebar border hover:bg-sidebar' : ''}`} onClick={() => setViewMode('table')}>
+                        <Icon name="Grid3x3" size={16} className={`text-muted-foreground ${viewMode === 'table' ? 'text-primary' : ''}`} />
+                    </Button>
+                </div>
             </div>
-            <div className={switcherClasses}>
-              <Button
-                variant={viewMode === "card" ? "default" : "ghost"}
-                className={`h-8 w-8 ${
-                  viewMode === "card"
-                    ? "bg-sidebar border hover:bg-sidebar"
-                    : ""
-                }`}
-                onClick={() => setViewMode("card")}
-              >
-                <Icon
-                  name="LayoutGrid"
-                  size={16}
-                  className={`text-muted-foreground ${
-                    viewMode === "card" ? "text-primary" : ""
-                  }`}
-                />
-              </Button>
-              <Button
-                variant={viewMode === "table" ? "default" : "ghost"}
-                className={`h-8 w-8 ${
-                  viewMode === "table"
-                    ? "bg-sidebar border hover:bg-sidebar"
-                    : ""
-                }`}
-                onClick={() => setViewMode("table")}
-              >
-                <Icon
-                  name="Grid3x3"
-                  size={16}
-                  className={`text-muted-foreground ${
-                    viewMode === "table" ? "text-primary" : ""
-                  }`}
-                />
-              </Button>
-            </div>
-          </div>
         </div>
+
+        {/* === LISTA DE SERVIÇOS E PAGINAÇÃO === */}
         <div className="text-sm text-muted-foreground">
-          {filteredServices.length} resultados encontrados
+          {totalResults} resultado(s) encontrado(s)
         </div>
+
         {viewMode === "card" ? (
-          <div
-            className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 ${
-              className ?? ""
-            }`}
-          >
+          <div className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${className ?? ""}`}>
             {paginatedServices.map((service) => (
               <ServiceCardView key={service.id} service={service} />
             ))}
           </div>
         ) : (
-          <ServiceTableView
-            services={paginatedServices}
-            onAddToOrder={onAddToOrder}
-          />
+          // Lógica de `onAddToOrder` foi removida daqui
+          <ServiceTableView services={paginatedServices} />
         )}
 
         {totalPages > 1 && (
@@ -291,6 +159,8 @@ export function ServiceList({
           </div>
         )}
       </div>
+
+      {/* Modais (sem alteração) */}
       <DeleteService />
       <SeeService />
       <EditService />

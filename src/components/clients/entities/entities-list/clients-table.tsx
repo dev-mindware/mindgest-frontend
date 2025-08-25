@@ -98,6 +98,7 @@ export function ClientsTable() {
         return (
           <div className="flex flex-col gap-1">
             <Badge
+            
               className={cn(
                 "w-fit text-xs",
                 categoria === "VIP" &&

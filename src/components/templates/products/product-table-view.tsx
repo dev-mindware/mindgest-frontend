@@ -55,10 +55,10 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
                   variant="secondary"
                   className={
                     product.status === "Disponível"
-                      ? "text-xs text-green-700 bg-green-100 border-green-200"
+                      ? "text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                       : product.status === "Pendente"
-                        ? "text-xs text-yellow-700 bg-yellow-100 border-yellow-200"
-                        : "text-xs text-red-700 bg-red-100 border-red-200"
+                        ? "text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        : "text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                   }
                 >
                   {product.status}

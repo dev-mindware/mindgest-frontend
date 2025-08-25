@@ -1,7 +1,7 @@
 export const status = [
-  { label: "Ativo", value: "active" },
-  { label: "Inativo", value: "inactive" },
-  { label: "Pendente", value: "pending" },
+  { label: "Activo", value: "Activo" },
+  { label: "Inactivo", value: "Inactivo" },
+  { label: "Pendente", value: "Pendente" },
 ];
 
 export const category = [

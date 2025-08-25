@@ -11,6 +11,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   TsunamiOnly,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from "@/components";
 import { useProductActions } from "@/hooks";
 import { Product } from "@/types/types";
@@ -24,6 +27,10 @@ export function ProductCardView({ product }: ProductCardProps) {
   const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } =
     useProductActions();
 
+  const truncateTitle = (title: string, maxLength: number = 23) => {
+    return title.length > maxLength ? title.substring(0, maxLength) + "..." : title;
+  };
+
   return (
     <Card className="relative overflow-hidden transition-shadow duration-200 border border-border bg-card hover:shadow-lg">
       <CardHeader className="pb-2">
@@ -33,9 +40,16 @@ export function ProductCardView({ product }: ProductCardProps) {
               <Icon name="Package" className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold leading-tight truncate text-foreground">
-                {product.name}
-              </h3>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <h3 className="text-sm font-semibold leading-tight truncate cursor-default text-foreground">
+                    {truncateTitle(product.name)}
+                  </h3>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{product.name}</p>
+                </TooltipContent>
+              </Tooltip>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">
                   SKU - {product.sku}
@@ -44,10 +58,10 @@ export function ProductCardView({ product }: ProductCardProps) {
                   variant="secondary"
                   className={
                     product.status === "Disponível"
-                      ? "text-xs text-green-700 bg-green-100 border-green-200"
+                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                       : product.status === "Pendente"
-                        ? "text-xs text-yellow-700 bg-yellow-100 border-yellow-200"
-                        : "text-xs text-red-700 bg-red-100 border-red-200"
+                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                   }
                 >
                   {product.status}
@@ -111,7 +125,7 @@ export function ProductCardView({ product }: ProductCardProps) {
               {product.stock} no Stock - {product.location}
             </span>
             <span className="text-xs text-muted-foreground">
-              Expira em: ({product.expirydate})
+              Expira em: ({product.expirydate?.toString().slice(0, 10)})
             </span>
           </div>
          </TsunamiOnly>

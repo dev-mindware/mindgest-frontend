@@ -1,4 +1,4 @@
-import { Product, Service } from './types';
+import { Product, Service, ServiceStatus, ProductStatus } from './types';
 
 export const initialProducts: Product[] = [
   {
@@ -11,7 +11,7 @@ export const initialProducts: Product[] = [
     stock: 10,
     warranty: 36,
     location: 'Armazém A',
-    status: 'Pendente',
+    status: ProductStatus.Pendente,
     expirydate: new Date('2028-02-26'),
     repositiontime: 15,
     minstock: 5,
@@ -31,7 +31,7 @@ export const initialProducts: Product[] = [
     stock: 50,
     warranty: 12,
     location: 'Armazém B',
-    status: 'Pendente',
+    status: ProductStatus.Pendente,
     expirydate: new Date('2025-02-06'),
     repositiontime: 10,
     minstock: 8,
@@ -51,7 +51,7 @@ export const initialProducts: Product[] = [
     stock: 30,
     warranty: 24,
     location: 'Armazém C',
-    status: 'Pendente',
+    status: ProductStatus.Pendente,
     expirydate: new Date('2028-02-26'),
     repositiontime: 20,
     minstock: 6,
@@ -71,7 +71,7 @@ export const initialProducts: Product[] = [
     stock: 15,
     warranty: 12,
     location: 'Armazém D',
-    status: 'Disponível',
+    status: ProductStatus.Disponível,
     expirydate: new Date('2028-02-26'),
     repositiontime: 12,
     minstock: 4,
@@ -91,7 +91,7 @@ export const initialProducts: Product[] = [
     stock: 60,
     warranty: 12,
     location: 'Armazém E',
-    status: 'Esgotado',
+    status: ProductStatus.Esgotado,
     expirydate: new Date('2025-12-31'),
     repositiontime: 18,
     minstock: 10,
@@ -111,7 +111,7 @@ export const initialProducts: Product[] = [
     stock: 35,
     warranty: 72,
     location: 'Armazém B',
-    status: 'Disponível',
+    status: ProductStatus.Disponível,
     expirydate: new Date('2026-02-28'),
     repositiontime: 14,
     minstock: 5,
@@ -131,7 +131,7 @@ export const initialProducts: Product[] = [
     stock: 25,
     warranty: 31,
     location: 'Armazém A',
-    status: 'Esgotado',
+    status: ProductStatus.Esgotado,
     expirydate: new Date('2025-12-31'),
     repositiontime: 11,
     minstock: 3,
@@ -151,7 +151,7 @@ export const initialProducts: Product[] = [
     stock: 22,
     warranty: 14,
     location: 'Armazém C',
-    status: 'Disponível',
+    status: ProductStatus.Disponível,
     expirydate: new Date('2025-08-01'),
     repositiontime: 9,
     minstock: 5,
@@ -171,7 +171,7 @@ export const initialProducts: Product[] = [
     stock: 120,
     warranty: 21,
     location: 'Armazém E',
-    status: 'Disponível',
+    status: ProductStatus.Disponível,
     expirydate: new Date('2025-11-11'),
     repositiontime: 7,
     minstock: 15,
@@ -191,7 +191,7 @@ export const initialProducts: Product[] = [
     stock: 90,
     warranty: 24,
     location: 'Armazém A',
-    status: 'Pendente',
+    status: ProductStatus.Pendente,
     expirydate: new Date('2026-02-28'),
     repositiontime: 8,
     minstock: 10,
@@ -205,9 +205,66 @@ export const initialProducts: Product[] = [
 
 
 export const initialServices: Service[] = [
-  { id: '1', title: 'Consultoria em TI', category: "Consultoria", description: 'Serviço de consultoria em tecnologia da informação', price: 150000, isActive: true },
-  { id: '2', title: 'Desenvolvimento de Software', category: "Desenvolvimento", description: 'Criação de software sob medida', price: 300000, isActive: true },
-  { id: '3', title: 'Suporte Técnico', category: "Suporte", description: 'Assistência técnica para equipamentos de informática', price: 80000, isActive: false },
-  { id: '4', title: 'Treinamento em Tecnologia', category: "Treinamento", description: 'Capacitação em ferramentas tecnológicas', price: 100000, isActive: true },
-  { id: '5', title: 'Gerenciamento de Projetos', category: "Gerenciamento", description: 'Gestão de projetos de tecnologia', price: 200000, isActive: true },
+  { 
+    id: '1', name: 'Consultoria em TI',
+     category: "Consultoria",
+     description: 'Serviço de consultoria em tecnologia da informação',
+     price: 150000,
+     status: ServiceStatus.Activo
+  },
+  { id: '2', name: 'Desenvolvimento de Software',
+     category: "Desenvolvimento",
+     description: 'Criação de software sob medida',
+     price: 300000,
+     status: ServiceStatus.Activo
+  },
+  { id: '3', name: 'Suporte Técnico',
+     category: "Suporte",
+     description: 'Assistência técnica para equipamentos de informática',
+     price: 80000,
+     status: ServiceStatus.Inactivo
+  },
+  { id: '4', name: 'Treinamento em Tecnologia',
+     category: "Treinamento",
+     description: 'Capacitação em ferramentas tecnológicas',
+     price: 100000,
+     status: ServiceStatus.Activo
+  },
+  { id: '5', name: 'Gerenciamento de Projetos',
+     category: "Gerenciamento",
+     description: 'Gestão de projetos de tecnologia',
+     price: 200000,
+     status: ServiceStatus.Inactivo
+  },
+  { id: '6', name: 'Auditoria de Sistemas',
+     category: "Auditoria",
+     description: 'Avaliação e auditoria de sistemas de TI',
+     price: 250000,
+     status: ServiceStatus.Pendente
+  },
+  { id: '7', name: 'Design de Interface',
+     category: "Design",
+     description: 'Criação de interfaces de usuário intuitivas',
+     price: 120000,
+     status: ServiceStatus.Activo
+  },
+  { id: '8', name: 'Marketing Digital',
+     category: "Marketing",
+     description: 'Estratégias de marketing para presença online',
+     price: 180000,
+     status: ServiceStatus.Pendente
+  },
+  { id: '9', name: 'Manutenção de Hardware',
+     category: "Manutenção",
+     description: 'Serviços de manutenção e reparo de hardware',
+     price: 90000,
+     status: ServiceStatus.Activo
+  },
+  { id: '10', name: 'Consultoria em Segurança da Informação',
+     category: "Consultoria",
+     description: 'Avaliação e consultoria em segurança da informação',
+     price: 220000,
+     status: ServiceStatus.Pendente
+  }
+
 ]

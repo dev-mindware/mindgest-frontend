@@ -42,6 +42,11 @@ export function AddService() {
     reset,
   } = useForm<AddServiceFormData>({
     resolver: zodResolver(addServiceSchema),
+    defaultValues: {
+      price: 0,
+      selectedStatus: "Activo",
+      description: "",
+    },
   });
 
   const onSubmit = (data: AddServiceFormData) => {

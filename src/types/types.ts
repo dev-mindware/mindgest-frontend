@@ -1,4 +1,3 @@
-
 export interface Cashier {
   id: number;
   name: string;
@@ -41,18 +40,30 @@ export interface Product {
   expirydate?: Date;
   tax?: number;
   warranty?: number;
-  status?: "Disponível" | "Pendente" | "Esgotado";
+  status: ProductStatus;
   salesperday?: number;
   repositiontime?: number;
   description?: string;
 }
 
+export enum ServiceStatus {
+  Activo = "Activo",
+  Pendente = "Pendente",
+  Inactivo = "Inactivo",
+}
+
+export enum ProductStatus {
+  Disponível = "Disponível",
+  Pendente = "Pendente",
+  Esgotado = "Esgotado",
+}
+
 export interface Service {
   id: string;
-  title: string;
+  name: string;
   category: string;
   price: number;
-  isActive: boolean;
+  status: ServiceStatus;
   description?: string;
 }
 

@@ -1,30 +1,17 @@
 "use client"
 import React from 'react'
-import { AddProduct, AddService, DinamicBreadcrumb, Separator, SidebarTrigger, Tabs, TabsList, TabsTrigger, TabsContent, ProductList, Button, ServiceList } from "@/components";
+import { AddProduct, AddService, Separator, Tabs, TabsList, TabsTrigger, TabsContent, ProductList, Button, ServiceList } from "@/components";
 import { useModal } from "@/stores";
 export function Items() {
   const { openModal } = useModal();
   return (
     <div>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
-          <DinamicBreadcrumb
-            showSeparator={false}
-            subRoute="Items"
-          />
-        </div>
-      </header>
       <div className="flex flex-col flex-1">
         <div className="@container/main flex flex-1 p-4 flex-col gap-2">
           <Tabs defaultValue="tab-1">
             <div className="flex flex-col w-full gap-6">
               <div className="w-full lg:w-auto">
-                <h1 className="mb-4 text-xl text-center sm:text-2xl text-foreground lg:text-left">
+                <h1 className="py-6 mb-4 text-xl text-center sm:text-2xl text-foreground lg:text-left">
                   Alterne entre os tipos de Items
                 </h1>
                 <div className="flex justify-center lg:justify-start">

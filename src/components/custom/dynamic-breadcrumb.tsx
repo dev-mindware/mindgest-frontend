@@ -8,19 +8,29 @@ import {
 } from "../ui";
 
 interface Props {
-  route?: string;
-  subRoute: string;
+  routePath?: string;
+  routeLabel?: string;  
+  subRoute: string;     
   showSeparator?: boolean;
 }
 
-export function DinamicBreadcrumb({ route, subRoute, showSeparator = true }: Props) {
+export function DinamicBreadcrumb({
+  routePath,
+  routeLabel,
+  subRoute,
+  showSeparator = true,
+}: Props) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="#">{route}</BreadcrumbLink>
-        </BreadcrumbItem>
-        {showSeparator && <BreadcrumbSeparator className="hidden md:block" />}
+        {routePath && routeLabel && (
+          <BreadcrumbItem className="hidden md:block">
+            <BreadcrumbLink href={routePath}>{routeLabel}</BreadcrumbLink>
+          </BreadcrumbItem>
+        )}
+        {showSeparator && routePath && (
+          <BreadcrumbSeparator className="hidden md:block" />
+        )}
         <BreadcrumbItem>
           <BreadcrumbPage>{subRoute}</BreadcrumbPage>
         </BreadcrumbItem>

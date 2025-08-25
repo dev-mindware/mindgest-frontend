@@ -64,7 +64,7 @@ export function AdminNavMenu({ items }: { items: MenuItem[] }) {
                       className={cn(
                         activeMain
                           ? "bg-primary/10 text-primary"
-                          : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                          : "hover:bg-sidebar-accent "
                       )}
                     >
                       {item.icon}
@@ -95,7 +95,7 @@ export function AdminNavMenu({ items }: { items: MenuItem[] }) {
                                 className={cn(
                                   activeSub
                                     ? "bg-primary/10 text-primary"
-                                    : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                    : "hover:bg-sidebar-accent "
                                 )}
                               >
                                 <Link href={sub.url}>
@@ -119,7 +119,7 @@ export function AdminNavMenu({ items }: { items: MenuItem[] }) {
                       className={cn(
                         activeMain
                           ? "bg-primary/10 text-primary"
-                          : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                          : "hover:bg-sidebar-accent "
                       )}
                     >
                       {item.showUpgrade ? (

@@ -38,8 +38,7 @@ export function AdminNavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-muted-foreground">
               <Avatar className="w-8 h-8 rounded-lg">
                 <AvatarImage src={user.name} alt={user.name} />
                 <AvatarFallback className="rounded-lg">

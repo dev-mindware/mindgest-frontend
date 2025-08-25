@@ -1,8 +1,8 @@
-import { Items } from "@/components";
+import { Items, PageWrapper } from "@/components";
 export default function Page() {
   return (
-    <div>
+    <PageWrapper subRoute="Items">
       <Items />
-    </div>
+    </PageWrapper>
   );
 }
