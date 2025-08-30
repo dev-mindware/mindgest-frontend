@@ -30,7 +30,7 @@ export function ProformItems({ fieldArray }: InvoiceItemsProps) {
       quantity,
       unitPrice,
       tax,
-      total: quantity * unitPrice * (1 + tax / 100),
+      total,
     });
 
     setItemDraft({ description: "", quantity: 1, unitPrice: 0, tax: 0 });

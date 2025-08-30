@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const CompanySchema = z.object({
+export const CompanySchema = z.object({
   name: z
     .string()
     .min(3, "O nome da empresa precisa ter pelo menos 3 caracteres")
@@ -117,3 +117,6 @@ export const ReceiptSchema = z.object({
   payment: PaymentSchema.optional(),
 });
 export type ReceiptFormData = z.infer<typeof ReceiptSchema>;
+
+
+export type CompanyFormData = z.infer<typeof CompanySchema>;

@@ -13,7 +13,7 @@ export function ButtonSubmit({ isLoading, children, className }: Props) {
     <Button
       disabled={isLoading}
       type="submit"
-      className={`w-full bg-primary hover:bg-[#8B4CF0] text-white py-2 ${className}`}
+      className={`w-max bg-primary hover:bg-[#8B4CF0] text-white py-2 ${className}`}
     >
       {isLoading && <Icon className="animate-spin" name="LoaderCircle" />}
       {children}

@@ -1,5 +1,5 @@
 "use client";
-import { Button, Input, RHFSelect } from "@/components";
+import { Button, ButtonSubmit, Input, RHFSelect } from "@/components";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProformaFormData, ProformaSchema } from "@/schemas";
@@ -7,17 +7,25 @@ import { useEffect } from "react";
 import { SummaryCard } from "../sumary-card";
 import { ProformItems } from "./proform-items";
 import { paymentOptions } from "./invoice-form";
+import { handleDownloadProforma } from "@/utils/pdf";
+import { useModal } from "@/stores";
+import { MINDWARE_INFO } from "@/constants";
 
 export function ProformaForm() {
+  const { openModal } = useModal();
   const {
     control,
     register,
     watch,
     setValue,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm<ProformaFormData>({
     resolver: zodResolver(ProformaSchema),
+    defaultValues: {
+      company: MINDWARE_INFO,
+    },
   });
 
   const fieldArray = useFieldArray<ProformaFormData, "items">({
@@ -25,9 +33,13 @@ export function ProformaForm() {
     name: "items",
   });
 
-  function onSubmit(data: ProformaFormData) {
+  async function onSubmit(data: ProformaFormData) {
     console.log("Proforma:", data);
-    alert(JSON.stringify(data, null, 2));
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    handleDownloadProforma(data);
+    openModal("invoice-created");
+    reset();
   }
 
   const items = watch("items");
@@ -119,9 +131,7 @@ export function ProformaForm() {
         )}
       </div>
       <div className="flex justify-end col-span-3">
-        <Button variant="default" type="submit">
-          Criar Proforma
-        </Button>
+        <ButtonSubmit isLoading={isSubmitting}>Criar Proforma</ButtonSubmit>
       </div>
     </form>
   );

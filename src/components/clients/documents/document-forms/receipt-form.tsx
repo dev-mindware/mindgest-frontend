@@ -1,23 +1,31 @@
 "use client";
-import { Input, Button } from "@/components";
+import { Input, Button, ButtonSubmit } from "@/components";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReceiptFormData, ReceiptSchema } from "@/schemas";
 import { ReceiptItems } from "./receipt-items";
 import { SummaryCard } from "../sumary-card";
 import { useEffect } from "react";
+import { handleDownloadReceipt } from "@/utils/pdf";
+import { useModal } from "@/stores";
+import { MINDWARE_INFO } from "@/constants";
 
 export function ReceiptForm() {
+  const { openModal } = useModal();
   const {
     watch,
     setValue,
     control,
     register,
+    reset,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ReceiptFormData>({
     resolver: zodResolver(ReceiptSchema),
     mode: "onChange",
+    defaultValues: {
+      company: MINDWARE_INFO,
+    },
   });
 
   const fieldArray = useFieldArray<ReceiptFormData, "items">({
@@ -25,9 +33,12 @@ export function ReceiptForm() {
     name: "items",
   });
 
-  function onSubmit(data: ReceiptFormData) {
+  async function onSubmit(data: ReceiptFormData) {
     console.log("Receipt:", data);
-    alert(JSON.stringify(data, null, 2));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    handleDownloadReceipt(data);
+    openModal("invoice-created");
+    reset();
   }
 
   const items = watch("items");
@@ -109,9 +120,7 @@ export function ReceiptForm() {
       </div>
 
       <div className="flex justify-end col-span-3">
-        <Button variant="default" type="submit">
-          Criar Recibo
-        </Button>
+        <ButtonSubmit isLoading={isSubmitting}>Criar Recibo</ButtonSubmit>
       </div>
     </form>
   );

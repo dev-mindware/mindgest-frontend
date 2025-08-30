@@ -1,11 +1,14 @@
 "use client";
-import { Button, Input, RHFSelect } from "@/components";
+import { Button, ButtonSubmit, Input, RHFSelect } from "@/components";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import { InvoiceItems } from "./items-items";
 import { useEffect } from "react";
 import { SummaryCard } from "../sumary-card";
+import { handleDownloadInvoice } from "@/utils/pdf";
+import { useModal } from "@/stores";
+import { MINDWARE_INFO } from "@/constants";
 
 export const paymentOptions = [
   { label: "Transferência Bancária", value: "bank_transfer" },
@@ -14,20 +17,22 @@ export const paymentOptions = [
 ];
 
 export function InvoiceForm() {
+  const { openModal } = useModal();
   const {
     register,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     control,
     watch,
+    reset,
   } = useForm<InvoiceFormData>({
     resolver: zodResolver(InvoiceSchema),
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
-      dueDate: new Date().toISOString().split("T")[0],
       items: [],
+      company: MINDWARE_INFO,
     },
   });
 
@@ -36,9 +41,13 @@ export function InvoiceForm() {
     name: "items",
   });
 
-  function onSubmit(data: InvoiceFormData) {
+  async function onSubmit(data: InvoiceFormData) {
     console.log("Invoice:", data);
-    alert(JSON.stringify(data, null, 2));
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    handleDownloadInvoice(data);
+    openModal("invoice-created");
+    reset();
   }
 
   const items = watch("items");
@@ -143,9 +152,7 @@ export function InvoiceForm() {
       </div>
 
       <div className="flex justify-end mt-6">
-        <Button variant="default" type="submit">
-          Criar Fatura
-        </Button>
+        <ButtonSubmit isLoading={isSubmitting}>Criar Fatura</ButtonSubmit>
       </div>
     </form>
   );

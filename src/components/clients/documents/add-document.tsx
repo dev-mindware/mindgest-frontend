@@ -1,9 +1,15 @@
 "use client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
+import { useState } from "react";
 import { TitleList } from "@/components/layout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 import { InvoiceForm, ProformaForm, ReceiptForm } from "./document-forms";
+import { InvoiceCreatedModal } from "./Invoice-created-modal";
+
+type TabsAloweds = "invoice-tab" | "receipt-tab" | "proform-tab";
 
 export function AddDocuments() {
+  const [currentTab, setCurrentTab] = useState<TabsAloweds>("invoice-tab");
+
   return (
     <div className="space-y-6">
       <TitleList
@@ -11,11 +17,26 @@ export function AddDocuments() {
         suTitle="Crie documentos que ajudaram no controlo das suas atividades."
       />
 
-      <Tabs defaultValue="invoice-tab" className="w-full">
+      <Tabs defaultValue={currentTab} className="w-full">
         <TabsList className="flex justify-center md:justify-start">
-          <TabsTrigger value="invoice-tab">Fatura Normal</TabsTrigger>
-          <TabsTrigger value="receipt-tab">Fatura Recibo</TabsTrigger>
-          <TabsTrigger value="proform-tab">Fatura Proforma</TabsTrigger>
+          <TabsTrigger
+            value="invoice-tab"
+            onClick={() => setCurrentTab("invoice-tab")}
+          >
+            Fatura Normal
+          </TabsTrigger>
+          <TabsTrigger
+            value="receipt-tab"
+            onClick={() => setCurrentTab("receipt-tab")}
+          >
+            Fatura Recibo
+          </TabsTrigger>
+          <TabsTrigger
+            value="proform-tab"
+            onClick={() => setCurrentTab("proform-tab")}
+          >
+            Fatura Proforma
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="invoice-tab">
@@ -28,6 +49,8 @@ export function AddDocuments() {
           <ProformaForm />
         </TabsContent>
       </Tabs>
+
+      <InvoiceCreatedModal type={currentTab} />
     </div>
   );
 }
