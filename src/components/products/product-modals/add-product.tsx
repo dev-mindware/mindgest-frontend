@@ -3,7 +3,6 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { measurement, category, status } from "./constant-data";
-
 import {
   Button,
   GlobalModal,
@@ -12,10 +11,10 @@ import {
   Input,
   TsunamiOnly,
   RHFSelect,
-  AddCategory
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { AddProductFormData, addProductSchema } from "@/schemas";
+import { AddCategory } from "@/components/categories";
 
 function parseCurrency(value: string): number {
   const numericValue = value.replace(/\D/g, "");
@@ -24,7 +23,8 @@ function parseCurrency(value: string): number {
 
 function formatCurrency(value: string | number): string {
   if (!value) return "";
-  const number = typeof value === "number" ? value : parseCurrency(value.toString());
+  const number =
+    typeof value === "number" ? value : parseCurrency(value.toString());
   return new Intl.NumberFormat("pt-BR", {
     style: "decimal",
     minimumFractionDigits: 2,
@@ -56,7 +56,6 @@ export function AddProduct() {
     },
   });
 
-
   const onSubmit: SubmitHandler<AddProductFormData> = (data) => {
     alert(JSON.stringify(data, null, 2));
   };
@@ -85,7 +84,7 @@ export function AddProduct() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => openModal("category")}
+          onClick={() => openModal("add-category")}
         >
           Adicionar Categoria
         </Button>
@@ -94,10 +93,8 @@ export function AddProduct() {
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
       >
-        {/* Coluna da esquerda */}
         <TsunamiOnly>
           <div className="space-y-6">
-            {/* Código de barras */}
             <div className="rounded-lg bg-sidebar">
               <div className="p-6">
                 <h3 className="mb-4 font-semibold">Código de Barras</h3>
@@ -122,13 +119,11 @@ export function AddProduct() {
           </div>
         </TsunamiOnly>
 
-        {/* Coluna da direita */}
         <div className="">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Informação Geral</h3>
           </div>
           <div className="space-y-4 sm:w-[35rem]">
-            {/* Nome e SKU */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
                 className="mt-1"
@@ -150,7 +145,6 @@ export function AddProduct() {
               />
             </div>
 
-            {/* Categoria e Medida */}
             <div className="grid gap-4 sm:grid-cols-2">
               <RHFSelect
                 name="selectedCategory"
@@ -178,7 +172,6 @@ export function AddProduct() {
               />
             </div>
 
-            {/* Fornecedor, Localização, Preço, Estoque */}
             <TsunamiOnly className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <Input

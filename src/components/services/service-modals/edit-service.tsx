@@ -11,12 +11,12 @@ import {
   Label,
   Input,
   RHFSelect,
-  AddCategory
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { AddServiceFormData, addServiceSchema } from "@/schemas";
 import { currentServiceStore } from "@/stores";
 import { useEffect } from "react";
+import { AddCategory } from "@/components/categories";
 
 function formatCurrency(value: string | number): string {
   if (!value) return "";
@@ -91,7 +91,7 @@ export function EditService() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => openModal("category")}
+          onClick={() => openModal("add-category")}
         >
           Adicionar Categoria
         </Button>

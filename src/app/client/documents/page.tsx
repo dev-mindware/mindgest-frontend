@@ -1,11 +1,10 @@
-import { PageWrapper, ProductList } from "@/components";
-import Link from "next/link";
+import { PageWrapper } from "@/components";
+import { DocumentList } from "@/components/clients";
 
 export default function Page() {
   return (
     <PageWrapper subRoute="Documentos">
-      <Link href="/client/documents/new">Novo</Link>
-      <ProductList />
+      <DocumentList />
     </PageWrapper>
   );
 }

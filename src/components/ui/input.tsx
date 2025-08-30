@@ -36,7 +36,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       Number(value ?? props.defaultValue) || 0
     );
 
-    // Mantém sincronizado com RHF
     React.useEffect(() => {
       if (typeof value !== "undefined") {
         setQuantity(Number(value));

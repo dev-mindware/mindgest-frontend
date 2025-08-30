@@ -13,7 +13,7 @@ export function Icon({
   name,
   color,
   size,
-  strokeWidth = 2,
+  strokeWidth,
   className,
 }: IconProps) {
   const LucideIcon = icons[name];

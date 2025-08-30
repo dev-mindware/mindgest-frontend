@@ -1,3 +1,5 @@
 export * from "./types"
 export * from "./auth"
 export * from "./data"
+export * from "./upload"
+export * from "./documents"

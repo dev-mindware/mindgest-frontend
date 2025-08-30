@@ -2,6 +2,7 @@ import { useModal } from "@/stores/use-modal-store";
 import { Badge, Button, GlobalModal, Icon } from "@/components";
 import { currentServiceStore } from "@/stores";
 import { formatPrice } from "@/utils";
+
 export function SeeService() {
   const { closeModal } = useModal();
   const { currentService } = currentServiceStore();
@@ -28,7 +29,7 @@ export function SeeService() {
         <div className="flex items-center justify-center p-2 mx-auto rounded-full w-18 h-18 bg-primary/10">
           <Icon name="Store" className="w-16 h-16 text-primary" />
         </div>
-        <h2 className="text-2xl font-bold text-center">{currentService?.title}</h2>
+        <h2 className="text-2xl font-bold text-center">{currentService?.category}</h2>
         <div className="flex justify-between gap-1">
           <div className="p-2 border rounded-md text-md border-muted text-muted-foreground"><span>{currentService?.category}</span></div>
           <div>

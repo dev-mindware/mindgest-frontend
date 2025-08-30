@@ -32,7 +32,6 @@ export function Appearance() {
     { name: "System", value: "system", img: "/themes/system.png" },
   ]
 
-  // Carregar configs salvas
   useEffect(() => {
     const savedColor = localStorage.getItem("primary-color")
     const savedFont = localStorage.getItem("font-family")
@@ -55,7 +54,6 @@ export function Appearance() {
     setPrimaryColor(hex)
   }
 
-  // Atualizar fonte
   const handleFontChange = (fontName: string) => {
     const fontValue = `'${fontName}', sans-serif`
     document.documentElement.style.setProperty("--font-family", fontValue)
@@ -63,7 +61,6 @@ export function Appearance() {
     setFont(fontName)
   }
 
-  // Restaurar tudo
   const restoreDefaults = () => {
     const defaultColor = "#9956F6"
     const defaultFont = "'Outfit', sans-serif"

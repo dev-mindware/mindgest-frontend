@@ -1,6 +1,7 @@
 import { Plan, Role } from "@/types";
 
 export const PUBLIC_ROUTES = [
+  "/",
   "/auth/login",
   "/auth/register",
   "/auth/forgot-password",

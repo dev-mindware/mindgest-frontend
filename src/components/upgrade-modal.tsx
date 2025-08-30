@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { GlobalModal } from "./modal";
 import { Button } from "./ui";
 import { useModal } from "@/stores";
@@ -10,16 +11,18 @@ export function UpgradeModal({ feature }: { feature: string }) {
   return (
     <GlobalModal
       id="upgrade-modal"
-      title="Atualize seu plano"
-      description=""
-    >
-      <div className="px-6 py-5 space-y-4">
-        <div className="text-center space-y-3">
+      className="w-[28rem]"
+      title={
+        <>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">
             <Sparkles className="h-4 w-4" />
             Recurso Premium
           </div>
-
+        </>
+      }
+    >
+      <div className="py-5 space-y-4">
+        <div className="text-center space-y-3">
           <div className="space-y-2">
             <p className="text-slate-600 leading-relaxed text-sm">
               O recurso{" "}
@@ -42,13 +45,13 @@ export function UpgradeModal({ feature }: { feature: string }) {
           <Button
             variant="outline"
             onClick={() => closeModal("upgrade-modal")}
-            className="flex-1 border-slate-200 text-slate-600 hover:bg-slate-50 bg-transparent"
+            className="flex-1"
           >
             Talvez Depois
           </Button>
-          <Button className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg shadow-purple-600/25">
-            Ver Planos
-          </Button>
+          <Link href="/pricing" className="block flex-1">
+            <Button className=  "w-full bg-primary">Ver Planos</Button>
+          </Link>
         </div>
       </div>
     </GlobalModal>

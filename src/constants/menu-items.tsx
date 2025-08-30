@@ -86,7 +86,7 @@ export const menuItems: MenuStructure = {
     {
       name: "GestIA",
       url: "/client/gestia",
-      icon: <Icon name="Sparkles" />,
+      icon: <Icon name="Sparkles" className="h-5 w-5" />,
       roles: ["MANAGER", "OWNER", "SELLER"],
       minPlan: "BASE",
       showUpgrade: true,

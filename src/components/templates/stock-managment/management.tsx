@@ -2,10 +2,12 @@
 import Image from "next/image";
 import Ai from "@/assets/AI.png";
 import { useModal } from "@/stores/use-modal-store";
-import { ProductList, AddProduct, Button } from "@/components";
+import { Button } from "@/components/ui";
+import { AddProduct, ProductList } from "@/components/products";
+
 export function Management() {
   const { openModal } = useModal();
-  
+
   return (
     <div>
       <div className="flex items-center justify-between w-full">

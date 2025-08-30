@@ -65,6 +65,7 @@ export interface Service {
   price: number;
   status: ServiceStatus;
   description?: string;
+  isActive?: boolean
 }
 
 export interface OrderItem {

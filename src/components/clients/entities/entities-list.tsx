@@ -1,12 +1,11 @@
 "use client";
 import Link from "next/link";
-import { TsunamiOnly } from "@/components/layout";
+import { TitleList, TsunamiOnly } from "@/components/layout";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Separator,
   Button,
 } from "@/components/ui";
 import { ClientsTable } from "./entities-list/clients-table";
@@ -15,15 +14,11 @@ import { StoresTable } from "./entities-list/stores-table";
 
 export function EntitiesList() {
   return (
-    <div className="p-6 space-y-6 ">
-      <div>
-        <h2 className="text-2xl text-center md:text-start">Entidades</h2>
-        <p className="text-center text-muted-foreground md:text-start">
-          Crie entidades que ajudaram no controlo das suas atividades.
-        </p>
-      </div>
-
-      <Separator />
+    <div className="space-y-6">
+      <TitleList
+        title="Entidades"
+        suTitle="Crie entidades que ajudaram no controlo das suas atividades"
+      />
 
       <Tabs defaultValue="client-tab" className="w-full">
         <div className="w-full flex items-center justify-between">
@@ -38,8 +33,6 @@ export function EntitiesList() {
             <Button variant="default">Adicionar</Button>
           </Link>
         </div>
-
-        <div className="mt-4" />
 
         <TabsContent value="client-tab">
           <div className="hidden w-full md:block">

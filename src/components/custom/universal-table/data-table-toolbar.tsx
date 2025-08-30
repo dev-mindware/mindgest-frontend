@@ -108,7 +108,7 @@ export function DataTableToolbar<TData>({
                 )}
                 value={(searchColumnObj.getFilterValue() ?? "") as string}
                 onChange={(e) => searchColumnObj.setFilterValue(e.target.value)}
-                placeholder={`Search ${searchColumn}...`}
+                placeholder={`Pesquisar...`}
                 type="text"
                 aria-label={`Filter by ${searchColumn}`}
               />

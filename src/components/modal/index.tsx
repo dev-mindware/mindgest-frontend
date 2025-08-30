@@ -19,7 +19,7 @@ import { useModal } from "@/stores/use-modal-store"
 interface ModalProps {
   id: string
   title?: string | ReactNode
-  description?: string
+  description?: string | ReactNode
   canClose?: boolean
   children?: ReactNode
   footer?: ReactNode

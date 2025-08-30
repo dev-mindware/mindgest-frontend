@@ -11,8 +11,8 @@ type Props = {
 
 export function PageWrapper({ routePath, routeLabel, subRoute, showSeparator = true, children }: Props) {
   return (
-    <div>
-      <header className="flex h-16 sticky top-0 z-50 shrink-0 bg-sidebar border-b items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <div className="">
+      <header className="flex h-16 sticky top-0 z-50 shrink-0 bg-sidebar border-b items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-16">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -22,8 +22,8 @@ export function PageWrapper({ routePath, routeLabel, subRoute, showSeparator = t
           <DinamicBreadcrumb routePath={routePath} routeLabel={routeLabel} subRoute={subRoute} showSeparator={showSeparator} />
         </div>
       </header>
-      <div className="flex flex-col flex-1">
-        <div className="@container/main flex flex-1 p-4 flex-col gap-2">
+      <div className="flex flex-col flex-1 max-w-7xl mx-auto space-y-4 md:space-y-6">
+        <div className="@container/main flex flex-1 p-6 flex-col gap-2">
           {children}
         </div>
       </div>

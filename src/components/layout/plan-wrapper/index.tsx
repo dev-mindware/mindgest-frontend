@@ -54,6 +54,7 @@ export function BaseOnly(props: Omit<WrapperProps, "minPlan">) {
 export function TsunamiOnly(props: Omit<WrapperProps, "minPlan">) {
   return <PlanWrapper minPlan="TSUNAMI" {...props} />;
 }
+
 export function SmartProOnly(props: Omit<WrapperProps, "minPlan">) {
   return <PlanWrapper minPlan="SMART_PRO" {...props} />;
 }

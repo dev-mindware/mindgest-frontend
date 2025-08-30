@@ -12,12 +12,11 @@ import {
   Input,
   TsunamiOnly,
   RHFSelect,
-  AddCategory
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { AddProductFormData, addProductSchema } from "@/schemas";
 import { useEffect } from "react";
-
+import { AddCategory } from "@/components/categories";
 
 function parseCurrency(value: string): number {
   const numericValue = value.replace(/\D/g, "");
@@ -26,7 +25,8 @@ function parseCurrency(value: string): number {
 
 function formatCurrency(value: string | number): string {
   if (!value) return "";
-  const number = typeof value === "number" ? value : parseCurrency(value.toString());
+  const number =
+    typeof value === "number" ? value : parseCurrency(value.toString());
   return new Intl.NumberFormat("pt-BR", {
     style: "decimal",
     minimumFractionDigits: 2,
@@ -46,19 +46,12 @@ export function EditProduct() {
     resolver: zodResolver(addProductSchema),
     defaultValues: {
       stock: 1,
-      minStock: null,
-      warranty: null,
       selectedStatus: "Disponível",
-      repositionTime: null,
-      salesPerDay: null,
-      tax: null,
       price: 0,
-      expiryDate: null,
     },
   });
 
-
- useEffect(() => {
+  useEffect(() => {
     if (currentProduct) {
       reset({
         ...currentProduct,
@@ -99,9 +92,9 @@ export function EditProduct() {
     >
       <div className="flex justify-end">
         <Button
-          variant="outline"
           size="sm"
-          onClick={() => openModal("category")}
+          variant="outline"
+          onClick={() => openModal("add-category")}
         >
           Adicionar Categoria
         </Button>
@@ -110,10 +103,8 @@ export function EditProduct() {
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
       >
-        {/* Coluna da esquerda */}
         <TsunamiOnly>
           <div className="space-y-6">
-            {/* Código de barras */}
             <div className="rounded-lg bg-sidebar">
               <div className="p-6">
                 <h3 className="mb-4 font-semibold">Código de Barras</h3>
@@ -138,13 +129,11 @@ export function EditProduct() {
           </div>
         </TsunamiOnly>
 
-        {/* Coluna da direita */}
         <div className="">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Informação Geral</h3>
           </div>
           <div className="space-y-4 sm:w-[35rem]">
-            {/* Nome e SKU */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
                 className="mt-1"
@@ -166,7 +155,6 @@ export function EditProduct() {
               />
             </div>
 
-            {/* Categoria e Medida */}
             <div className="grid gap-4 sm:grid-cols-2">
               <RHFSelect
                 name="selectedCategory"
@@ -194,8 +182,7 @@ export function EditProduct() {
               />
             </div>
 
-            {/* Fornecedor, Localização, Preço, Estoque */}
-             <TsunamiOnly className="space-y-4"> 
+            <TsunamiOnly className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <Input
                   id="supplier"
@@ -308,7 +295,7 @@ export function EditProduct() {
                   {...register("description")}
                 />
               </div>
-             </TsunamiOnly> 
+            </TsunamiOnly>
           </div>
         </div>
       </form>

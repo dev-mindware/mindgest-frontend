@@ -2,6 +2,7 @@ import { useModal } from "@/stores/use-modal-store";
 import { Badge, Button, GlobalModal, Icon, Label } from "@/components";
 import { currentProductStore } from "@/stores";
 import { formatPrice } from "@/utils";
+
 export function SeeProduct() {
   const { closeModal } = useModal();
   const { currentProduct } = currentProductStore();
