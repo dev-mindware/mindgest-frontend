@@ -30,7 +30,7 @@
 ### Semana 3 (25-31 Ago): Visualização & Relatórios
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
-| Template PDF responsivo             | Mauro       | Alta       | [ ]    |
+| Template PDF                        | Mauro       | Alta       | [X]    |
 | Pré-visualização em tempo real      | John        | Média      | [ ]    |
 | Histórico de documentos (listagem)  | John        | Alta       | [ ]    |
 | Painel de relatórios mensais        | Mauro       | Alta       | [ ]    |
