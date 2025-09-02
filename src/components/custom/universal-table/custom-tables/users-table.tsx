@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DataTableRowActions } from "../data-table-row-actions";
 import { DataTable } from "../data-table";
-import { Icon } from "@/components/layout/icon";
+import { Icon } from "@/components/common/icon";
 
 interface User {
   id: string;

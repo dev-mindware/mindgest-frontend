@@ -11,7 +11,6 @@ export function useProductFilters(
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   
-  // ALTERAÇÃO 1: O estado inicial do filtro de status agora é um array vazio.
   const [statusFilter, setStatusFilter] = useState<ProductStatus[]>([]);
 
   const [sortBy, setSortBy] = useState<SortByType>("az");
@@ -38,9 +37,8 @@ export function useProductFilters(
           categoryFilter.length === 0 ||
           categoryFilter.includes(product.category);
 
-        // Esta lógica já funciona corretamente com um array vazio
         const matchStatus =
-          statusFilter.length === 0 || statusFilter.includes(product.status);
+          statusFilter.length === 0 || statusFilter.includes(product.status!);
 
         return matchSearch && matchCategory && matchStatus;
       })
@@ -51,9 +49,9 @@ export function useProductFilters(
           case "za":
             return (b.name || '').localeCompare(a.name || '');
           case "price-max":
-            return b.price - a.price;
+            return b.price! - a.price!;
           case "price-min":
-            return a.price - b.price;
+            return a.price! - b.price!;
           default:
             return 0;
         }

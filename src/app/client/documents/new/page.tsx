@@ -8,7 +8,7 @@ export default function AddDocsPage() {
       routeLabel="Documentos"
       subRoute="Novo Documento"
       showSeparator={true}
-      >
+    >
       <AddDocuments />
     </PageWrapper>
   );

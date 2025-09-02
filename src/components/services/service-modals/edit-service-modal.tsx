@@ -14,26 +14,14 @@ import {
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { AddServiceFormData, addServiceSchema } from "@/schemas";
-import { AddCategory } from "@/components/categories";
+import { currentServiceStore } from "@/stores";
+import { useEffect } from "react";
+import { AddCategoryModal } from "@/components/categories";
+import { formatCurrency, parseCurrency } from "@/utils";
 
-function formatCurrency(value: string | number): string {
-  if (!value) return "";
-  const number = typeof value === "number" ? value : parseFloat(value.replace(/\D/g, "")) / 100;
-  return new Intl.NumberFormat("pt-BR", {
-    style: "decimal",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(number);
-}
-
-function parseCurrency(value: string): number {
-  const numericValue = value.replace(/\D/g, "");
-  return numericValue ? parseFloat(numericValue) / 100 : 0;
-}
-
-export function AddService() {
-  const { openModal } = useModal();
-  const { closeModal } = useModal();
+export function EditServiceModal() {
+  const { openModal, closeModal } = useModal();
+  const { currentService } = currentServiceStore();
   const {
     register,
     handleSubmit,
@@ -49,19 +37,31 @@ export function AddService() {
     },
   });
 
+  useEffect(() => {
+    if (currentService) {
+      reset({
+        name: currentService.name ?? "",
+        selectedCategory: currentService.category ?? "",
+        price: currentService.price ?? 0,
+        selectedStatus: currentService.status ?? "Activo",
+        description: currentService.description ?? "",
+      });
+    }
+  }, [currentService, reset]);
+  
   const onSubmit = (data: AddServiceFormData) => {
     alert(JSON.stringify(data, null, 2));
   };
   
   const handleCancel = () => {
     reset();
-    closeModal("add-service");
+    closeModal("edit-service");
   };
 
   return (
     <GlobalModal
-      id="add-service"
-      title="Adicionar Serviço"
+      id="edit-service"
+      title="Editar Serviço"
       className="!max-h-[85vh] !w-max"
       canClose
       footer={
@@ -88,7 +88,6 @@ export function AddService() {
             <h3 className="font-semibold">Informação Geral</h3>
           </div>
           <div className="space-y-4 sm:w-[35rem]">
-            {/* Nome e Categoria */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
                 className="mt-1"
@@ -107,7 +106,6 @@ export function AddService() {
               />
             </div>
 
-            {/* Preço e Status */}
             <div className="grid gap-4 sm:grid-cols-2">
               <Controller
                 control={control}
@@ -145,7 +143,7 @@ export function AddService() {
           </div>
         </div>
       </form>
-      <AddCategory />
+      <AddCategoryModal />
     </GlobalModal>
   );
 }

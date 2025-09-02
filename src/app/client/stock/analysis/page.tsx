@@ -14,7 +14,7 @@ export default function AnalysisPage() {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <DinamicBreadcrumb route="Gestão de Stock" subRoute="Análise" />
+          <DinamicBreadcrumb routeLabel="Gestão de Stock" subRoute="Análise" />
         </div>
       </header>
       <div className="flex flex-col flex-1">

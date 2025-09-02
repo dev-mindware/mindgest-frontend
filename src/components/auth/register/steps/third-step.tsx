@@ -2,7 +2,7 @@
 import { RegisterFormData } from "@/schemas";
 import { useFormContext, Controller } from "react-hook-form";
 import { Label, Checkbox } from "@/components/ui";
-import { AlertError } from "@/components/layout";
+import { AlertError } from "@/components/common";
 
 export function ThirdStep() {
   const { control } = useFormContext<RegisterFormData>();

@@ -2,18 +2,18 @@ import { Button, GlobalModal } from "@/components";
 import { currentServiceStore } from "@/stores";
 import { useModal } from "@/stores/use-modal-store";
 
-export function DeleteService() {
+export function DeleteServiceModal() {
   const { closeModal } = useModal();
   const { currentService } = currentServiceStore();
 
   return (
     <GlobalModal
+      warning
+      canClose
+      className="!w-max "
       id="delete-service"
       title="Tem certeza que deseja apagar o serviço?"
       description="Lembre-se que esta ação não pode ser desfeita."
-      className="!w-max "
-      warning
-      canClose
       footer={
         <div className="flex justify-end gap-4">
           <Button

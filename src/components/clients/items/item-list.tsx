@@ -7,8 +7,8 @@ import {
   Button,
   TitleList,
 } from "@/components";
-import { AddProduct, ProductList } from "@/components/products";
-import { AddService, ServiceList } from "@/components/services";
+import { AddProductModal, ProductList } from "@/components/products";
+import { AddServiceModal, ServiceList } from "@/components/services";
 import { useModal } from "@/stores";
 import { useState } from "react";
 
@@ -59,8 +59,8 @@ export function Items() {
           <ServiceList />
         </TabsContent>
       </Tabs>
-      {currentModal === "add-product" && <AddProduct />}
-      {currentModal === "add-service" && <AddService />}
+      {currentModal === "add-product" && <AddProductModal />}
+      {currentModal === "add-service" && <AddServiceModal />}
     </div>
   );
 }

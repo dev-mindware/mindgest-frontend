@@ -1,4 +1,5 @@
 export * from "./utils"
+export * from "./format-currency"
 export * from "./format-price"
 export * from "./feedback"
 export * from "./get-user-role"

@@ -1,6 +1,6 @@
+import { Service } from "@/types";
 import { useModal } from "@/stores/use-modal-store";
 import { currentServiceStore } from "@/stores";
-import { Service } from "@/types";
 
 export function useServiceActions() {
   const { openModal } = useModal();

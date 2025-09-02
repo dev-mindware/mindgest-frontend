@@ -3,13 +3,13 @@ import { Badge, Button, GlobalModal, Icon, Label } from "@/components";
 import { currentProductStore } from "@/stores";
 import { formatPrice } from "@/utils";
 
-export function SeeProduct() {
+export function DetailsProductModal() {
   const { closeModal } = useModal();
   const { currentProduct } = currentProductStore();
 
   return (
     <GlobalModal
-      id="details-product"
+      id="view-product"
       title="Detalhes do producto"
       description="Está a ver os detalhes do produto"
       className="!max-h-[85vh] !w-max"
@@ -17,7 +17,7 @@ export function SeeProduct() {
       footer={
         <div className="flex justify-end gap-4">
           <Button
-            onClick={() => closeModal("details-product")}
+            onClick={() => closeModal("view-product")}
             variant={"outline"}
           >
             Fechar

@@ -90,13 +90,13 @@ export function SupplierForm() {
 
         <div className="*:not-first:mt-2">
           <Label>Produtos ou Categorias</Label>
-          <Controller
+          {/* <Controller
             name="products"
             control={control}
             render={({ field }) => (
-              <InnerTagsInput value={field.value as any} onChange={field.onChange} />
+              <InnerTagsInput value={field.value as any[]} onChange={field.onChange} />
             )}
-          />
+          /> */}
           {errors.products && (
             <p className="text-sm text-red-500">{errors.products.message}</p>
           )}

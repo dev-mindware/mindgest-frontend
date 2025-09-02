@@ -15,7 +15,7 @@ export default function Page() {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <DinamicBreadcrumb route="Definições" subRoute="Geral" />
+          <DinamicBreadcrumb routeLabel="Definições" subRoute="Geral" />
         </div>
       </header>
       <div className="flex flex-col flex-1">

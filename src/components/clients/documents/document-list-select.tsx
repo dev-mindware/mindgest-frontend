@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { TitleList } from "@/components/layout";
+import { TitleList } from "@/components/common";
 import {
   Tabs,
   TabsContent,

@@ -5,7 +5,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
-import { TitleList, TsunamiOnly } from "@/components/layout";
+import { TitleList, TsunamiOnly } from "@/components/common";
 import { StoreForm, SupplierForm, ClientForm } from "./entities-form";
 
 export function AddEntities() {

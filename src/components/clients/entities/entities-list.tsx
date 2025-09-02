@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { TitleList, TsunamiOnly } from "@/components/layout";
+import { TitleList, TsunamiOnly } from "@/components/common";
 import {
   Tabs,
   TabsContent,

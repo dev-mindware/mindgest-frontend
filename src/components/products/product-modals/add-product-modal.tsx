@@ -1,5 +1,4 @@
 "use client";
-
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { measurement, category, status } from "./constant-data";
@@ -14,24 +13,10 @@ import {
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { AddProductFormData, addProductSchema } from "@/schemas";
-import { AddCategory } from "@/components/categories";
+import { AddCategoryModal } from "@/components/categories";
+import { formatCurrency, parseCurrency } from "@/utils";
 
-function parseCurrency(value: string): number {
-  const numericValue = value.replace(/\D/g, "");
-  return numericValue ? parseFloat(numericValue) / 100 : 0;
-}
-
-function formatCurrency(value: string | number): string {
-  if (!value) return "";
-  const number =
-    typeof value === "number" ? value : parseCurrency(value.toString());
-  return new Intl.NumberFormat("pt-BR", {
-    style: "decimal",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(number);
-}
-export function AddProduct() {
+export function AddProductModal() {
   const { openModal } = useModal();
   const { closeModal } = useModal();
 
@@ -289,7 +274,7 @@ export function AddProduct() {
           </div>
         </div>
       </form>
-      <AddCategory />
+      <AddCategoryModal />
     </GlobalModal>
   );
 }

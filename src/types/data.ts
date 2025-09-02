@@ -1,4 +1,5 @@
-import { Product, Service, ServiceStatus, ProductStatus } from './types';
+import { Product, ProductStatus } from "./products";
+import { Service, ServiceStatus } from "./services";
 
 export const initialProducts: Product[] = [
   {

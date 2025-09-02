@@ -12,7 +12,7 @@ import { ProductStatus, initialProducts } from "@/types";
 import { ProductCardView } from "./product-card-view";
 import { ProductTableView } from "./product-table-view";
 import { useProductFilters } from "@/hooks";
-import { DeleteProduct, EditProduct, SeeProduct } from "./product-modals";
+import { AddProductModal, DeleteProductModal, DetailsProductModal, EditProductModal } from "./product-modals";
 
 interface ProductListProps {
   className?: string;
@@ -248,9 +248,9 @@ export function ProductList({
         )}
       </div>
 
-      <DeleteProduct />
-      <SeeProduct />
-      <EditProduct   />
+      <DeleteProductModal />
+      <DetailsProductModal />
+      <EditProductModal />
     </div>
   );
 }

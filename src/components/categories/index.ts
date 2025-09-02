@@ -1,1 +1,1 @@
-export * from "./add-category"
+export * from "./add-category-modal"

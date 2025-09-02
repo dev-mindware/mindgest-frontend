@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CategoryFormData, categorySchema } from "@/schemas";
 import { useModal } from "@/stores";
 
-export function AddCategory() {
+export function AddCategoryModal() {
   const { closeModal } = useModal();
   const form = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
@@ -23,10 +23,10 @@ export function AddCategory() {
 
   return (
     <GlobalModal
+      canClose
       id="add-category"
       title="Adicionar Categoria"
       className="!max-w-md !w-[90vw] md:!w-full"
-      canClose
     >
       <form
         onSubmit={form.handleSubmit(onSubmit)}

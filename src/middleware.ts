@@ -43,10 +43,11 @@ export async function middleware(request: NextRequest) {
   const isPrivateRoute = PRIVATE_ROUTE_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix)
   );
+  
   if (!isAuthenticated && isPrivateRoute) {
     return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
   }
-
+// aqui
   const routePermission = ROUTE_FEATURE_MAPPING.find((item) =>
     pathname.startsWith(item.pathPrefix)
   );

@@ -15,13 +15,12 @@ export const PRIVATE_ROUTE_PREFIXES = ["/admin", "/client"];
 
 type RouteFeatureMapping = {
   pathPrefix: string;
-  feature?: string; // Tornei opcional, pois nem toda rota precisa de uma feature
+  feature?: string; 
   minPlan: Plan;
-  roles?: Role[]; // AGORA ESTÁ AQUI
+  roles?: Role[]; 
 };
 
 export const ROUTE_FEATURE_MAPPING: RouteFeatureMapping[] = [
-  // Rotas de Usuários (Clientes/Empresas)
   {
     pathPrefix: "/client/dashboard",
     feature: "dashboard_access",

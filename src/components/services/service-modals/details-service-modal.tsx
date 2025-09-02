@@ -3,7 +3,7 @@ import { Badge, Button, GlobalModal, Icon } from "@/components";
 import { currentServiceStore } from "@/stores";
 import { formatPrice } from "@/utils";
 
-export function SeeService() {
+export function DetailsServiceModal() {
   const { closeModal } = useModal();
   const { currentService } = currentServiceStore();
 

@@ -12,7 +12,7 @@ import { ServiceStatus, initialServices } from "@/types";
 import { ServiceCardView } from "./service-card-view";
 import { ServiceTableView } from "./service-table-view";
 import { useServiceFilters } from "@/hooks";
-import { DeleteService, EditService, SeeService } from "./service-modals";
+import { DeleteServiceModal, EditServiceModal, DetailsServiceModal } from "./service-modals";
 
 interface ServiceListProps {
   className?: string;
@@ -251,9 +251,9 @@ export function ServiceList({
         )}
       </div>
 
-      <DeleteService />
-      <SeeService />
-      <EditService />
+      <DeleteServiceModal />
+      <DetailsServiceModal />
+      <EditServiceModal />
     </div>
   );
 }

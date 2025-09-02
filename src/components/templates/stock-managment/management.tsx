@@ -3,7 +3,8 @@ import Image from "next/image";
 import Ai from "@/assets/AI.png";
 import { useModal } from "@/stores/use-modal-store";
 import { Button } from "@/components/ui";
-import { AddProduct, ProductList } from "@/components/products";
+import { AddProductModal, ProductList } from "@/components/products";
+import { TitleList } from "@/components/common";
 
 export function Management() {
   const { openModal } = useModal();
@@ -11,12 +12,10 @@ export function Management() {
   return (
     <div>
       <div className="flex items-center justify-between w-full">
-        <div>
-          <h1 className="text-2xl font-semibold">Produtos</h1>
-          <p className="text-muted-foreground">
-            Faça a gestão dos seus produtos aqui
-          </p>
-        </div>
+        <TitleList
+          title="Produtos"
+          suTitle="Faça a gestão dos seus produtos aqui"
+        />
         <Button
           onClick={() => openModal("add-product")}
           className="hidden md:block"
@@ -34,7 +33,7 @@ export function Management() {
         />
       </div>
       <ProductList size="large" />
-      <AddProduct />
+      <AddProductModal />
     </div>
   );
 }

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
-import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Inter, Outfit } from "next/font/google";
 import { CustomToaster } from "@/utils";
-import { SessionProvider } from "@/providers/session-provider";
+import { ThemeProvider, SessionProvider } from "@/providers";
 import { getSession } from "@/lib/auth";
-import { User } from "@/types";
 import { SidebarProvider } from "@/components";
+import { User } from "@/types";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 

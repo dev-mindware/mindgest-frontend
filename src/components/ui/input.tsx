@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Eye, EyeOff, icons, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Icon, AlertError } from "../layout";
+import { Icon, AlertError } from "../common";
 
 type InputType =
   | "text"

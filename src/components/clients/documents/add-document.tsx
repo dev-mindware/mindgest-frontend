@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { TitleList } from "@/components/layout";
+import { TitleList } from "@/components/common";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 import { InvoiceForm, ProformaForm, ReceiptForm } from "./document-forms";
 import { InvoiceCreatedModal } from "./Invoice-created-modal";

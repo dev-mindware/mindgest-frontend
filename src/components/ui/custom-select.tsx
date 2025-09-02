@@ -13,7 +13,7 @@ import {
   SelectItem,
   Label,
 } from "@/components/ui/";
-import { AlertError } from "../layout";
+import { AlertError } from "../common";
 
 type Option = {
   label: string;

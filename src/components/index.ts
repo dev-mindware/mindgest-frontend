@@ -1,5 +1,5 @@
 export * from "./ui";
-export * from "./layout";
+export * from "./common";
 export * from "./modal";
 export * from "./templates";
 export * from "./custom";

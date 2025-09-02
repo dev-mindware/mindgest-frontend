@@ -1,5 +1,3 @@
-import { Plan } from "./types";
-
 export interface LoginResponse {
   user: User;
   message: string;
@@ -28,3 +26,5 @@ interface Company {
   name: string;
   plan: Plan;
 }
+
+export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"

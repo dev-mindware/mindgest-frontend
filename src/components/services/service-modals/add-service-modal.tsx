@@ -14,28 +14,12 @@ import {
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { AddServiceFormData, addServiceSchema } from "@/schemas";
-import { currentServiceStore } from "@/stores";
-import { useEffect } from "react";
-import { AddCategory } from "@/components/categories";
+import { AddCategoryModal } from "@/components/categories";
+import { formatCurrency, parseCurrency } from "@/utils";
 
-function formatCurrency(value: string | number): string {
-  if (!value) return "";
-  const number = typeof value === "number" ? value : parseFloat(value.replace(/\D/g, "")) / 100;
-  return new Intl.NumberFormat("pt-BR", {
-    style: "decimal",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(number);
-}
-
-function parseCurrency(value: string): number {
-  const numericValue = value.replace(/\D/g, "");
-  return numericValue ? parseFloat(numericValue) / 100 : 0;
-}
-
-export function EditService() {
-  const { openModal, closeModal } = useModal();
-  const { currentService } = currentServiceStore();
+export function AddServiceModal() {
+  const { openModal } = useModal();
+  const { closeModal } = useModal();
   const {
     register,
     handleSubmit,
@@ -51,33 +35,21 @@ export function EditService() {
     },
   });
 
-  useEffect(() => {
-    if (currentService) {
-      reset({
-        name: currentService.name ?? "",
-        selectedCategory: currentService.category ?? "",
-        price: currentService.price ?? 0,
-        selectedStatus: currentService.status ?? "Activo",
-        description: currentService.description ?? "",
-      });
-    }
-  }, [currentService, reset]);
-  
   const onSubmit = (data: AddServiceFormData) => {
     alert(JSON.stringify(data, null, 2));
   };
-  
+
   const handleCancel = () => {
     reset();
-    closeModal("edit-service");
+    closeModal("add-service");
   };
 
   return (
     <GlobalModal
-      id="edit-service"
-      title="Editar Serviço"
-      className="!max-h-[85vh] !w-max"
       canClose
+      id="add-service"
+      title="Adicionar Serviço"
+      className="!max-h-[85vh] !w-max"
       footer={
         <div className="flex justify-end gap-4">
           <Button variant="outline" onClick={handleCancel}>
@@ -102,7 +74,6 @@ export function EditService() {
             <h3 className="font-semibold">Informação Geral</h3>
           </div>
           <div className="space-y-4 sm:w-[35rem]">
-            {/* Nome e Categoria */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
                 className="mt-1"
@@ -121,7 +92,6 @@ export function EditService() {
               />
             </div>
 
-            {/* Preço e Status */}
             <div className="grid gap-4 sm:grid-cols-2">
               <Controller
                 control={control}
@@ -141,7 +111,6 @@ export function EditService() {
                   />
                 )}
               />
-
               <RHFSelect
                 label="Status"
                 options={status}
@@ -159,7 +128,7 @@ export function EditService() {
           </div>
         </div>
       </form>
-      <AddCategory />
+      <AddCategoryModal />
     </GlobalModal>
   );
 }

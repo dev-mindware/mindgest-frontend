@@ -1,6 +1,6 @@
 export * from "./icon"
 export * from "./alert-error"
-export * from "./theme-provider"
+export * from "./button-actions"
 export * from "./page-wrapper"
 export * from "./plan-wrapper"
 export * from "./skeletons"

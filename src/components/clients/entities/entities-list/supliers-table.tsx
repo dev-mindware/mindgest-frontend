@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Icon } from "@/components/layout/icon";
+import { Icon } from "@/components/common/icon";
 import { DataTable, DataTableRowActions } from "@/components/custom";
 
 interface Supplier {

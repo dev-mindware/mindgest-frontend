@@ -3,18 +3,15 @@ import {
   Icon,
   Button,
   Badge,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  ButtonOnlyAction,
 } from "@/components";
-import { Product, OrderItem } from "@/types/types";
+import { Product, OrderItem } from "@/types";
 import { formatPrice } from "@/utils/format-price";
 import { useProductActions } from "@/hooks/products";
 
@@ -23,8 +20,12 @@ interface ProductTableProps {
   onAddToOrder?: (item: OrderItem) => void;
 }
 
-export function ProductTableView({ products, onAddToOrder }: ProductTableProps) {
-  const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } = useProductActions()
+export function ProductTableView({
+  products,
+  onAddToOrder,
+}: ProductTableProps) {
+  const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } =
+    useProductActions();
 
   return (
     <div className="border rounded-md">
@@ -46,9 +47,7 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
               <TableCell className="font-medium">{product.name}</TableCell>
               <TableCell>{product.sku}</TableCell>
               <TableCell>{product.category}</TableCell>
-              <TableCell>
-                {formatPrice(product.price)}
-              </TableCell>
+              <TableCell>{formatPrice(product.price!)}</TableCell>
               <TableCell>{product.stock}</TableCell>
               <TableCell>
                 <Badge
@@ -57,13 +56,12 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
                     product.status === "Disponível"
                       ? "text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                       : product.status === "Pendente"
-                        ? "text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                        : "text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                      ? "text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                      : "text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                   }
                 >
                   {product.status}
                 </Badge>
-
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
@@ -76,7 +74,7 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
                         onAddToOrder({
                           id: product.id,
                           title: product.name,
-                          price: product.price,
+                          price: product.price!,
                           quantity: 1,
                         })
                       }
@@ -85,35 +83,12 @@ export function ProductTableView({ products, onAddToOrder }: ProductTableProps) 
                       <Icon name="Plus" className="w-4 h-4 text-primary" />
                     </Button>
                   )}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="rounded-full shadow-none"
-                      >
-                        <Icon name="Ellipsis" size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={() => handlerDetailsProduct(product)}
-                      >
-                        Detalhes
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handlerEditProduct(product)}
-                      >
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => handlerDeleteProduct(product)}
-                      >
-                        Deletar
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ButtonOnlyAction
+                    data={product}
+                    handleDelete={handlerDeleteProduct}
+                    handleEdit={handlerEditProduct}
+                    handleSee={handlerDetailsProduct}
+                  />
                 </div>
               </TableCell>
             </TableRow>
