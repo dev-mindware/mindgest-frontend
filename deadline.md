@@ -1,7 +1,7 @@
 # Deadline Frontend - Plano Base (4 semanas)
 
 ## 👥 Alocação de Equipe
-- **Você: Tarefas complexas, integrações críticas e lógica de negócio
+- **Mauro Tarefas complexas, integrações críticas e lógica de negócio
 - **John: Implementação de UI, componentes visuais e testes básicos
 
 ---
@@ -11,40 +11,48 @@
 ### Semana 1 (11-17 Ago): Autenticação & Cadastros
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
+<<<<<<< HEAD
 | Página de login com validação       | Você        | Alta       | [ V ]    |
 | Dashboard inicial (placeholders)    | John        | Média      | [ V ]    |
 | CRUD clientes (listagem/formulário) | Você        | Alta       | [ ]    |
 | CRUD produtos (listagem básica)     | John        | Alta       | [ V ]    |
 | Validação de formulários genéricos  | John        | Baixa      | [ ]    |
+=======
+| Página de login com validação       | Mauro       | Alta       | [X]    |
+| Dashboard inicial (placeholders)    | John        | Média      | [X]    |
+| CRUD clientes (listagem/formulário) | Mauro       | Alta       | [X]    |
+| CRUD produtos (listagem básica)     | John        | Alta       | [X]    |
+| Validação de formulários genéricos  | John        | Baixa      | [X]    |
+>>>>>>> base-plan
 
 ### Semana 2 (18-24 Ago): Faturação Core
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
-| Seletor de tipo documento           | Você        | Alta       | [ ]    |
-| Formulário criação documentos       | Você        | Crítica    | [ ]    |
-| Adição dinâmica de itens            | Você        | Alta       | [ ]    |
-| Cálculos automáticos (totais)       | Você        | Crítica    | [ ]    |
-| Header contextual dinâmico          | John        | Média      | [ ]    |
-| Integração Sidebar com rotas        | John        | Alta       | [ ]    |
+| Seletor de tipo documento           | Mauro       | Alta       | [X]    |
+| Formulário criação documentos       | Mauro       | Crítica    | [X]    |
+| Adição dinâmica de itens            | Mauro       | Alta       | [X]    |
+| Cálculos automáticos (totais)       | Mauro       | Crítica    | [X]    |
+| Header contextual dinâmico          | John        | Média      | [X]    |
+| Integração Sidebar com rotas        | John        | Alta       | [X]    |
 
 ### Semana 3 (25-31 Ago): Visualização & Relatórios
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
-| Template PDF responsivo             | Você        | Alta       | [ ]    |
+| Template PDF                        | Mauro       | Alta       | [X]    |
 | Pré-visualização em tempo real      | John        | Média      | [ ]    |
 | Histórico de documentos (listagem)  | John        | Alta       | [ ]    |
-| Painel de relatórios mensais        | Você        | Alta       | [ ]    |
-| Gráficos básicos (Chart.js)         | John        | Média      | [ ]    |
-| Exportação CSV                      | Você        | Baixa      | [ ]    |
+| Painel de relatórios mensais        | Mauro       | Alta       | [ ]    |
+| Gráficos básicos (Chart.js)         | John        | Média      | [X]    |
+| Exportação CSV                      | Mauro       | Baixa      | [ ]    |
 
 ### Semana 4 (1-7 Set): Mobile & Polimento
 | Tarefa                              | Responsável | Prioridade | Status |
 |-------------------------------------|-------------|------------|--------|
 | Adaptação mobile (WebView)          | John        | Alta       | [ ]    |
 | Testes viewports (iOS/Android)      | John        | Alta       | [ ]    |
-| Tratamento de erros global          | Você        | Alta       | [ ]    |
+| Tratamento de erros global          | Mauro       | Alta       | [ ]    |
 | Loaders e estados vazios            | John        | Média      | [ ]    |
-| Otimização de performance           | Você        | Crítica    | [ ]    |
+| Otimização de performance           | Mauro       | Crítica    | [ ]    |
 | Testes de usabilidade               | Ambos       | Alta       | [ ]    |
 
 

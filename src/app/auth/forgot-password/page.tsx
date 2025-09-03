@@ -1,13 +1,7 @@
-"use client";
-import ForgotPassIllustration from "@/assets/ForgotPassword.svg";
+"use client"
 import Image from "next/image";
-
-import { EmailSentModal } from "./modals/email-sent-modal";
-import { EmailErrorModal } from "./modals/email-error-modal";
-import { OTPModal } from "./modals/otp-modal";
-import { SentEmail } from "./sent-email";
-import { UpdatePassword } from "./update-password";
-import { PasswordSucessModal } from "./modals/password-sucess-modal";
+import ForgotPassIllustration from "@/assets/ForgotPassword.svg";
+import { SentEmail } from "@/components";
 
 export default function ForgotPassPage() {
   return (
@@ -20,14 +14,7 @@ export default function ForgotPassPage() {
 
       <div className="relative z-20 flex flex-col gap-4 p-6 md:p-10">
         <SentEmail />
-        <div className="hidden">
-          <UpdatePassword />
-        </div>
       </div>
-      <EmailSentModal />
-      <EmailErrorModal />
-      <OTPModal />
-      <PasswordSucessModal />
     </div>
   );
 }

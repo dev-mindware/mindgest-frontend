@@ -30,7 +30,7 @@ import {
 import { DataTableConfig } from "./types";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { Icon } from "@/components/layout/icon";
+import { Icon } from "@/components/common/icon";
 
 interface DataTableProps<TData> extends DataTableConfig<TData> {
   isLoading?: boolean;

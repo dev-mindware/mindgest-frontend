@@ -24,7 +24,7 @@ export default function RequiredInput({
         {label} <span className="text-destructive">*</span>
       </Label>
       <div className="relative">
-        <Input
+        <input
           id={id}
           className={cn("ps-9", className)}
           {...props}

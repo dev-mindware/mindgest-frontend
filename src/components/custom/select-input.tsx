@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { Icon } from "../layout"
+import { Icon } from "../common"
 import { icons } from "lucide-react"
 
 export interface Option {

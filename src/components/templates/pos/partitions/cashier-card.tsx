@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components";
 import { MoreVertical } from "lucide-react";
-import { getStatusColor, getStatusDot } from "../../../../utils/utils";
-import { CashierCardProps } from "../../../../types/types";
+import { CashierCardProps } from "@/types/cashier";
+import { getStatusColor, getStatusDot } from "@/utils";
 
 export const CashierCard: React.FC<CashierCardProps> = ({ cashier, onAdd }) => (
   <Card

@@ -1,4 +1,4 @@
-import { Cashier } from "@/types/types";
+import { Cashier } from "@/types/cashier";
 
 export const getStatusColor = (status: Cashier["status"]): string => {
   switch (status) {
@@ -29,4 +29,3 @@ export const getStatusDot = (status: Cashier["status"]): string => {
       return "bg-gray-500";
   }
 };
-

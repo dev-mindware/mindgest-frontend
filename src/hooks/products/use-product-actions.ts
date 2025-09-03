@@ -12,7 +12,7 @@ export function useProductActions() {
   }
 
   function handlerDetailsProduct(product: Product) {
-    openModal("details-product");
+    openModal("view-product");
     setCurrentProduct(product);
   }
 

@@ -1,6 +1,7 @@
 "use client"
-import { RegisterSteps } from "./steps";
+
+import { RegisterForm } from "@/components/auth";
 
 export default function page() {
-  return <RegisterSteps />;
+  return <RegisterForm />;
 }

@@ -18,7 +18,7 @@ export function BreadcrumbProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     if (title) {
-      document.title = title // Atualiza o título da aba
+      document.title = title 
     }
   }, [title])
 

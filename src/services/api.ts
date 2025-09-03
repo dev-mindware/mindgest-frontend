@@ -1,55 +1,50 @@
 import axios from "axios";
-import { getCookie, setCookie } from "cookies-next";
-import { TOKEN_COOKIE_KEY } from "@/constants";
-import { refresh } from "@/actions/login";
+import { getAccessToken } from "@/app/actions/token";
+import { reauthenticate } from "@/app/actions/auth";
 
 export const api = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://mindgest-api.onrender.com",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export function setAuthToken(token?: string) {
+api.interceptors.request.use(async (config) => {
+  const token = await getAccessToken();
   if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    setCookie(TOKEN_COOKIE_KEY, token, { path: "/" }); 
-  } else {
-    delete api.defaults.headers.common["Authorization"];
+    config.headers.Authorization = `Bearer ${token}`;
   }
-}
-
-const savedToken = getCookie(TOKEN_COOKIE_KEY) as string | undefined;
-if (savedToken) {
-  console.log("TOKEN SALVO:"+savedToken)
-  api.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
-}
+  return config;
+});
 
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
     const original = err.config;
 
-    if (err.response?.status === 401 && !original._retry) {
-      original._retry = true;
-
-      try {
-        const { accessToken } = await refresh();
-
-        if (accessToken) {
-          setAuthToken(accessToken); 
-
-          original.headers.Authorization = `Bearer ${accessToken}`;
-          return api(original); 
-        }
-      } catch (refreshError) {
-        console.error("Erro ao tentar refresh token:", refreshError);
-      }
+    if (original.url.includes("/auth/") || original._retry) {
+      return Promise.reject(err);
     }
 
+    if (err.response?.status === 401) {
+      original._retry = true;
+      try {
+        await reauthenticate();
+        
+        const newToken = await getAccessToken();
+        if (newToken) {
+          original.headers.Authorization = `Bearer ${newToken}`;
+          return api(original);
+        }
+
+      } catch (refreshError) {
+        console.error("Erro ao renovar token:", refreshError);
+        window.location.replace("/auth/login");
+        return Promise.reject(err);
+      }
+    }
     return Promise.reject(err);
   }
 );
 
-export default api
+export default api;

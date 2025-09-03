@@ -7,7 +7,7 @@ import { CashStats } from "./partitions/cash-stats";
 import { CashOpeningNotification } from "./partitions/cash-opening-notification";
 import { CashierCard } from "./partitions/cashier-card";
 import { CashOpeningForm } from "./partitions/cash-opening-form";
-import { Cashier, OpenCashRegister } from "../../../types/types";
+import { Cashier, OpenCashRegister } from "@/types/cashier";
 
 const cashiers: Cashier[] = [
   {

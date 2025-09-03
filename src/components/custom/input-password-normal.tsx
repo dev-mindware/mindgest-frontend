@@ -22,7 +22,7 @@ export const InputPassword = forwardRef<
           ref={ref}
           className={`pe-9 ps-9 ${className ?? ""}`}
           placeholder={placeholder}
-          type={isVisible ? "text" : "password"}
+          type={isVisible ? "text" : "password" as any}
           {...props}
         />
         <div className="absolute inset-y-0 flex items-center justify-center pointer-events-none text-muted-foreground/80 start-0 ps-3 peer-disabled:opacity-50">

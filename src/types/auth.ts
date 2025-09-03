@@ -1,27 +1,30 @@
 export interface LoginResponse {
-  message: string;
   user: User;
-  tokens: Tokens;
-}
-
-interface Tokens {
+  message: string;
   accessToken: string;
   refreshToken: string;
-  expiresIn: string;
 }
+
+export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | 'SELLER' | "CASHIER"
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
-  companyId: string;
-  storeId: string;
+  role: Role;
   company: Company;
-  store: Company;
+  stores: Store[];
+}
+
+interface Store {
+  id: string;
+  name: string;
 }
 
 interface Company {
   id: string;
   name: string;
+  plan: Plan;
 }
+
+export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"

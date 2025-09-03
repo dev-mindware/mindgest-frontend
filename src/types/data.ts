@@ -1,0 +1,271 @@
+import { Product, ProductStatus } from "./products";
+import { Service, ServiceStatus } from "./services";
+
+export const initialProducts: Product[] = [
+  {
+    id: '1',
+    name: 'PC Gaming Intel i9 RTX 4080',
+    sku: 'Gigabyte-900',
+    category: 'Eletrônicos',
+    measurement: 'Unidade',
+    price: 5700000,
+    stock: 10,
+    warranty: 36,
+    location: 'Armazém A',
+    status: ProductStatus.Pendente,
+    expirydate: new Date('2028-02-26'),
+    repositiontime: 15,
+    minstock: 5,
+    supplier: 'João Pedro',
+    tax: 14,
+    salesperday: 5,
+    description:
+      'Computador gamer de alta performance com processador Intel i9 e placa gráfica RTX 4080, ideal para jogos AAA e edição de vídeo.'
+  },
+  {
+    id: '2',
+    name: 'Smartphone Samsung Galaxy S24',
+    sku: 'Samsung-S24',
+    category: 'Telemóveis',
+    measurement: 'Unidade',
+    price: 270000,
+    stock: 50,
+    warranty: 12,
+    location: 'Armazém B',
+    status: ProductStatus.Pendente,
+    expirydate: new Date('2025-02-06'),
+    repositiontime: 10,
+    minstock: 8,
+    supplier: 'Samsung Angola',
+    tax: 14,
+    salesperday: 12,
+    description:
+      'Smartphone topo de gama da Samsung com câmera de alta resolução e desempenho robusto.'
+  },
+  {
+    id: '3',
+    name: 'TV LG OLED 55" 4K',
+    sku: 'LG-4K55',
+    category: 'Eletrônicos',
+    measurement: 'Unidade',
+    price: 1100000,
+    stock: 30,
+    warranty: 24,
+    location: 'Armazém C',
+    status: ProductStatus.Pendente,
+    expirydate: new Date('2028-02-26'),
+    repositiontime: 20,
+    minstock: 6,
+    supplier: 'LG Distribuidora',
+    tax: 14,
+    salesperday: 4,
+    description:
+      'Televisor LG OLED 55" com resolução 4K, cores vibrantes e suporte HDR para máxima imersão.'
+  },
+  {
+    id: '4',
+    name: 'Máquina de Lavar Samsung 10kg',
+    sku: 'Wash-S10',
+    category: 'Eletrodomésticos',
+    measurement: 'Kg',
+    price: 450000,
+    stock: 15,
+    warranty: 12,
+    location: 'Armazém D',
+    status: ProductStatus.Disponível,
+    expirydate: new Date('2028-02-26'),
+    repositiontime: 12,
+    minstock: 4,
+    supplier: 'Samsung Angola',
+    tax: 14,
+    salesperday: 2,
+    description:
+      'Máquina de lavar Samsung 10kg, tecnologia de lavagem rápida e eficiência energética A++.'
+  },
+  {
+    id: '5',
+    name: 'Ventoinha Xiaomi Smart Fan',
+    sku: 'Xiao-Fan',
+    category: 'Eletrodomésticos',
+    measurement: 'Unidade',
+    price: 120000,
+    stock: 60,
+    warranty: 12,
+    location: 'Armazém E',
+    status: ProductStatus.Esgotado,
+    expirydate: new Date('2025-12-31'),
+    repositiontime: 18,
+    minstock: 10,
+    supplier: 'Xiaomi Angola',
+    tax: 14,
+    salesperday: 7,
+    description:
+      'Ventoinha inteligente Xiaomi com controlo via app e diferentes modos de ventilação.'
+  },
+  {
+    id: '6',
+    name: 'iPhone 15 Pro Max 256GB',
+    sku: 'Apple-15PM',
+    category: 'Telemóveis',
+    measurement: 'Unidade',
+    price: 850000,
+    stock: 35,
+    warranty: 72,
+    location: 'Armazém B',
+    status: ProductStatus.Disponível,
+    expirydate: new Date('2026-02-28'),
+    repositiontime: 14,
+    minstock: 5,
+    supplier: 'Apple Store Angola',
+    tax: 14,
+    salesperday: 9,
+    description:
+      'iPhone 15 Pro Max com 256GB, performance extrema, câmeras avançadas e acabamento premium.'
+  },
+  {
+    id: '7',
+    name: 'Monitor Dell 27" 4K UHD',
+    sku: 'Dell-4K27',
+    category: 'Eletrônicos',
+    measurement: 'Unidade',
+    price: 320000,
+    stock: 25,
+    warranty: 31,
+    location: 'Armazém A',
+    status: ProductStatus.Esgotado,
+    expirydate: new Date('2025-12-31'),
+    repositiontime: 11,
+    minstock: 3,
+    supplier: 'Dell Angola',
+    tax: 14,
+    salesperday: 3,
+    description:
+      'Monitor Dell 27" UHD 4K com painel IPS, design minimalista e conectividade moderna.'
+  },
+  {
+    id: '8',
+    name: 'Tablet Huawei MatePad 11',
+    sku: 'Huawei-M11',
+    category: 'Eletrônicos',
+    measurement: 'Unidade',
+    price: 280000,
+    stock: 22,
+    warranty: 14,
+    location: 'Armazém C',
+    status: ProductStatus.Disponível,
+    expirydate: new Date('2025-08-01'),
+    repositiontime: 9,
+    minstock: 5,
+    supplier: 'Huawei Angola',
+    tax: 14,
+    salesperday: 6,
+    description:
+      'Tablet Huawei MatePad 11 com suporte à caneta Stylus e performance optimizada para estudo e trabalho.'
+  },
+  {
+    id: '9',
+    name: 'Teclado Mecânico Redragon K552',
+    sku: 'Red-K552',
+    category: 'Acessórios',
+    measurement: 'Unidade',
+    price: 45000,
+    stock: 120,
+    warranty: 21,
+    location: 'Armazém E',
+    status: ProductStatus.Disponível,
+    expirydate: new Date('2025-11-11'),
+    repositiontime: 7,
+    minstock: 15,
+    supplier: 'Redragon Angola',
+    tax: 14,
+    salesperday: 14,
+    description:
+      'Teclado mecânico Redragon K552 com switches Blue, retroiluminação RGB e design resistente.'
+  },
+  {
+    id: '10',
+    name: 'Headset Gamer Logitech G Pro X',
+    sku: 'Logi-GPX',
+    category: 'Acessórios',
+    measurement: 'Unidade',
+    price: 85000,
+    stock: 90,
+    warranty: 24,
+    location: 'Armazém A',
+    status: ProductStatus.Pendente,
+    expirydate: new Date('2026-02-28'),
+    repositiontime: 8,
+    minstock: 10,
+    supplier: 'Logitech Angola',
+    tax: 14,
+    salesperday: 8,
+    description:
+      'Headset gamer Logitech G Pro X com som surround e microfone Blue VO!CE para comunicação cristalina.'
+  }
+];
+
+
+export const initialServices: Service[] = [
+  { 
+    id: '1', name: 'Consultoria em TI',
+     category: "Consultoria",
+     description: 'Serviço de consultoria em tecnologia da informação',
+     price: 150000,
+     status: ServiceStatus.Activo
+  },
+  { id: '2', name: 'Desenvolvimento de Software',
+     category: "Desenvolvimento",
+     description: 'Criação de software sob medida',
+     price: 300000,
+     status: ServiceStatus.Activo
+  },
+  { id: '3', name: 'Suporte Técnico',
+     category: "Suporte",
+     description: 'Assistência técnica para equipamentos de informática',
+     price: 80000,
+     status: ServiceStatus.Inactivo
+  },
+  { id: '4', name: 'Treinamento em Tecnologia',
+     category: "Treinamento",
+     description: 'Capacitação em ferramentas tecnológicas',
+     price: 100000,
+     status: ServiceStatus.Activo
+  },
+  { id: '5', name: 'Gerenciamento de Projetos',
+     category: "Gerenciamento",
+     description: 'Gestão de projetos de tecnologia',
+     price: 200000,
+     status: ServiceStatus.Inactivo
+  },
+  { id: '6', name: 'Auditoria de Sistemas',
+     category: "Auditoria",
+     description: 'Avaliação e auditoria de sistemas de TI',
+     price: 250000,
+     status: ServiceStatus.Pendente
+  },
+  { id: '7', name: 'Design de Interface',
+     category: "Design",
+     description: 'Criação de interfaces de usuário intuitivas',
+     price: 120000,
+     status: ServiceStatus.Activo
+  },
+  { id: '8', name: 'Marketing Digital',
+     category: "Marketing",
+     description: 'Estratégias de marketing para presença online',
+     price: 180000,
+     status: ServiceStatus.Pendente
+  },
+  { id: '9', name: 'Manutenção de Hardware',
+     category: "Manutenção",
+     description: 'Serviços de manutenção e reparo de hardware',
+     price: 90000,
+     status: ServiceStatus.Activo
+  },
+  { id: '10', name: 'Consultoria em Segurança da Informação',
+     category: "Consultoria",
+     description: 'Avaliação e consultoria em segurança da informação',
+     price: 220000,
+     status: ServiceStatus.Pendente
+  }
+
+]

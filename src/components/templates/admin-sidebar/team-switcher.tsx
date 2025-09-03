@@ -35,7 +35,7 @@ export function AdminTeamSwitcher({ teams }: Props) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-muted-foreground"
             >
               <div className="flex items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground aspect-square size-8">
                 <Icon name={activeTeam.logo} className="size-4" />

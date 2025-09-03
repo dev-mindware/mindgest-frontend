@@ -8,7 +8,9 @@ export * from "./tooltip";
 export * from "./button";
 export * from "./label";
 export * from "./input";
+export * from "./input-otp";
 export * from "./separator";
+export * from "./select-field";
 export * from "./avatar";
 export * from "./breadcrumb-context";
 export * from "./breadcrumb";
@@ -29,3 +31,4 @@ export * from "./chart"
 export * from "./card"
 export * from "./switch"
 export * from "./textarea"
+export * from "./custom-select"

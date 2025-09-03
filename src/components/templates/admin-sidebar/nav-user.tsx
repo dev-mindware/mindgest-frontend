@@ -1,5 +1,5 @@
-"use client"
-
+"use client";
+import { logoutAction } from "@/app/actions/login";
 import {
   Icon,
   Avatar,
@@ -16,14 +16,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components"
-import { useAuthStore } from "@/stores/auth/auth-store";
-import Link from "next/link"
+} from "@/components";
+import { useAuth } from "@/hooks/auth";
 
 export function AdminNavUser() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { isMobile } = useSidebar();
 
+  if (!user) return null;
+
+  async function onLogout() {
+    try {
+      await logoutAction();
+    } catch (error) {}
+  }
 
   return (
     <SidebarMenu>
@@ -32,11 +38,12 @@ export function AdminNavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-muted-foreground">
               <Avatar className="w-8 h-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={user.name} alt={user.name} />
+                <AvatarFallback className="rounded-lg">
+                  {user.name[0].toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-sm leading-tight text-left">
                 <span className="font-medium truncate">{user.name}</span>
@@ -54,8 +61,10 @@ export function AdminNavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="w-8 h-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user.name} alt={user.name} />
+                  <AvatarFallback className="rounded-lg">
+                    {user.name[0].toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-sm leading-tight text-left">
                   <span className="font-medium truncate">{user.name}</span>
@@ -86,15 +95,13 @@ export function AdminNavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <Link href="/">
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
               <Icon name="LogOut" />
               Log out
             </DropdownMenuItem>
-            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }
