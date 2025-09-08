@@ -18,8 +18,7 @@ import { AddCategoryModal } from "@/components/categories";
 import { formatCurrency, parseCurrency } from "@/utils";
 
 export function AddServiceModal() {
-  const { openModal } = useModal();
-  const { closeModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const {
     register,
     handleSubmit,
@@ -37,6 +36,7 @@ export function AddServiceModal() {
 
   const onSubmit = (data: AddServiceFormData) => {
     alert(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(data, null, 2));
   };
 
   const handleCancel = () => {
