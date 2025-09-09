@@ -1,11 +1,5 @@
 "use client";
-import {
-  Input,
-  Button,
-  GlobalModal,
-  TsunamiOnly,
-  FileImageUpload,
-} from "@/components";
+import { Input, Button, GlobalModal, Label, Textarea } from "@/components";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategoryFormData, categorySchema } from "@/schemas";
@@ -13,13 +7,27 @@ import { useModal } from "@/stores";
 
 export function AddCategoryModal() {
   const { closeModal } = useModal();
-  const form = useForm<CategoryFormData>({
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
+    mode: "onChange", 
   });
 
   async function onSubmit(data: CategoryFormData) {
-    console.log(data);
+    console.log("Categoria criada:", data);
+    alert(JSON.stringify(data, null, 2));
   }
+
+  const handleCancel = () => {
+    reset();
+    closeModal("add-category");
+  };
 
   return (
     <GlobalModal
@@ -29,43 +37,41 @@ export function AddCategoryModal() {
       className="!max-w-md !w-[90vw] md:!w-full"
     >
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 overflow-auto max-h-[80vh]"
       >
         <Input
           label="Nome"
           placeholder="Ex: Plásticos, Cosméticos..."
-          {...form.register("name")}
-          error={form.formState.errors?.name?.message}
+          {...register("name")}
+          error={errors.name?.message}
         />
 
         <Input
           label="Código de Abreviação"
           placeholder="Ex: PLSTC, CMTC"
-          {...form.register("abbreviation")}
-          error={form.formState.errors?.abbreviation?.message}
+          {...register("abbreviation")}
+          error={errors.abbreviation?.message}
         />
-
-        <TsunamiOnly>
-          <div>
-            <FileImageUpload
-              name="icon"
-              label="Icone"
-              control={form.control}
-              info="Imagem do icone"
+        <Label>Descrição</Label>
+            <Textarea
+              id="description"
+              {...register("description")}
+              placeholder="Escreva aqui..."
             />
-          </div>
-        </TsunamiOnly>
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button
             type="button"
             variant="outline"
             className="px-6"
-            onClick={() => closeModal("add-category")}
+            onClick={handleCancel}
           >
             Cancelar
           </Button>
-          <Button disabled={form.formState.isSubmitting} className="">
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            className="px-6"
+          >
             Salvar
           </Button>
         </div>
