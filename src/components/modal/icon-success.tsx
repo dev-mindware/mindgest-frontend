@@ -5,7 +5,7 @@ export function IconCheckSucessfull({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center w-20 h-20 rounded-full bg-green-100 text-green-600",
+        "flex items-center justify-center mb-4 w-20 h-20 rounded-full bg-green-100 text-green-600",
         className
       )}
     >
