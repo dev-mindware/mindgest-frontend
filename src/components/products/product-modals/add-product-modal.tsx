@@ -43,6 +43,7 @@ export function AddProductModal() {
 
   const onSubmit: SubmitHandler<AddProductFormData> = (data) => {
     alert(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(data, null, 2))
   };
 
   const handleCancel = () => {
