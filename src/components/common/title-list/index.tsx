@@ -3,18 +3,21 @@ import { Separator } from "@/components/ui";
 interface TitleListProps {
   title: string;
   suTitle?: string;
+  separator?: boolean;
 }
 
-export function TitleList({ title, suTitle }: TitleListProps) {
+export function TitleList({ title, suTitle, separator }: TitleListProps) {
   return (
     <>
       <div>
-        <h2 className="text-2xl text-center md:text-start">{title}</h2>
-        <p className="text-center text-muted-foreground md:text-start">
-          {suTitle}
-        </p>
+        <h2 className="text-2xl text-start md:text-start">{title}</h2>
+        {suTitle && (
+          <p className="text-start text-muted-foreground sm:text-start">
+            {suTitle}
+          </p>
+        )}
       </div>
-      <Separator />
+      {separator && <Separator />}
     </>
   );
 }

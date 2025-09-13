@@ -3,13 +3,16 @@ import { RegisterFormData } from "@/schemas";
 import { useFormContext, Controller } from "react-hook-form";
 import { Label, Checkbox } from "@/components/ui";
 import { AlertError } from "@/components/common";
+import { StepsHeader } from "./steps-header";
 
 export function ThirdStep() {
   const { control } = useFormContext<RegisterFormData>();
 
   return (
     <div className="max-w-2xl p-2 mx-auto space-y-8">
-      <h1 className="text-3xl font-bold">Termos e Políticas</h1>
+      <div className="flex flex-col items-center mt-4 gap-2 text-center">
+        <StepsHeader title="Termos e Políticas" />
+      </div>
       <div className="space-y-6">
         <p>Isso inclui, mas não se limita a:</p>
 

@@ -5,3 +5,4 @@ export * from "./templates";
 export * from "./custom";
 export * from "./auth";
 export * from "./clients";
+export * from "./shared";

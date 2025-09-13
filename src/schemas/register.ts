@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { companySchema } from "./company";
 
-
 export const registerSchema = z.object({
   step1: z
     .object({
-      full_name: z
+      name: z
         .string()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
@@ -17,6 +16,7 @@ export const registerSchema = z.object({
           (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
           "Insira número de telemovél válido"
         ),
+      role: z.enum(["OWNER"]),
       password: z
         .string()
         .nonempty("Campo obrigatório")

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFoundPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950 text-white p-4">
+    <div className="flex h-screen w-screen items-center justify-center bg-gray-950 text-white p-4">
       <div className="text-center space-y-6">
         <div className="relative inline-block">
           <h1 className="text-8xl sm:text-9xl font-extrabold text-primary tracking-tight transition-colors duration-500">

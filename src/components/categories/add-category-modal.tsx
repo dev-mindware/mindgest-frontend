@@ -7,16 +7,14 @@ import { useModal } from "@/stores";
 
 export function AddCategoryModal() {
   const { closeModal } = useModal();
-
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
     reset,
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
-    mode: "onChange", 
+    mode: "onChange",
   });
 
   async function onSubmit(data: CategoryFormData) {
@@ -54,11 +52,11 @@ export function AddCategoryModal() {
           error={errors.abbreviation?.message}
         />
         <Label>Descrição</Label>
-            <Textarea
-              id="description"
-              {...register("description")}
-              placeholder="Escreva aqui..."
-            />
+        <Textarea
+          id="description"
+          {...register("description")}
+          placeholder="Escreva aqui..."
+        />
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button
             type="button"
@@ -68,10 +66,7 @@ export function AddCategoryModal() {
           >
             Cancelar
           </Button>
-          <Button
-            onClick={handleSubmit(onSubmit)}
-            className="px-6"
-          >
+          <Button onClick={handleSubmit(onSubmit)} className="px-6">
             Salvar
           </Button>
         </div>

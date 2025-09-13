@@ -6,7 +6,7 @@ import { roleRedirects } from "@/utils";
 import { LoginResponse, Role, User } from "@/types";
 import { loginSchema } from "@/schemas";
 import api from "@/services/api";
-import { createSession } from "@/lib/session"; 
+import { createSession } from "@/lib/session";
 import { SESSION_COOKIE_KEY } from "@/constants";
 
 export async function loginAction({
@@ -22,18 +22,20 @@ export async function loginAction({
       email,
       password,
     });
-    const { user, accessToken, refreshToken, message } = res.data;
+
+    const { user, tokens, message } = res.data;
 
     if (!user) {
       throw new Error("Usuário não autorizado");
     }
-    
-    console.log(user)
+    // console.log("Usuário logado:", user);
+    console.log("RESULTADO DA RESPOSTA");
+    console.log(res.data);
 
     await createSession({
       user,
-      accessToken,
-      refreshToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
     });
 
     const redirectPath = getRedirectPath(user.role);

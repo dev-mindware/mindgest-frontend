@@ -33,26 +33,26 @@ export type MenuStructure = {
 
 export const adminMenu: MenuItem[] = [
   {
-    name: "Dashboard Global",
-    url: "/super/dashboard",
-    icon: <Icon name="Globe" />,
+    name: "Dashboard",
+    url: "/admin/dashboard",
+    icon: <Icon name="LayoutDashboard" />,
     roles: ["ADMIN"],
   },
   {
     name: "Empresas",
-    url: "/super/companies",
+    url: "/admin/companies",
     icon: <Icon name="Building" />,
     roles: ["ADMIN"],
   },
   {
     name: "Planos & Billing",
-    url: "/super/plans",
+    url: "/admin/plans",
     icon: <Icon name="Wallet" />,
     roles: ["ADMIN"],
   },
   {
     name: "Logs do Sistema",
-    url: "/super/logs",
+    url: "/admin/logs",
     icon: <Icon name="FileSearch" />,
     roles: ["ADMIN"],
   },
@@ -63,8 +63,8 @@ export const adminMenu: MenuItem[] = [
     roles: ["ADMIN"],
     minPlan: "BASE",
     items: [
-      { name: "Geral", url: "/settings/general" },
-      { name: "Exportação", url: "/settings/export" },
+      { name: "Geral", url: "/admin/settings/general" },
+      { name: "Exportação", url: "/admin/settings/export" },
     ],
   },
 ];

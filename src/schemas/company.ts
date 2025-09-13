@@ -24,9 +24,6 @@ export const companySchema = z.object({
       "Insira número de telemovél válido"
     ),
   email: z.string().email("Email invalido"),
-  website: z
-    .string()
-    .nonempty("Campo obrigatorio")
-    .min(3, "No minimo 3 caracters"),
+  website: z.string().optional(),
   logo: z.string().optional(),
 });

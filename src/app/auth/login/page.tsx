@@ -1,17 +1,15 @@
-import { LoginForm } from "@/components/auth";
-import { HeroImageSide, SeparatorLine } from "@/components/auth";
+import { HeroImageSide, LoginForm } from "@/components";
 
 export default function LoginPage() {
   return (
-    <div className="relative grid min-h-svh lg:grid-cols-2">
-      <HeroImageSide source="/login.svg" />
-      <SeparatorLine />
+    <div className="min-h-screen w-full grid lg:grid-cols-2">
+      <div className="hidden lg:block">
+        <HeroImageSide source="/login.svg" />
+      </div>
 
-      <div className="relative z-20 flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex items-center justify-center flex-1">
-          <div className="w-full max-w-xs">
-            <LoginForm />
-          </div>
+      <div className="flex items-center justify-center bg-background p-6 md:p-10">
+        <div className="w-full max-w-sm">
+          <LoginForm />
         </div>
       </div>
     </div>

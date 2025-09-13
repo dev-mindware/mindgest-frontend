@@ -3,7 +3,7 @@ import { getAccessToken } from "@/app/actions/token";
 import { reauthenticate } from "@/app/actions/auth";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://mindgest-api.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },

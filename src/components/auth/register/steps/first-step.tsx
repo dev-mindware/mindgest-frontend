@@ -12,9 +12,12 @@ export function FirstStep() {
     formState: { errors },
   } = useFormContext<RegisterFormData>();
 
+  console.log("ERROS: ")
+  console.log(errors)
+
   return (
     <div className={cn("flex flex-col gap-6")}>
-      <div className="flex flex-col items-center gap-2 text-center">
+      <div className="flex flex-col items-center gap-2 mt text-center">
         <StepsHeader title="Insira seus dados pessoais" />
       </div>
       <div className="grid gap-6">
@@ -22,8 +25,8 @@ export function FirstStep() {
           label="Seu nome"
           startIcon="User"
           placeholder="Insira seu nome"
-          {...register("step1.full_name")}
-          error={errors?.step1?.full_name && errors?.step1?.full_name?.message}
+          {...register("step1.name")}
+          error={errors?.step1?.name && errors?.step1?.name?.message}
         />
         <Input
           label="Email"
@@ -66,7 +69,7 @@ export function FirstStep() {
           href="/auth/login"
           className="font-medium text-primary hover:underline underline-offset-4"
         >
-          Entre
+          Entrar
         </Link>
       </div>
     </div>

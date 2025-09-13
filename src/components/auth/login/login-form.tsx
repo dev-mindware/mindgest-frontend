@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
-import { ButtonSubmit, Input } from "@/components";
+import { ButtonSubmit, GoogleButton, Input, OrLine } from "@/components";
 import Image from "next/image";
 import Logo from "@/assets/brand.png";
-import { GoogleButton, OrLine } from "../auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoginFormData, loginSchema } from "@/schemas";

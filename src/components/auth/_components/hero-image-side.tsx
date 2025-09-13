@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function HeroImageSide({ source }: { source: string }) {
   return (
-    <div className="relative hidden w-full h-screen md:flex items-center justify-center">
+    <div className="relative hidden w-full h-screen lg:flex items-center justify-center">
       <Image
         src={source}
         alt="Image"

@@ -14,7 +14,7 @@ export function SecondStep() {
 
   return (
     <div className={cn("flex flex-col gap-6")}>
-      <div className="flex flex-col items-center gap-2 text-center">
+      <div className="flex flex-col items-center mt-4 gap-2 text-center">
         <StepsHeader title="Insira os dados da empresa" />
       </div>
       <div className="grid gap-6">
@@ -70,7 +70,7 @@ export function SecondStep() {
           }
         />
         <Input
-          label="Website"
+          label="Website (Opcional)"
           startIcon="Globe"
           placeholder="Insira seu website"
           {...register("step2.company.website")}
