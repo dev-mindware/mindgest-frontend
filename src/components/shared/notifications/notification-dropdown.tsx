@@ -1,0 +1,56 @@
+"use client";
+
+import { useState } from "react";
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { NotificationList } from "./notification-list";
+import { useNotifications } from "@/hooks/notifications/use-notifications";
+
+export function NotificationDropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const {
+    notifications,
+    markAllAsRead,
+    handleNotificationClick,
+    deleteNotification,
+  } = useNotifications();
+
+  const unreadCount = notifications.filter((n) => n.status === "unread").length;
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="relative  hover:bg-primary-50"
+        >
+          <Bell className="h-5 w-5 text-gray-600" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        align="end"
+        className="w-96 p-0 shadow-lg border border-gray-200"
+        sideOffset={8}
+      >
+        <NotificationList
+          notifications={notifications}
+          onMarkAllAsRead={markAllAsRead}
+          onNotificationClick={handleNotificationClick}
+          deleteNotification={deleteNotification}
+        />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

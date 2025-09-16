@@ -10,7 +10,7 @@ import {
   ROUTE_FEATURE_MAPPING,
 } from "@/constants/routes";
 import { hasPlanAccess } from "@/lib/features";
-import { Plan, Role } from "@/types";
+import { PlanType, Role } from "@/types";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_KEY } from "@/constants";
 
@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   const sessionPayload = sessionCookie ? await decrypt(sessionCookie) : null;
   const isAuthenticated = !!sessionPayload;
 
-  const plan = (sessionPayload?.user?.company?.plan || null) as Plan;
+  const plan = (sessionPayload?.user?.company?.subscription?.plan || null) as PlanType;
   const role = (sessionPayload?.user?.role || null) as Role;
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) =>

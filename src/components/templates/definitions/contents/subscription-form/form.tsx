@@ -240,14 +240,14 @@ export function AddSubscriptionModal({ isOpen, onClose, onSubmit }: AddSubscript
                       className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
                         isSelected
                           ? 'border-primary bg-accent' 
-                          : 'border-border hover:border-primary/50 hover:bg-purple-50/50'
+                          : 'border-border hover:border-primary/50 hover:bg-primary-50/50'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className={`flex items-center justify-center w-8 h-8 text-sm font-medium text-white rounded-full ${
                           isSelected 
-                            ? 'bg-gradient-to-br from-purple-500 to-purple-700' 
-                            : 'bg-gradient-to-br from-purple-400 to-primary'
+                            ? 'bg-gradient-to-br from-primary-500 to-primary-700' 
+                            : 'bg-gradient-to-br from-primary-400 to-primary'
                         }`}>
                           {user.name.split(' ').map(n => n[0]).join('')}
                         </div>
@@ -295,7 +295,7 @@ export function AddSubscriptionModal({ isOpen, onClose, onSubmit }: AddSubscript
               </Button>
               <Button 
                 onClick={handleSubmit}
-                className="flex-1 bg-primary hover:bg-purple-700"
+                className="flex-1 bg-primary hover:bg-primary-700"
                 disabled={selectedUsers.size === 0 || !selectedPlan}
               >
                 Adicionar ({selectedUsers.size})

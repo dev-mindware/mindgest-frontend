@@ -9,7 +9,9 @@ export default function ClientLayout({ children }: Props) {
     <>
       <AppSidebar />
       <SidebarInset>
-        <BreadcrumbProvider>{children}</BreadcrumbProvider>
+        <div className="bg-gray-50 dark:bg-zinc-900">
+          <BreadcrumbProvider>{children}</BreadcrumbProvider>
+        </div>
       </SidebarInset>
     </>
   );

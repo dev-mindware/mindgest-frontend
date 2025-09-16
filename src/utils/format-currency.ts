@@ -11,5 +11,5 @@ export function formatCurrency(value: string | number): string {
     style: "decimal",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(number);
+  }).format(number)+ " Kz";
 }

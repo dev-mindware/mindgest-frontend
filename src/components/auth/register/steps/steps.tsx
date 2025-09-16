@@ -4,10 +4,11 @@ import { FirstStep } from "./first-step";
 import { SecondStep } from "./second-step";
 import {
   Stepper,
-  StepperIndicator,
   StepperItem,
-  StepperSeparator,
   StepperTrigger,
+  StepperSeparator,
+  StepperIndicator,
+  AccountCreatedModal,
 } from "@/components";
 import { NavigationButtons } from "./navigation-buttons";
 import { FormProvider, useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ import { RegisterFormData, registerSchema } from "@/schemas";
 import { ThirdStep } from "./third-step";
 import { HeroImageSide } from "../../_components";
 import { useAddCompany } from "@/hooks";
+import { ErrorMessage } from "@/utils/messages";
 
 export function RegisterForm() {
   const steps = [1, 2, 3];
@@ -26,9 +28,6 @@ export function RegisterForm() {
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
-    defaultValues: {
-      step1: { role: "OWNER" },
-    },
   });
 
   const validateCurrentStep = async () => {
@@ -75,12 +74,15 @@ export function RegisterForm() {
       const { passwordConfirmation, ...rest } = data.step1;
       const finalData = { ...rest, ...data.step2 };
 
-      console.log("DATA FINAL: ", finalData);
-
       await addCompany(finalData);
-      window.location.replace("/auth/login");
-    } catch (error) {
-      console.error("Erro ao enviar dados", error);
+    } catch (error: any) {
+      if (error?.response?.data) {
+        ErrorMessage(
+          error?.response?.data?.message || "Ocorreu um erro ao criar a conta"
+        );
+      } else {
+        ErrorMessage("Ocorreu um erro desconhecido.Tente novamente");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -125,6 +127,7 @@ export function RegisterForm() {
           </div>
         </div>
       </form>
+      <AccountCreatedModal />
     </FormProvider>
   );
 }

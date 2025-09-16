@@ -13,8 +13,8 @@ const colors = [
     title: "Total Levantado",
   },
   {
-    bgColor: "bg-purple-50",
-    pulseColor: "bg-purple-100",
+    bgColor: "bg-primary-50",
+    pulseColor: "bg-primary-100",
     title: "Comissões Totais",
   },
   {

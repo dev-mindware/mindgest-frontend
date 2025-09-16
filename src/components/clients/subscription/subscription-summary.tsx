@@ -1,0 +1,139 @@
+import { Plan } from "@/types";
+import { formatCurrency } from "@/utils";
+import type { ComponentType, ReactNode } from "react";
+import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components";
+import { Shield, Check, CreditCard } from "lucide-react";
+
+function InfoRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex justify-between items-center">
+      <span className="text-foreground">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function SectionCard({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <Card className="border-border shadow-none">
+      <CardHeader className="font-semibold flex items-center text-foreground">
+        <Icon className="h-5 w-5 text-primary-500 mr-2" />
+        {title}
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
+}
+
+function CheckItem({ children }: { children: ReactNode }) {
+  return (
+    <li className="flex items-center">
+      <Check className="h-4 w-4 text-green-500 mr-2" />
+      <span className="text-foreground">{children}</span>
+    </li>
+  );
+}
+
+function Pill({ children }: { children: ReactNode }) {
+  return (
+    <div className="bg-primary-50 dark:bg-primary-300/10  p-2 rounded text-xs font-mono text-foreground">
+      {children}
+    </div>
+  );
+}
+
+interface SubscriptionSummaryProps {
+  selectedPlan: Plan | null;
+  months: number;
+}
+
+export function SubscriptionSummary({
+  selectedPlan,
+  months,
+}: SubscriptionSummaryProps) {
+  if (!selectedPlan) return null;
+
+  const price = parseFloat(selectedPlan.priceMonthly);
+  const totalToPay = price * months;
+
+  const featuresList = [
+    selectedPlan.maxUsers > 0
+      ? `Até ${selectedPlan.maxUsers} usuários`
+      : "Usuários ilimitados",
+    selectedPlan.maxStores > 0
+      ? `Até ${selectedPlan.maxStores} loja(s)`
+      : "Lojas ilimitadas",
+    selectedPlan.features.canExportSaft && "Exportação SAFT",
+    selectedPlan.features.hasSimplifiedReporting && "Relatórios simplificados",
+    selectedPlan.features.hasAdvancedReporting && "Relatórios avançados",
+    selectedPlan.features.hasStockManagement && "Gestão de estoque",
+    selectedPlan.features.hasSupplierManagement && "Gestão de fornecedores",
+    selectedPlan.features.hasGestAI && "GestAI incluído",
+    selectedPlan.features.hasPOS && "Gestão de POS",
+  ].filter(Boolean);
+
+  return (
+    <div className="space-y-6">
+      <Card className="border-border shadow-none">
+        <CardHeader>
+          <CardTitle className="text-xl text-foreground">
+            Resumo da Assinatura
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <InfoRow label="Plano selecionado:">
+            <Badge className="bg-primary-500 text-white">
+              {selectedPlan.name}
+            </Badge>
+          </InfoRow>
+
+          <InfoRow label="Preço mensal:">
+            <span className="font-bold text-primary-600">
+              {formatCurrency(price)}
+            </span>
+          </InfoRow>
+
+          <InfoRow label="Usuários permitidos:">
+            <span>{selectedPlan.maxUsers}</span>
+          </InfoRow>
+
+          <InfoRow label="Lojas permitidas:">
+            <span>{selectedPlan.maxStores}</span>
+          </InfoRow>
+
+          <InfoRow label="Total a pagar:">
+            <span className="font-bold text-primary-600">
+              {formatCurrency(totalToPay)}
+            </span>
+          </InfoRow>
+        </CardContent>
+      </Card>
+
+      <SectionCard icon={Shield} title="Recursos inclusos">
+        <ul className="space-y-2 text-sm">
+          {featuresList.slice(0, 5).map((feature, idx) => (
+            <CheckItem key={idx}>{feature}</CheckItem>
+          ))}
+        </ul>
+      </SectionCard>
+
+      <SectionCard icon={CreditCard} title="Pagamento Seguro">
+        <p className="text-sm text-foreground mb-4">
+          Seus dados estão protegidos com criptografia SSL
+        </p>
+        <div className="flex space-x-2">
+          <Pill>Transferência</Pill>
+          <Pill>Express</Pill>
+        </div>
+      </SectionCard>
+    </div>
+  );
+}

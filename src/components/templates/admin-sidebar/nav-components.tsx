@@ -41,7 +41,7 @@ export function AdminNavMenu({ items }: { items: MenuItem[] }) {
   return (
     <>
       <SidebarGroup>
-        <SidebarMenu>
+        <SidebarMenu className="group-data-[collapsible=icon]:items-center">
           {items.map((item) => {
             const id = item.name || item.url;
             const hasSubmenu = !!item.items?.length;

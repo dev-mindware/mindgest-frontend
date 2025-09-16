@@ -1,14 +1,8 @@
 "use client";
-// import { api } from "@/services";
-import axios from "axios"
+import { api } from "@/services/api";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
-
-const api = axios.create({
-  baseURL: "https://mamexpress.onrender.com",
-});
-
 
 const TOKEN_TEST = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQwN2RhNDA1LTFhYmYtNDIxZi1hM2U3LWY0NGI0ZTdmOTA0MCIsImlhdCI6MTc1NjU2MjI0NSwiZXhwIjoxNzU2NTkxMDQ1fQ.SkAWkcNC3RTGB0miz_1IYg0cDpH00UcCPYuG4PFgkzE"
 

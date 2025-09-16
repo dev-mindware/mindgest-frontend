@@ -1,10 +1,10 @@
-import { Plan, Role } from "@/types";
+import { PlanType, Role } from "@/types";
 import { hasPlanAccess } from "@/lib/features";
 
 export type MenuItem = {
   label: string;
   path: string;
-  minPlan?: Plan;
+  minPlan?: PlanType;
   feature?: string;
 };
 
@@ -13,16 +13,16 @@ type SidebarPermissions = Record<Role, MenuItem[]>;
 export const sidebarPermissions: SidebarPermissions = {
   OWNER: [
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Usuários", path: "/owner/users", minPlan: "BASE" },
+    { label: "Usuários", path: "/owner/users", minPlan: "Base" },
     { label: "Configurações", path: "/settings" },
   ],
   MANAGER: [
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Estoque", path: "/inventory", minPlan: "BASE" },
+    { label: "Estoque", path: "/inventory", minPlan: "Base" },
     {
       label: "Relatórios Avançados",
       path: "/reports",
-      minPlan: "SMART_PRO",
+      minPlan: "Smart Pro",
       feature: "ADVANCED_REPORTS",
     },
   ],
@@ -45,7 +45,7 @@ export const sidebarPermissions: SidebarPermissions = {
  */
 export function getSidebarForUser(
   role: Role,
-  plan: Plan,
+  plan: PlanType,
   activeFeatures: string[] = []
 ) {
   const menu = sidebarPermissions[role] || [];

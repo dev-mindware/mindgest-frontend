@@ -30,8 +30,8 @@ export function AdminStatsCards() {
       value: "120",
       icon: "CreditCard",
       description: "Clientes com assinatura ativa",
-      color: "text-purple-500",
-      bgColor: "bg-purple-50",
+      color: "text-primary-500",
+      bgColor: "bg-primary-50",
     },
     {
       title: "Faturamento",

@@ -10,23 +10,6 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Mindware, Lda",
-      logo: GalleryVerticalEnd,
-      plan: "Empresa",
-    },
-    {
-      name: "Mindware Studio",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "MindSchool",
-      logo: University,
-      plan: "Free",
-    },
-  ],
   menuItems: [
     {
       name: "Caixa",
@@ -50,7 +33,7 @@ export function PosAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <PosTeamSwitcher teams={data.teams} />
+        <PosTeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <PosNavMenu items={data.menuItems} />

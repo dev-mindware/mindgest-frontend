@@ -32,13 +32,14 @@ export function AdminNavUser() {
   }
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className="group-data-[collapsible=icon]:items-center">
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-muted-foreground">
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-muted-foreground"
+            >
               <Avatar className="w-8 h-8 rounded-lg">
                 <AvatarImage src={user.name} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
@@ -76,7 +77,7 @@ export function AdminNavUser() {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Icon name="Sparkles" />
-                Sobe para o Pro
+                Fazer Upgrade
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -85,19 +86,11 @@ export function AdminNavUser() {
                 <Icon name="SquarePen" />
                 Aparência
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Icon name="User" />
-                Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Icon name="Bell" />
-                Notificações
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onLogout}>
-              <Icon name="LogOut" />
-              Log out
+            <DropdownMenuItem className="text-red-500" onClick={onLogout}>
+              <Icon name="LogOut" className="text-red-500" />
+              Terminar Sessão
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

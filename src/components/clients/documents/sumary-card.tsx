@@ -11,7 +11,7 @@ export function SummaryCard({ label, value, highlight }: SummaryCardProps) {
       <div
         className={`text-2xl font-bold p-3 rounded-lg 
           ${highlight
-            ? "text-purple-600 bg-purple-50 border border-purple-200"
+            ? "text-primary-600 bg-primary-50 border border-primary-200"
             : "text-gray-900 bg-gray-50 border"
           }`}
       >

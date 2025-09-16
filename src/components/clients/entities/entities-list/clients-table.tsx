@@ -71,7 +71,7 @@ export function ClientsTable() {
                 className={cn(
                   "w-fit text-xs",
                   category === "VIP" &&
-                    "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+                    "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200",
                   category === "Regular" &&
                     "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
                   category === "Comum" &&

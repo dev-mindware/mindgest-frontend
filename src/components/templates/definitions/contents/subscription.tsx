@@ -19,8 +19,8 @@ const subscriptions = [
     type: "Trimestral",
     expiration: "19/06/2025",
     progress: 85,
-    color: "bg-gradient-to-br from-purple-500 to-purple-600",
-    planColor: "text-purple-600",
+    color: "bg-gradient-to-br from-primary-500 to-primary-600",
+    planColor: "text-primary-600",
     badgeVariant: "default"
   },
   {

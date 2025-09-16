@@ -6,7 +6,6 @@ export interface LoginResponse {
   tokens: Tokens;
 }
 
-export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"
 export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | 'SELLER' | "CASHIER"
 
 export enum Role2  {
@@ -17,11 +16,12 @@ export enum Role2  {
   CASHIER = 'CASHIER'
 }
 
-export interface User {
+export type User = {
   id: string;
   email: string;
   name: string;
   role: Role;
+  phone?: string,
   company?: Company;
   store?: Store
 }

@@ -8,8 +8,11 @@ import { useForm } from "react-hook-form";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { useAuthStore } from "@/stores/auth";
 import { loginAction } from "@/app/actions/login";
+import { useRouter } from "next/navigation";
+import { ErrorMessage } from "@/utils/messages";
 
 export function LoginForm() {
+  const router = useRouter();
   const { setUser } = useAuthStore();
   const {
     register,
@@ -24,15 +27,15 @@ export function LoginForm() {
       const res = await loginAction({ email, password });
       if (!res.user) return;
       setUser(res.user);
-      window.location.replace(res.redirectPath || "/");
+      router.replace(res.redirectPath || "/");
     } catch (error: any) {
-      if (error?.res) {
-        console.log(
-          String(error?.res?.data?.message) ||
+      if (error?.response) {
+        ErrorMessage(
+          String(error?.response?.data?.message) ||
             "Ocorreu um erro desconhecido. Tente novamente."
         );
       } else {
-        console.log("Ocorreu um erro desconhecido. Tente novamente.!");
+        ErrorMessage("Ocorreu um erro desconhecido. Tente novamente.!");
       }
     }
   }

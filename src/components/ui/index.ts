@@ -1,5 +1,6 @@
 export * from "./dialog";
 export * from "./button-submit";
+export * from "./alert";
 export * from "./sidebar";
 export * from "./skeleton";
 export * from "./dropdown-menu";

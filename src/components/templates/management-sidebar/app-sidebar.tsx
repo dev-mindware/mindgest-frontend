@@ -2,30 +2,14 @@
 
 import * as React from "react"
 import { ManagementNavMenu, ManagementNavUser, ManagementTeamSwitcher, Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, Icon } from "@/components"
-import { GalleryVerticalEnd, AudioWaveform, University } from "lucide-react";
+
+
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Mindware, Lda",
-      logo: GalleryVerticalEnd,
-      plan: "Empresa",
-    },
-    {
-      name: "Mindware Studio",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "MindSchool",
-      logo: University,
-      plan: "Free",
-    },
-  ],
   menuItems: [
     {
       name: "Dashboard",
@@ -131,7 +115,7 @@ export function ManagementAppSidebar({ ...props }: React.ComponentProps<typeof S
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <ManagementTeamSwitcher teams={data.teams} />
+        <ManagementTeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <ManagementNavMenu items={data.menuItems} />

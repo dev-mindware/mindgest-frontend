@@ -17,7 +17,7 @@ export interface Subscription {
   plan: Plan;
 }
 
-export type PlanType = "BASE" | "TSUNAMI" | "SMART_PRO"
+export type PlanType = "Base" | "Tsunami" | "Smart Pro"
 
 export interface Plan {
   id: string;
