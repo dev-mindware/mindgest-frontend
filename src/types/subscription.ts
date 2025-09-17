@@ -12,8 +12,6 @@ export interface Subscription {
   paymentProvider: string;
   providerCustomerId: string;
   providerSubscriptionId: string;
-  companyId: string;
-  planId: string;
   plan: Plan;
 }
 

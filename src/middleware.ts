@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   const sessionPayload = sessionCookie ? await decrypt(sessionCookie) : null;
   const isAuthenticated = !!sessionPayload;
 
-  const plan = (sessionPayload?.user?.company?.subscription?.plan || null) as PlanType;
+  const plan = (sessionPayload?.user?.company?.subscription?.plan.name || null) as PlanType;
   const role = (sessionPayload?.user?.role || null) as Role;
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) =>
