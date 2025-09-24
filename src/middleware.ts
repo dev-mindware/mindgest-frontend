@@ -1,79 +1,59 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { decrypt } from "@/lib/session";
+import { NextRequest, NextResponse } from "next/server";
 import {
-  PUBLIC_ROUTES,
-  PRIVATE_ROUTE_PREFIXES,
   API_AUTH_PREFIX,
   DEFAULT_LOGIN_REDIRECT,
-  UPGRADE_REDIRECT,
-  ROUTE_FEATURE_MAPPING,
-} from "@/constants/routes";
-import { hasPlanAccess } from "@/lib/features";
-import { PlanType, Role } from "@/types";
-import { cookies } from "next/headers";
-import { SESSION_COOKIE_KEY } from "@/constants";
+  PRIVATE_ROUTE_PREFIXES,
+  PUBLIC_ROUTES,
+  SESSION_COOKIE_KEY,
+} from "./constants";
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const authCookies = await cookies();
+// Verifica se a rota é pública
+function isPublicRoute(pathname: string): boolean {
+  if (PUBLIC_ROUTES.includes(pathname)) return true;
+  if (pathname === "/" && PUBLIC_ROUTES.includes("/")) return true;
 
+  return PUBLIC_ROUTES.some((route) => {
+    if (route === "/") return false;
+    if (!pathname.startsWith(route)) return false;
+
+    const nextChar = pathname[route.length];
+    return nextChar === undefined || nextChar === "/" || nextChar === "?";
+  });
+}
+
+export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Ignora chamadas da API de auth
   if (pathname.startsWith(API_AUTH_PREFIX)) {
     return NextResponse.next();
   }
 
-  const sessionCookie = authCookies.get(SESSION_COOKIE_KEY)?.value;
-  const sessionPayload = sessionCookie ? await decrypt(sessionCookie) : null;
-  const isAuthenticated = !!sessionPayload;
+  const sessionCookie = req.cookies.get(SESSION_COOKIE_KEY)?.value;
+  const isAuthenticated = Boolean(sessionCookie);
 
-  const plan = (sessionPayload?.user?.company?.subscription?.plan.name || null) as PlanType;
-  const role = (sessionPayload?.user?.role || null) as Role;
-
-  const isPublicRoute = PUBLIC_ROUTES.some((route) =>
-    pathname.startsWith(route)
+  const isPublic = isPublicRoute(pathname);
+  const isPrivate = PRIVATE_ROUTE_PREFIXES.some((prefix) =>
+    pathname.startsWith(prefix)
   );
-  
-  if (isPublicRoute) {
-    if (isAuthenticated && pathname === DEFAULT_LOGIN_REDIRECT) {
-      return NextResponse.redirect(new URL("/client/dashboard", request.url));
-    }
+
+  // Usuário já logado tentando acessar sign-in/sign-up → manda para landing
+  if (isPublic && !isPrivate) {
+   /*  const isAuthPage = ["/sign-in", "/sign-up"].includes(pathname);
+    if (isAuthenticated && isAuthPage) {
+      return NextResponse.redirect(new URL("/landing", req.url));
+    } */
     return NextResponse.next();
   }
 
-  const isPrivateRoute = PRIVATE_ROUTE_PREFIXES.some((prefix) =>
-    pathname.startsWith(prefix)
-  );
-  
-  if (!isAuthenticated && isPrivateRoute) {
-    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
-  }
-// aqui
-  const routePermission = ROUTE_FEATURE_MAPPING.find((item) =>
-    pathname.startsWith(item.pathPrefix)
-  );
-
-  if (!routePermission) {
-    console.log(
-      `[Middleware] Rota não encontrada no mapa de permissões: ${pathname}`
-    );
-    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  // Rota privada sem autenticação → redireciona para login
+  if (isPrivate && !isAuthenticated) {
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));
   }
 
-  if (
-    routePermission.minPlan &&
-    !hasPlanAccess(plan, routePermission.minPlan)
-  ) {
-    console.log(
-      `[Middleware] Plano insuficiente (${plan} < ${routePermission.minPlan}) -> Upgrade`
-    );
-    return NextResponse.redirect(new URL(UPGRADE_REDIRECT, request.url));
-  }
-
-  if (routePermission.roles && !routePermission.roles.includes(role)) {
-    console.log(
-      `[Middleware] Acesso negado por ROLE para a rota ${pathname}. Role: ${role}`
-    );
-    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  // Rota não pública e não privada → precisa estar autenticado
+  if (!isPrivate && !isAuthenticated) {
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));
   }
 
   return NextResponse.next();

@@ -1,4 +1,4 @@
-import { Product } from "@/types";
+import { ItemResponse as Product } from "@/types";
 import { create } from "zustand";
 
 interface ProductStore {

@@ -1,17 +1,17 @@
 import { useMemo } from "react";
 import { Badge } from "../ui";
-import { ProductStatus } from "@/types";
+import { ItemStatus } from "@/types";
 
 interface StatusBadgeProps {
-  status: ProductStatus;
+  status: ItemStatus;
 }
 
-export const StatusBadge = ({ status }: StatusBadgeProps) => {
+export function StatusBadge({ status }: StatusBadgeProps) {
   const statusStyles = useMemo(() => {
     switch (status) {
-      case "Disponível":
+      case "ACTIVE":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "Pendente":
+      case "OUT_OF_STOCK":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
       default:
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
@@ -20,7 +20,18 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
 
   return (
     <Badge variant="secondary" className={statusStyles}>
-      {status}
+      {displayStatusLabel(status)}
     </Badge>
   );
+}
+
+export const statusMap: Record<ItemStatus, string> = {
+  ACTIVE: "Activo",
+  INACTIVE: "Inactivo",
+  OUT_OF_STOCK: "Fora de Estoque",
+};
+
+export const displayStatusLabel = (status: ItemStatus): string => {
+  if (!status) return "----";
+  return statusMap[status] || "----";
 };

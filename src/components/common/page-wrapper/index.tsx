@@ -18,7 +18,7 @@ export function PageWrapper({
   children,
 }: Props) {
   return (
-    <div className="">
+    <div className="bg-background">
       <header className="flex h-16 sticky top-0 z-50 shrink-0 bg-sidebar border-b items-center gap-2 transition-[width,height] ease-linear justify-between">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />

@@ -9,10 +9,10 @@ export interface Company {
   taxNumber: string;
   website?: string;
   logo?: string;
-  isActive?: boolean;
+  isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
-  subscription?: Subscription | null;
+  subscription: Subscription | null;
 }
 
 export interface Store {
@@ -25,5 +25,8 @@ export type CompanyData = {
   name: string;
   password: string;
   phone: string;
-  company: Omit<Company, "id">;
-}
+  company: Omit<
+    Company,
+    "id" | "isActive" | "createdAt" | "updatedAt" | "subscription"
+  >;
+};

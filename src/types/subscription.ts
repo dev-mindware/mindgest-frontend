@@ -1,8 +1,7 @@
-
 export interface Subscription {
   id: string;
-  status: string;
-  trialEndsAt: null;
+  status: SubscriptionStatus;
+  trialEndsAt: string;
   periodStartsAt: string;
   periodEndsAt: string;
   canceledAt: string;
@@ -12,10 +11,19 @@ export interface Subscription {
   paymentProvider: string;
   providerCustomerId: string;
   providerSubscriptionId: string;
+  billingPeriodInMonths: string | null;
   plan: Plan;
 }
 
-export type PlanType = "Base" | "Tsunami" | "Smart Pro"
+export type PlanType = "Base" | "Tsunami" | "Smart Pro";
+
+enum SubscriptionStatus {
+  TRIALING = "TRIALING",
+  ACTIVE = "ACTIVE",
+  PAST_DUE = "PAST_DUE",
+  CANCELED = "CANCELED",
+  EXPIRED = "EXPIRED",
+}
 
 export interface Plan {
   id: string;
@@ -26,6 +34,7 @@ export interface Plan {
   updatedAt: string;
   maxUsers: number;
   maxStores: number;
+  trialPeriodInDays: number | null;
   billingIntervals: any[];
   features: Features;
 }

@@ -1,6 +1,6 @@
 import { useModal } from "@/stores/use-modal-store";
 import { currentProductStore } from "@/stores";
-import { Product } from "@/types";
+import { ItemResponse as Product } from "@/types";
 
 export function useProductActions() {
   const { openModal } = useModal();

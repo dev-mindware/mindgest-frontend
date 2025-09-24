@@ -1,4 +1,4 @@
-import { CardStat } from "@/components/shared";
+import { CardStat } from "@/components/clients";
 import { Stats } from "@/types";
 
 export function AdminStatsCards() {

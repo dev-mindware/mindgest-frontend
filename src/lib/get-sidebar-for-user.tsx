@@ -7,14 +7,8 @@ export function getSidebarForUser(
   role: Role,
   plan?: PlanType
 ): MenuItem[] {
-  if (!plan) {
+ /*  if (!plan) {
     return [
-      {
-        name: "Perfil",
-        url: "/client/profile",
-        icon: <Icon name="User" />,
-        roles: [role],
-      },
       {
         name: "Planos",
         url: "/client/plans",
@@ -28,12 +22,12 @@ export function getSidebarForUser(
         roles: [role],
       },
     ];
-  }
+  } */
 
   return items
     .filter((item) => {
       const roleOk = !item.roles || item.roles.includes(role);
-      const planOk = !item.minPlan || plan >= item.minPlan;
+      const planOk = !item.minPlan || plan! >= item.minPlan;
 
       if (!planOk && item.showUpgrade) return roleOk;
 
@@ -43,7 +37,7 @@ export function getSidebarForUser(
       ...item,
       items: item.items?.filter((sub) => {
         const roleOk = !sub.roles || sub.roles.includes(role);
-        const planOk = !sub.minPlan || plan >= sub.minPlan;
+        const planOk = !sub.minPlan || plan! >= sub.minPlan;
         return roleOk && planOk;
       }),
     }));

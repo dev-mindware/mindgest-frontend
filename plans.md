@@ -2,16 +2,14 @@
 
 ## Base  -- 5.445,22 kz
 
-* #### Usuários 3
-* #### Faturação de produtos e Serviços
-* #### Fatura (normal, proforma, recibo <<Documentos>>)
-* #### Exportação de documentos SAF-T
-* #### Cadastro de clientes
-* #### Web (Desktop, Android, IOS)
-* #### Relatórios de vendas simplificadas (mês e ano)
-* #### Documentos ilimitados
-
-#### 
+* #### Usuários 3 []
+* #### Faturação de produtos e Serviços []
+* #### Fatura (normal, proforma, recibo <<Documentos>>) []
+* #### Exportação de documentos SAF-T []
+* #### Cadastro de clientes []
+* #### Web (Desktop, Android, IOS) [X]
+* #### Relatórios de vendas simplificadas (mês e ano) []
+* #### Documentos ilimitados []
 
 
 ## Tsunami -- 11.998,22 kz

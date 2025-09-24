@@ -1,6 +1,6 @@
 "use client";
 import { useProductActions } from "@/hooks";
-import { Product } from "@/types";
+import { ItemResponse } from "@/types";
 import { formatPrice } from "@/utils";
 import { ProductIcon } from "./product-icon";
 import { ProductTitle } from "./product-title";
@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, ButtonOnlyAction } from "@/components";
 import { StockInfo } from "./stock-info";
 
 interface ProductCardProps {
-  product: Product;
+  product: ItemResponse;
 }
 
 export function ProductCardView({ product }: ProductCardProps) {

@@ -15,10 +15,10 @@ type Props<T> = {
 };
 
 export function ButtonOnlyAction<T>({
-  handleDelete,
-  handleEdit,
-  handleSee,
   data,
+  handleSee,
+  handleEdit,
+  handleDelete,
 }: Props<T>) {
   return (
     <DropdownMenu>

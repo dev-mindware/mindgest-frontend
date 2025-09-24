@@ -26,8 +26,8 @@ export function NotificationList({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-900">Notificações</h3>
+      <div className="flex items-center justify-between p-4 border-b border-border">
+        <h3 className="font-semibold text-foreground">Notificações</h3>
         {unreadNotifications.length > 0 && (
           <Button
             variant="ghost"

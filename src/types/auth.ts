@@ -8,14 +8,6 @@ export interface LoginResponse {
 
 export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | 'SELLER' | "CASHIER"
 
-export enum Role2  {
-  ADMIN = 'ADMIN',
-  OWNER = 'OWNER',
-  MANAGER = 'MANAGER',
-  SELLER = 'SELLER',
-  CASHIER = 'CASHIER'
-}
-
 export type User = {
   id: string;
   email: string;
@@ -31,4 +23,3 @@ export interface Tokens {
   refreshToken: string;
   expiresIn: string;
 }
-

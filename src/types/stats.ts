@@ -5,6 +5,6 @@ export type Stats = {
   value: string | number;
   icon: keyof typeof icons;
   description: string;
-  color: string;
-  bgColor: string;
+  color?: string;
+  bgColor?: string;
 };

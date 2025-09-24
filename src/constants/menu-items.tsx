@@ -21,7 +21,7 @@ export type MenuItem = {
 };
 
 export type MenuStructure = {
-  menuItems: MenuItem[];
+  items: MenuItem[];
 };
 
 export const adminMenu: MenuItem[] = [
@@ -38,7 +38,7 @@ export const adminMenu: MenuItem[] = [
     roles: ["ADMIN"],
   },
   {
-    name: "Planos & Billing",
+    name: "Planos",
     url: "/admin/plans",
     icon: <Icon name="Wallet" />,
     roles: ["ADMIN"],
@@ -63,7 +63,7 @@ export const adminMenu: MenuItem[] = [
 ];
 
 export const menuItems: MenuStructure = {
-  menuItems: [
+  items: [
     {
       name: "Dashboard",
       url: "/client/dashboard",
@@ -129,60 +129,68 @@ export const menuItems: MenuStructure = {
       ],
     },
     {
+      name: "Notificações",
+      url: "/client/notifications",
+      icon: <Icon name="Bell" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
+    },
+    // AQUI COMEÇA O TSUNAMI
+    {
       name: "Estoque",
-      url: "/admin/stock",
+      url: "/client/stock",
       icon: <Icon name="Boxes" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Tsunami",
     },
     {
       name: "POS",
-      url: "/mindgest/pos",
+      url: "/client/pos",
       icon: <Icon name="Monitor" />,
-      roles: ["CASHIER", "OWNER"],
+      roles: ["CASHIER", "OWNER", "MANAGER"],
       minPlan: "Tsunami",
       items: [
-        { name: "Novo ponto de Venda", url: "/mindgest/pos/new" },
-        { name: "Movimentos de Caixa", url: "/mindgest/pos/moviments-box" },
+        { name: "Novo ponto de Venda", url: "/client/pos/new" },
+        { name: "Movimentos de Caixa", url: "/client/pos/moviments-box" },
         {
           name: "Configurações",
-          url: "/mindgest/pos/settings",
-          roles: ["ADMIN"],
+          url: "/client/pos/settings",
+          roles: ["CASHIER", "CASHIER", "OWNER", "MANAGER"],
           minPlan: "Smart Pro",
         },
       ],
     },
     {
       name: "Aparência",
-      url: "/admin/appearance",
+      url: "/client/appearance",
       icon: <Icon name="Palette" />,
-      roles: ["OWNER"],
+      roles: ["OWNER", "MANAGER"],
       minPlan: "Tsunami",
     },
     {
       name: "Fornecedores & Lojas",
-      url: "/admin/suppliers",
+      url: "/client/suppliers",
       icon: <Icon name="Store" />,
       roles: ["OWNER", "MANAGER"],
       minPlan: "Smart Pro",
     },
     {
       name: "GestAI",
-      url: "/mindgest/gestai",
+      url: "/client/gestai",
       icon: <Icon name="Bot" />,
       roles: ["OWNER", "MANAGER"],
       minPlan: "Smart Pro",
     },
     {
       name: "Análise de Estoque",
-      url: "/admin/stock-analysis",
+      url: "/client/stock-analysis",
       icon: <Icon name="ChartPie" />,
       roles: ["OWNER", "MANAGER"],
       minPlan: "Smart Pro",
     },
     {
       name: "Gestão de POS",
-      url: "/admin/pos-management",
+      url: "/client/pos-management",
       icon: <Icon name="SquareTerminal" />,
       roles: ["OWNER"],
       minPlan: "Smart Pro",

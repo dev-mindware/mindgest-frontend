@@ -1,8 +1,6 @@
 "use client";
-import Link from "next/link";
 import { usePlans } from "@/hooks";
 import { InfoBanner, PlansPageSkeleton, RequestError } from "@/components";
-import { Button } from "@/components/ui";
 import { AvailablePlans } from "./availables-plans";
 import { useAuthStore } from "@/stores/auth";
 import { CurrentPlanCard } from "./current-plan-card";

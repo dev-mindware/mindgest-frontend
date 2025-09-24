@@ -1,15 +1,12 @@
-
-
-
 export interface Product {
   id: string;
-  name: string; 
+  name: string;
   sku: string;
   category: string;
   subcategory?: string;
 
   // Preços
-  price?: number; 
+  price?: number;
   retailPrice?: {
     min: number;
     max: number;
@@ -40,27 +37,6 @@ export interface Product {
   status?: ProductStatus;
 }
 
-
-/* export interface Product {
-  id: string;
-  name: string;
-  category: string;
-  sku: string;
-  price: number;
-  measurement?: string;
-  stock: number;
-  minstock?: number;
-  supplier?: string;
-  location?: string;
-  expirydate?: Date;
-  tax?: number;
-  warranty?: number;
-  status: ProductStatus;
-  salesperday?: number;
-  repositiontime?: number;
-  description?: string;
-} */
-
 export interface ProductCard {
   id: string;
   title: string;
@@ -80,7 +56,7 @@ export interface ProductCard {
   variants: number;
   isActive: boolean;
 }
-  export enum ProductStatus {
+export enum ProductStatus {
   Disponível = "Disponível",
   Pendente = "Pendente",
   Esgotado = "Esgotado",

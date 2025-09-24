@@ -1,25 +1,45 @@
 "use client";
-import { Input, Button, GlobalModal, Label, Textarea } from "@/components";
+import { useModal } from "@/stores";
 import { useForm } from "react-hook-form";
+import { useCategory } from "@/hooks/category";
+import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CategoryFormData, categorySchema } from "@/schemas";
-import { useModal } from "@/stores";
+import {
+  Input,
+  Button,
+  Textarea,
+  ButtonSubmit,
+  GlobalModal,
+} from "@/components";
 
 export function AddCategoryModal() {
   const { closeModal } = useModal();
+  const { mutateAsync: addCategory, isPending } = useCategory();
   const {
+    reset,
     register,
     handleSubmit,
-    formState: { errors },
-    reset,
+    formState: { errors, isSubmitting },
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     mode: "onChange",
   });
 
   async function onSubmit(data: CategoryFormData) {
-    console.log("Categoria criada:", data);
-    alert(JSON.stringify(data, null, 2));
+    try {
+      await addCategory(data);
+      reset();
+    } catch (error: any) {
+      if (error?.response) {
+        ErrorMessage(
+          error?.response?.data?.message ||
+            "Ocorreu um erro ao adicionar a categoria"
+        );
+      } else {
+        ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
+      }
+    }
   }
 
   const handleCancel = () => {
@@ -40,35 +60,30 @@ export function AddCategoryModal() {
       >
         <Input
           label="Nome"
+          startIcon="Tag"
           placeholder="Ex: Plásticos, Cosméticos..."
           {...register("name")}
           error={errors.name?.message}
         />
 
-        <Input
-          label="Código de Abreviação"
-          placeholder="Ex: PLSTC, CMTC"
-          {...register("abbreviation")}
-          error={errors.abbreviation?.message}
-        />
-        <Label>Descrição</Label>
         <Textarea
+          label="Descrição"
           id="description"
           {...register("description")}
           placeholder="Escreva aqui..."
         />
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3">
           <Button
-            type="button"
             variant="outline"
-            className="px-6"
+            type="button"
+            className="w-max"
             onClick={handleCancel}
           >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit(onSubmit)} className="px-6">
-            Salvar
-          </Button>
+          <ButtonSubmit className="w-max" isLoading={isPending || isSubmitting}>
+            Adicionar
+          </ButtonSubmit>
         </div>
       </form>
     </GlobalModal>

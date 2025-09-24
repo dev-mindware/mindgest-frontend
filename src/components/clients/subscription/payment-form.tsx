@@ -116,7 +116,7 @@ export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
                 <span>{formatCurrency(planValue)} / mês</span>
               </div>
 
-              <hr className="border-gray-200" />
+              <hr className="border-border" />
 
               <div className="flex items-center justify-between text-lg font-bold">
                 <span>Total a Pagar:</span>

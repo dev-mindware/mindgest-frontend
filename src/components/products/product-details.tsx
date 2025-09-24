@@ -1,12 +1,12 @@
-import { Product } from "@/types";
+import { ItemResponse as Product } from "@/types";
 import { TsunamiOnly } from "../common";
 
 export const ProductDetails = ({ product }: { product: Product }) => (
   <TsunamiOnly>
     <div className="flex items-center gap-2 text-muted-foreground">
-      <ProductInfoChip>{product.category}</ProductInfoChip>
-      <ProductInfoChip>{product.measurement}</ProductInfoChip>
-      <ProductInfoChip>{product.warranty} dias de garantia</ProductInfoChip>
+      <ProductInfoChip>{product.name}</ProductInfoChip>
+      <ProductInfoChip>{product.cost}</ProductInfoChip>
+      <ProductInfoChip>{product.daysToExpiry} dias de garantia</ProductInfoChip>
     </div>
   </TsunamiOnly>
 );

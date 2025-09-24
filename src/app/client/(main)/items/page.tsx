@@ -1,10 +1,12 @@
-import { PageWrapper } from "@/components";
-import { Items } from "@/components/clients";
+import { ItemsPageContent, PageWrapper } from "@/components";
+import { Suspense } from "react";
 
 export default function Page() {
   return (
     <PageWrapper subRoute="Items">
-      <Items />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ItemsPageContent />
+      </Suspense>
     </PageWrapper>
   );
 }

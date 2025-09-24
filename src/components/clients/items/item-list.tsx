@@ -12,8 +12,9 @@ import { AddServiceModal, ServiceList } from "@/components/services";
 import { useModal } from "@/stores";
 import { useState } from "react";
 
-export function Items() {
-  const { openModal } = useModal();
+// filtros category, status e type
+export function ItemsPageContent() {
+  const { openModal, open } = useModal();
   const [currentTab, setCurrentTab] = useState<"product" | "service">(
     "product"
   );
@@ -59,8 +60,9 @@ export function Items() {
           <ServiceList />
         </TabsContent>
       </Tabs>
-      {currentModal === "add-product" && <AddProductModal />}
-      {currentModal === "add-service" && <AddServiceModal />}
+      {/*  criar um estado pra gerenciar a bert */}
+      {currentModal === "add-product" && open && <AddProductModal />}
+      {currentModal === "add-service" && open && <AddServiceModal />}
     </div>
   );
 }

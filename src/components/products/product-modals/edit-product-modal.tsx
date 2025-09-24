@@ -37,21 +37,6 @@ export function EditProductModal() {
     },
   });
 
-  useEffect(() => {
-    if (currentProduct) {
-      reset({
-        ...currentProduct,
-        price: currentProduct.price ?? 0,
-        expiryDate: currentProduct.expirydate
-          ? new Date(currentProduct.expirydate)
-          : null,
-        selectedCategory: currentProduct.category ?? "",
-        selectedMeasurement: currentProduct.measurement ?? "",
-        selectedStatus: currentProduct.status ?? "Disponível",
-      });
-    }
-  }, [currentProduct, reset]);
-
   const onSubmit: SubmitHandler<AddProductFormData> = (data) => {
     alert(JSON.stringify(data, null, 2));
   };
@@ -64,7 +49,21 @@ export function EditProductModal() {
   return (
     <GlobalModal
       id="edit-product"
-      title="Editar Produto"
+      title={
+        <>
+          <div className="w-full flex items-center justify-between gap-2 mb-4">
+            <span>Editar Produto</span>
+            <Button
+              size="sm"
+              className="sticky right-0"
+              variant="outline"
+              onClick={() => openModal("add-category")}
+            >
+              Adicionar Categoria
+            </Button>
+          </div>
+        </>
+      }
       className="!max-h-[85vh] !w-max"
       canClose
       footer={
@@ -76,15 +75,6 @@ export function EditProductModal() {
         </div>
       }
     >
-      <div className="flex justify-end">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => openModal("add-category")}
-        >
-          Adicionar Categoria
-        </Button>
-      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
@@ -129,6 +119,7 @@ export function EditProductModal() {
                 label="Nome do Produto"
                 placeholder="Escreva aqui..."
                 error={errors.name?.message}
+                defaultValue={currentProduct?.name}
               />
               <Input
                 id="product-sku"
@@ -138,6 +129,7 @@ export function EditProductModal() {
                 error={errors.sku?.message}
                 label="SKU ou ID do Produto"
                 placeholder="Escreva aqui..."
+                defaultValue={currentProduct?.sku}
               />
             </div>
 
@@ -159,6 +151,7 @@ export function EditProductModal() {
                     label="Preço de Venda"
                     error={errors.price?.message}
                     value={formatCurrency(value)}
+                    defaultValue={currentProduct?.price}
                     onChange={(e) => {
                       const rawNumber = parseCurrency(e.target.value);
                       onChange(rawNumber);

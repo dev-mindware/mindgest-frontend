@@ -27,7 +27,7 @@ export function RegisterForm() {
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: "onChange",
+    mode: "onChange", 
   });
 
   const validateCurrentStep = async () => {

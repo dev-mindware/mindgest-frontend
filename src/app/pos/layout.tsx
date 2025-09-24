@@ -1,5 +1,4 @@
 import {
-  PosAppSidebar,
   BreadcrumbProvider,
   SidebarInset,
   SidebarProvider,
@@ -11,7 +10,6 @@ export default function ManagementLayout({
 }) {
   return (
     <SidebarProvider>
-      <PosAppSidebar />
       <SidebarInset>
         <BreadcrumbProvider>{children}</BreadcrumbProvider>
       </SidebarInset>

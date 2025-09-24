@@ -3,10 +3,10 @@ import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
 import { Inter, Outfit } from "next/font/google";
 import { CustomToaster } from "@/utils";
-import { ThemeProvider, SessionProvider } from "@/providers";
-import { getSession } from "@/lib/auth";
+import { ThemeProvider } from "@/providers";
 import { SidebarProvider } from "@/components";
-import { User } from "@/types";
+import { AuthProvider } from "@/contexts";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -17,21 +17,18 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "MINDGEST",
+  title: "MindGest",
   description: "Software de Gestão e Faturação",
   icons: {
     icon: "/mindware.png",
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
-  const user = (session?.user as User) || null;
-
   return (
     <html
       lang="en"
@@ -51,10 +48,12 @@ export default async function RootLayout({
           storageKey="mindware-theme"
         >
           <ReactQueryProvider>
-            <SessionProvider user={user}>
-              <SidebarProvider>{children}</SidebarProvider>
-            </SessionProvider>
-            <CustomToaster />
+            <AuthProvider>
+              <NuqsAdapter>
+                <SidebarProvider>{children}</SidebarProvider>
+                <CustomToaster />
+              </NuqsAdapter>
+            </AuthProvider>
           </ReactQueryProvider>
         </ThemeProvider>
       </body>

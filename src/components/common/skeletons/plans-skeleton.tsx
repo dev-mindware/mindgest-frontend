@@ -8,7 +8,7 @@ function Skeleton({ className }: { className?: string }) {
 export function PlansPageSkeleton() {
   return (
     <div className="mx-auto space-y-8">
-      <Card className="bg-primary-50 border-primary-200">
+      <Card className="bg-muted/30 border border-border">
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-2">
             <Skeleton className="h-6 w-32" />
@@ -27,7 +27,7 @@ export function PlansPageSkeleton() {
               <Skeleton className="h-6 w-20" />
             </div>
           </div>
-          <Badge variant="secondary" className="bg-green-100">
+          <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
             <Skeleton className="h-4 w-12" />
           </Badge>
         </CardHeader>
@@ -35,7 +35,8 @@ export function PlansPageSkeleton() {
 
       <div className="space-y-6">
         <div className="grid md:grid-cols-3 gap-6">
-          <Card className="relative">
+          {/* Plan 1 */}
+          <Card className="relative border border-border">
             <CardHeader className="text-center space-y-4">
               <Skeleton className="h-6 w-24 mx-auto" />
               <div className="space-y-2">
@@ -55,9 +56,9 @@ export function PlansPageSkeleton() {
           </Card>
 
           {/* Plan 2 - Popular */}
-          <Card className="relative border-primary-200">
+          <Card className="relative border border-border">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-primary-100 text-primary-800">
+              <Badge className="bg-primary/20 text-primary">
                 <Skeleton className="h-4 w-16" />
               </Badge>
             </div>
@@ -80,9 +81,9 @@ export function PlansPageSkeleton() {
           </Card>
 
           {/* Plan 3 - Current */}
-          <Card className="relative border-primary-200">
+          <Card className="relative border border-border">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <Badge variant="secondary" className="bg-primary-100 text-primary-800">
+              <Badge variant="secondary" className="bg-primary/20 text-primary">
                 <Skeleton className="h-4 w-16" />
               </Badge>
             </div>

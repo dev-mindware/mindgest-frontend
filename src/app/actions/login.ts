@@ -1,7 +1,7 @@
 "use server";
+import { z } from "zod";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { z } from "zod";
 import { roleRedirects } from "@/utils";
 import { LoginResponse, Role, User } from "@/types";
 import { loginSchema } from "@/schemas";
