@@ -17,7 +17,7 @@ export default function Page() {
           <DashboardCharts />
 
           <div className="space-y-4">
-            <TitleList title="Candidaturas Recentes" />
+            <TitleList suTitle="Vendas Recentes" />
             {/* <SubmissionsList data={mockSubmissions.slice(0, 5)} /> */}
           </div>
         </div>

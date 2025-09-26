@@ -10,8 +10,7 @@ export function useCreateSubscription() {
   return useMutation({
     mutationFn: (data: SubscriptionFormData) => subscriptionService.createSubscription(data),
     onSuccess: () => {
-      openModal("subscription-success");
-
+      openModal("subscription-created");
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
       queryClient.invalidateQueries({ queryKey: ["current-subscription"] });
     },

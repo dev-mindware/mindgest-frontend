@@ -9,7 +9,7 @@ export enum Status {
 
 export type ItemsFilters = {
   sortBy?: string;
-  category?: string;
+  categoryId?: string;
   status?: ItemStatus;
   sortOrder?: string;
 };
@@ -43,3 +43,5 @@ export type ItemResponse = ItemData & {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ViewMode = "card" | "table"

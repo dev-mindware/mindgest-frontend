@@ -20,3 +20,8 @@ export type CategoryResponse = {
   totalPages: number
 }
 
+export type CategoryFilters = {
+  sortBy?: string;
+  isActive?: string;
+  sortOrder?: string;
+};

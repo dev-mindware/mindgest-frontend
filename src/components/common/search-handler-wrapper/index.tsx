@@ -18,17 +18,17 @@ export function SearchHandlerWrapper({
   return (
     <div className={cn("flex gap-4", className)}>
       <div className="w-full flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Icon
-            name="Search"
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
-          />
+        <div className="relative w-full">
           <Input
+            type="search"
             value={search}
-            placeholder="Pesquisar..."
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 py-2"
+            placeholder="Pesquisar..."
+            className="w-full h-10 text-sm border rounded-md ps-10 pe-10 border-input bg-background"
           />
+          <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3 text-muted-foreground">
+            <Icon name="Search" size={16} />
+          </div>
         </div>
       </div>
       <div>{children}</div>

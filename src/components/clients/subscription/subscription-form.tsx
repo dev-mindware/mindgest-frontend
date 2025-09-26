@@ -40,7 +40,7 @@ export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
     resolver: zodResolver(subscriptionSchema),
     defaultValues: {
       status: "PENDING_PAYMENT",
-      months: 1,
+      billingPeriodInMonths: 1,
     }
   })
  
@@ -168,11 +168,11 @@ export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
                 <Input
                   min={1}
                   type="number"
-                  defaultValue={watch("months")}
+                  defaultValue={watch("billingPeriodInMonths")}
                   label="Meses (Número de meses que deseja assinar)"
-                  {...register("months", { valueAsNumber: true })}
+                  {...register("billingPeriodInMonths", { valueAsNumber: true })}
                   className="border-border focus:border-primary-500 focus:ring-primary-500"
-                  error={errors?.months && errors?.months?.message}
+                  error={errors?.billingPeriodInMonths && errors?.billingPeriodInMonths?.message}
                 />
               </div>
 
@@ -190,7 +190,7 @@ export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
 
       <div className="lg:col-span-1">
         <SubscriptionSummary
-          months={watch("months")}
+          months={watch("billingPeriodInMonths")}
           selectedPlan={currentPlanSelected}
         />
       </div>

@@ -4,13 +4,21 @@ interface TitleListProps {
   title?: string;
   suTitle?: string;
   separator?: boolean;
+  children?: React.ReactNode;
 }
 
-export function TitleList({ title, suTitle, separator }: TitleListProps) {
+export function TitleList({
+  title,
+  suTitle,
+  separator,
+  children,
+}: TitleListProps) {
   return (
-    <>
+    <div className="flex items-center justify-between">
       <div>
-        {title && <h2 className="text-2xl text-start md:text-start">{title}</h2>}
+        {title && (
+          <h2 className="text-2xl text-start md:text-start">{title}</h2>
+        )}
         {suTitle && (
           <p className="text-start text-muted-foreground sm:text-start">
             {suTitle}
@@ -18,6 +26,7 @@ export function TitleList({ title, suTitle, separator }: TitleListProps) {
         )}
       </div>
       {separator && <Separator />}
-    </>
+      {children && children}
+    </div>
   );
 }

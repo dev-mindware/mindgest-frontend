@@ -80,6 +80,13 @@ export const menuItems: MenuStructure = {
       showUpgrade: true,
     },
     {
+      name: "Planos",
+      url: "/client/plans",
+      icon: <Icon name="Wallet" className="h-5 w-5" />,
+      roles: ["MANAGER", "OWNER", "SELLER"],
+      minPlan: "Base",
+    },
+    {
       name: "Documentos",
       url: "/client/documents",
       icon: <Icon name="ScrollText" />,
@@ -90,6 +97,13 @@ export const menuItems: MenuStructure = {
       name: "Items",
       url: "/client/items",
       icon: <Icon name="ShoppingBasket" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
+    },
+    {
+      name: "Categorias",
+      url: "/client/categories",
+      icon: <Icon name="Tag" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },

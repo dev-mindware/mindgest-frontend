@@ -18,7 +18,6 @@ export function useAddItem() {
   });
 }
 
-/* ------------------------- UPDATE ------------------------- */
 export function useUpdateItem() {
   const queryClient = useQueryClient();
 
@@ -28,9 +27,6 @@ export function useUpdateItem() {
     onSuccess: () => {
       SucessMessage("Item atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
-    },
-    onError: () => {
-      ErrorMessage("Erro ao atualizar item!");
     },
   });
 }
@@ -43,9 +39,6 @@ export function useDeleteItem() {
     onSuccess: () => {
       SucessMessage("Item removido com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
-    },
-    onError: () => {
-      ErrorMessage("Erro ao remover item!");
     },
   });
 }

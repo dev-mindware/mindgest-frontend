@@ -32,7 +32,7 @@ export function Management() {
           className="animate-pulse"
         />
       </div>
-      <ProductList />
+      {/* <ProductList /> */}
       <AddProductModal />
     </div>
   );

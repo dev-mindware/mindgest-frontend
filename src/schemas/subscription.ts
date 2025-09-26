@@ -28,7 +28,7 @@ export const subscriptionSchema = z.object({
   companyId: z.string(),
   planId: z.string(),
 
-  months: z.number().min(1, "Informe pelo menos 1 mês"),
+  billingPeriodInMonths: z.number().min(1, "Informe pelo menos 1 mês"),
   periodStartsAt: z.string().datetime().optional(),
   periodEndsAt: z.string().datetime().optional(),
   canceledAt: z.string().datetime().nullable().optional(),

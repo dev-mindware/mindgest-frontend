@@ -1,55 +1,46 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
-import { useURLSearchParams } from "@/hooks/common/use-url-search-params";
-import { Icon, SearchHandlerWrapper } from "../common";
-import { useGetCategories } from "@/hooks";
-import { ItemsFilters, ItemStatus } from "@/types/items";
+import { CategoryFilters } from "@/types";
+import { useRouter } from "next/navigation";
 import { FilterPopover } from "../shared";
-import { itemsByOption, itemsOrderOption, itemsStatusOptions } from "@/constants";
-
+import { Icon, SearchHandlerWrapper } from "../common";
+import { categorySortByOption, categorySortOrderOption, categoryStatusOptions } from "@/constants";
+import { useURLSearchParams } from "@/hooks/common";
 
 type Props = {
-  filters: ItemsFilters;
-  setFilters: (filters: ItemsFilters) => void;
-};
+  filters: CategoryFilters;
+  setFilters: (filters: CategoryFilters) => void;
+}
 
-export function ProductsFilters({ filters, setFilters }: Props) {
+export function CategoriesFilters({ filters, setFilters }: Props) {
   const router = useRouter();
-  const { search, setSearch } = useURLSearchParams("search-items");
-  const { categories, isLoading, error, refetch } = useGetCategories();
+  const { search, setSearch } = useURLSearchParams("search-category");
 
-  const handleChange = (newFilters: Partial<ItemsFilters>) => {
+  const handleChange = (newFilters: Partial<CategoryFilters>) => {
     const updated = { ...filters, ...newFilters };
     setFilters(updated);
 
     const query = new URLSearchParams();
-    if (updated.status) query.set("status", updated.status);
-    if (updated.categoryId) query.set("categoryId", updated.categoryId);
+    if (updated.isActive) query.set("isActive", updated.isActive);
     if (updated.sortBy) query.set("sortBy", updated.sortBy);
     if (updated.sortOrder) query.set("sortOrder", updated.sortOrder);
 
-    router.push(`/client/items?${query.toString()}`);
+    router.push(`/client/categories?${query.toString()}`);
   };
 
   function clearFilters() {
     handleChange({
       sortBy: undefined,
-      status: undefined,
-      categoryId: undefined,
+      isActive: undefined,
       sortOrder: undefined,
     });
   }
 
   const hasFilter =
-    filters.status ||
-    filters.categoryId ||
+    filters.isActive ||
     filters.sortBy ||
     filters.sortOrder ||
     search.length > 0;
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading categories</div>;
 
   return (
     <SearchHandlerWrapper
@@ -59,25 +50,17 @@ export function ProductsFilters({ filters, setFilters }: Props) {
     >
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
         <FilterPopover
-          label="Categoria"
-          icon="ChartBarStacked"
-          options={categories}
-          value={filters.categoryId}
-          onChange={(categoryId) => handleChange({ categoryId })}
-        />
-
-        <FilterPopover
           icon="Tag"
           label="Status"
-          options={itemsStatusOptions}
-          value={filters.status}
-          onChange={(status) => handleChange({ status: status as ItemStatus })}
+          options={categoryStatusOptions}
+          value={filters.isActive}
+          onChange={(isActive) => handleChange({ isActive })}
         />
 
         <FilterPopover
           icon="List"
           label="Ordenar por"
-          options={itemsByOption}
+          options={categorySortByOption}
           value={filters.sortBy}
           onChange={(sortBy) => handleChange({ sortBy })}
         />
@@ -85,7 +68,7 @@ export function ProductsFilters({ filters, setFilters }: Props) {
         <FilterPopover
           label="Ordem"
           icon="ListOrdered"
-          options={itemsOrderOption}
+          options={categorySortOrderOption}
           value={filters.sortOrder}
           onChange={(sortOrder) => handleChange({ sortOrder })}
         />
@@ -104,4 +87,4 @@ export function ProductsFilters({ filters, setFilters }: Props) {
       </div>
     </SearchHandlerWrapper>
   );
-}
+}/*  */

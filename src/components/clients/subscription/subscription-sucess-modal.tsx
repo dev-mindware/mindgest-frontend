@@ -15,15 +15,16 @@ export function SubscriptionSucessModal() {
     <GlobalModal
       sucess
       canClose
-      id="subscription-sucess"
+      id="subscription-created"
       title={
-        <span className="text-center">Assinatura efectuada com sucesso!</span>
+        <span className="text-center">Assinatura registrada com sucesso!</span>
       }
       className="p-8"
       description={
         <>
           <span className="text-lg text-foreground text-center">
-            🎉 Parabéns! Sua assinatura foi efectuada com sucesso.
+            🎉 Parabéns! Sua assinatura foi efectuada com sucesso. Você receberá
+            uma notificação assim que estiver tudo liberado.
           </span>
         </>
       }

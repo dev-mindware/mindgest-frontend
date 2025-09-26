@@ -3,7 +3,7 @@ import { Button, Icon } from "@/components";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui";
 import { icons } from "lucide-react";
 
-type Option = { value: string; label: string };
+type Option = { value: string ; label: string };
 
 interface FilterPopoverProps {
   label: string;

@@ -26,7 +26,7 @@ export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
   const { mutateAsync, isPending } = useCreateSubscription();
 
   const planValue = Number(subscriptionData?.plan.priceMonthly) || 0;
-  const months = subscriptionData?.months || 1;
+  const months = subscriptionData?.billingPeriodInMonths || 1;
   const totalToPay = planValue * months;
 
   const { handleSubmit } = useForm<SubscriptionFormData>({
@@ -41,8 +41,6 @@ export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
 
     await mutateAsync(data);
 
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-    
     window.location.replace("/client/dashboard");
     localStorage.removeItem("plan-storage");
   }

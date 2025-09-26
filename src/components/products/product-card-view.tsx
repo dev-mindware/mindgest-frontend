@@ -1,7 +1,7 @@
 "use client";
 import { useProductActions } from "@/hooks";
 import { ItemResponse } from "@/types";
-import { formatPrice } from "@/utils";
+import { formatCurrency, formatPrice } from "@/utils";
 import { ProductIcon } from "./product-icon";
 import { ProductTitle } from "./product-title";
 import { StatusBadge } from "./product-status-badge";
@@ -27,7 +27,7 @@ export function ProductCardView({ product }: ProductCardProps) {
               <ProductTitle name={product.name} />
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">
-                  SKU - {product.sku}
+                   {product.categoryId?.substring(0, 4)} - {product.sku}
                 </span>
                 <StatusBadge status={product.status!} />
               </div>
@@ -51,7 +51,7 @@ export function ProductCardView({ product }: ProductCardProps) {
               Preço do produto
             </p>
             <p className="text-sm font-semibold text-foreground">
-              {formatPrice(product.price!)}
+              {formatCurrency(product.price!)}
             </p>
           </div>
         </div>

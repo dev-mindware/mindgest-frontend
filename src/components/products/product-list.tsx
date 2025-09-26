@@ -1,17 +1,18 @@
 "use client";
-import { useState } from "react";
-import { usePagination } from "@/hooks/common";
+import { useMemo, useState } from "react";
+import { usePagination, useURLSearchParams } from "@/hooks/common";
 import { useSearchParams } from "next/navigation";
 import { ProductsFilters } from "./products-filters";
 import { ProductCardView } from "./product-card-view";
 import {
-  Column,
-  GenericTable,
   Icon,
+  Column,
   Button,
   RequestError,
+  GenericTable,
   ListSkeleton,
   ButtonOnlyAction,
+  ProductCardSkeletonGrid,
 } from "@/components";
 import { ItemResponse, ItemsFilters, ItemStatus } from "@/types";
 import { StatusBadge } from "./product-status-badge";
@@ -22,6 +23,7 @@ import {
   DetailsProductModal,
   EditProductModal,
 } from "./product-modals";
+import { normalize } from "@/utils/normalize-string";
 
 interface ProductListProps {
   className?: string;
@@ -31,12 +33,14 @@ export function ProductList({ className }: ProductListProps) {
   const query = useSearchParams();
   const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } =
     useProductActions();
+  const { search } = useURLSearchParams("search-items");
+
   const [viewMode, setViewMode] = useState<"card" | "table">("table");
   const [filters, setFilters] = useState<ItemsFilters>({
     status: (query.get("status") as ItemStatus) || undefined,
     sortBy: (query.get("sortBy") as string) || undefined,
     sortOrder: (query.get("sortOrder") as string) || undefined,
-    category: (query.get("category") as string) || undefined,
+    categoryId: (query.get("categoryId") as string) || undefined,
   });
 
   const {
@@ -55,6 +59,20 @@ export function ProductList({ className }: ProductListProps) {
     queryKey: ["items"],
     queryParams: filters,
   });
+
+  const filteredData = useMemo(() => {
+    return items.filter((item) => {
+      const term = normalize(search);
+      const username = item.price?.toString() || "";
+      const plan = item.name?.toLowerCase() || "";
+      const sku = item.sku?.toLowerCase() || "";
+      return (
+        normalize(username).includes(term) ||
+        normalize(plan).includes(term) ||
+        normalize(sku).includes(term)
+      );
+    });
+  }, [items, search]);
 
   const columns: Column<ItemResponse>[] = [
     { key: "name", header: "Nome" },
@@ -82,7 +100,6 @@ export function ProductList({ className }: ProductListProps) {
       header: "Status",
       render: (_, item) => <StatusBadge status={item.status} />,
     },
-    // { key: "category", header: "Categoria" },
     {
       key: "action",
       header: "Ação",
@@ -97,7 +114,8 @@ export function ProductList({ className }: ProductListProps) {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading)
+    return viewMode === "card" ? <ProductCardSkeletonGrid /> : <ListSkeleton />;
 
   if (isError) {
     return (
@@ -110,7 +128,7 @@ export function ProductList({ className }: ProductListProps) {
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
           <ProductsFilters filters={filters} setFilters={setFilters} />
-          <div className="hidden sm:flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border">
+          <div className="sm:flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border">
             <Button
               variant={viewMode === "card" ? "default" : "ghost"}
               className={`h-8 w-8 ${
@@ -145,23 +163,19 @@ export function ProductList({ className }: ProductListProps) {
         </div>
       </div>
 
-   {/*    <div className="text-sm text-muted-foreground">
-        {total} resultado(s) encontrado(s)
-      </div> */}
-
       {viewMode === "card" ? (
         <div
           className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${
             className ?? ""
           }`}
         >
-          {items.map((product) => (
+          {filteredData.map((product) => (
             <ProductCardView key={product.id} product={product} />
           ))}
         </div>
       ) : (
         <GenericTable<ItemResponse>
-          data={items}
+          data={filteredData}
           columns={columns}
           page={page}
           total={total}
@@ -169,7 +183,6 @@ export function ProductList({ className }: ProductListProps) {
           setPage={setPage}
           goToNextPage={goToNextPage}
           goToPreviousPage={goToPreviousPage}
-          route="/items"
         />
       )}
 

@@ -54,7 +54,7 @@ export function ItemsPageContent() {
         </div>
 
         <TabsContent value="product-tab">
-          <ProductList />
+          <ProductList  />
         </TabsContent>
         <TabsContent value="service-tab">
           <ServiceList />

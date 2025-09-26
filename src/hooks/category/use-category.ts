@@ -16,6 +16,31 @@ export function useCategory() {
   });
 }
 
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CategoryData> }) =>
+      categoryService.updateCategory(id, data as any),
+    onSuccess: () => {
+      SucessMessage("Categoria atualizada com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+}
+
+export function useDeleteCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => categoryService.deleteCategory(id),
+    onSuccess: () => {
+      SucessMessage("Categoria removido com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+}
+
 export function useGetCategories() {
   const { data, error, isLoading, refetch } = useFetch<CategoryResponse>(
     "categories",

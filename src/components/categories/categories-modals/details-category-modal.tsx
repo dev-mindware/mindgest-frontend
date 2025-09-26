@@ -3,7 +3,6 @@ import { useModal } from "@/stores/use-modal-store";
 import { Button, GlobalModal, Icon } from "@/components";
 import { currentProductStore } from "@/stores";
 import { formatDateTime, formatPrice } from "@/utils";
-import { StatusBadge } from "../product-status-badge";
 
 function DetailRow({
   label,
@@ -45,7 +44,7 @@ export function DetailsProductModal() {
                   SKU: {currentProduct.sku}
                 </span>
               )}
-              <StatusBadge status={currentProduct.status} />
+              {/* <StatusBadge status={currentProduct.status} /> */}
             </div>
           </div>
         </>
