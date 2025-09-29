@@ -1,5 +1,5 @@
 "use client";
-import { Button, ButtonSubmit, Input, RHFSelect } from "@/components";
+import { ButtonSubmit, Input, RHFSelect } from "@/components";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
@@ -75,7 +75,7 @@ export function InvoiceForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 space-y-8 border p-8 rounded-lg"
+      className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-3">
         <Input
@@ -121,9 +121,9 @@ export function InvoiceForm() {
         />
       </div>
 
-      <InvoiceItems fieldArray={fieldArray} />
+      <InvoiceItems fieldArray={fieldArray} control={control}/>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <SummaryCard label="Subtotal" value={watch("totals.subtotal")} />
         <SummaryCard label="Taxa Total" value={watch("totals.totalTax")} />
         <SummaryCard

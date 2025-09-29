@@ -80,12 +80,14 @@ export const InvoiceSchema = z.object({
   company: CompanySchema.optional(),
   customer: CustomerSchema,
   documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
+  categoryId: z.union([z.string(), z.number()]).optional(),
   issueDate: z.string().min(1, "A data de emissão é obrigatória"),
   dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
   orderReference: z.string().optional(),
   items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
   totals: TotalsSchema,
   payment: PaymentSchema,
+  discount: z.number().optional(),
 });
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
 
