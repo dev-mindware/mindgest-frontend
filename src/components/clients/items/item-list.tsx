@@ -7,12 +7,12 @@ import {
   Button,
   TitleList,
 } from "@/components";
-import { AddProductModal, ProductList } from "@/components/products";
-import { AddServiceModal, ServiceList } from "@/components/services";
+import { AddProductModal, ProductList, ServiceList, ServiceModal } from "@/components/clients";
 import { useModal } from "@/stores";
 import { useState } from "react";
 
-// filtros category, status e type
+// quando mudar voltar
+
 export function ItemsPageContent() {
   const { openModal, open } = useModal();
   const [currentTab, setCurrentTab] = useState<"product" | "service">(
@@ -54,15 +54,15 @@ export function ItemsPageContent() {
         </div>
 
         <TabsContent value="product-tab">
-          <ProductList  />
+          <ProductList />
         </TabsContent>
         <TabsContent value="service-tab">
           <ServiceList />
         </TabsContent>
       </Tabs>
-      {/*  criar um estado pra gerenciar a bert */}
-      {currentModal === "add-product" && open && <AddProductModal />}
-      {currentModal === "add-service" && open && <AddServiceModal />}
+      {/* criar um estafo pra gerenciar a abertura dos modais */}
+      {currentModal === "add-product" && <AddProductModal />}
+      {currentModal === "add-service" && <ServiceModal action="add" />}
     </div>
   );
 }

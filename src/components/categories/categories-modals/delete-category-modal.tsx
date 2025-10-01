@@ -30,12 +30,12 @@ export function DeleteProductModal() {
       warning
       canClose
       className="!w-max"
-      id="delete-product"
-      title="Tem certeza que deseja apagar o produto?"
+      id="delete-category"
+      title="Tem certeza que deseja apagar a categoria?"
       description="Lembre-se que esta ação não pode ser desfeita."
     >
       <div className="flex justify-end gap-4">
-        <Button onClick={() => closeModal("delete-product")} variant="outline">
+        <Button onClick={() => closeModal("delete-category")} variant="outline">
           Cancelar
         </Button>
         <Button
@@ -43,7 +43,7 @@ export function DeleteProductModal() {
           variant="destructive"
           onClick={() => handleDelete(currentProduct?.id!)}
         >
-          {isPending ? "Apagando..." : "Apagar Produto"}
+          {isPending ? "Apagando..." : "Apagar Categoria"}
         </Button>
       </div>
     </GlobalModal>

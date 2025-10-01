@@ -11,12 +11,13 @@ if (!secretKey) {
 export const encodedKey = new TextEncoder().encode(secretKey);
 
 export interface SessionPayload extends JWTPayload {
-  user: User;
+  //user: User;
   accessToken: string;
   refreshToken: string;
 }
 
 export async function createSession(payload: SessionPayload) {
+  // const expiresAt = new Date(Date.now() + 2 * 60 * 1000); 
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); 
   const session = await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })

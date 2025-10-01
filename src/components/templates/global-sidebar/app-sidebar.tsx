@@ -11,12 +11,12 @@ import {
   SidebarCompanyInfo,
 } from "@/components";
 import { adminMenu, menuItems } from "@/constants/menu-items";
+import { useAuth } from "@/hooks/auth";
 import { getSidebarForUser } from "@/lib/get-sidebar-for-user";
-import { useAuthStore } from "@/stores/auth";
 import { PlanType } from "@/types";
 
 export function AppSidebar() {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
 
   if (!user) return <SidebarSkeleton />;
 

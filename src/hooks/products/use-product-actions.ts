@@ -17,7 +17,7 @@ export function useProductActions() {
   }
 
   function handlerDeleteProduct(product: Product) {
-    openModal("delete-product");
+    openModal("delete-item");
     setCurrentProduct(product);
   }
 

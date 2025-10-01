@@ -1,10 +1,11 @@
 "use client";
 import { Role } from "@/types";
 import { getUserRole } from "@/utils";
-import { useAuthStore } from "@/stores/auth";
+import { useAuth } from "@/hooks/auth";
 
 export function useCurrentRole() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
+
   const isAdmin = getUserRole(user?.role as Role) == "admin";
 
   return {

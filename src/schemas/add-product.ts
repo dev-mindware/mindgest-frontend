@@ -20,7 +20,7 @@ export const addProductSchema = z.object({
 
   expiryDate: z.coerce.date().nullable().optional(),
 
-  selectedStatus: z.enum(["Disponível", "Esgotado", "Pendente"]),
+  selectedStatus: z.enum(["ACTIVE", "INACTIVE", "OUT_OF_STOCK"]).optional(),
 
   description: z.string().max(500, "Descrição deve ter no máximo 500 caracteres").optional(),
 });

@@ -18,16 +18,17 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { PlanCard } from "./plan-card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthStore, useCurrentPlanStore } from "@/stores";
+import { useCurrentPlanStore } from "@/stores";
 import { ErrorMessage } from "@/utils/messages";
 import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
+import { useAuth } from "@/hooks/auth";
 
 interface SubscriptionFormProps {
   onNext: (data: SubscriptionFormData) => void;
 }
 
 export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { plans, error, isLoading, refetch } = usePlans();
   const { currentPlanSelected, setCurrentPlanSelected } = useCurrentPlanStore();
   const {

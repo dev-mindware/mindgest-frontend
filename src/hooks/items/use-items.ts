@@ -12,9 +12,6 @@ export function useAddItem() {
       SucessMessage("Item adicionado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
-    onError: () => {
-      ErrorMessage("Erro ao adicionar item!");
-    },
   });
 }
 

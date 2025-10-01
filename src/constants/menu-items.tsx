@@ -149,6 +149,13 @@ export const menuItems: MenuStructure = {
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
+    {
+      name: "Configurações",
+      url: "/client/settings",
+      icon: <Icon name="Settings" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
+    },
     // AQUI COMEÇA O TSUNAMI
     {
       name: "Estoque",

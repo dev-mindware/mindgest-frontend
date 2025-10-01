@@ -11,7 +11,9 @@ import { getStatusColor, getStatusDot } from "@/utils";
 export const CashierCard: React.FC<CashierCardProps> = ({ cashier, onAdd }) => (
   <Card
     className="mb-4 transition-shadow cursor-pointer hover:shadow-md"
-    onClick={() => onAdd({ name: cashier.name, cashNumber: cashier.cashNumber })}
+    onClick={() =>
+      onAdd({ name: cashier.name, cashNumber: cashier.cashNumber })
+    }
   >
     <CardContent className="p-4">
       <div className="flex items-start justify-between mb-3">
@@ -26,13 +28,19 @@ export const CashierCard: React.FC<CashierCardProps> = ({ cashier, onAdd }) => (
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="text-sm font-semibold">Caixa nº {cashier.cashNumber}</h3>
+            <h3 className="text-sm font-semibold">
+              Caixa nº {cashier.cashNumber}
+            </h3>
             <p className="text-sm text-gray-600">{cashier.name}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className={getStatusColor(cashier.status)}>
-            <div className={`w-2 h-2 mr-1 rounded-full ${getStatusDot(cashier.status)}`}></div>
+            <div
+              className={`w-2 h-2 mr-1 rounded-full ${getStatusDot(
+                cashier.status
+              )}`}
+            ></div>
             {cashier.status}
           </Badge>
           <Button
@@ -49,7 +57,9 @@ export const CashierCard: React.FC<CashierCardProps> = ({ cashier, onAdd }) => (
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div>
           <p className="text-gray-500">Total vendido</p>
-          <p className="font-semibold">{cashier.totalSold.toLocaleString()} Kz</p>
+          <p className="font-semibold">
+            {cashier.totalSold.toLocaleString()} Kz
+          </p>
         </div>
         <div>
           <p className="text-gray-500">Tempo de atividade</p>

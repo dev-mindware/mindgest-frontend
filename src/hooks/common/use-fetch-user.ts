@@ -1,47 +1,47 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores";
 import { api } from "@/services/api";
 import { User } from "@/types";
 
 export function useFetchUser() {
- const { setUser, setLoading, setInitialized, isLoading, isInitialized } =
-   useAuthStore();
+  const { setUser, user } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(true);
 
- useEffect(() => {
-   if (isInitialized || isLoading) return;
+  useEffect(() => {
+    if (user) return;
 
-   const fetchUser = async () => {
-     try {
-       setLoading(true);
+    const fetchUser = async () => {
+      try {
+        const response = await api.get<User>("/auth/profile");
 
-       const response = await api.get<User>("/auth/profile");
+        if (response.data) {
+          const userData = response.data;
+          setUser(userData);
+          setIsLoading(false);
+        } else if (response.status === 401) {
+          // Usuário não autenticado - isso é normal
+          setUser(null);
+          setIsLoading(false);
+        } else {
+          // Outros erros
+          console.error("Erro ao buscar usuário:", response.statusText);
+          setUser(null);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Erro na requisição do usuário:", error);
+        setUser(null);
+        setIsLoading(false);
+      }
+    };
 
-       if (response.data) {
-         const userData = response.data;
-         setUser(userData);
-       } else if (response.status === 401) {
-         // Usuário não autenticado - isso é normal
-         setUser(null);
-       } else {
-         // Outros erros
-         console.error("Erro ao buscar usuário:", response.statusText);
-         setUser(null);
-       }
-     } catch (error) {
-       console.error("Erro na requisição do usuário:", error);
-       setUser(null);
-     } finally {
-       setLoading(false);
-       setInitialized(true); // CRUCIAL: marca como inicializado independente do resultado
-     }
-   };
+    fetchUser();
+  }, [setUser, user]);
 
-   fetchUser();
- }, [setUser, setLoading, setInitialized, isInitialized, isLoading]);
-
- return { isLoading, isInitialized };
+  return { user, isLoading };
 }
+
 /* "use client";
 import { User } from "@/types";
 import { api } from "@/services/api";
@@ -83,4 +83,3 @@ export function useFetchUser() {
 
   return { isLoading, isInitialized: isFetchedAfterMount, user: data };
 } */
-

@@ -1,15 +1,15 @@
 "use client";
 import Link from "next/link";
-import { ButtonSubmit, GoogleButton, Input, OrLine } from "@/components";
 import Image from "next/image";
 import Logo from "@/assets/brand.png";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { LoginFormData, loginSchema } from "@/schemas";
-import { useAuthStore } from "@/stores/auth";
-import { loginAction } from "@/app/actions/login";
 import { useRouter } from "next/navigation";
 import { ErrorMessage } from "@/utils/messages";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginFormData, loginSchema } from "@/schemas";
+import { ButtonSubmit, GoogleButton, Input, OrLine } from "@/components";
+import { loginAction } from "@/app/actions/login";
+import { useAuthStore } from "@/stores";
 
 export function LoginForm() {
   const router = useRouter();
@@ -26,9 +26,10 @@ export function LoginForm() {
     try {
       const res = await loginAction({ email, password });
       if (!res.user) return;
-      setUser(res.user);
       router.replace(res.redirectPath || "/");
+      setUser(res.user);
     } catch (error: any) {
+      alert(JSON.stringify(error, null, 2));
       if (error?.response) {
         ErrorMessage(
           String(error?.response?.data?.message) ||

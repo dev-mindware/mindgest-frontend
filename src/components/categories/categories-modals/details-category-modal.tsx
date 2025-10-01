@@ -20,7 +20,7 @@ function DetailRow({
   );
 }
 
-export function DetailsProductModal() {
+export function DetailsCategoryModal() {
   const { closeModal } = useModal();
   const { currentProduct } = currentProductStore();
 
@@ -29,7 +29,7 @@ export function DetailsProductModal() {
   return (
     <GlobalModal
       canClose
-      id="view-product"
+      id="view-category"
       title={
         <>
           <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10">
@@ -61,7 +61,7 @@ export function DetailsProductModal() {
       <div className="space-y-6 text-sm">
         {(currentProduct.description ||
           currentProduct.barcode ||
-          currentProduct.categoryId ||
+          currentProduct.category ||
           currentProduct.unit ||
           currentProduct.type) && (
           <section className="space-y-2">
@@ -73,7 +73,7 @@ export function DetailsProductModal() {
               label="Código de Barras"
               value={currentProduct.barcode}
             />
-            <DetailRow label="Categoria" value={currentProduct.categoryId} />
+            <DetailRow label="Categoria" value={currentProduct.category} />
             <DetailRow label="Unidade" value={currentProduct.unit} />
             <DetailRow
               label="Tipo"
@@ -134,7 +134,7 @@ export function DetailsProductModal() {
           </section>
         )}
 
-        {(currentProduct.companyId ||
+        {(currentProduct.company ||
           currentProduct.storeId ||
           currentProduct.createdAt ||
           currentProduct.updatedAt) && (

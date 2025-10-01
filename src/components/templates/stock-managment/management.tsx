@@ -3,8 +3,8 @@ import Image from "next/image";
 import Ai from "@/assets/AI.png";
 import { useModal } from "@/stores/use-modal-store";
 import { Button } from "@/components/ui";
-import { AddProductModal, ProductList } from "@/components/products";
 import { TitleList } from "@/components/common";
+import { AddProductModal } from "@/components/clients";
 
 export function Management() {
   const { openModal } = useModal();

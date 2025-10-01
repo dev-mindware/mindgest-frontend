@@ -7,14 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui";
 import { formatCurrency } from "@/utils";
-import { useAuthStore } from "@/stores";
+import { useAuth } from "@/hooks/auth";
 
 interface CurrentPlanCardProps {
   currentPlan: Plan;
 }
 
 export function CurrentPlanCard({ currentPlan }: CurrentPlanCardProps) {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
 
   return (
     <Card className="border-primary-200 bg-primary-100">

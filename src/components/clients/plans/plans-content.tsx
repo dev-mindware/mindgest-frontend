@@ -2,12 +2,12 @@
 import { usePlans } from "@/hooks";
 import { InfoBanner, PlansPageSkeleton, RequestError } from "@/components";
 import { AvailablePlans } from "./availables-plans";
-import { useAuthStore } from "@/stores/auth";
+import { useAuth } from "@/hooks/auth";
 import { CurrentPlanCard } from "./current-plan-card";
 import { WithoutActivePlan } from "./without-active-plan";
 
 export function PlansAvailableInfo() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { plans, isLoading, error, refetch } = usePlans();
 
   if (error)

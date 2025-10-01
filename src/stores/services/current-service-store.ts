@@ -1,4 +1,4 @@
-import { Service } from "@/types";
+import { ItemResponse as Service } from "@/types";
 import { create } from "zustand";
 
 interface ServiceStore {

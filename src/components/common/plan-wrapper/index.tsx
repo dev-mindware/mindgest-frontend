@@ -1,6 +1,6 @@
 "use client";
-import { PlanType } from "@/types";
 import { useAuth } from "@/hooks/auth";
+import { PlanType } from "@/types";
 import { useEffect, useState } from "react";
 
 type WrapperProps = React.HTMLAttributes<HTMLDivElement> & {

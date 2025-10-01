@@ -12,10 +12,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components";
-import { useAuthStore } from "@/stores";
+import { useAuth } from "@/hooks/auth";
 
 export function SidebarCompanyInfo() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { isMobile } = useSidebar();
 
   if (!user) return null;

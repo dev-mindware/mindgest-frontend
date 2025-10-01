@@ -12,6 +12,7 @@ export type ItemsFilters = {
   categoryId?: string;
   status?: ItemStatus;
   sortOrder?: string;
+  search?: string;
 };
 
 export interface ItemData {
@@ -28,8 +29,10 @@ export interface ItemData {
   dimensions?: string;
   image?: string;
   type: ItemType;
-  companyId: string;
+  company?: string;
+  companyId?: string;
   storeId?: string;
+  category?: string;
   categoryId?: string;
   hasExpiry?: boolean;
   expiryDate?: string;
