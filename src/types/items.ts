@@ -16,7 +16,6 @@ export type ItemsFilters = {
 };
 
 export interface ItemData {
-  id: string;
   name: string;
   description?: string;
   sku?: string;

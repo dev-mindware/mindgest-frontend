@@ -1,3 +1,5 @@
 export * from "./add-entities"
-export * from "./entities-list"
-export * from "./entities-form"
+export * from "./entities-page-content"
+export * from "./clients"
+export * from "./stores"
+export * from "./suppliers"

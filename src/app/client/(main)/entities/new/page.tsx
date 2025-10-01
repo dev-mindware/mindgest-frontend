@@ -1,5 +1,5 @@
 import { PageWrapper } from "@/components";
-import { AddEntities } from "@/components/clients";
+// import { AddEntities } from "@/components/clients";
 
 export default function AddEntitiesPage() {
   return (
@@ -9,7 +9,8 @@ export default function AddEntitiesPage() {
       subRoute="Nova Entidade"
       showSeparator={true}
     >
-      <AddEntities />
+      <h1>Ola mundo add</h1>
+      {/* <AddEntities /> */}
     </PageWrapper>
   );
 }

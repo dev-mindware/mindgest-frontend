@@ -8,6 +8,9 @@ export const categoryService = {
   updateCategory: async (id: string, data: CategoryData) => {
     return api.put<CategoryResponse>(`/categories/${id}`, data);
   },
+  toggleStatusCategory: async (id: string) => {
+    return api.patch<CategoryResponse>(`/categories/${id}/toggle-status`);
+  },
   deleteCategory: async (id: string) => {
     return api.delete<CategoryResponse>(`/categories/${id}`);
   },

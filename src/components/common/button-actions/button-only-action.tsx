@@ -12,6 +12,8 @@ type Props<T> = {
   handleSee: (data: T) => void;
   handleEdit: (data: T) => void;
   handleDelete: (data: T) => void;
+  auxAction?: (data: T) => void;
+  auxActionLabel?: string;
 };
 
 export function ButtonOnlyAction<T>({
@@ -19,6 +21,8 @@ export function ButtonOnlyAction<T>({
   handleSee,
   handleEdit,
   handleDelete,
+  auxAction,
+  auxActionLabel
 }: Props<T>) {
   return (
     <DropdownMenu>
@@ -39,12 +43,18 @@ export function ButtonOnlyAction<T>({
         <DropdownMenuItem onClick={() => handleEdit(data)}>
           Editar
         </DropdownMenuItem>
+        {auxAction && (
+          <DropdownMenuItem onClick={() => auxAction(data)}>
+            {auxActionLabel}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="text-destructive"
           onClick={() => handleDelete(data)}
         >
           Deletar
         </DropdownMenuItem>
+       
       </DropdownMenuContent>
     </DropdownMenu>
   );

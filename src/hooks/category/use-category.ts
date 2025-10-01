@@ -4,7 +4,7 @@ import { categoryService } from "@/services/category-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage } from "@/utils/messages";
 
-export function useCategory() {
+export function useAddCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -20,8 +20,8 @@ export function useUpdateCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<CategoryData> }) =>
-      categoryService.updateCategory(id, data as any),
+    mutationFn: ({ id, data }: { id: string; data: CategoryData }) =>
+      categoryService.updateCategory(id, data),
     onSuccess: () => {
       SucessMessage("Categoria atualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -35,7 +35,19 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: (id: string) => categoryService.deleteCategory(id),
     onSuccess: () => {
-      SucessMessage("Categoria removido com sucesso!");
+      SucessMessage("Categoria removida com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+}
+
+export function useToggleStatusCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => categoryService.toggleStatusCategory(id),
+    onSuccess: () => {
+      SucessMessage("Status da categoria alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
   });

@@ -5,7 +5,6 @@ import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
 import { Collaborators } from "./contents/collaborators";
 import { Subscriptions } from "./contents/subscription";
-import { EntitiesList } from "@/components/clients/entities";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -38,7 +37,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       id: "tab-4",
       label: "Entidades",
       icon: "Users",
-      component: <EntitiesList />,
+      component: <p>Ola entidades kkk</p>,
       category: "workplace",
     },
     {

@@ -1,6 +1,7 @@
 import { TitleList } from "@/components";
-import { AddCategoryModal, CategoriesList } from "@/components/categories";
 import { ButtonAddCategory } from "./button-add-category";
+import { CategoriesList } from "./categories-list";
+import { CategoryModal } from "./categories-modals";
 
 export function CategoriesPageContent() {
   return (
@@ -10,7 +11,7 @@ export function CategoriesPageContent() {
       </TitleList>
 
       <CategoriesList />
-      <AddCategoryModal />
+      <CategoryModal action="add" />
     </div>
   );
 }
