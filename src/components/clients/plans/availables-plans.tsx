@@ -18,6 +18,7 @@ interface AvailablePlansProps {
   hasActiveSubscription: boolean;
 }
 
+
 export function AvailablePlans({
   plans,
   currentPlanId,
@@ -45,14 +46,17 @@ export function AvailablePlans({
     hasPosManagement: "Gestão de POS",
   };
 
+  // 👉 se não tiver plano atual, o "popular" será o ativo
+  const activePlanId = currentPlanId || plans[1]?.id;
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">Planos Disponíveis</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan, index) => {
-          const isCurrent = currentPlanId === plan.id;
+          const isActive = activePlanId === plan.id;
           const isPopular = index === 1;
-          const buttonIsDisabled = isCurrent || hasActiveSubscription;
+          const buttonIsDisabled = isActive || hasActiveSubscription;
 
           const features: string[] = [
             `Até ${
@@ -74,27 +78,20 @@ export function AvailablePlans({
             <Card
               key={plan.id}
               className={`relative rounded-lg shadow-md ${
-                isCurrent 
-                  ? "border-primary-300 bg-primary-300/10"
-                  : isPopular
+                isActive
                   ? "border-2 border-primary-500 bg-primary-300/10 shadow-xl"
-                  : ""
+                  : "border border-border bg-card"
               }`}
             >
-              {isPopular && !isCurrent && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary-500 text-white">
-                    <Icon name="Star" className="h-3 w-3 mr-1" />
-                    Popular
-                  </Badge>
-                </div>
-              )}
-
-              {isCurrent && (
+              {/* Badge quando for ativo */}
+              {isActive && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-primary-600 text-white">
-                    <Icon name="Crown" className="h-3 w-3 mr-1" />
-                    Atual
+                    <Icon
+                      name={currentPlanId ? "Crown" : "Star"}
+                      className="h-3 w-3 mr-1"
+                    />
+                    {currentPlanId ? "Atual" : "Popular"}
                   </Badge>
                 </div>
               )}
@@ -128,10 +125,14 @@ export function AvailablePlans({
                 <Button
                   onClick={() => onHandlerChoosePlan(plan)}
                   className={`w-full ${buttonIsDisabled && "bg-muted"}`}
-                  variant={isCurrent ? "outline" : "default"}
+                  variant={isActive ? "outline" : "default"}
                   disabled={buttonIsDisabled}
                 >
-                  {isCurrent ? "Plano Atual" : "Escolher Plano"}
+                  {isActive
+                    ? currentPlanId
+                      ? "Plano Atual"
+                      : "Plano Popular"
+                    : "Escolher Plano"}
                 </Button>
               </CardFooter>
             </Card>

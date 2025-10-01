@@ -1,10 +1,11 @@
 "use client";
-import { currentCategoryStore, useModal } from "@/stores";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useAddCategory, useUpdateCategory } from "@/hooks/category";
-import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ErrorMessage } from "@/utils/messages";
+import { currentCategoryStore, useModal } from "@/stores";
 import { CategoryFormData, categorySchema } from "@/schemas";
+import { useAddCategory, useUpdateCategory } from "@/hooks/category";
 import {
   Input,
   Button,
@@ -20,6 +21,7 @@ type CategoryModalProps = {
 export function CategoryModal({ action }: CategoryModalProps) {
   const { closeModal } = useModal();
   const { currentCategory } = currentCategoryStore();
+
   const { mutateAsync: addCategory, isPending: isAdding } = useAddCategory();
   const { mutateAsync: editCategory, isPending: isEditing } = useUpdateCategory();
 
@@ -31,49 +33,53 @@ export function CategoryModal({ action }: CategoryModalProps) {
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     mode: "onChange",
-    defaultValues: currentCategory ?? { name: "", description: "" },
   });
+
+  // 👉 Preenche valores quando for editar
+  useEffect(() => {
+    if (action === "edit" && currentCategory) {
+      reset({
+        name: currentCategory.name,
+        description: currentCategory.description || "",
+      });
+    }
+  }, [action, currentCategory, reset]);
 
   async function onSubmit(data: CategoryFormData) {
     try {
       if (action === "add") {
         await addCategory(data);
-      } else if (action === "edit" && currentCategory?.id) {
+        reset();
+      } else if (action === "edit" && currentCategory) {
         await editCategory({ id: currentCategory.id, data });
       }
-      reset();
-      closeModal(`${action}-category`);
+      handleCancel();
     } catch (error: any) {
-      if (error?.response) {
-        ErrorMessage(
-          error?.response?.data?.message ||
-            "Ocorreu um erro ao salvar a categoria"
-        );
-      } else {
-        ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
-      }
+      ErrorMessage(
+        error?.response?.data?.message ||
+          "Ocorreu um erro ao salvar a categoria"
+      );
     }
   }
 
   const handleCancel = () => {
     reset();
-    closeModal(`${action}-category`);
+    closeModal(action === "add" ? "add-category" : "edit-category");
   };
 
-  const isPending = isAdding || isEditing || isSubmitting;
-  const modalTitle = action === "add" ? "Adicionar Categoria" : "Editar Categoria";
-  const submitLabel = action === "add" ? "Adicionar" : "Salvar alterações";
+  // Não renderiza se for editar e não tiver categoria
+  if (action === "edit" && !currentCategory) return null;
 
   return (
     <GlobalModal
       canClose
-      id={`${action}-category`}
-      title={modalTitle}
+      id={action === "add" ? "add-category" : "edit-category"}
+      title={action === "add" ? "Adicionar Categoria" : "Editar Categoria"}
       className="!max-w-md !w-[90vw] md:!w-full"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 overflow-auto"
+        className="space-y-6 overflow-auto max-h-[80vh]"
       >
         <Input
           label="Nome"
@@ -99,8 +105,11 @@ export function CategoryModal({ action }: CategoryModalProps) {
           >
             Cancelar
           </Button>
-          <ButtonSubmit className="w-max" isLoading={isPending}>
-            {submitLabel}
+          <ButtonSubmit
+            className="w-max"
+            isLoading={isSubmitting || isAdding || isEditing}
+          >
+            {action === "add" ? "Adicionar" : "Salvar alterações"}
           </ButtonSubmit>
         </div>
       </form>

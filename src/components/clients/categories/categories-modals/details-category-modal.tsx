@@ -23,7 +23,7 @@ export function DetailsCategoryModal() {
       title={
         <>
           <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10">
-            <Icon name="Package" className="w-10 h-10 text-primary" />
+            <Icon name="Tag" className="w-10 h-10 text-primary" />
           </div>
 
           <div className="text-center space-y-1">

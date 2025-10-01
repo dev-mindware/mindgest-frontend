@@ -12,8 +12,12 @@ interface ProductCardProps {
 }
 
 export function ProductCardView({ product }: ProductCardProps) {
-  const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } =
-    useProductActions();
+  const {
+    handlerDeleteProduct,
+    handlerDetailsProduct,
+    handlerEditProduct,
+    toggleStatusProduct,
+  } = useProductActions();
 
   return (
     <Card className="relative overflow-hidden transition-shadow duration-200 border border-border bg-card hover:shadow-lg">
@@ -25,7 +29,7 @@ export function ProductCardView({ product }: ProductCardProps) {
               <ProductTitle name={product.name} />
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">
-                   {product.category}
+                  {product.category}
                 </span>
                 <ItemStatusBadge status={product.status!} />
               </div>
@@ -36,6 +40,10 @@ export function ProductCardView({ product }: ProductCardProps) {
             handleDelete={handlerDeleteProduct}
             handleEdit={handlerEditProduct}
             handleSee={handlerDetailsProduct}
+            auxAction={toggleStatusProduct}
+            auxActionLabel={
+              product.status === "ACTIVE" ? "Desativar" : "Ativar"
+            }
           />
         </div>
       </CardHeader>

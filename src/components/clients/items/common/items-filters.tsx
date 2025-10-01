@@ -12,8 +12,8 @@ import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 
 export function ItemsFiltersTSX() {
-  const { search, setSearch } = useURLSearchParams("search-item");
   const { filters, setFilters } = useItemsFilters();
+  const { search, setSearch } = useURLSearchParams("search-item");
   const { categories, isLoading, error, refetch } = useGetCategories();
 
   function clearFilters() {

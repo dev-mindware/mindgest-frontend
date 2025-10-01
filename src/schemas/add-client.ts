@@ -2,23 +2,30 @@ import { z } from "zod";
 
 export const clientSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
-  nif: z
+  taxNumber: z
     .string()
-    .regex(/^\d{9}$/, "NIF deve ter exatamente 9 dígitos"),
-  typeCompany: z.string().nonempty("Selecione o tipo de empresa"),
+    .nonempty("Campo obrigatorio")
+    .refine(
+      (value) => /^\d{9}[A-Z]{2}\d{3}$/.test(value) || /^\d{10}$/.test(value),
+      "NIF inválido — use formato de pessoa singular ou coletiva"
+    ),
   phone: z
     .string()
-    .regex(/^\d{9}$/, "Telefone deve ter 9 dígitos"),
+    .max(9, "O número deve ter 9 dígitos")
+    .refine(
+      (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
+      "Insira número de telemovél válido"
+    ),
   email: z.string().email("Email inválido"),
   address: z.string().min(5, "Endereço muito curto"),
   iban: z
     .string()
     .regex(
-      /^AO\d{23}$/,
-      "IBAN inválido (deve começar com 'AO' e ter 25 caracteres)"
-    ),
-  category: z.string().nonempty("Selecione uma categoria"),
-  registerDate: z.string().nonempty("Selecione uma data válida"),
+      /^AO06\d{21}$/,
+      "IBAN inválido (deve começar com 'AO06' e ter 21 caracteres)"
+    )
+    .optional(),
+  companyId: z.string().nonempty("Selecione uma categoria"),
 });
 
 export type ClientFormData = z.infer<typeof clientSchema>;

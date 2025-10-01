@@ -1,164 +1,110 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { Icon } from "@/components/common/icon";
-import { DataTable, DataTableRowActions } from "@/components/custom";
+import { usePagination, useURLSearchParams } from "@/hooks/common";
+import {
+  Column,
+  RequestError,
+  GenericTable,
+  ListSkeleton,
+  ButtonOnlyAction,
+  ProductCardSkeletonGrid,
+  ItemsFiltersTSX,
+  ItemStatusBadge,
+} from "@/components";
+import { ClientResponse } from "@/types";
+import { formatDateTime } from "@/utils";
+import { useItemsFilters, useProductActions } from "@/hooks";
 
-export interface Client {
-  id: string;
-  nome: string;
-  email: string;
-  categoria: "VIP" | "Regular" | "Comum";
-  nif: string;
-}
-
-const mockClients: Client[] = Array.from({ length: 30 }).map((_, i) => ({
-  id: (i + 1).toString(),
-  nome: `Client ${i + 1}`,
-  email: `client${i + 1}@mail.com`,
-  categoria: i % 3 === 0 ? "VIP" : i % 3 === 1 ? "Regular" : "Comum",
-  nif: (100000000 + i).toString(),
-}));
+import { useDebounce } from "use-debounce";
 
 export function ClientsList() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { search } = useURLSearchParams("search-item");
+  const [debounceSearch] = useDebounce(search, 400);
+  const { filters, page, setPage } = useItemsFilters();
+  const {
+    data: clients,
+    total,
+    totalPages,
+    goToNextPage,
+    goToPreviousPage,
+    isLoading,
+    isError,
+    refetch,
+  } = usePagination<ClientResponse>({
+    endpoint: "/clients",
+    queryKey: ["clients"],
+    queryParams: { ...filters, search: debounceSearch, page },
+  });
 
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setClients(mockClients);
-      setIsLoading(false);
-    }, 800);
+  const columns: Column<ClientResponse>[] = [
+    { key: "name", header: "Nome" },
+    { key: "taxNumber", header: "NIF" },
+    {
+      key: "email",
+      header: "Email",
+    },
+    { key: "phone", header: "Telefone" },
+    { key: "address", header: "Endereço" },
+    {
+      key: "createdAt",
+      header: "Criado em",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">
+          {formatDateTime(item.createdAt)}
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (_, item) => (
+        <ItemStatusBadge status={item.isActive ? "ACTIVE" : "INACTIVE"} />
+      ),
+    },
+    {
+      key: "action",
+      header: "Ação",
+      render: (_, item) => (
+        <p>...</p>
+       /*  <ButtonOnlyAction
+          data={item}
+          handleDelete={handlerDeleteProduct}
+          handleEdit={handlerEditProduct}
+          handleSee={handlerDetailsProduct}
+        /> */
+      ),
+    },
+  ];
 
-    return () => clearTimeout(timer);
-  }, []);
+  if (isLoading) return <ListSkeleton />;
 
-  // ✅ UseMemo for columns (avoid recreating on each render)
-  const clientColumns: ColumnDef<Client>[] = useMemo(
-    () => [
-      {
-        accessorKey: "nome",
-        header: "Name",
-        cell: ({ row }) => (
-          <div className="min-w-0 font-medium">
-            <div className="truncate">{row.getValue("nome")}</div>
-            <div className="text-xs truncate text-muted-foreground md:hidden">
-              {row.getValue("email")}
-            </div>
-          </div>
-        ),
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div className="hidden min-w-0 md:block truncate">
-            {row.getValue("email")}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "categoria",
-        header: "Category",
-        cell: ({ row }) => {
-          const category = row.getValue("categoria") as Client["categoria"];
-          return (
-            <div className="flex flex-col gap-1">
-              <Badge
-                className={cn(
-                  "w-fit text-xs",
-                  category === "VIP" &&
-                    "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200",
-                  category === "Regular" &&
-                    "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-                  category === "Comum" &&
-                    "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-                )}
-              >
-                {category}
-              </Badge>
-              <div className="font-mono text-xs text-muted-foreground lg:hidden">
-                NIF: {row.getValue("nif")}
-              </div>
-            </div>
-          );  
-        },
-        filterFn: (row, id, value) => value.includes(row.getValue(id)),
-      },
-      {
-        accessorKey: "nif",
-        header: "NIF",
-        cell: ({ row }) => (
-          <div className="hidden font-mono lg:block">
-            {row.getValue("nif")}
-          </div>
-        ),
-      },
-      {
-        id: "actions",
-        header: () => <span className="sr-only">Actions</span>,
-        cell: ({ row }) => (
-          <DataTableRowActions
-            row={row}
-            actions={[
-              {
-                label: "View",
-                icon: <Icon name="Eye" size={16} />,
-                onClick: (row) => console.log("View client:", row.original),
-                shortcut: "⌘V",
-              },
-              {
-                label: "Edit",
-                icon: <Icon name="Eraser" size={16} />,
-                onClick: (row) => console.log("Edit client:", row.original),
-                shortcut: "⌘E",
-              },
-              {
-                label: "Delete",
-                icon: <Icon name="Trash2" size={16} />,
-                onClick: (row) => handleDeleteClient(row.original.id),
-                variant: "destructive",
-                shortcut: "⌘⌫",
-              },
-            ]}
-          />
-        ),
-      },
-    ],
-    []
-  );
-
-  const handleDeleteClient = (id: string) => {
-    setClients((prev) => prev.filter((client) => client.id !== id));
-    console.log("Deleted client:", id);
-  };
+  if (isError) {
+    return (
+      <RequestError refetch={refetch} message="Erro ao carregar os clientes" />
+    );
+  }
 
   return (
-    <div className="bg-background">
-      <DataTable
+    <div className="justify-start mt-6 space-y-8">
+      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+          <ItemsFiltersTSX />
+        </div>
+      </div>
+
+      <GenericTable<ClientResponse>
+        page={page}
         data={clients}
-        columns={clientColumns}
-        searchableColumns={["nome", "email"]}
-        filterableColumns={[
-          {
-            id: "categoria",
-            title: "Category",
-          },
-        ]}
-        isLoading={isLoading}
-        emptyState={{
-          title: "No clients found",
-          description: "Start by creating a new client record.",
-        }}
-        // ✅ Custom pagination buttons with #9956F6
-        /* pagination={{
-          className:
-            "flex gap-2 mt-4 [&>button]:bg-[#9956F6] [&>button]:text-white [&>button]:rounded-lg [&>button]:px-3 [&>button]:py-1",
-        }} */
+        columns={columns}
+        total={total}
+        totalPages={totalPages}
+        setPage={setPage}
+        goToNextPage={goToNextPage}
+        goToPreviousPage={goToPreviousPage}
       />
+
+     {/*  <DetailsProductModal />
+      <DeleteItemModal type="Produto" />
+      <EditProductModal /> */}
     </div>
   );
 }

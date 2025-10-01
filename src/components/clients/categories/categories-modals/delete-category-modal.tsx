@@ -32,7 +32,7 @@ export function DeleteCategoryModal() {
       className="!w-max"
       id="delete-category"
       title="Tem certeza que deseja apagar a categoria?"
-      description="Lembre-se que esta ação não pode ser desfeita."
+      description="Lembre-se que os proutos pertencentes a essa categoria serão apagados!"
     >
       <div className="flex justify-end gap-4">
         <Button onClick={() => closeModal("delete-category")} variant="outline">

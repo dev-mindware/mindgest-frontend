@@ -113,6 +113,28 @@ export const menuItems: MenuStructure = {
       icon: <Icon name="Users" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
+
+      items: [
+        {
+          name: "Clientes",
+          url: "/client/entities",
+          roles: ["MANAGER", "OWNER"],
+          minPlan: "Base",
+        },
+        {
+          name: "Fornecedores",
+          url: "/client/suppliers",
+          roles: ["MANAGER", "OWNER"],
+          minPlan: "Tsunami",
+        },
+        {
+          name: "Lojas",
+          url: "/client/stores",
+          roles: ["MANAGER", "OWNER"],
+          minPlan: "Tsunami",
+        },
+        
+      ],
     },
     {
       name: "Relatórios",

@@ -6,7 +6,7 @@ type PropsBanner = {
 
 export function InfoBanner({ title, description, children }: PropsBanner) {
   return (
-    <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg">
+    <div className="bg-primary-600 text-white rounded-lg">
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
           <div className="w-full">

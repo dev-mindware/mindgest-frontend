@@ -20,14 +20,13 @@ import {
   ItemStatusBadge,
   ItemViewToggle,
 } from "../common";
-
 import { useDebounce } from "use-debounce";
 
 export function ProductList() {
   const { search } = useURLSearchParams("search-item");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, setViewMode, viewMode, page, setPage } = useItemsFilters();
-  const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct } = useProductActions();
+  const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct, toggleStatusProduct } = useProductActions();
   const {
     data: items,
     total,
@@ -78,6 +77,8 @@ export function ProductList() {
           handleDelete={handlerDeleteProduct}
           handleEdit={handlerEditProduct}
           handleSee={handlerDetailsProduct}
+          auxAction={toggleStatusProduct}
+          auxActionLabel={item.status === "ACTIVE" ? "Desativar" : "Ativar"}
         />
       ),
     },

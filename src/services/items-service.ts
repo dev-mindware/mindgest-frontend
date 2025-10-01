@@ -8,6 +8,11 @@ export const itemsService = {
   updateItem: async (id: string, data: ItemData) => {
     return api.put<ItemData>(`/items/${id}`, data);
   },
+  
+  toggleStatusItem: async (id: string) => {
+    return api.patch<ItemData>(`/items/${id}/toggle-status`);
+  },
+
   deleteItem: async (id: string) => {
     return api.delete<ItemData>(`/items/${id}`);
   },

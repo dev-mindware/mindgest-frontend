@@ -39,3 +39,15 @@ export function useDeleteItem() {
     },
   });
 }
+
+export function useToggleStatusItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => itemsService.toggleStatusItem(id),
+    onSuccess: () => {
+      SucessMessage("Status do item alterado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+  });
+}

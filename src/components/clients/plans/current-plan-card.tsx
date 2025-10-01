@@ -17,7 +17,7 @@ export function CurrentPlanCard({ currentPlan }: CurrentPlanCardProps) {
   const { user } = useAuth();
 
   return (
-    <Card className="border-primary-200 bg-primary-100">
+    <Card className="border-border bg-primary-300/10">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold text-primary-700">
@@ -29,17 +29,17 @@ export function CurrentPlanCard({ currentPlan }: CurrentPlanCardProps) {
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-sm text-gray-600">Plano</p>
+            <p className="text-sm text-foreground">Plano</p>
             <p className="font-semibold text-lg">{currentPlan.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Valor</p>
+            <p className="text-sm text-foreground">Valor</p>
             <p className="font-semibold text-lg">
               {formatCurrency(currentPlan.priceMonthly)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Próxima renovação</p>
+            <p className="text-sm text-foreground">Próxima renovação</p>
             {/* <p className="font-semibold text-lg">
               {formatDate(user?.subscription?.expiresAt ?? "")}
             </p> */}

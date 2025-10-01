@@ -1,35 +1,44 @@
+import { Category } from "@/types";
 import { useModal } from "@/stores/use-modal-store";
 import { currentCategoryStore } from "@/stores";
-import { Category } from "@/types";
 import { useToggleStatusCategory } from "./use-category";
+import { ErrorMessage } from "@/utils/messages";
 
 export function useCategoryActions() {
   const { openModal } = useModal();
   const { setCurrentCategory } = currentCategoryStore();
-  const { mutateAsync: toggleStatus, isPending } = useToggleStatusCategory();
+  const { mutateAsync: toggleStatus, isPending: isUpdating } = useToggleStatusCategory();
 
   function handlerEditCategory(category: Category) {
-    openModal("edit-category");
     setCurrentCategory(category);
+    openModal("edit-category");
   }
 
   function handlerDetailsCategory(category: Category) {
-    openModal("view-category");
     setCurrentCategory(category);
+    openModal("view-category");
   }
 
   function handlerDeleteCategory(category: Category) {
-    openModal("delete-category");
     setCurrentCategory(category);
+    openModal("delete-category");
   }
 
   async function toggleStatusCategory(category: Category) {
-    setCurrentCategory(category);
-    await toggleStatus(category.id);
+    try {
+      setCurrentCategory(category);
+      await toggleStatus(category.id);
+    } catch (error: any) {
+      if (error?.response?.data) {
+        ErrorMessage(error?.response?.data?.message || "Erro inesperado");
+      } else {
+        ErrorMessage("Erro Desconhecido. Tente novamente.");
+      }
+    }
   }
 
-
   return {
+    isUpdating,
     handlerDeleteCategory,
     handlerDetailsCategory,
     handlerEditCategory,

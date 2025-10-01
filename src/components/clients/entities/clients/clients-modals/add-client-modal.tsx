@@ -1,29 +1,41 @@
 "use client";
-import { RHFSelect, Button, Input, GlobalModal, ButtonSubmit } from "@/components";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-// import { categoryOptions, options } from "./constant-data";
-import { ClientFormData, clientSchema } from "@/schemas";
 import { useModal } from "@/stores";
+import { useForm } from "react-hook-form";
+import { useAddClient } from "@/hooks/entities";
+import { ErrorMessage } from "@/utils/messages";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ClientFormData, clientSchema } from "@/schemas";
+import { Button, Input, GlobalModal, ButtonSubmit } from "@/components";
 
 export function AddClientModal() {
   const { closeModal } = useModal();
+  const { mutateAsync: addClientMutate, isPending } = useAddClient();
   const {
     reset,
-    control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
+    mode: "onChange",
     defaultValues: {
-      registerDate: new Date().toString(),
+      companyId: "axsns0asjhjsjsbx",
     },
   });
 
-  function onSubmit(data: ClientFormData) {
-    console.log("✅ Cliente:", data);
-    alert(JSON.stringify(data, null, 2));
+  async function onSubmit(data: ClientFormData) {
+    try {
+      const { iban, ...finalData } = data;
+      await addClientMutate(finalData);
+    } catch (error: any) {
+      if (error?.response?.data) {
+        ErrorMessage(
+          error?.response?.data?.message || "Ocorreu um erro inesperado"
+        );
+      } else {
+        ErrorMessage("Ocorreu um erro inesperado. Tente Novamente");
+      }
+    }
   }
 
   function handleCancel() {
@@ -38,8 +50,8 @@ export function AddClientModal() {
       title="Novo Cliente"
       className="!max-h-[85vh] !w-max"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-8">
-        <div className="grid gap-6 md:grid-cols-3">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt- space-y-8">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nome"
             startIcon="User"
@@ -51,24 +63,17 @@ export function AddClientModal() {
           <Input
             label="NIF"
             startIcon="IdCard"
-            type="number"
             placeholder="Ex: 546829403"
             className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("nif")}
-            error={errors.nif?.message}
+            {...register("taxNumber")}
+            error={errors.taxNumber?.message}
           />
-
-       {/*    <RHFSelect
-            name="typeCompany"
-            options={options}
-            control={control}
-            label="Tipo de Empresa"
-          /> */}
 
           <Input
             label="Telefone"
-            placeholder="Ex: 944072491"
             startIcon="Phone"
+            maxLength={9}
+            placeholder="9xxxxxxxx"
             {...register("phone")}
             error={errors.phone?.message}
           />
@@ -83,14 +88,6 @@ export function AddClientModal() {
           />
 
           <Input
-            label="Endereço"
-            placeholder="Ex: Av. Pedro Castro"
-            startIcon="MapPin"
-            {...register("address")}
-            error={errors.address?.message}
-          />
-
-          <Input
             label="IBAN"
             startIcon="FileDigit"
             placeholder="Ex: AO06004000005603309410251"
@@ -99,35 +96,19 @@ export function AddClientModal() {
             error={errors.iban?.message}
           />
 
-          <RHFSelect
-            name="category"
-            control={control}
-            options={[
-              { label: "cat1", value: "Loja" },
-              { label: "cat2", value: "Fornecedor" },
-              { label: "cat3", value: "Cliente" },
-            ]}
-            label="Categoria"
-          />
-
           <Input
-            type="date"
-            label="Data de Registo"
-            placeholder="Ex: 0040.0000.5660.0824.1017.4"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("registerDate")}
-            error={errors.registerDate?.message}
+            label="Endereço"
+            placeholder="Ex: Av. Pedro Castro"
+            startIcon="MapPin"
+            {...register("address")}
+            error={errors.address?.message}
           />
         </div>
         <div className="flex justify-end gap-4 mt-5">
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit
-            className="w-max"
-            isLoading
-            // ={isPending || isSubmitting}
-          >
+          <ButtonSubmit className="w-max" isLoading={isPending || isSubmitting}>
             Salvar
           </ButtonSubmit>
         </div>

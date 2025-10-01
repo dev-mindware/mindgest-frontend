@@ -34,10 +34,9 @@ export function CategoriesList() {
     handlerEditCategory,
     handlerDetailsCategory,
   } = useCategoryActions();
-
   const {
-    data: categories,
     total,
+    data: categories,
     totalPages,
     goToNextPage,
     goToPreviousPage,
@@ -65,6 +64,15 @@ export function CategoriesList() {
       render: (_, item) => (
         <div className="text-sm text-foreground">
           {formatDateTime(item.createdAt)}
+        </div>
+      ),
+    },
+    {
+      key: "updatedAt",
+      header: "Actualizado em",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">
+          {formatDateTime(item.updatedAt)}
         </div>
       ),
     },

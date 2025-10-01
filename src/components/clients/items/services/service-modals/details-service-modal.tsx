@@ -1,15 +1,14 @@
 "use client";
 import { useModal } from "@/stores/use-modal-store";
 import {
+  Icon,
   Button,
   DetailRow,
   GlobalModal,
-  Icon,
   ItemStatusBadge,
 } from "@/components";
 import { currentServiceStore } from "@/stores";
 import { formatDateTime, formatPrice } from "@/utils";
-
 
 export function DetailsServiceModal() {
   const { closeModal } = useModal();
@@ -24,7 +23,7 @@ export function DetailsServiceModal() {
       title={
         <>
           <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10">
-            <Icon name="Package" className="w-10 h-10 text-primary" />
+            <Icon name="Store" className="w-10 h-10 text-primary" />
           </div>
 
           <div className="text-center space-y-1 mt-4">
