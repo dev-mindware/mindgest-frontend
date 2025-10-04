@@ -1,8 +1,8 @@
 import {
   PageWrapper,
-  DashboardMetrics,
   DashboardCharts,
   TitleList,
+  DashboardAnalisys,
 } from "@/components";
 
 export default function Page() {
@@ -11,7 +11,7 @@ export default function Page() {
       <TitleList suTitle="Painel Administrativo" />
 
       <div className="flex flex-col gap-4 mt-4 md:gap-6">
-        <DashboardMetrics />
+        <DashboardAnalisys/>
         <div className="space-y-5">
           <TitleList suTitle="Estatísticas" />
           <DashboardCharts />

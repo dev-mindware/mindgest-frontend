@@ -1,40 +1,52 @@
-import { Stats } from "@/types";
-import { CardStat } from "./stat-card";
-import { formatCurrency } from "@/utils";
+// components/StatsGrid.tsx
+import { TrendingUp, TrendingDown } from "lucide-react"
+import { StatCard } from "./stat-card"
 
-const metrics: Stats[] = [
+const stats = [
   {
-    title: "Total de Lucro",
-    value: `${formatCurrency(1200)}`,
-    icon: "CreditCard",
-    description: "Valor total já levantado",
+    label: "Total de Termos",
+    value: "2,450",
+    trend: "-20 este mês",
+    trendIcon: TrendingDown,
+    trendPositive: false,
+    footerMain: "Crescimento constante",
+    footerSub: "Base lexical em expansão",
   },
   {
-    title: "Comissões Totais",
-    value: `${formatCurrency(15000)}`,
-    icon: "DollarSign",
-    description: "Todas as comissões acumuladas",
+    label: "Topónimos Cadastrados",
+    value: "3,678",
+    trend: "+5.2%",
+    trendIcon: TrendingUp,
+    trendPositive: true,
+    footerMain: "Cobertura geográfica a aumentar",
+    footerSub: "Mais localidades mapeadas",
   },
   {
-    title: "Produtos e Serviços",
-    value: "45",
-    icon: "ShoppingCart",
-    description: "Número total de vendas",
+    label: "Antropónimos Recolhidos",
+    value: "8,912",
+    trend: "-1.2%",
+    trendIcon: TrendingDown,
+    trendPositive: false,
+    footerMain: "Pequena queda na recolha",
+    footerSub: "Precisa reforço de pesquisa",
   },
   {
-    title: "Usuários",
-    value: "3",
-    icon: "Users",
-    description: "Usuários cadastrados pelo seu link",
+    label: "Total de Entradas",
+    value: "25,040",
+    trend: "+7.8%",
+    trendIcon: TrendingUp,
+    trendPositive: true,
+    footerMain: "Base geral em expansão",
+    footerSub: "Atingindo as metas do projeto",
   },
-];
+]
 
-export function DashboardMetrics() {
+export function DashboardAnalisys() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {metrics.map((stat, index) => {
-        return <CardStat key={index} stat={stat} />;
-      })}
+    <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      {stats.map((stat, i) => (
+        <StatCard key={i} {...stat} />
+      ))}
     </div>
-  );
+  )
 }

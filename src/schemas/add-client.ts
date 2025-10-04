@@ -19,12 +19,13 @@ export const clientSchema = z.object({
   email: z.string().email("Email inválido"),
   address: z.string().min(5, "Endereço muito curto"),
   iban: z
-    .string()
-    .regex(
-      /^AO06\d{21}$/,
-      "IBAN inválido (deve começar com 'AO06' e ter 21 caracteres)"
-    )
-    .optional(),
+  .string()
+  .regex(
+    /^AO06\d{21}$/,
+    "IBAN inválido: deve começar com 'AO06' seguido de 21 dígitos (total 25 caracteres, sem espaços)"
+  )
+  .transform((val) => val.replace(/\s+/g, "")) // se quiseres limpar depois
+  .optional(),
   companyId: z.string().nonempty("Selecione uma categoria"),
 });
 

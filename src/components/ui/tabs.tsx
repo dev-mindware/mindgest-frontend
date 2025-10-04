@@ -44,7 +44,7 @@ function TabsTrigger({
       className={cn(
         "hover:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-xs [&_svg]:shrink-0",
         // 🔥 cor ativa roxo
-        "data-[state=active]:bg-primary-50 data-[state=active]:text-primary-700",
+        "data-[state=active]:bg-primary-50 dark:data-[state=active]:bg-primary/10 data-[state=active]:text-primary-700 dark:data-[state=active]:text-primary-400",
         className
       )}
       {...props}
