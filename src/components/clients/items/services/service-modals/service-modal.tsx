@@ -26,7 +26,7 @@ type ServiceModalProps = {
 
 export function ServiceModal({ action }: ServiceModalProps) {
   const { user } = useAuth();
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, open } = useModal();
   const { currentService } = currentServiceStore();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
   const { categories, isLoading, error, refetch } = useGetCategories();
@@ -78,6 +78,8 @@ export function ServiceModal({ action }: ServiceModalProps) {
         message="Ocorreu um erro ao carregar as categorias"
       />
     );
+
+    if(!open[`${action}-service`]) return null;
 
   return (
     <GlobalModal

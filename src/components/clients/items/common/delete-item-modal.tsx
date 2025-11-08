@@ -6,7 +6,7 @@ import { ErrorMessage } from "@/utils/messages";
 
 export function DeleteItemModal({ type }: { type: string }) {
   const { closeModal, open } = useModal();
-  const isOpen = ["delete-item"];
+  const isOpen = open["delete-item"]
   const { currentProduct } = currentProductStore();
   const { mutateAsync: deleteItemMutate, isPending } = useDeleteItem();
 

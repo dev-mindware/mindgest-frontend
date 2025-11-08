@@ -21,7 +21,7 @@ import { useAuth } from "@/hooks/auth";
 
 export function AddProductModal() {
   const { user } = useAuth();
-  const { openModal, closeModal, open } = useModal();
+  const { openModal, closeModal } = useModal();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
   const { categories, isLoading, error, refetch } = useGetCategories();
   const {

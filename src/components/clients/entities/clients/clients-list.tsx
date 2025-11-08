@@ -7,17 +7,23 @@ import {
   ListSkeleton,
   ItemStatusBadge,
   EmptyState,
+  ButtonOnlyAction,
+  DeleteClientModal,
+  DetailsClientModal,
+  ClientModal,
 } from "@/components";
 import { ClientResponse } from "@/types";
 import { formatDateTime } from "@/utils";
-import { useItemsFilters } from "@/hooks";
 import { useDebounce } from "use-debounce";
 import { ClientsFiltersTSX } from "./common";
+import { useClientActions, useClientsFilters } from "@/hooks/entities";
 
 export function ClientsList() {
   const { search } = useURLSearchParams("search-clients");
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, page, setPage } = useItemsFilters();
+  const { filters, page, setPage } = useClientsFilters();
+  const { handlerDeleteClient, handlerDetailsClient, handlerEditClient } =
+    useClientActions();
   const {
     data: clients,
     total,
@@ -62,13 +68,12 @@ export function ClientsList() {
       key: "action",
       header: "Ação",
       render: (_, item) => (
-        <p>...</p>
-        /*  <ButtonOnlyAction
-           data={item}
-           handleDelete={handlerDeleteProduct}
-           handleEdit={handlerEditProduct}
-           handleSee={handlerDetailsProduct}
-         /> */
+        <ButtonOnlyAction
+          data={item}
+          handleDelete={handlerDeleteClient}
+          handleEdit={handlerEditClient}
+          handleSee={handlerDetailsClient}
+        />
       ),
     },
   ];
@@ -81,8 +86,14 @@ export function ClientsList() {
     );
   }
 
-  if (clients?.length == 0) 
-    return <EmptyState description="Adicione novos clientes" title="Sem Clientes" icon="Users" />;
+  if (clients?.length == 0)
+    return (
+      <EmptyState
+        description="Adicione novos clientes"
+        title="Sem Clientes"
+        icon="Users"
+      />
+    );
 
   return (
     <div className="justify-start mt-6 space-y-8">
@@ -92,21 +103,21 @@ export function ClientsList() {
         </div>
       </div>
 
-        <GenericTable<ClientResponse>
-          page={page}
-          data={clients}
-          columns={columns}
-          total={total}
-          totalPages={totalPages}
-          setPage={setPage}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhum cliente encontrado"
-        />
+      <GenericTable<ClientResponse>
+        page={page}
+        data={clients}
+        columns={columns}
+        total={total}
+        totalPages={totalPages}
+        setPage={setPage}
+        goToNextPage={goToNextPage}
+        goToPreviousPage={goToPreviousPage}
+        emptyMessage="Nenhum cliente encontrado"
+      />
 
-      {/*  <DetailsProductModal />
-      <DeleteItemModal type="Produto" />
-      <EditProductModal /> */}
+      <DetailsClientModal />
+      <DeleteClientModal />
+      <ClientModal action="edit" />
     </div>
   );
 }

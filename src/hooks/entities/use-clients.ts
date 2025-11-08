@@ -23,7 +23,7 @@ export function useUpdateClient() {
       clientsService.updateClient(id, data as any),
     onSuccess: () => {
       SucessMessage("Cliente atualizado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 }
@@ -35,7 +35,7 @@ export function useDeleteClient() {
     mutationFn: (id: string) => clientsService.deleteClient(id),
     onSuccess: () => {
       SucessMessage("Cliente removido com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 }

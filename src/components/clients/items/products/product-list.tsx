@@ -23,7 +23,7 @@ import {
 import { useDebounce } from "use-debounce";
 
 export function ProductList() {
-  const { search } = useURLSearchParams("search-item");
+  const { search } = useURLSearchParams("search-items");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, setViewMode, viewMode, page, setPage } = useItemsFilters();
   const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct, toggleStatusProduct } = useProductActions();

@@ -35,7 +35,7 @@ export function AddDocuments() {
             value="invoice-tab"
             onClick={() => setCurrentTab("invoice-tab")}
           >
-            Fatura Normal
+            Fatura
           </TabsTrigger>
           <TabsTrigger
             value="receipt-tab"

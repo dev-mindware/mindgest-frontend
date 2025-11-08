@@ -9,7 +9,7 @@ import {
   Button,
 } from "@/components/ui";
 import { useModal } from "@/stores";
-import { ClientsList, AddClientModal } from "./clients";
+import { ClientsList, ClientModal } from "./clients";
 import { StoresList, AddStoreModal } from "./stores";
 import { SuppliersList, AddSupplierModal } from "./suppliers";
 
@@ -82,7 +82,7 @@ export function EntitiesPageContent() {
         </TabsContent>
       </Tabs>
 
-      {open["add-client"] && <AddClientModal />}
+      <ClientModal action="add"  />
       {open["add-supplier"] && <AddSupplierModal />}
       {open["add-store"] && <AddStoreModal />}
     </div>

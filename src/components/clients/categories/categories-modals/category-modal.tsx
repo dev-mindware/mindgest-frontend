@@ -19,11 +19,12 @@ type CategoryModalProps = {
 };
 
 export function CategoryModal({ action }: CategoryModalProps) {
-  const { closeModal } = useModal();
+  const { closeModal, open } = useModal();
+  const isOpen = open["add-category"] || open["edit-category"];
   const { currentCategory } = currentCategoryStore();
-
   const { mutateAsync: addCategory, isPending: isAdding } = useAddCategory();
-  const { mutateAsync: editCategory, isPending: isEditing } = useUpdateCategory();
+  const { mutateAsync: editCategory, isPending: isEditing } =
+    useUpdateCategory();
 
   const {
     reset,
@@ -35,7 +36,6 @@ export function CategoryModal({ action }: CategoryModalProps) {
     mode: "onChange",
   });
 
-  // 👉 Preenche valores quando for editar
   useEffect(() => {
     if (action === "edit" && currentCategory) {
       reset({
@@ -67,8 +67,7 @@ export function CategoryModal({ action }: CategoryModalProps) {
     closeModal(action === "add" ? "add-category" : "edit-category");
   };
 
-  // Não renderiza se for editar e não tiver categoria
-  if (action === "edit" && !currentCategory) return null;
+  if (action === "edit" && !currentCategory || !isOpen) return null;
 
   return (
     <GlobalModal

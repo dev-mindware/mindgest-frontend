@@ -11,10 +11,11 @@ import { currentServiceStore } from "@/stores";
 import { formatDateTime, formatPrice } from "@/utils";
 
 export function DetailsServiceModal() {
-  const { closeModal } = useModal();
+  const { closeModal, open } = useModal();
+  const isOpen = open["view-service"]
   const { currentService } = currentServiceStore();
 
-  if (!currentService) return null;
+  if (!currentService || !isOpen) return null;
 
   return (
     <GlobalModal

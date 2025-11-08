@@ -63,7 +63,7 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
     return () => {
       isMounted = false;
     };
-  }, [enabled, setUser, user]);
+  }, []);
 
   return { user, isLoading };
 }

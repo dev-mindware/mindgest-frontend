@@ -25,10 +25,7 @@ export function ClientsFiltersTSX() {
   }
 
   const hasFilter =
-    filters.status ||
-    filters.sortBy ||
-    filters.sortOrder ||
-    search.length > 0;
+    filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
 
   return (
     <SearchHandlerWrapper
@@ -56,7 +53,11 @@ export function ClientsFiltersTSX() {
         <FilterPopover
           label="Ordem"
           icon="ListOrdered"
-          options={itemsOrderOption}
+          options={[
+            { value: "name", label: "Nome" },
+            { value: "createdAt", label: "Mais Recente" },
+            { value: "updatedAt", label: "Mais Antigo" },
+          ]}
           value={filters.sortOrder}
           onChange={(sortOrder) => setFilters({ sortOrder })}
         />

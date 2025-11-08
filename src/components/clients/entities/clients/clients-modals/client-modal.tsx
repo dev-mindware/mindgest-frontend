@@ -1,15 +1,25 @@
 "use client";
-import { useAuthStore, useModal } from "@/stores";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useAddClient } from "@/hooks/entities";
-import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ErrorMessage } from "@/utils/messages";
+import { useModal, currentClientStore } from "@/stores";
 import { ClientFormData, clientSchema } from "@/schemas";
+import { useAddClient, useUpdateClient } from "@/hooks/entities";
 import { Button, Input, GlobalModal, ButtonSubmit } from "@/components";
 
-export function AddClientModal() {
-  const { closeModal } = useModal();
-  const { mutateAsync: addClientMutate, isPending } = useAddClient();
+type ClientModalProps = {
+  action: "add" | "edit";
+};
+
+export function ClientModal({ action }: ClientModalProps) {
+  const { closeModal, open } = useModal();
+  const isOpen = open["add-client"] || open["edit-client"];
+  const { currentClient } = currentClientStore();
+
+  const { mutateAsync: addClient, isPending: isAdding } = useAddClient();
+  const { mutateAsync: editClient, isPending: isEditing } = useUpdateClient();
+
   const {
     reset,
     register,
@@ -20,36 +30,53 @@ export function AddClientModal() {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    if (action === "edit" && currentClient) {
+      reset({
+        name: currentClient.name,
+        email: currentClient.email,
+        phone: currentClient.phone,
+        address: currentClient.address,
+        taxNumber: currentClient.taxNumber,
+        iban: currentClient.taxNumber,
+      });
+    }
+  }, [action, currentClient, reset]);
+
   async function onSubmit(data: ClientFormData) {
     try {
       const { iban, ...finalData } = data;
-      await addClientMutate(finalData);
-      reset();
-    } catch (error: any) {
-      if (error?.response?.data) {
-        ErrorMessage(
-          error?.response?.data?.message || "Ocorreu um erro inesperado"
-        );
-      } else {
-        ErrorMessage("Ocorreu um erro inesperado. Tente Novamente");
+
+      if (action === "add") {
+        await addClient(finalData);
+      } else if (action === "edit" && currentClient) {
+        await editClient({ id: currentClient.id, data: finalData });
       }
+
+      handleCancel();
+    } catch (error: any) {
+      ErrorMessage(
+        error?.response?.data?.message ||
+          "Ocorreu um erro ao salvar o cliente."
+      );
     }
   }
 
-  console.log(errors)
-  function handleCancel() {
+  const handleCancel = () => {
     reset();
-    closeModal("add-client");
-  }
+    closeModal(action === "add" ? "add-client" : "edit-client");
+  };
+
+  if ((action === "edit" && !currentClient) || !isOpen) return null;
 
   return (
     <GlobalModal
       canClose
-      id="add-client"
-      title="Novo Cliente"
+      id={action === "add" ? "add-client" : "edit-client"}
+      title={action === "add" ? "Adicionar Cliente" : "Editar Cliente"}
       className="!max-h-[85vh] !w-max"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nome"
@@ -103,12 +130,16 @@ export function AddClientModal() {
             error={errors.address?.message}
           />
         </div>
+
         <div className="flex justify-end gap-4 mt-5">
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit className="w-max" isLoading={isPending || isSubmitting}>
-            Salvar
+          <ButtonSubmit
+            className="w-max"
+            isLoading={isSubmitting || isAdding || isEditing}
+          >
+            {action === "add" ? "Adicionar" : "Salvar Alterações"}
           </ButtonSubmit>
         </div>
       </form>

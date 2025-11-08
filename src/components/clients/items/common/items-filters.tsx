@@ -13,7 +13,7 @@ import { useURLSearchParams } from "@/hooks/common";
 
 export function ItemsFiltersTSX() {
   const { filters, setFilters } = useItemsFilters();
-  const { search, setSearch } = useURLSearchParams("search-item");
+  const { search, setSearch } = useURLSearchParams("search-items");
   const { categories, isLoading, error, refetch } = useGetCategories();
 
   function clearFilters() {

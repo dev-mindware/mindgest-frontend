@@ -9,7 +9,7 @@ export type ClientData = {
 
 export type ClientResponse = ClientData & {
   id: string;
-  isActive: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };

@@ -1,6 +1,5 @@
 import { ItemStatus } from "@/types";
 import { Badge } from "@/components/ui";
-import { Icon } from "@/components/common";
 
 interface StatusBadgeProps {
   status: ItemStatus;
