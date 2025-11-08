@@ -21,11 +21,12 @@ export function DocumentList() {
       />
 
       <Tabs defaultValue="invoice-tab" className="w-full">
-        <div className="w-full flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <TabsList className="flex justify-center md:justify-start">
             <TabsTrigger value="invoice-tab">Fatura Normal</TabsTrigger>
             <TabsTrigger value="receipt-tab">Fatura Recibo</TabsTrigger>
             <TabsTrigger value="proform-tab">Fatura Proforma</TabsTrigger>
+            <TabsTrigger value="only-receipt-tab">Recibos</TabsTrigger>
           </TabsList>
           <Link href="/client/documents/new">
             <Button variant="default">Adicionar</Button>

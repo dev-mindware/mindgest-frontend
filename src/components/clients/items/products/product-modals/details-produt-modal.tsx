@@ -5,10 +5,11 @@ import { formatDateTime, formatPrice } from "@/utils";
 import { Button, DetailRow, GlobalModal, Icon, ItemStatusBadge } from "@/components";
 
 export function DetailsProductModal() {
-  const { closeModal } = useModal();
+  const { closeModal, open } = useModal();
+  const isOpen = ["view-product"]
   const { currentProduct } = currentProductStore();
 
-  if (!currentProduct) return null;
+  if (!currentProduct || !isOpen) return null;
 
   return (
     <GlobalModal
@@ -16,11 +17,11 @@ export function DetailsProductModal() {
       id="view-product"
       title={
         <>
-          <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10">
+          <div className="flex items-center justify-center w-20 h-20 mx-auto rounded-full bg-primary/10">
             <Icon name="Package" className="w-10 h-10 text-primary" />
           </div>
 
-          <div className="text-center space-y-1 mt-4">
+          <div className="mt-4 space-y-1 text-center">
             <h2 className="text-2xl font-bold">{currentProduct.name}</h2>
             <div className="flex items-center justify-center gap-2">
               {currentProduct.sku && (

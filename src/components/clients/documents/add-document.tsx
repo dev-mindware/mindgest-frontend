@@ -4,11 +4,19 @@ import { TitleList } from "@/components/common";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 import { InvoiceForm, ProformaForm, ReceiptForm } from "./document-forms";
 import { InvoiceCreatedModal } from "./Invoice-created-modal";
+import { useSearchParams } from "next/navigation";
 
 type TabsAloweds = "invoice-tab" | "receipt-tab" | "proform-tab";
 
 export function AddDocuments() {
-  const [currentTab, setCurrentTab] = useState<TabsAloweds>("invoice-tab");
+  const invoice = useSearchParams().get("invoice");
+  const current_Tab = useSearchParams().get("current_tab");
+  const [currentTab, setCurrentTab] = useState<TabsAloweds>(() => {
+    if (current_Tab) {
+      return current_Tab as TabsAloweds;
+    }
+    return "invoice-tab";
+  });
 
   return (
     <div className="space-y-6">
@@ -16,6 +24,10 @@ export function AddDocuments() {
         title="Documentos"
         suTitle="Crie documentos que ajudaram no controlo das suas atividades."
       />
+      <code>
+
+        {JSON.stringify(JSON.parse(invoice as string), null, 2)}
+      </code>
 
       <Tabs defaultValue={currentTab} className="w-full">
         <TabsList className="flex justify-center md:justify-start">

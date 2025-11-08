@@ -1,5 +1,5 @@
 "use client";
-import { useModal } from "@/stores";
+import { useAuthStore, useModal } from "@/stores";
 import { useForm } from "react-hook-form";
 import { useAddClient } from "@/hooks/entities";
 import { ErrorMessage } from "@/utils/messages";
@@ -18,9 +18,6 @@ export function AddClientModal() {
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     mode: "onChange",
-    defaultValues: {
-      companyId: "axsns0asjhjsjsbx",
-    },
   });
 
   async function onSubmit(data: ClientFormData) {
@@ -50,7 +47,7 @@ export function AddClientModal() {
       title="Novo Cliente"
       className="!max-h-[85vh] !w-max"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="mt- space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nome"

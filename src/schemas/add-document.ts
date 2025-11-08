@@ -76,7 +76,8 @@ const PaymentSchema = z.object({
 /**
  * Invoice (Fatura normal)
  */
-export const InvoiceSchema = z.object({
+
+export const ReceiptInvoiceSchema = z.object({
   company: CompanySchema.optional(),
   customer: CustomerSchema,
   documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
@@ -88,8 +89,9 @@ export const InvoiceSchema = z.object({
   totals: TotalsSchema,
   payment: PaymentSchema,
   discount: z.number().optional(),
+  liquidationDate: z.string().optional(),
 });
-export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
+export type ReceiptInvoiceFormData = z.infer<typeof ReceiptInvoiceSchema>;
 
 /**
  * Proforma
@@ -105,20 +107,8 @@ export const ProformaSchema = z.object({
 });
 export type ProformaFormData = z.infer<typeof ProformaSchema>;
 
-/**
- * Receipt (Recibo)
- */
-export const ReceiptSchema = z.object({
-  company: CompanySchema.optional(),
-  customer: CustomerSchema.optional(),
-  documentNumber: z.string().min(1, "O número do recibo é obrigatório"),
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  referenceInvoice: z.string().min(1, "A referência da fatura é obrigatória"),
-  items: z.array(ItemSchema).optional(), 
-  totals: TotalsSchema.pick({ totalDue: true }),
-  payment: PaymentSchema.optional(),
-});
-export type ReceiptFormData = z.infer<typeof ReceiptSchema>;
-
-
 export type CompanyFormData = z.infer<typeof CompanySchema>;
+// ==============================
+// 💵 Recibo - Estrutura Completa
+// ==============================
+

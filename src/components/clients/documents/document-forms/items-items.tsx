@@ -2,17 +2,15 @@ import { useState } from "react";
 import { Button, Input, RequestError, RHFSelect, SelectField, Tabs, TabsList, TabsTrigger } from "@/components";
 import { Control, UseFieldArrayReturn } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
-import { InvoiceFormData } from "@/schemas";
+import { ReceiptInvoiceFormData } from "@/schemas";
 import { EmptyState } from "../empty-state";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { useGetCategories } from "@/hooks";
 
 interface InvoiceItemsProps {
-  fieldArray: UseFieldArrayReturn<InvoiceFormData, "items">;
-  control: Control<InvoiceFormData>; 
+  fieldArray: UseFieldArrayReturn<ReceiptInvoiceFormData, "items">;
+  control: Control<ReceiptInvoiceFormData>; 
 }
-
-
 
 export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
   const { fields, append, remove } = fieldArray;

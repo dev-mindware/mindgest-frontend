@@ -1,14 +1,14 @@
 "use client";
-import { Input, Button, ButtonSubmit } from "@/components";
+import { useEffect } from "react";
+import { Input, ButtonSubmit } from "@/components";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReceiptFormData, ReceiptSchema } from "@/schemas";
+import { ReceiptInvoiceSchema, ReceiptInvoiceFormData } from "@/schemas";
 import { ReceiptItems } from "./receipt-items";
 import { SummaryCard } from "../sumary-card";
-import { useEffect } from "react";
 import { handleDownloadReceipt } from "@/utils/pdf";
-import { useModal } from "@/stores";
 import { MINDWARE_INFO } from "@/constants";
+import { useModal } from "@/stores";
 
 export function ReceiptForm() {
   const { openModal } = useModal();
@@ -20,20 +20,20 @@ export function ReceiptForm() {
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ReceiptFormData>({
-    resolver: zodResolver(ReceiptSchema),
+  } = useForm<ReceiptInvoiceFormData>({
+    resolver: zodResolver(ReceiptInvoiceSchema),
     mode: "onChange",
     defaultValues: {
       company: MINDWARE_INFO,
     },
   });
 
-  const fieldArray = useFieldArray<ReceiptFormData, "items">({
+  const fieldArray = useFieldArray<ReceiptInvoiceFormData, "items">({
     control,
     name: "items",
   });
 
-  async function onSubmit(data: ReceiptFormData) {
+  async function onSubmit(data: ReceiptInvoiceFormData) {
     console.log("Receipt:", data);
     await new Promise((resolve) => setTimeout(resolve, 3000));
     handleDownloadReceipt(data);
@@ -64,7 +64,7 @@ export function ReceiptForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 space-y-8 border p-8 rounded-lg"
+      className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-3">
         <Input
@@ -79,13 +79,6 @@ export function ReceiptForm() {
           label="Data de Emissão"
           {...register("issueDate")}
           error={errors.issueDate?.message}
-        />
-        <Input
-          startIcon="FileDigit"
-          placeholder="INV002025"
-          label="Referência da Fatura"
-          {...register("referenceInvoice")}
-          error={errors.referenceInvoice?.message}
         />
         <Input
           label="Cliente"
@@ -111,7 +104,7 @@ export function ReceiptForm() {
 
       <ReceiptItems fieldArray={fieldArray} />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <SummaryCard
           label="Total a Pagar"
           value={watch("totals.totalDue")}
@@ -120,7 +113,7 @@ export function ReceiptForm() {
       </div>
 
       <div className="flex justify-end col-span-3">
-        <ButtonSubmit isLoading={isSubmitting}>Criar Recibo</ButtonSubmit>
+        <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>Criar Fatura-Recibo</ButtonSubmit>
       </div>
     </form>
   );

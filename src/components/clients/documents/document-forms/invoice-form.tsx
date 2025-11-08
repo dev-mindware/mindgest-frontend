@@ -2,7 +2,7 @@
 import { ButtonSubmit, Input, RHFSelect } from "@/components";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InvoiceFormData, InvoiceSchema } from "@/schemas";
+import { ReceiptInvoiceFormData, ReceiptInvoiceSchema } from "@/schemas";
 import { InvoiceItems } from "./items-items";
 import { useEffect } from "react";
 import { SummaryCard } from "../sumary-card";
@@ -20,30 +20,28 @@ export function InvoiceForm() {
   const { openModal } = useModal();
   const {
     register,
+    control,
     setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
-    control,
     watch,
     reset,
-  } = useForm<InvoiceFormData>({
-    resolver: zodResolver(InvoiceSchema),
+  } = useForm<ReceiptInvoiceFormData>({
+    resolver: zodResolver(ReceiptInvoiceSchema),
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       items: [],
-      company: MINDWARE_INFO,
     },
   });
 
-  const fieldArray = useFieldArray<InvoiceFormData, "items">({
+  const fieldArray = useFieldArray<ReceiptInvoiceFormData, "items">({
     control,
     name: "items",
   });
 
-  async function onSubmit(data: InvoiceFormData) {
+  async function onSubmit(data: ReceiptInvoiceFormData) {
     console.log("Invoice:", data);
-
     await new Promise((resolve) => setTimeout(resolve, 3000));
     handleDownloadInvoice(data);
     openModal("invoice-created");
@@ -78,13 +76,13 @@ export function InvoiceForm() {
       className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-3">
-        <Input
+        {/* <Input
           startIcon="FileDigit"
           placeholder="INV2025"
           label="Número da fatura"
           {...register("documentNumber")}
           error={errors.documentNumber?.message}
-        />
+        /> */}
         <Input
           type="date"
           label="Data de Emissão"
@@ -121,7 +119,7 @@ export function InvoiceForm() {
         />
       </div>
 
-      <InvoiceItems fieldArray={fieldArray} control={control}/>
+      <InvoiceItems fieldArray={fieldArray} control={control} />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <SummaryCard label="Subtotal" value={watch("totals.subtotal")} />
@@ -152,7 +150,7 @@ export function InvoiceForm() {
       </div>
 
       <div className="flex justify-end mt-6">
-        <ButtonSubmit isLoading={isSubmitting}>Criar Fatura</ButtonSubmit>
+        <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>Criar Fatura</ButtonSubmit>
       </div>
     </form>
   );

@@ -20,7 +20,7 @@ type ItemTab = "product" | "service";
 
 export function ItemsPageContent() {
   const [currentTab, setCurrentTab] = useState<ItemTab>("product");
-  const { openModal } = useModal();
+  const { openModal, open } = useModal();
 
   const itemLabels: Record<ItemTab, string> = {
     product: "Produto",
@@ -44,7 +44,7 @@ export function ItemsPageContent() {
       />
 
       <Tabs defaultValue="product-tab" className="w-full">
-        <div className="w-full flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <TabsList className="flex justify-center md:justify-start">
             <TabsTrigger
               value="product-tab"
@@ -73,12 +73,8 @@ export function ItemsPageContent() {
         </TabsContent>
       </Tabs>
 
-      {/* Modais */}
-      <AddProductModal />
-      <ServiceModal action="add" />
+      {open["add-product"] && <AddProductModal />}
+      {open["add-service"] && <ServiceModal action="add" />}
     </div>
   );
 }
-
-// com o path
-

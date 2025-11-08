@@ -103,9 +103,9 @@ export function ProductList() {
       </div>
 
       {viewMode === "card" ? (
-        <div className="w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.length === 0 ? (
-            <p className="text-muted-foreground py-12">
+            <p className="py-12 text-muted-foreground">
               Nenhum produto encontrado
             </p>
           ) : (

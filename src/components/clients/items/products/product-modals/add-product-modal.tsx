@@ -21,7 +21,7 @@ import { useAuth } from "@/hooks/auth";
 
 export function AddProductModal() {
   const { user } = useAuth();
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, open } = useModal();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
   const { categories, isLoading, error, refetch } = useGetCategories();
   const {
@@ -48,7 +48,7 @@ export function AddProductModal() {
       if (error?.response) {
         ErrorMessage(
           error?.response?.data?.message ||
-            "Ocorreu um erro ao adicionar o item"
+          "Ocorreu um erro ao adicionar o item"
         );
       } else {
         ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
@@ -75,7 +75,7 @@ export function AddProductModal() {
       canClose
       id="add-product"
       title={
-        <div className="w-full flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center justify-between w-full gap-2 mb-4">
           Adicionar Produto
           <Button
             size="sm"
@@ -117,7 +117,7 @@ export function AddProductModal() {
         </TsunamiOnly>
 
         <div className="">
-          {/* <h3 className="font-semibold my-4">Informação Geral</h3> */}
+          {/* <h3 className="my-4 font-semibold">Informação Geral</h3> */}
           <div className="space-y-4 sm:w-[35rem]">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
@@ -257,7 +257,7 @@ export function AddProductModal() {
             >
               Salvar
             </ButtonSubmit>
-          </div>  
+          </div>
         </div>
       </form>
       <CategoryModal action="add" />

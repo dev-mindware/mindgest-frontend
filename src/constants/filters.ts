@@ -18,7 +18,7 @@ export const categorySortOrderOption = [
 export const itemsStatusOptions = [
   { value: "ACTIVE", label: "Activo" },
   { value: "INACTIVE", label: "Inactivo" },
-  { value: "OUT_OF_STOCK", label: "Fora do Stock" },
+  // { value: "OUT_OF_STOCK", label: "Fora do Stock" },
 ];
 
 export const itemsByOption = [

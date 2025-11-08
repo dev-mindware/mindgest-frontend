@@ -1,3 +1,5 @@
+import { cn } from "@/lib";
+
 type SummaryCardProps = {
   label: string;
   value: string | number;
@@ -7,14 +9,11 @@ type SummaryCardProps = {
 export function SummaryCard({ label, value, highlight }: SummaryCardProps) {
   return (
     <div className="space-y-3">
-      <label className="text-sm font-semibold text-gray-700">{label}</label>
+      <label className="text-sm font-semibold text-foreground">{label}</label>
       <div
-        className={`text-2xl font-bold p-3 rounded-lg 
-          ${highlight
-            ? "text-primary-600 bg-primary-50 border border-primary-200"
-            : "text-gray-900 bg-gray-50 border"
-          }`}
-      >
+        className={cn("p-3 text-2xl font-bold rounded-lg bg-card text-foreground", {
+          "text-primary": highlight
+        })}>
         {value || "0.00"} Kz
       </div>
     </div>

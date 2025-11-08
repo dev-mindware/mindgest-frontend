@@ -44,6 +44,12 @@ export const adminMenu: MenuItem[] = [
     roles: ["ADMIN"],
   },
   {
+    name: "Categorias",
+    url: "/admin/categories",
+    icon: <Icon name="Tag" />,
+    roles: ["ADMIN"],
+  },
+  {
     name: "Logs do Sistema",
     url: "/admin/logs",
     icon: <Icon name="FileSearch" />,
@@ -74,7 +80,7 @@ export const menuItems: MenuStructure = {
     {
       name: "GestIA",
       url: "/client/gestia",
-      icon: <Icon name="Sparkles" className="h-5 w-5" />,
+      icon: <Icon name="Sparkles" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER", "SELLER"],
       minPlan: "Base",
       showUpgrade: true,
@@ -82,7 +88,7 @@ export const menuItems: MenuStructure = {
     {
       name: "Planos",
       url: "/client/plans",
-      icon: <Icon name="Wallet" className="h-5 w-5" />,
+      icon: <Icon name="Wallet" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER", "SELLER"],
       minPlan: "Base",
     },
@@ -100,13 +106,7 @@ export const menuItems: MenuStructure = {
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
-    {
-      name: "Categorias",
-      url: "/client/categories",
-      icon: <Icon name="Tag" />,
-      roles: ["MANAGER", "OWNER"],
-      minPlan: "Base",
-    },
+
     {
       name: "Entidades",
       url: "/client/entities",
@@ -133,7 +133,7 @@ export const menuItems: MenuStructure = {
           roles: ["MANAGER", "OWNER"],
           minPlan: "Tsunami",
         },
-        
+
       ],
     },
     {

@@ -5,7 +5,8 @@ import { useModal } from "@/stores/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
 
 export function DeleteItemModal({ type }: { type: string }) {
-  const { closeModal } = useModal();
+  const { closeModal, open } = useModal();
+  const isOpen = ["delete-item"];
   const { currentProduct } = currentProductStore();
   const { mutateAsync: deleteItemMutate, isPending } = useDeleteItem();
 
@@ -25,6 +26,8 @@ export function DeleteItemModal({ type }: { type: string }) {
     }
   }
 
+ if(!isOpen) return null;
+  
   return (
     <GlobalModal
       warning

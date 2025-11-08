@@ -4,21 +4,29 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState, useMemo } from "react";
 import { DataTable } from "@/components/custom";
 import { Invoice, InvoiceStatus } from "@/types";
+import { ButtonActionLink, ButtonOnlyAction } from "@/components/common";
+import { useRouter } from "next/navigation";
 
 const mockInvoices: Invoice[] = Array.from({ length: 15 }).map((_, i) => ({
   id: `INV-${1000 + i}`,
   client: `Client ${i + 1}`,
   total: 100 + i * 50,
-  status: i % 3 === 0 ? "Paid" : i % 3 === 1 ? "Pending" : "Canceled",
+  status: i % 3 === 1 ? "Pending" : "Canceled",
   date: new Date(2025, 7, i + 1).toISOString().split("T")[0],
 }));
 
 export function InvoicesTable() {
+  const router = useRouter()
   const [invoices, setInvoices] = useState<Invoice[]>([]);
 
   useEffect(() => {
     setTimeout(() => setInvoices(mockInvoices), 500);
   }, []);
+
+  function handlergenerateReceipt(invoice: any) {
+    const convertedInvoice = JSON.stringify(invoice, null, 2)
+    router.push(`/client/documents/new?current_tab=receipt-tab&invoice=${convertedInvoice}`)
+  }
 
   const columns: ColumnDef<Invoice>[] = useMemo(
     () => [
@@ -35,15 +43,15 @@ export function InvoicesTable() {
                 status === "Paid"
                   ? "bg-green-100 text-green-800"
                   : status === "Pending"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-red-100 text-red-800"
               }
             >
               {status === "Paid"
                 ? "Pago"
                 : status === "Pending"
-                ? "Pendente"
-                : "Cancelado"}
+                  ? "Pendente"
+                  : "Cancelado"}
             </Badge>
           );
         },
@@ -53,7 +61,12 @@ export function InvoicesTable() {
         id: "actions",
         header: "Ações",
         cell: ({ row }) => (
-          <button onClick={() => alert(row.original.id)}>ver </button>
+          <ButtonActionLink
+            id={"testeId"}
+            route="/clients"
+            primaryAction="Gerar recibo"
+            handlerPrimaryAction={() => handlergenerateReceipt(row.original.client)}
+          />
         ),
       },
     ],

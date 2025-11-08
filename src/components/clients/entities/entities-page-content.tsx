@@ -17,7 +17,7 @@ type EntityTab = "client" | "supplier" | "store";
 
 export function EntitiesPageContent() {
   const [currentTab, setCurrentTab] = useState<EntityTab>("client");
-  const { openModal } = useModal();
+  const { openModal, open } = useModal();
 
   const entityLabels: Record<EntityTab, string> = {
     client: "Cliente",
@@ -42,7 +42,7 @@ export function EntitiesPageContent() {
       />
 
       <Tabs defaultValue="client-tab" className="w-full">
-        <div className="w-full flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <TabsList className="flex justify-center md:justify-start">
             <TabsTrigger
               value="client-tab"
@@ -82,10 +82,9 @@ export function EntitiesPageContent() {
         </TabsContent>
       </Tabs>
 
-      {/* Modais */}
-      <AddClientModal />
-      <AddSupplierModal />
-      <AddStoreModal />
+      {open["add-client"] && <AddClientModal />}
+      {open["add-supplier"] && <AddSupplierModal />}
+      {open["add-store"] && <AddStoreModal />}
     </div>
   );
 }

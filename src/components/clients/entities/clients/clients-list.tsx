@@ -5,19 +5,17 @@ import {
   RequestError,
   GenericTable,
   ListSkeleton,
-  ButtonOnlyAction,
-  ProductCardSkeletonGrid,
-  ItemsFiltersTSX,
   ItemStatusBadge,
+  EmptyState,
 } from "@/components";
 import { ClientResponse } from "@/types";
 import { formatDateTime } from "@/utils";
-import { useItemsFilters, useProductActions } from "@/hooks";
-
+import { useItemsFilters } from "@/hooks";
 import { useDebounce } from "use-debounce";
+import { ClientsFiltersTSX } from "./common";
 
 export function ClientsList() {
-  const { search } = useURLSearchParams("search-item");
+  const { search } = useURLSearchParams("search-clients");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useItemsFilters();
   const {
@@ -65,12 +63,12 @@ export function ClientsList() {
       header: "Ação",
       render: (_, item) => (
         <p>...</p>
-       /*  <ButtonOnlyAction
-          data={item}
-          handleDelete={handlerDeleteProduct}
-          handleEdit={handlerEditProduct}
-          handleSee={handlerDetailsProduct}
-        /> */
+        /*  <ButtonOnlyAction
+           data={item}
+           handleDelete={handlerDeleteProduct}
+           handleEdit={handlerEditProduct}
+           handleSee={handlerDetailsProduct}
+         /> */
       ),
     },
   ];
@@ -83,26 +81,30 @@ export function ClientsList() {
     );
   }
 
+  if (clients?.length == 0) 
+    return <EmptyState description="Adicione novos clientes" title="Sem Clientes" icon="Users" />;
+
   return (
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <ItemsFiltersTSX />
+          <ClientsFiltersTSX />
         </div>
       </div>
 
-      <GenericTable<ClientResponse>
-        page={page}
-        data={clients}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-      />
+        <GenericTable<ClientResponse>
+          page={page}
+          data={clients}
+          columns={columns}
+          total={total}
+          totalPages={totalPages}
+          setPage={setPage}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhum cliente encontrado"
+        />
 
-     {/*  <DetailsProductModal />
+      {/*  <DetailsProductModal />
       <DeleteItemModal type="Produto" />
       <EditProductModal /> */}
     </div>

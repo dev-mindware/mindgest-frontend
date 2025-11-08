@@ -84,7 +84,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
       canClose
       id={`${action}-service`}
       title={
-        <div className="w-full flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center justify-between w-full gap-2 mb-4">
           <span>
             {action === "add" ? "Adicionar Serviço" : "Editar Serviço"}
           </span>
