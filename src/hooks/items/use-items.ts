@@ -1,7 +1,7 @@
 import { ItemData } from "@/types";
 import { itemsService } from "@/services/items-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SucessMessage, ErrorMessage } from "@/utils/messages";
+import { SucessMessage} from "@/utils/messages";
 
 export function useAddItem() {
   const queryClient = useQueryClient();

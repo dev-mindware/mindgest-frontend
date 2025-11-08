@@ -1,7 +1,7 @@
 import { ClientData, ItemData } from "@/types";
 import { clientsService } from "@/services/clients-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SucessMessage, ErrorMessage } from "@/utils/messages";
+import { SucessMessage } from "@/utils/messages";
 
 export function useAddClient() {
   const queryClient = useQueryClient();

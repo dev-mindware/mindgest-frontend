@@ -20,13 +20,8 @@ export const clientSchema = z.object({
   address: z.string().min(5, "Endereço muito curto"),
   iban: z
     .string()
-   /*  .regex(
-      /d{21}$/,
-      "IBAN inválido"
-    ) */
     .transform((val) => val.replace(/\s+/g, "")) // se quiseres limpar depois
     .optional(),
-  companyId: z.string(),
 });
 
 export type ClientFormData = z.infer<typeof clientSchema>;

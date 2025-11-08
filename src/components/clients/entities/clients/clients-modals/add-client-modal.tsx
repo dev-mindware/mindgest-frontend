@@ -24,6 +24,7 @@ export function AddClientModal() {
     try {
       const { iban, ...finalData } = data;
       await addClientMutate(finalData);
+      reset();
     } catch (error: any) {
       if (error?.response?.data) {
         ErrorMessage(
@@ -35,6 +36,7 @@ export function AddClientModal() {
     }
   }
 
+  console.log(errors)
   function handleCancel() {
     reset();
     closeModal("add-client");

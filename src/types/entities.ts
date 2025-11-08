@@ -4,7 +4,7 @@ export type ClientData = {
   phone: string;
   address: string;
   taxNumber: string;
-  companyId: string;
+  companyId?: string;
 };
 
 export type ClientResponse = ClientData & {
