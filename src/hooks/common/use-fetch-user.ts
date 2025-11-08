@@ -1,85 +1,69 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "@/stores";
 import { api } from "@/services/api";
 import { User } from "@/types";
 
-export function useFetchUser() {
+interface UseFetchUserOptions {
+  enabled?: boolean;
+}
+
+export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
   const { setUser, user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
-    if (user) return;
+    // Se desabilitado, marca como não carregando e retorna
+    if (!enabled) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Se já tem usuário, marca como não carregando e retorna
+    if (user !== null) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Se já buscou antes, não buscar novamente mas marca como não carregando
+    if (hasFetched.current) {
+      setIsLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    hasFetched.current = true;
 
     const fetchUser = async () => {
       try {
         const response = await api.get<User>("/auth/profile");
 
-        if (response.data) {
-          const userData = response.data;
-          setUser(userData);
-          setIsLoading(false);
-        } else if (response.status === 401) {
-          // Usuário não autenticado - isso é normal
-          setUser(null);
-          setIsLoading(false);
-        } else {
-          // Outros erros
-          console.error("Erro ao buscar usuário:", response.statusText);
-          setUser(null);
+        if (!isMounted) return;
+
+        setUser(response.data);
+      } catch (error: any) {
+        if (!isMounted) return;
+
+        // Apenas logar erros que não sejam 401 (não autenticado é esperado)
+        if (error.response?.status !== 401) {
+          console.error("Erro ao buscar usuário:", error);
+        }
+        setUser(null);
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
-      } catch (error) {
-        console.error("Erro na requisição do usuário:", error);
-        setUser(null);
-        setIsLoading(false);
       }
     };
 
     fetchUser();
-  }, [setUser, user]);
+
+    // Cleanup para evitar atualizações de estado em componente desmontado
+    return () => {
+      isMounted = false;
+    };
+  }, [enabled, setUser, user]);
 
   return { user, isLoading };
 }
-
-/* "use client";
-import { User } from "@/types";
-import { api } from "@/services/api";
-import { useAuthStore } from "@/stores";
-import { useQuery } from "@tanstack/react-query";
-
-const fetchUserProfile = async (): Promise<User | null> => {
-  try {
-    const response = await api.get<User>("/auth/profile");
-    return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      return null;
-    }
-    throw new Error("Failed to fetch user profile.");
-  }
-};
-
-export function useFetchUser() {
-  const { setUser } = useAuthStore();
-  const {
-    data,
-    isLoading,
-    isFetchedAfterMount,
-    status: QueryStatus,
-  } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: fetchUserProfile,
-    staleTime: 5 * 60 * 1000,
-    initialData: null,
-    retry: false,
-  });
-
-  if (QueryStatus === "success") {
-    setUser(data);
-  } else {
-    setUser(null);
-  }
-
-  return { isLoading, isInitialized: isFetchedAfterMount, user: data };
-} */

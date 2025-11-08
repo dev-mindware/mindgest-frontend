@@ -1,22 +1,29 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
 
+
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-full border px-1.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition-[color,box-shadow] [&>svg]:shrink-0 leading-normal",
+  "inline-flex items-center justify-center rounded-full border px-2 py-0.5 cursor-pointer text-xs font-medium w-fit whitespace-nowrap shrink-0 gap-1 leading-normal transition-all duration-300 backdrop-blur-md backdrop-saturate-150 shadow-[inset_0_0_2px_rgba(255,255,255,0.4),0_0_8px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_2px_rgba(255,255,255,0.1),0_0_8px_rgba(255,255,255,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
   {
     variants: {
       variant: {
+        
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          "border-primary/30 bg-primary/20 text-primary-foreground/90 hover:bg-primary/30 hover:text-primary-foreground dark:bg-primary/15 dark:hover:bg-primary/25 dark:border-primary/40 dark:text-primary-foreground/80",
+
+        
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+          "border-secondary/30 bg-secondary/20 text-secondary-foreground/90 hover:bg-secondary/30 hover:text-secondary-foreground dark:bg-secondary/15 dark:hover:bg-secondary/25 dark:border-secondary/40 dark:text-secondary-foreground/80",
+
+        
         destructive:
-          "bg-destructive/10 text-destructive [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+          "border-red-500/40 bg-red-500/20 text-red-600 hover:bg-red-500/30 hover:text-red-500 dark:border-red-400/40 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20",
+
+        
         outline:
-          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          "border-black/30 bg-black/5 text-foreground/80 hover:bg-black/20 hover:text-foreground  dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white/90",
       },
     },
     defaultVariants: {

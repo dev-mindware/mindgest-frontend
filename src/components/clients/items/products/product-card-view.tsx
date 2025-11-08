@@ -20,7 +20,7 @@ export function ProductCardView({ product }: ProductCardProps) {
   } = useProductActions();
 
   return (
-    <Card className="relative overflow-hidden transition-shadow duration-200 border border-border bg-card hover:shadow-lg">
+    <Card className="relative overflow-hidden transition-shadow duration-200 border border-border bg-card hover:shadow-lg hover:border-primary/25">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

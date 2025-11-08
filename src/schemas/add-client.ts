@@ -26,7 +26,7 @@ export const clientSchema = z.object({
     ) */
     .transform((val) => val.replace(/\s+/g, "")) // se quiseres limpar depois
     .optional(),
-  companyId: z.string().optional(),
+  companyId: z.string(),
 });
 
 export type ClientFormData = z.infer<typeof clientSchema>;

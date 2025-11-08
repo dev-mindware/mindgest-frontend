@@ -22,7 +22,7 @@ export function useUpdateClient() {
     mutationFn: ({ id, data }: { id: string; data: Partial<ItemData> }) =>
       clientsService.updateClient(id, data as any),
     onSuccess: () => {
-      SucessMessage("Item atualizado com sucesso!");
+      SucessMessage("Cliente atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
@@ -34,7 +34,7 @@ export function useDeleteClient() {
   return useMutation({
     mutationFn: (id: string) => clientsService.deleteClient(id),
     onSuccess: () => {
-      SucessMessage("Item removido com sucesso!");
+      SucessMessage("Cliente removido com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
