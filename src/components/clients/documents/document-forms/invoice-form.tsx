@@ -41,7 +41,7 @@ export function InvoiceForm() {
   });
 
   async function onSubmit(data: ReceiptInvoiceFormData) {
-    console.log("Invoice:", data);
+    console.log("Invoice:", JSON.stringify(data, null, 2));
     await new Promise((resolve) => setTimeout(resolve, 3000));
     handleDownloadInvoice(data);
     openModal("invoice-created");
@@ -49,6 +49,9 @@ export function InvoiceForm() {
   }
 
   const items = watch("items");
+
+  console.log("ERROS: ")
+  console.log(errors)
 
   useEffect(() => {
     if (!items) return;

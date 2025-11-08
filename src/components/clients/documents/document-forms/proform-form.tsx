@@ -34,7 +34,7 @@ export function ProformaForm() {
   });
 
   async function onSubmit(data: ProformaFormData) {
-    console.log("Proforma:", data);
+    console.log("Proforma:", JSON.stringify(data));
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
     handleDownloadProforma(data);
@@ -67,17 +67,10 @@ export function ProformaForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 space-y-8 border p-8 rounded-lg"
+      className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid grid-cols-1 gap-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            startIcon="FileDigit"
-            placeholder="PROF2025"
-            label="Número da fatura"
-            {...register("documentNumber")}
-            error={errors.documentNumber?.message}
-          />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
             type="date"
             label="Data de Emissão"
@@ -85,7 +78,7 @@ export function ProformaForm() {
             error={errors.issueDate?.message}
           />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
             startIcon="User"
             label="Cliente"
@@ -103,7 +96,7 @@ export function ProformaForm() {
         </div>
       </div>
       <ProformItems fieldArray={fieldArray} />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <SummaryCard label="Subtotal" value={watch("totals.subtotal")} />
         <SummaryCard label="Taxa Total" value={watch("totals.totalTax")} />
         <SummaryCard
@@ -131,7 +124,7 @@ export function ProformaForm() {
         )}
       </div>
       <div className="flex justify-end col-span-3">
-        <ButtonSubmit isLoading={isSubmitting}>Criar Proforma</ButtonSubmit>
+        <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>Criar Proforma</ButtonSubmit>
       </div>
     </form>
   );

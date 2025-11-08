@@ -68,13 +68,6 @@ export function ReceiptForm() {
     >
       <div className="grid gap-6 md:grid-cols-3">
         <Input
-          startIcon="FileDigit"
-          placeholder="REC2025"
-          label="Número do recibo"
-          {...register("documentNumber")}
-          error={errors.documentNumber?.message}
-        />
-        <Input
           type="date"
           label="Data de Emissão"
           {...register("issueDate")}

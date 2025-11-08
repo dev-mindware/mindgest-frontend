@@ -21,12 +21,12 @@ export interface Receipt {
   client: string;
   amount: number;
   date: string;
-  method: "Cash" | "Card" | "Transfer";
+  method: PaymentMethod,
 }
 
 // RECEIP 
+// NOVOS DA API
 // Tipos base reutilizáveis
-
 
 // ========================
 // 🏢 ENTIDADES BASE
@@ -69,10 +69,9 @@ export type Totals = {
 // ========================
 // 💳 PAGAMENTO E PARCELAS
 // ========================
-export type PaymentMethod = "bank_transfer" | "cash" | "card";
-
+export type PaymentMethod = "Cash" | "Card" | "Transfer";;
 // Estado do pagamento
-export type PaymentStatus = "unpaid" | "partial" | "paid";
+export type PaymentStatus = "unpaid" | "paid";
 
 // Uma parcela de pagamento
 export type Installment = {
