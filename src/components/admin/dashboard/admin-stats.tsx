@@ -1,4 +1,4 @@
-import { CardStat } from "@/components/clients";
+// import { CardStat } from "@/components/clients";
 import { Stats } from "@/types";
 
 export function AdminStatsCards() {
@@ -46,7 +46,7 @@ export function AdminStatsCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {adminStats.map((stat) => {
-        return <CardStat stat={stat} />;
+        return null;
       })}
     </div>
   );
