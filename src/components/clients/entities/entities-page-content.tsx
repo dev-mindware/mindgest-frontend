@@ -12,6 +12,7 @@ import { useModal } from "@/stores";
 import { ClientsList, ClientModal } from "./clients";
 import { StoresList, AddStoreModal } from "./stores";
 import { SuppliersList, AddSupplierModal } from "./suppliers";
+import { toast } from "sonner";
 
 type EntityTab = "client" | "supplier" | "store";
 
@@ -40,6 +41,7 @@ export function EntitiesPageContent() {
         title="Entidades"
         suTitle="Crie entidades que ajudarão no controlo das suas atividades"
       />
+
 
       <Tabs defaultValue="client-tab" className="w-full">
         <div className="flex items-center justify-between w-full">
