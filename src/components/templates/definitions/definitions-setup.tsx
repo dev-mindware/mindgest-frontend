@@ -3,8 +3,8 @@ import { Icon } from "@/components";
 import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
-import { Collaborators } from "./contents/collaborators";
 import { Subscriptions } from "./contents/subscription";
+import { CollaboratorsPageContent } from "./contents/collaborators";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -44,7 +44,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       id: "tab-5",
       label: "Colaboradores",
       icon: "BriefcaseBusiness",
-      component: <Collaborators />,
+      component: <CollaboratorsPageContent />,
       category: "workplace",
     },
     {
@@ -101,14 +101,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       <h1 className="text-2xl font-semibold">Definições da Conta</h1>
 
       <div className="hidden md:block">
-        <Tabs defaultValue={defaultTab} className="flex-row w-full mt-5 ">
-          <div className="h-screen bg-sidebar">
+        <Tabs defaultValue={defaultTab} className="flex-row w-full mt-5">
+          <div className="h-screen bg-sidebar rounded-md">
             <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
               <div className="p-4 space-y-5">
                 {generalTabs.length > 0 && (
                   <>
-                    <p className="text-sm text-muted-foreground">
-                      Definições Gerais
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Gerais
                     </p>
                     <div>
                       {generalTabs.map((tab) => renderTabTrigger(tab, true))}
@@ -122,8 +122,8 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
 
                 {workplaceTabs.length > 0 && (
                   <>
-                    <p className="text-sm text-muted-foreground">
-                      Definições de Ambiente de Trabalho
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Ambiente de Trabalho
                     </p>
                     <div>
                       {workplaceTabs.map((tab) => renderTabTrigger(tab, true))}
@@ -144,17 +144,25 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
         </Tabs>
       </div>
 
-      <div className="block mt-10 md:hidden">
-        <Tabs defaultValue={defaultTab} className="items-center">
-          <TabsList className="h-auto p-0 -space-x-px shadow-xs bg-background rtl:space-x-reverse">
-            {enabledTabs.map((tab) => renderTabTrigger(tab, false))}
-          </TabsList>
+      <div className="block mt-6 sm:mt-8 md:mt-10 md:hidden">
+        <Tabs defaultValue={defaultTab} className="w-full">
+          <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+            <TabsList className="h-auto w-full min-w-full inline-flex p-0 shadow-xs bg-background overflow-x-auto overflow-y-hidden scrollbar-hide -space-x-px rtl:space-x-reverse">
+              {enabledTabs.map((tab) => renderTabTrigger(tab, false))}
+            </TabsList>
+          </div>
 
-          {enabledTabs.map((tab) => (
-            <TabsContent key={tab.id} value={tab.id}>
-              {tab.component}
-            </TabsContent>
-          ))}
+          <div className="mt-4 sm:mt-6">
+            {enabledTabs.map((tab) => (
+              <TabsContent
+                key={tab.id}
+                value={tab.id}
+                className="focus-visible:outline-none focus-visible:ring-0"
+              >
+                {tab.component}
+              </TabsContent>
+            ))}
+          </div>
         </Tabs>
       </div>
     </div>
