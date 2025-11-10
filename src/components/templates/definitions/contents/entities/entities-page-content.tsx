@@ -7,6 +7,7 @@ import {
   TabsList,
   TabsTrigger,
   Button,
+  Separator,
 } from "@/components/ui";
 import { useModal } from "@/stores";
 import { ClientsList, ClientModal } from "./clients";
@@ -36,19 +37,20 @@ export function EntitiesPageContent() {
   const currentModal = entityModals[currentTab];
 
   return (
-    <div className="space-y-6">
+    <div className="!p-4 sm:p-6 space-y-6">
       <TitleList
         title="Entidades"
         suTitle="Crie entidades que ajudarão no controlo das suas atividades"
       />
-
+      <Separator />
 
       <Tabs defaultValue="client-tab" className="w-full">
-        <div className="flex items-center justify-between w-full">
-          <TabsList className="flex justify-center md:justify-start">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full">
+          <TabsList className="flex flex-wrap justify-center sm:justify-start gap-2">
             <TabsTrigger
               value="client-tab"
               onClick={() => setCurrentTab("client")}
+              className="text-sm sm:text-base"
             >
               Cliente
             </TabsTrigger>
@@ -56,32 +58,36 @@ export function EntitiesPageContent() {
               <TabsTrigger
                 value="supplier-tab"
                 onClick={() => setCurrentTab("supplier")}
+                className="text-sm sm:text-base"
               >
                 Fornecedor
               </TabsTrigger>
               <TabsTrigger
                 value="store-tab"
                 onClick={() => setCurrentTab("store")}
+                className="text-sm sm:text-base"
               >
                 Loja
               </TabsTrigger>
             </TsunamiOnly>
           </TabsList>
 
-          <Button onClick={() => openModal(currentModal)} variant="default">
+          <Button onClick={() => openModal(currentModal)} variant="default" className="w-full sm:w-auto text-sm sm:text-base">
             {currentLabel}
           </Button>
         </div>
 
-        <TabsContent value="client-tab">
-          <ClientsList />
-        </TabsContent>
-        <TabsContent value="supplier-tab">
+        <div className="mt-4">
+          <TabsContent value="client-tab">
+            <ClientsList />
+          </TabsContent>
+          <TabsContent value="supplier-tab">
           <SuppliersList />
         </TabsContent>
         <TabsContent value="store-tab">
           <StoresList />
         </TabsContent>
+        </div>
       </Tabs>
 
       <ClientModal action="add"  />

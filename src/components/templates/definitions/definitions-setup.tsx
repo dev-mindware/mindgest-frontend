@@ -4,7 +4,7 @@ import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
 import { Subscriptions } from "./contents/subscription";
-import { CollaboratorsPageContent } from "./contents/collaborators";
+import { CollaboratorsPageContent, EntitiesPageContent } from "./contents";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -37,7 +37,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       id: "tab-4",
       label: "Entidades",
       icon: "Users",
-      component: <p>Ola entidades kkk</p>,
+      component: <EntitiesPageContent />,
       category: "workplace",
     },
     {

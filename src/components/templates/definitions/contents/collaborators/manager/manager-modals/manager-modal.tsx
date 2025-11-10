@@ -42,12 +42,11 @@ export function ManagerModal({ action }: ManagerModalProps) {
 
   async function onSubmit(data: ManagerFormData) {
     try {
-      const { password, ...finalData } = data;
+      const { ...finalData } = data;
 
       if (action === "add") {
         await addManager({
           role: "MANAGER", ...finalData,
-          password: ""
         });
       } else if (action === "edit" && currentManager) {
         await editManager({ id: currentManager.id, data: finalData });
