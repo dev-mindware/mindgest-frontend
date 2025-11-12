@@ -106,7 +106,6 @@ export async function generateInvoicePDF(invoice: InvoiceFormData): Promise<any>
           },
           {
             stack: [
-              { text: `Nº Documento: ${invoice.documentNumber}` },
               { text: `Data Emissão: ${invoice.issueDate}` },
               { text: `Data Vencimento: ${invoice.dueDate}` },
             ]
@@ -144,7 +143,6 @@ export async function generateProformaPDF(proforma: ProformaFormData): Promise<a
           },
           {
             stack: [
-              { text: `Nº Documento: ${proforma.documentNumber}` },
               { text: `Data Emissão: ${proforma.issueDate}` }
             ]
           }
@@ -183,9 +181,7 @@ export async function generateReceiptPDF(receipt: ReceiptFormData): Promise<any>
           },
           {
             stack: [
-              { text: `Nº Documento: ${receipt.documentNumber}` },
               { text: `Data Emissão: ${receipt.issueDate}` },
-              { text: `Ref. Fatura: ${receipt.referenceInvoice}` },
             ]
           }
         ],
@@ -214,15 +210,12 @@ export async function generateReceiptPDF(receipt: ReceiptFormData): Promise<any>
 
 export async function handleDownloadInvoice(invoiceData: InvoiceFormData) {
   const docDefinition = await generateInvoicePDF(invoiceData);
-  pdfMake.createPdf(docDefinition).download(`fatura-${invoiceData.documentNumber}.pdf`);
 }
 
 export async function handleDownloadProforma(proformaData: ProformaFormData) {
   const docDefinition = await generateProformaPDF(proformaData);
-  pdfMake.createPdf(docDefinition).download(`proforma-${proformaData.documentNumber}.pdf`);
 }
 
 export async function handleDownloadReceipt(receiptData: ReceiptFormData) {
   const docDefinition = await generateReceiptPDF(receiptData);
-  pdfMake.createPdf(docDefinition).download(`recibo-${receiptData.documentNumber}.pdf`);
 }
