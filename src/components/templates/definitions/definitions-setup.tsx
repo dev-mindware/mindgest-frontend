@@ -1,3 +1,5 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icon } from "@/components";
 import { Appearance } from "./contents/appearance";
@@ -5,12 +7,16 @@ import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
 import { Subscriptions } from "./contents/subscription";
 import { CollaboratorsPageContent, EntitiesPageContent } from "./contents";
+import { useRouter, usePathname } from "next/navigation";
 
 interface DefSetupProps {
   disabledTabs?: string[];
 }
 
 export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const tabs = [
     {
       id: "tab-1",
@@ -68,6 +74,11 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
 
   const defaultTab = enabledTabs[0]?.id || "tab-1";
 
+  // Função para limpar query params ao trocar de tab
+  const handleTabChange = (value: string) => {
+    router.push(pathname);
+  };
+
   const renderTabTrigger = (
     tab: (typeof tabs)[0],
     isDesktop: boolean = true
@@ -101,7 +112,11 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       <h1 className="text-2xl font-semibold">Definições da Conta</h1>
 
       <div className="hidden md:block">
-        <Tabs defaultValue={defaultTab} className="flex-row w-full mt-5">
+        <Tabs 
+          defaultValue={defaultTab} 
+          className="flex-row w-full mt-5"
+          onValueChange={handleTabChange}
+        >
           <div className="h-screen bg-sidebar rounded-md">
             <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
               <div className="p-4 space-y-5">
@@ -145,7 +160,11 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       </div>
 
       <div className="block mt-6 sm:mt-8 md:mt-10 md:hidden">
-        <Tabs defaultValue={defaultTab} className="w-full">
+        <Tabs 
+          defaultValue={defaultTab} 
+          className="w-full"
+          onValueChange={handleTabChange}
+        >
           <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="h-auto w-full min-w-full inline-flex p-0 shadow-xs bg-background overflow-x-auto overflow-y-hidden scrollbar-hide -space-x-px rtl:space-x-reverse">
               {enabledTabs.map((tab) => renderTabTrigger(tab, false))}

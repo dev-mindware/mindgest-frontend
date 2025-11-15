@@ -6,9 +6,9 @@ export const ManagerDataService = {
     return api.post<ManagerData>("/auth/register/user", data);
   },
   updateManager: async (id: string, data: ManagerData) => {
-    return api.put<ManagerData>(`/auth/register/user/${id}`, data);
+    return api.put<ManagerData>(`/users/${id}`, data);
   },
   deleteManager: async (id: string) => {
-    return api.delete<ManagerData>(`/auth/register/user/${id}`);
+    return api.delete<ManagerData>(`/users/${id}`);
   },
 };

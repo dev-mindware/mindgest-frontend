@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui";
 import { ItemStatus } from "@/types/items";
 import {
-  itemsByOption,
+  usersByOption,
   itemsStatusOptions,
 } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
@@ -12,7 +12,7 @@ import { useManagerFilters } from "@/hooks/collaborators";
 
 export function ManagerFiltersTSX() {
   const { filters, setFilters } = useManagerFilters();
-  const { search, setSearch } = useURLSearchParams("search-managers");
+  const { search, setSearch } = useURLSearchParams("search");
 
   function clearFilters() {
     setFilters({
@@ -43,18 +43,17 @@ export function ManagerFiltersTSX() {
         <FilterPopover
           icon="List"
           label="Ordenar por"
-          options={itemsByOption}
+          options={usersByOption}
           value={filters.sortBy}
           onChange={(sortBy) => setFilters({ sortBy })}
         />
 
         <FilterPopover
-          label="Ordem"
-          icon="ListOrdered"
+          label="Sortear por"
+          icon="ArrowDownUp"
           options={[
-            { value: "name", label: "Nome" },
-            { value: "createdAt", label: "Mais Recente" },
-            { value: "updatedAt", label: "Mais Antigo" },
+            { value: "asc", label: "ASC" },
+            { value: "desc", label: "DESC" },
           ]}
           value={filters.sortOrder}
           onChange={(sortOrder) => setFilters({ sortOrder })}

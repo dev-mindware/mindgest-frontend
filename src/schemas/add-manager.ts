@@ -9,7 +9,7 @@ export const managerSchema = z.object({
       (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
       "Insira número de telemovél válido"
     ),
-  email: z.string().email("Email inválido"),
+  email: z.string().email("Email inválido").optional(),
   password: z
     .string()
     .min(1, "Senha é obrigatória")
@@ -31,18 +31,7 @@ export const managerSchema = z.object({
       (password) => /[@$!%*?&#_\-+=]/.test(password),
       "Senha deve conter pelo menos um caractere especial"
     )
-    .refine((password) => !/\s/.test(password), "Senha não pode conter espaços")
-    .refine((password) => {
-      const commonSequences = [
-        "123456",
-        "abcdef",
-        "qwerty",
-        "password",
-        "senha123",
-      ];
-      const lowerPassword = password.toLowerCase();
-      return !commonSequences.some((seq) => lowerPassword.includes(seq));
-    }, "Senha não pode conter sequências comuns"),
+    .refine((password) => !/\s/.test(password), "Senha não pode conter espaços").optional(),
 });
 
 export type ManagerFormData = z.infer<typeof managerSchema>;

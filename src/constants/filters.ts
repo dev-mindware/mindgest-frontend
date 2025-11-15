@@ -29,6 +29,13 @@ export const itemsByOption = [
   { value: "updatedAt", label: "Mais Antigo" },
 ];
 
+export const usersByOption = [
+  { value: "name", label: "Nome" },
+  { value: "email", label: "Email" },
+  { value: "createdAt", label: "Mais Recente" },
+  { value: "updatedAt", label: "Mais Antigo" },
+];
+
 export const itemsOrderOption = [
   { value: "asc", label: "A-Z" },
   { value: "desc", label: "Z-A" },

@@ -1,7 +1,7 @@
 export type ManagerData = {
   name: string;
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   phone: string;
   role: string;
   companyId?: string;
@@ -10,7 +10,7 @@ export type ManagerData = {
 
 export type ManagerResponse = ManagerData & {
   id: string;
-  isActive: boolean;
+  status: any;
   createdAt: string;
   updatedAt: string;
 };

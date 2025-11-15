@@ -13,7 +13,7 @@ import {
 
 export function Notification() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-4 sm:p-6 space-y-6">
       {/* Notificações */}
       <section className="space-y-4">
         <div>

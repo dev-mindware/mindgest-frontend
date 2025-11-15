@@ -34,7 +34,6 @@ export function ManagerModal({ action }: ManagerModalProps) {
     if (action === "edit" && currentManager) {
       reset({
         name: currentManager.name,
-        email: currentManager.email,
         phone: currentManager.phone,
       });
     }
@@ -42,21 +41,22 @@ export function ManagerModal({ action }: ManagerModalProps) {
 
   async function onSubmit(data: ManagerFormData) {
     try {
-      const { ...finalData } = data;
+      const { password, ...finalData } = data;
 
       if (action === "add") {
         await addManager({
-          role: "MANAGER", ...finalData,
+          role: "MANAGER",
+          ...finalData,
+          password,
         });
       } else if (action === "edit" && currentManager) {
-        await editManager({ id: currentManager.id, data: finalData });
+        await editManager({ id: currentManager.id, data: { name: finalData.name, phone: finalData.phone } });
       }
 
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message ||
-          "Ocorreu um erro ao salvar o cliente."
+        error?.response?.data?.message || "Ocorreu um erro ao salvar o cliente."
       );
     }
   }
@@ -94,22 +94,26 @@ export function ManagerModal({ action }: ManagerModalProps) {
             error={errors.phone?.message}
           />
 
-          <Input
-            type="email"
-            label="Email"
-            startIcon="Mail"
-            placeholder="Ex: cea.co@gmail.com"
-            {...register("email")}
-            error={errors.email?.message}
-          />
+          {action === "add" && (
+            <>
+              <Input
+                type="email"
+                label="Email"
+                startIcon="Mail"
+                placeholder="Ex: cea.co@gmail.com"
+                {...register("email")}
+                error={errors.email?.message}
+              />
 
-          <Input
-            label="Senha"
-            startIcon="Lock"
-            placeholder="Ex: 12345678"
-            {...register("password")}
-            error={errors.password?.message}
-          />
+              <Input
+                label="Senha"
+                startIcon="Lock"
+                placeholder="Ex: 12345678"
+                {...register("password")}
+                error={errors.password?.message}
+              />
+            </>
+          )}
         </div>
 
         <div className="flex justify-end gap-4 mt-5">

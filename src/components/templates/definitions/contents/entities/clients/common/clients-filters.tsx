@@ -14,7 +14,7 @@ import { useClientsFilters } from "@/hooks/entities";
 
 export function ClientsFiltersTSX() {
   const { filters, setFilters } = useClientsFilters();
-  const { search, setSearch } = useURLSearchParams("search-clients");
+  const { search, setSearch } = useURLSearchParams("search");
 
   function clearFilters() {
     setFilters({
@@ -45,18 +45,21 @@ export function ClientsFiltersTSX() {
         <FilterPopover
           icon="List"
           label="Ordenar por"
-          options={itemsByOption}
           value={filters.sortBy}
-          onChange={(sortBy) => setFilters({ sortBy })}
-        />
-
-        <FilterPopover
-          label="Ordem"
-          icon="ListOrdered"
           options={[
             { value: "name", label: "Nome" },
             { value: "createdAt", label: "Mais Recente" },
             { value: "updatedAt", label: "Mais Antigo" },
+          ]}
+          onChange={(sortBy) => setFilters({ sortBy })}
+        />
+
+        <FilterPopover
+          label="Sortear por"
+          icon="ArrowDownUp"
+          options={[
+            { value: "asc", label: "ASC" },
+            { value: "desc", label: "DESC" },
           ]}
           value={filters.sortOrder}
           onChange={(sortOrder) => setFilters({ sortOrder })}

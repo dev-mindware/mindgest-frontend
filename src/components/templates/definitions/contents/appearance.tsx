@@ -89,7 +89,7 @@ if (!isMounted) return null;
 
 
   return (
-    <div className="p-6 space-y-6" suppressHydrationWarning>
+    <div className="py-4 sm:p-6 space-y-6" suppressHydrationWarning>
       <div>
         <h2 className="text-2xl text-center md:text-start">Aparência</h2>
         <p className="text-center text-muted-foreground md:text-start">

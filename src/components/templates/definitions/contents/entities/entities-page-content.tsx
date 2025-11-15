@@ -37,7 +37,7 @@ export function EntitiesPageContent() {
   const currentModal = entityModals[currentTab];
 
   return (
-    <div className="!p-4 sm:p-6 space-y-6">
+    <div className="!py-4 sm:p-6 space-y-6">
       <TitleList
         title="Entidades"
         suTitle="Crie entidades que ajudarão no controlo das suas atividades"

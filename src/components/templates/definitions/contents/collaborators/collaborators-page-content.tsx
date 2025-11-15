@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { TitleList } from "@/components/common";
+import { TitleList, TsunamiOnly } from "@/components/common";
 import {
   Tabs,
   TabsContent,
@@ -32,7 +32,7 @@ export function CollaboratorsPageContent() {
   const currentModal = entityModals[currentTab];
 
   return (
-    <div className="!p-4 sm:p-6 space-y-6">
+    <div className="!py-4 sm:p-6 space-y-6">
       <TitleList
         title="Colaboradores"
         suTitle="Crie colaboradores que ajudarão no controlo das suas atividades"
@@ -49,6 +49,7 @@ export function CollaboratorsPageContent() {
             >
               Gerente
             </TabsTrigger>
+            <TsunamiOnly>
             <TabsTrigger
               value="cashier-tab"
               onClick={() => setCurrentTab("cashier")}
@@ -56,6 +57,7 @@ export function CollaboratorsPageContent() {
             >
               Caixa
             </TabsTrigger>
+            </TsunamiOnly>
           </TabsList>
 
           <Button

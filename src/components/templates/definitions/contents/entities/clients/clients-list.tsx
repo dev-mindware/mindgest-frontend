@@ -19,7 +19,7 @@ import { ClientsFiltersTSX } from "./common";
 import { useClientActions, useClientsFilters } from "@/hooks/entities";
 
 export function ClientsList() {
-  const { search } = useURLSearchParams("search-clients");
+  const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useClientsFilters();
   const { handlerDeleteClient, handlerDetailsClient, handlerEditClient } =

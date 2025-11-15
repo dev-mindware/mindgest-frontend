@@ -18,7 +18,7 @@ import { ManagerModal, DeleteManagerModal, DetailsManagerModal } from "./manager
 
 
 export function ManagerList() {
-  const { search } = useURLSearchParams("search-managers");
+  const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useManagerFilters();
   const { handlerDeleteManager, handlerDetailsManager, handlerEditManager } =
@@ -33,14 +33,21 @@ export function ManagerList() {
     isError,
     refetch,
   } = usePagination<ManagerResponse>({
-    endpoint: "/auth/users",
+    endpoint: "/users",
     queryKey: ["managers"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryParams: { role: "MANAGER", ...filters, search: debounceSearch, page },
   });
 
   const columns: Column<ManagerResponse>[] = [
     { key: "name", header: "Nome" },
-    { key: "role", header: "Função" },
+    {
+    key: "role",
+    header: "Função",
+    render: (_, item) => {
+      if (item.role === "MANAGER") return "GERENTE";
+      return item.role;
+    },
+  },
     {
       key: "email",
       header: "Email",
@@ -59,7 +66,7 @@ export function ManagerList() {
       key: "status",
       header: "Status",
       render: (_, item) => (
-        <ItemStatusBadge status={item.isActive ? "ACTIVE" : "INACTIVE"} />
+        <ItemStatusBadge status={item.status} />
       ),
     },
     {
@@ -86,11 +93,18 @@ export function ManagerList() {
 
   if (managers?.length == 0)
     return (
+      <div className="justify-start mt-6 space-y-8">
+      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+          <ManagerFiltersTSX />
+        </div>
+      </div>
       <EmptyState
         description="Adicione novos gerentes"
         title="Sem Gerentes"
         icon="Users"
-      />
+        />
+      </div>
     );
 
   return (

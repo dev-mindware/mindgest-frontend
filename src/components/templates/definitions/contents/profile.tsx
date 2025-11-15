@@ -34,7 +34,7 @@ export function Profile() {
   }
 
   return (
-    <div className="p-6 space-y-6 ">
+    <div className="py-4 sm:p-6 space-y-6 ">
       <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
         <div>
           <h2 className="text-2xl text-center md:text-start">Meu Perfil</h2>
