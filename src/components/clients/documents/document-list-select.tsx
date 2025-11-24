@@ -29,7 +29,7 @@ export function DocumentList() {
             <TabsTrigger value="only-receipt-tab">Recibos</TabsTrigger>
           </TabsList>
           <Link href="/client/documents/new">
-            <Button variant="default">Adicionar</Button>
+            <Button variant="default">Criar Documento</Button>
           </Link>
         </div>
 

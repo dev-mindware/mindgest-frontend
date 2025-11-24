@@ -2,7 +2,7 @@ import { GlobalModal } from "@/components/modal";
 import { Button } from "@/components/ui";
 import { useModal } from "@/stores";
 
-type TypeInvoice = "invoice-tab" | "receipt-tab" | "proform-tab";
+type TypeInvoice = "invoice-tab" | "receipt-invoice-tab" | "proform-tab";
 
 export function InvoiceCreatedModal({ type }: { type: TypeInvoice }) {
   const { closeModal } = useModal();
