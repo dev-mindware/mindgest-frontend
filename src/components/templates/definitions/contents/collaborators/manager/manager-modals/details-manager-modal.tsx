@@ -28,9 +28,9 @@ export function DetailsManagerModal() {
                 Cargo: {currentManager.role}
             </span>
               <Badge
-                variant={currentManager.isActive ? "success" : "destructive"}
+                variant={currentManager.status === "ACTIVE" ? "success" : "destructive"}
               >
-                {currentManager.isActive === true ? "Activo" : "Inactivo"}
+                {currentManager.status === "ACTIVE" ? "Activo" : "Inactivo"}
               </Badge>
             </div>
           </div>

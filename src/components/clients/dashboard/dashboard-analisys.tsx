@@ -4,42 +4,43 @@ import { StatCard } from "./stat-card"
 
 const stats = [
   {
-    label: "Total de Termos",
-    value: "2,450",
+    label: "Produtos Vendidos",
+    value: "450",
     trend: "-20 este mês",
     trendIcon: TrendingDown,
     trendPositive: false,
-    footerMain: "Crescimento constante",
-    footerSub: "Base lexical em expansão",
+    footerMain: "Queda pontual no volume",
+    footerSub: "Sugere ajustes nas campanhas",
   },
   {
-    label: "Topónimos Cadastrados",
-    value: "3,678",
+    label: "Serviços Prestados",
+    value: "678",
     trend: "+5.2%",
     trendIcon: TrendingUp,
     trendPositive: true,
-    footerMain: "Cobertura geográfica a aumentar",
-    footerSub: "Mais localidades mapeadas",
+    footerMain: "Crescimento consistente",
+    footerSub: "Alta procura nos últimos dias",
   },
   {
-    label: "Antropónimos Recolhidos",
-    value: "8,912",
+    label: "Total de Vendas",
+    value: "80,912 Kz",
     trend: "-1.2%",
     trendIcon: TrendingDown,
     trendPositive: false,
-    footerMain: "Pequena queda na recolha",
-    footerSub: "Precisa reforço de pesquisa",
+    footerMain: "Pequena retração no período",
+    footerSub: "Reforçar ações comerciais",
   },
   {
-    label: "Total de Entradas",
-    value: "25,040",
+    label: "Total Geral",
+    value: "250,040 Kz",
     trend: "+7.8%",
     trendIcon: TrendingUp,
     trendPositive: true,
-    footerMain: "Base geral em expansão",
-    footerSub: "Atingindo as metas do projeto",
+    footerMain: "Base financeira em expansão",
+    footerSub: "Superando metas estabelecidas",
   },
-]
+];
+
 
 export function DashboardAnalisys() {
   return (
