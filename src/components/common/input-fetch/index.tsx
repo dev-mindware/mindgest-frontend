@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Input } from "@/components/ui";
-import { icons } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Search, icons } from "lucide-react";
 import { api } from "@/services/api";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 
 interface InputFetchProps {
-  startIcon: keyof typeof icons;
+  startIcon?: keyof typeof icons;
   label: string;
   endpoint: string;
   displayFields?: string[];
-  onValueChange?: (value: string | number) => void;
+  onValueChange?: (value: string | number, fullObject?: Option | null) => void;
   placeholder?: string;
   debounceMs?: number;
   minChars?: number;
@@ -22,7 +23,7 @@ interface Option {
 }
 
 export function InputFetch({
-  startIcon,
+  startIcon: StartIcon,
   label,
   endpoint,
   displayFields = ['name'],
@@ -34,60 +35,58 @@ export function InputFetch({
   const [inputValue, setInputValue] = useState('');
   const [debouncedValue] = useDebounce(inputValue, debounceMs);
   const [isOpen, setIsOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // React Query para buscar dados
-  const { data: options = [], isLoading: loading } = useQuery({
+  const { data: options = [], isLoading: loading, error } = useQuery({
     queryKey: ['input-fetch', endpoint, debouncedValue],
     queryFn: async () => {
       if (debouncedValue.trim().length < minChars) return [];
       
+      console.log(`🔍 Buscando em: ${endpoint}?search=${encodeURIComponent(debouncedValue)}`);
+      
       const response = await api.get(`${endpoint}?search=${encodeURIComponent(debouncedValue)}`);
       const responseData = response.data;
       
+      let results = [];
       if (responseData && typeof responseData === 'object') {
         if (Array.isArray(responseData.data)) {
-          return responseData.data;
+          results = responseData.data;
         } else if (Array.isArray(responseData)) {
-          return responseData;
+          results = responseData;
         }
       }
-      return [];
+      
+      console.log(`✅ ${results.length} resultados encontrados:`, results);
+      return results;
     },
     enabled: debouncedValue.trim().length >= minChars,
-    staleTime: 1000 * 60 * 5, // Cache por 5 minutos
+    staleTime: 1000 * 60 * 5,
   });
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   // Abre o dropdown quando houver resultados e o input tiver foco
   useEffect(() => {
     if (options.length > 0 && inputValue.trim().length >= minChars) {
       setIsOpen(true);
-    } else if (options.length === 0 && !loading) {
-      // Opcional: fechar se não houver resultados, mas manter aberto se estiver carregando pode ser melhor UX
-      // setIsOpen(false); 
+    } else if (!loading && inputValue.trim().length >= minChars) {
+      setIsOpen(true); // Mantém aberto para mostrar "Nenhum resultado"
     }
   }, [options, inputValue, minChars, loading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
+    
+    // Se o usuário está digitando algo diferente da seleção, limpa a seleção
+    if (selectedOption) {
+      setSelectedOption(null);
+      console.log('🔄 Seleção limpa - usuário está digitando novamente');
+    }
+    
+    // O valor digitado é sempre notificado ao componente pai
     if (onValueChange) {
-      // Se o usuário limpar o input ou mudar, talvez queiramos limpar o valor selecionado pai
-      // Mas aqui estamos passando o valor raw do input por enquanto se necessário
-      // onValueChange(value); // Depende da lógica de negócio se deve passar o texto ou só ID
+      onValueChange(value, null);
     }
   };
 
@@ -98,10 +97,11 @@ export function InputFetch({
       .join(' - ');
     
     setInputValue(displayText);
+    setSelectedOption(option);
     setIsOpen(false);
     
     if (onValueChange) {
-      onValueChange(option.id);
+      onValueChange(option.id, option);
     }
   };
 
@@ -109,7 +109,9 @@ export function InputFetch({
     if (e.key === 'Escape') {
       setIsOpen(false);
     }
+    // TODO: Adicionar navegação por setas (ArrowUp, ArrowDown, Enter)
   };
+
 
   const getNestedValue = (obj: any, path: string): any => {
     return path.split('.').reduce((current, key) => current?.[key], obj);
@@ -124,34 +126,58 @@ export function InputFetch({
       return (
         <span key={field} className="block">
           {index === 0 ? (
-            <span className="font-medium text-gray-900">{value}</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">{value}</span>
           ) : (
-            <span className="text-sm text-gray-500">{value}</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{value}</span>
           )}
         </span>
       );
     });
   };
 
+  // Log imediato quando selectedOption mudar
+  useEffect(() => {
+    if (selectedOption) {
+      console.log('🎯 Estado atualizado: item da API selecionado');
+    }
+  }, [selectedOption]);
+
   return (
-    <div ref={wrapperRef} className="relative w-full">
-      <Input
-        startIcon={startIcon}
-        label={label}
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        onFocus={() => {
-            if (inputValue.trim().length >= minChars && options.length > 0) {
-                setIsOpen(true);
-            }
-        }}
-        placeholder={placeholder}
-        autoComplete="off"
-      />
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <div className="w-full">
+          <div className="relative">
+            <Input
+              ref={inputRef}
+              startIcon={StartIcon}
+              label={label}
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => {
+                if (inputValue.trim().length >= minChars && options.length > 0) {
+                  setIsOpen(true);
+                }
+              }}
+              placeholder={placeholder}
+              autoComplete="off"
+              className={selectedOption ? 'border-green-500 dark:border-green-600' : ''}
+            />
+            {inputValue && !selectedOption && (
+              <span className="absolute right-3 top-1/2 text-xs text-amber-500 dark:text-amber-400">
+                Não registado
+              </span>
+            )}
+          </div>
+        </div>
+      </PopoverTrigger>
       
-      {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-popover text-popover-foreground border border-border rounded-lg shadow-lg max-h-60 overflow-auto">
+      <PopoverContent 
+        className="w-[var(--radix-popover-trigger-width)] p-0"
+        align="start"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <div className="max-h-60 overflow-auto">
           {loading ? (
             <div className="px-4 py-3 text-sm text-muted-foreground text-center flex items-center justify-center gap-2">
               <svg className="animate-spin h-4 w-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -160,23 +186,30 @@ export function InputFetch({
               </svg>
               Buscando...
             </div>
+          ) : error ? (
+            <div className="px-4 py-3 text-sm text-destructive text-center">
+              ❌ Erro ao buscar dados
+            </div>
           ) : options.length > 0 ? (
             options.map((option: Option) => (
               <div
                 key={option.id}
                 onClick={() => handleSelectOption(option)}
-                className="px-4 py-3 hover:bg-accent hover:text-accent-foreground cursor-pointer transition border-b border-border last:border-b-0"
+                className="px-4 py-3 hover:bg-accent hover:text-accent-foreground cursor-pointer transition border-b border-border last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
               >
                 {renderOptionContent(option)}
               </div>
             ))
-          ) : (
+          ) : inputValue.trim().length >= minChars ? (
             <div className="px-4 py-3 text-sm text-muted-foreground text-center">
-              Nenhum resultado encontrado
+              <div className="mb-1">Nenhum resultado encontrado</div>
+              <div className="text-xs text-amber-500 dark:text-amber-400">
+                O texto digitado será usado como valor
+              </div>
             </div>
-          )}
+          ) : null}
         </div>
-      )}
-    </div>
+      </PopoverContent>
+    </Popover>
   );
 }
