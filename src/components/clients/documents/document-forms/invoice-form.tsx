@@ -80,30 +80,6 @@ export function InvoiceForm() {
     setIsClientFromAPI(false); // Reset do estado ao limpar o formulário
   }
 
-  const items = watch("items");
-
-  // Cálculos automáticos
-  useEffect(() => {
-    if (!items || items.length === 0) return;
-
-    const subtotal = items.reduce(
-      (acc, item) => acc + (item.unitPrice || 0) * (item.quantity || 0),
-      0
-    );
-
-    const totalTax = items.reduce(
-      (acc, item) =>
-        acc + (item.unitPrice || 0) * (item.quantity || 0) * ((item.tax || 0) / 100),
-      0
-    );
-
-    const totalDue = subtotal + totalTax;
-
-    setValue("totals.subtotal", subtotal);
-    setValue("totals.totalTax", totalTax);
-    setValue("totals.totalDue", totalDue);
-  }, [items, setValue]);
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -154,27 +130,7 @@ export function InvoiceForm() {
             disabled={isClientFromAPI}
           />
         </div>
-      </div>
-
-      <InvoiceItems fieldArray={fieldArray} control={control} />
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <SummaryCard
-          label="Subtotal"
-          value={watch("totals.subtotal") || 0}
-        />
-        <SummaryCard
-          label="Taxa Total"
-          value={watch("totals.totalTax") || 0}
-        />
-        <SummaryCard
-          label="Total a Pagar"
-          value={watch("totals.totalDue") || 0}
-          highlight
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
+        <div className="relative gap-6">
         <RHFSelect
           name="payment.method"
           label="Método de Pagamento"
@@ -191,6 +147,9 @@ export function InvoiceForm() {
           />
         )}
       </div>
+      </div>
+
+      <InvoiceItems fieldArray={fieldArray} control={control} />
 
       <div className="flex justify-end mt-6">
         <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>

@@ -161,7 +161,7 @@ export function InputFetch({
               }}
               placeholder={placeholder}
               autoComplete="off"
-              className={selectedOption ? 'border-green-500 dark:border-green-600' : ''}
+              className={selectedOption ? 'border-primary dark:border-primary' : ''}
             />
             {inputValue && !selectedOption && (
               <span className="absolute right-3 top-1/2 text-xs text-amber-500 dark:text-amber-400">

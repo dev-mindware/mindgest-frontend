@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Button, Input, SelectField, Separator } from "@/components";
+import { Button, EmptyState, Input, SelectField, Separator } from "@/components";
 import { Control, UseFieldArrayReturn } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,8 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
     name: "",
     quantity: 1,
     price: 0,
-    type: "PRODUCT" as "PRODUCT" | "SERVICE",
+    tax: 0,
+    discount: 0,
   });
 
   const [globalTax, setGlobalTax] = useState(0);
@@ -40,14 +41,16 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
   }, [fields, globalTax, globalDiscount]);
 
   function handleAddItem() {
-    const { name, quantity, price, type } = itemDraft;
+    const { name, quantity, price } = itemDraft;
     if (!name || quantity <= 0 || price < 0) return;
 
     append({
       description: name,
       unitPrice: price,
       quantity,
-      type,
+      tax: globalTax,
+      discount: globalDiscount,
+      total: price * quantity,
     });
 
     // Reseta o formulário
@@ -55,7 +58,8 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
       name: "",
       quantity: 1,
       price: 0,
-      type: "PRODUCT",
+      tax: globalTax,
+      discount: globalDiscount,
     });
     setIsItemFromAPI(false);
   }
@@ -87,10 +91,6 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
     }).format(value);
   };
 
-  const calculateItemTotal = (item: any) => {
-    return item.price * item.quantity;
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -100,10 +100,9 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
       <Separator />
 
       {/* Formulário de Adição */}
-      <Card>
-        <CardContent className="pt-6">
+        <div className="pt-6">
           <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <InputFetch
                 startIcon="ShoppingBasket"
                 label="Nome do Item"
@@ -115,23 +114,8 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
                 debounceMs={300}
               />
 
-              <SelectField
-                label="Tipo"
-                value={itemDraft.type}
-                onValueChange={(value) =>
-                  setItemDraft({ ...itemDraft, type: value as "PRODUCT" | "SERVICE" })
-                }
-                options={[
-                  { value: "PRODUCT", label: "Produto" },
-                  { value: "SERVICE", label: "Serviço" },
-                ]}
-                className="w-full"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Input
-                type="number"
+               <Input
+                type="quantity"
                 label="Quantidade"
                 min="1"
                 value={itemDraft.quantity}
@@ -161,36 +145,26 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
       {/* Lista de Itens */}
       {fields.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-full bg-muted p-4 mb-4">
-              <Package className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Nenhum item adicionado</h3>
-            <p className="text-sm text-muted-foreground">
-              Adicione itens à fatura usando o formulário acima
-            </p>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center text-center">
+            <EmptyState icon="ShoppingBasket"/>
+        </div>
       ) : (
         <div className="space-y-4">
           {/* Tabela de Itens */}
-          <Card>
-            <CardContent className="p-0">
+            <div className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="border-b bg-muted/50">
+                  <thead className="border-b bg-muted/50 ">
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-medium">Item</th>
                       <th className="px-4 py-3 text-left text-sm font-medium">Tipo</th>
                       <th className="px-4 py-3 text-right text-sm font-medium">Qtd</th>
                       <th className="px-4 py-3 text-right text-sm font-medium">Preço Unit.</th>
-                      <th className="px-4 py-3 text-right text-sm font-medium">Total</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium">Subtotal</th>
                       <th className="px-4 py-3 w-[50px]"></th>
                     </tr>
                   </thead>
@@ -199,16 +173,13 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
                       <tr key={item.id} className="hover:bg-muted/30 transition-colors">
                         <td className="px-4 py-3 text-sm font-medium">{item.description}</td>
                         <td className="px-4 py-3">
-                          <Badge variant={item.type === "PRODUCT" ? "default" : "secondary"}>
-                            {item.type === "PRODUCT" ? "Produto" : "Serviço"}
-                          </Badge>
                         </td>
                         <td className="px-4 py-3 text-sm text-right">{item.quantity}</td>
                         <td className="px-4 py-3 text-sm text-right">
                           {formatCurrency(item.unitPrice)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-right font-medium">
-                          {formatCurrency(calculateItemTotal(item))}
+                        <td className="px-4 py-3 text-sm text-right">
+                          {formatCurrency(item.unitPrice * item.quantity)}
                         </td>
                         <td className="px-4 py-3">
                           <Button
@@ -226,15 +197,13 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
           {/* Card de Totais */}
-          <Card>
-            <CardContent className="pt-6">
+            <div className="pt-6">
               <div className="space-y-4">
                 {/* Campos de IVA e Desconto */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pb-4 border-b">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 pb-4">
                   <SelectField
                     label="Imposto (IVA) sobre o total"
                     value={globalTax}
@@ -263,36 +232,37 @@ export function InvoiceItems({ fieldArray, control }: InvoiceItemsProps) {
                 </div>
 
                 {/* Resumo dos Totais */}
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
+                <div className="flex justify-start">
+                <div className="space-y-3 min-w-70 border border-dashed border-muted p-4 rounded-md">
+                  <div className="flex justify-between text-md gap-4">
                     <span className="text-muted-foreground">Subtotal:</span>
                     <span className="font-medium">{formatCurrency(totals.subtotal)}</span>
                   </div>
                   {globalTax > 0 && (
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-md gap-4">
                       <span className="text-muted-foreground">IVA ({globalTax}%):</span>
-                      <span className="font-medium text-blue-600">
+                      <span className="font-medium">
                         +{formatCurrency(totals.taxAmount)}
                       </span>
                     </div>
                   )}
                   {globalDiscount > 0 && (
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-md gap-4">
                       <span className="text-muted-foreground">Desconto ({globalDiscount}%):</span>
-                      <span className="font-medium text-green-600">
+                      <span className="font-medium text-destructive">
                         -{formatCurrency(totals.discountAmount)}
                       </span>
                     </div>
                   )}
                   <Separator />
-                  <div className="flex justify-between text-lg font-bold">
+                  <div className="flex justify-between text-xl font-bold gap-4">
                     <span>Total:</span>
-                    <span className="text-xl">{formatCurrency(totals.total)}</span>
+                    <span className="text-2xl text-primary">{formatCurrency(totals.total)}</span>
                   </div>
                 </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
         </div>
       )}
     </div>
