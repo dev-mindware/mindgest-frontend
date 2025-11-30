@@ -1,36 +1,5 @@
 export type InvoiceStatus = "Paid" | "Pending" | "Canceled";
 
-export interface Invoice {
-  id: string;
-  client: string;
-  total: number;
-  status: InvoiceStatus;
-  date: string;
-}
-
-export interface Proforma {
-  id: string;
-  client: string;
-  estimate: number;
-  validUntil: string;
-  status: "Draft" | "Confirmed";
-}
-
-export interface Receipt {
-  id: string;
-  client: string;
-  amount: number;
-  date: string;
-  method: PaymentMethod,
-}
-
-// RECEIP 
-// NOVOS DA API
-// Tipos base reutilizáveis
-
-// ========================
-// 🏢 ENTIDADES BASE
-// ========================
 export type ContactInfo = {
   phone?: string;
   email?: string;
@@ -43,28 +12,44 @@ export type CompanyInfo = {
   contact?: ContactInfo;
 };
 
-export type CustomerInfo = {
-  name: string;
-  address: string;
-  vatNumber?: string;
-};
-
-// ========================
-// 💰 ITENS E TOTAIS
-// ========================
-export type Item = {
-  description?: string;
+export type InvoiceItem = {
+  id: string;
   quantity: number;
-  unitPrice: number;
-  tax: number;
-  total: number;
+  price: string;
+  total: string;
+  invoiceId: string;
+  itemsId: string;
+  taxId: string | null;
+  item: ItemData;
+  tax: any;
 };
 
-export type Totals = {
-  subtotal?: number;
-  totalTax?: number;
-  totalDue: number;
+export type ItemData = {
+  id: string;
+  name: string;
+  description: string | null;
+  sku: string | null;
+  barcode: string | null;
+  price: string;
+  cost: string | null;
+  status: string;
+  minStock: number;
+  maxStock: number | null;
+  unit: string;
+  weight: number | null;
+  dimensions: string | null;
+  image: string | null;
+  hasExpiry: boolean | null;
+  expiryDate: string | null;
+  daysToExpiry: number | null;
+  createdAt: string;
+  updatedAt: string;
+  type: string;
+  companyId: string;
+  storeId: string | null;
+  categoryId: string | null;
 };
+
 
 // ========================
 // 💳 PAGAMENTO E PARCELAS
@@ -73,81 +58,61 @@ export type PaymentMethod = "Cash" | "Card" | "Transfer";;
 // Estado do pagamento
 export type PaymentStatus = "unpaid" | "paid";
 
-// Uma parcela de pagamento
-export type Installment = {
-  amount: number;          // valor pago nesta parcela
-  date: string;            // data do pagamento
-  method: PaymentMethod;   // forma de pagamento
-  reference?: string;      // id ou referência bancária
-};
-
 // Dados de pagamento (geral)
 export type Payment = {
   method: PaymentMethod;
   bankDetails?: string;
   status?: PaymentStatus;      // estado do pagamento
-  installments?: Installment[]; // lista de parcelas
   totalPaid?: number;           // soma já paga
 };
 
 // ========================
 // 🧾 DOCUMENTOS
 // ========================
-
-// Recibo (pós-pagamento) RECIBO DO POS
-export type ReceiptFormData = {
-  documentNumber: string;
-  issueDate: string;
-  paymentDate?: string;
-  totals: Pick<Totals, "totalDue">;
-  referenceInvoice: string;
-  company?: CompanyInfo;
-  customer?: CustomerInfo;
-  items?: Omit<Item, "total">[]; // itens opcionais, sem total detalhado
-  payment?: Payment;
-};
-
-// Pró-forma (orçamento / proposta)
-export type ProformaFormData = {
-  documentNumber: string;
-  issueDate: string;
-  customer: CustomerInfo;
-  items: Item[];
-  totals: Required<Totals>;
-  company?: CompanyInfo;
-  payment?: Payment;
-}; // good
-
-// Fatura Recibo
-export type ReceiptInvoice = {
-  documentNumber: string;
-  issueDate: string;
+export type InvoiceData = {
+  id: string;
+  number: string;
+  status: string;
+  subtotal: string;
+  taxAmount: string;
+  discountAmount: string | null;
+  total: string;
+  notes: string | null;
   dueDate: string;
-  customer: CustomerInfo;
-  items: Item[];
-  totals: Required<Totals>;
-  payment: Payment;
-  company?: CompanyInfo;
-  categoryId?: string;
-  orderReference?: string;
-  discount?: number;
-  isPaid: boolean; // por default é true
-  paymentDate?: string;  // data do pagamento total
+  paidAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  paymentMethod: any[];
+  type: string;
+  isPaid: boolean;
+  proformaExpiresAt: string | null;
+  originalInvoiceId: string;
+  receivedValue: string | null;
+  paymentMethodStr: string | null;
+  companyId: string;
+  storeId: string | null;
+  userId: string;
+  clientId: string;
+  discountId: string | null;
+  items: InvoiceItem[];
 };
 
-// fatura
 
-// recibo
-export type ReceiptData = {
-  receiptNumber: string;        // Nº Recibo (ex: RC 2025/0001)
-  costumerName: string
-  issueDate: string;            // Data de criação (ex: 8/11/2025)
-  invoiceValue: number;         // Valor total da fatura
-  discounts?: number;            // Valor descontado
-  receivedValue: number;        // Valor efetivamente recebido
-  taxes?: number;                // Impostos (se houver)
-  operator: string;             // Nome do operador responsável
-  referenceInvoice: string;    // Referência da fatura
-  paymentMethod?: string;       // Método de pagamento (ex: “Transferência”, “Cash”)
-  notes?: string;               // Observações adicionais
+
+export type InvoiceFilters = {
+  sortBy?: string;
+  status?: string;
+  sortOrder?: string;
+  search?: string;
+};
+
+export type InvoiceResponse = InvoiceData & {
+  id: string;
+  status: any;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ReceiptData = InvoiceData & {
+  paymentMethod: PaymentMethod;
 };

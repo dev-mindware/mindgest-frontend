@@ -1,14 +1,15 @@
 "use client";
+
 import { ButtonSubmit, Input, RHFSelect } from "@/components";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReceiptInvoiceFormData, ReceiptInvoiceSchema } from "@/schemas";
+import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import { InvoiceItems } from "./invoice-items";
-import { useEffect, useState } from "react";
-import { SummaryCard } from "../sumary-card";
-import { handleDownloadInvoice } from "@/utils/pdf";
-import { useModal } from "@/stores";
+import { useState } from "react";
 import { InputFetch } from "@/components/common/input-fetch";
+import { invoiceService } from "@/services/invoice-service";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const paymentOptions = [
   { label: "Transferência Bancária", value: "bank_transfer" },
@@ -17,10 +18,21 @@ export const paymentOptions = [
 ];
 
 export function InvoiceForm() {
-  const { openModal } = useModal();
-  
-  // Estado para controlar se o cliente veio da API
+  const router = useRouter();
+
+  // State for client API handling
   const [isClientFromAPI, setIsClientFromAPI] = useState(false);
+  const [clientApiId, setClientApiId] = useState<string | undefined>(undefined);
+
+  // Lifted state for totals calculation
+  const [globalTax, setGlobalTax] = useState(0);
+  const [globalDiscount, setGlobalDiscount] = useState(0);
+  const [invoiceTotals, setInvoiceTotals] = useState({
+    subtotal: 0,
+    taxAmount: 0,
+    discountAmount: 0,
+    total: 0,
+  });
 
   const {
     register,
@@ -28,10 +40,9 @@ export function InvoiceForm() {
     setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
     reset,
-  } = useForm<ReceiptInvoiceFormData>({
-    resolver: zodResolver(ReceiptInvoiceSchema),
+  } = useForm<InvoiceFormData>({
+    resolver: zodResolver(InvoiceSchema),
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
@@ -39,45 +50,79 @@ export function InvoiceForm() {
     },
   });
 
-  const fieldArray = useFieldArray<ReceiptInvoiceFormData, "items">({
+  const fieldArray = useFieldArray<InvoiceFormData, "items">({
     control,
     name: "items",
   });
 
-  // Handler para quando o cliente for selecionado
   const handleClientChange = (id: string | number, fullObject: any | null) => {
-    console.log('ID:', id);
-    console.log('Cliente completo:', JSON.stringify(fullObject, null, 2));
-    
     if (fullObject && fullObject.name) {
-      // Cliente da API - preenche automaticamente os campos
+      // Client from API
       setValue("customer.name", fullObject.name);
       setValue("customer.vatNumber", fullObject.taxNumber || "");
       setValue("customer.address", fullObject.address || "");
+      setValue("customer.phone", fullObject.phone || "");
+      setClientApiId(fullObject.id);
       setIsClientFromAPI(true);
-      
-      console.log('✅ Dados do cliente preenchidos automaticamente:');
-      console.log('   Nome:', fullObject.name);
-      console.log('   NIF:', fullObject.taxNumber || 'N/A');
-      console.log('   Endereço:', fullObject.address || 'N/A');
     } else {
-      // Texto livre - permite digitar manualmente
+      // Manual entry
       setValue("customer.name", typeof id === 'string' ? id : '');
       setValue("customer.vatNumber", "");
       setValue("customer.address", "");
+      setValue("customer.phone", "");
+      setClientApiId(undefined);
       setIsClientFromAPI(false);
-      
-      console.log('📝 Texto livre - usuário pode digitar os dados manualmente');
     }
   };
 
-  async function onSubmit(data: ReceiptInvoiceFormData) {
-    console.log("Invoice:", JSON.stringify(data, null, 2));
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    handleDownloadInvoice(data);
-    openModal("invoice-created");
+  async function onSubmit(data: InvoiceFormData) {
+    // Construct final payload
+    const finalPayload = {
+      issueDate: data.issueDate,
+      dueDate: data.dueDate,
+      customer: isClientFromAPI && clientApiId
+        ? { id: clientApiId }
+        : {
+          name: data.customer.name,
+          phone: data.customer.phone || undefined,
+          address: data.customer.address || undefined,
+          vatNumber: data.customer.vatNumber || undefined,
+        },
+      items: data.items.map((item) => {
+        if (item.isFromAPI && item.id) {
+          return {
+            id: item.id,
+            quantity: item.quantity,
+          };
+        }
+        return {
+          name: item.description,
+          price: item.unitPrice,
+          quantity: item.quantity,
+          type: item.type,
+        };
+      }),
+      // Use calculated totals
+      total: invoiceTotals.total,
+      taxAmount: invoiceTotals.taxAmount,
+      discountAmount: invoiceTotals.discountAmount,
+    };
+
+    console.log("🚀 Final Invoice Payload:", JSON.stringify(finalPayload, null, 2));
+    try {
+      await invoiceService.createInvoice(finalPayload);
+      toast.success("Fatura criada com sucesso!");
+      router.push("/clients/documents");
+    } catch (error) {
+      toast.error("Erro ao criar fatura!");
+      console.error("Error creating invoice:", error);
+    }
+    
+
+    // Reset form and state
     reset();
-    setIsClientFromAPI(false); // Reset do estado ao limpar o formulário
+    setIsClientFromAPI(false);
+    setClientApiId(undefined);
   }
 
   return (
@@ -122,6 +167,17 @@ export function InvoiceForm() {
 
         <div className="relative">
           <Input
+            startIcon="Phone"
+            placeholder="+244 923 456 789"
+            label="Telefone do cliente"
+            {...register("customer.phone")}
+            error={errors.customer?.phone?.message}
+            disabled={isClientFromAPI}
+          />
+        </div>
+
+        <div className="relative">
+          <Input
             startIcon="MapPin"
             placeholder="Luanda"
             label="Endereço do cliente"
@@ -130,26 +186,16 @@ export function InvoiceForm() {
             disabled={isClientFromAPI}
           />
         </div>
-        <div className="relative gap-6">
-        <RHFSelect
-          name="payment.method"
-          label="Método de Pagamento"
-          options={paymentOptions}
-          control={control}
-        />
-        {watch("payment.method") === "bank_transfer" && (
-          <Input
-            label="IBAN"
-            placeholder="Ex: AO06 0000 0000 0000 0000 0000 0"
-            className="md:col-span-2"
-            {...register("payment.bankDetails")}
-            error={errors.payment?.bankDetails?.message}
-          />
-        )}
-      </div>
       </div>
 
-      <InvoiceItems fieldArray={fieldArray} control={control} />
+      <InvoiceItems
+        fieldArray={fieldArray}
+        onTotalsChange={setInvoiceTotals}
+        globalTax={globalTax}
+        setGlobalTax={setGlobalTax}
+        globalDiscount={globalDiscount}
+        setGlobalDiscount={setGlobalDiscount}
+      />
 
       <div className="flex justify-end mt-6">
         <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>

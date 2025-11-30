@@ -9,11 +9,14 @@ import {
 
 type Props<T> = {
   data: T;
-  handleSee: (data: T) => void;
-  handleEdit: (data: T) => void;
-  handleDelete: (data: T) => void;
+  handleSee?: (data: T) => void;
+  handleEdit?: (data: T) => void;
+  handleDelete?: (data: T) => void;
   auxAction?: (data: T) => void;
   auxActionLabel?: string;
+  deleteLabel?: string;
+  editLabel?: string;
+  seeLabel?: string;
 };
 
 export function ButtonOnlyAction<T>({
@@ -22,7 +25,10 @@ export function ButtonOnlyAction<T>({
   handleEdit,
   handleDelete,
   auxAction,
-  auxActionLabel
+  auxActionLabel,
+  deleteLabel,
+  editLabel,
+  seeLabel
 }: Props<T>) {
   return (
     <DropdownMenu>
@@ -37,23 +43,29 @@ export function ButtonOnlyAction<T>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => handleSee(data)}>
-          Detalhes
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleEdit(data)}>
-          Editar
-        </DropdownMenuItem>
+        {handleSee && (
+          <DropdownMenuItem onClick={() => handleSee(data)}>
+            {seeLabel || "Ver"}
+          </DropdownMenuItem>
+        )}
+        {handleEdit && (
+          <DropdownMenuItem onClick={() => handleEdit(data)}>
+            {editLabel || "Editar"}
+          </DropdownMenuItem>
+        )}
         {auxAction && (
           <DropdownMenuItem onClick={() => auxAction(data)}>
             {auxActionLabel}
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem
-          className="text-destructive"
-          onClick={() => handleDelete(data)}
-        >
-          Deletar
-        </DropdownMenuItem>
+        {handleDelete && (
+          <DropdownMenuItem
+            className="text-destructive hover:!bg-destructive/15 hover:!text-destructive"
+            onClick={() => handleDelete(data)}
+          >
+            {deleteLabel || "Deletar"}
+          </DropdownMenuItem>
+        )}
        
       </DropdownMenuContent>
     </DropdownMenu>

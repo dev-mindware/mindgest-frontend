@@ -10,7 +10,7 @@ import {
 } from "@/components/ui";
 import { ReceiptsTable } from "./receipts-list";
 import { ProformasTable } from "./invoice-proform";
-import { InvoicesTable } from "./invoice-list";
+import { InvoiceList } from "./invoice-list";
 
 export function DocumentList() {
   return (
@@ -37,7 +37,7 @@ export function DocumentList() {
 
         <TabsContent value="invoice-tab">
           <div className="hidden w-full md:block">
-            <InvoicesTable />
+            <InvoiceList />
           </div>
         </TabsContent>
         <TabsContent value="proform-tab">
