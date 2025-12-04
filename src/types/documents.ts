@@ -1,3 +1,5 @@
+import { ItemData } from "./items";
+
 export type InvoiceStatus = "Paid" | "Pending" | "Canceled";
 
 export type ContactInfo = {
@@ -24,31 +26,7 @@ export type InvoiceItem = {
   tax: any;
 };
 
-export type ItemData = {
-  id: string;
-  name: string;
-  description: string | null;
-  sku: string | null;
-  barcode: string | null;
-  price: string;
-  cost: string | null;
-  status: string;
-  minStock: number;
-  maxStock: number | null;
-  unit: string;
-  weight: number | null;
-  dimensions: string | null;
-  image: string | null;
-  hasExpiry: boolean | null;
-  expiryDate: string | null;
-  daysToExpiry: number | null;
-  createdAt: string;
-  updatedAt: string;
-  type: string;
-  companyId: string;
-  storeId: string | null;
-  categoryId: string | null;
-};
+
 
 // ========================
 // 💳 PAGAMENTO E PARCELAS

@@ -23,10 +23,6 @@ export function AddDocuments() {
         title="Documentos"
         suTitle="Crie documentos que ajudaram no controlo das suas atividades."
       />
-      <code>
-
-        {JSON.stringify(JSON.parse(invoice as string), null, 2)}
-      </code>
 
       <Tabs defaultValue={currentTab} className="w-full">
         <TabsList className="flex justify-center md:justify-start">

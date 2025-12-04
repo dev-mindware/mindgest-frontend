@@ -1,4 +1,4 @@
-import { ItemData } from "@/types";
+import { CreateItemData } from "@/types";
 import { itemsService } from "@/services/items-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage} from "@/utils/messages";
@@ -7,7 +7,7 @@ export function useAddItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: ItemData) => itemsService.addItem(data),
+    mutationFn: (data: CreateItemData) => itemsService.addItem(data),
     onSuccess: () => {
       SucessMessage("Item adicionado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
@@ -19,7 +19,7 @@ export function useUpdateItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<ItemData> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreateItemData> }) =>
       itemsService.updateItem(id, data as any),
     onSuccess: () => {
       SucessMessage("Item atualizado com sucesso!");

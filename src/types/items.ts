@@ -15,33 +15,60 @@ export type ItemsFilters = {
   search?: string;
 };
 
-export interface ItemData {
+export type ItemData = {
+  id: string;
   name: string;
+  description: string;
+  company: string;
+  sku: string;
+  barcode: string;
+  price: number;
+  cost: number;
+  status: string;
+  minStock: number;
+  maxStock: number;
+  unit: string;
+  weight: number;
+  dimensions: string;
+  image: string;
+  hasExpiry: boolean;
+  expiryDate: string;
+  daysToExpiry: number;
+  createdAt: string;
+  updatedAt: string;
+  type?: string;
+  companyId: string;
+  storeId: string;
+  categoryId: string;
+};
+
+
+export type CreateItemData = {
+  name: string;
+  type: "PRODUCT" | "SERVICE";
+  categoryId: string;
+  companyId: string;
+  price: number;
+  cost: number;
   description?: string;
+  image?: string;
+  storeId?: string;
   sku?: string;
   barcode?: string;
-  price: number; // preço de venda
-  cost: number; // preço de compra
   minStock?: number;
   maxStock?: number;
   unit?: string;
   weight?: number;
   dimensions?: string;
-  image?: string;
-  type: ItemType;
-  company?: string;
-  companyId?: string;
-  storeId?: string;
-  category?: string;
-  categoryId?: string;
   hasExpiry?: boolean;
   expiryDate?: string;
   daysToExpiry?: number;
-}
+};
 
 // Resposta do backend: reaproveita ItemData e adiciona campos de controle
 export type ItemResponse = ItemData & {
   id: string;
+  category: string;
   status: ItemStatus;
   createdAt: string;
   updatedAt: string;
