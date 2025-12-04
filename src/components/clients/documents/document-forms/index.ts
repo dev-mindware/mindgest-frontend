@@ -1,3 +1,3 @@
-export * from "./invoice-form"
-export * from "./proform-form"
-export * from "./receipt-form"
+export * from "./invoice-form";
+export * from "./invoice-receipt-form";
+export * from "./proforma-form";

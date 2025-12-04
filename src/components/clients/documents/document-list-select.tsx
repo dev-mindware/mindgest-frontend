@@ -8,9 +8,9 @@ import {
   TabsTrigger,
   Button,
 } from "@/components/ui";
-import { ReceiptsTable } from "./receipts-list";
-import { ProformasTable } from "./invoice-proform";
-import { InvoiceList } from "./invoice-list";
+import { InvoiceReceiptList, InvoiceList, ReceiptList, ProformaList } from "./lists";
+
+
 
 export function DocumentList() {
   return (
@@ -24,7 +24,7 @@ export function DocumentList() {
         <div className="flex items-center justify-between w-full">
           <TabsList className="flex justify-center md:justify-start">
             <TabsTrigger value="invoice-tab">Fatura Normal</TabsTrigger>
-            <TabsTrigger value="receipt-tab">Fatura Recibo</TabsTrigger>
+            <TabsTrigger value="invoice-receipt-tab">Fatura Recibo</TabsTrigger>
             <TabsTrigger value="proform-tab">Fatura Proforma</TabsTrigger>
             <TabsTrigger value="only-receipt-tab">Recibos</TabsTrigger>
           </TabsList>
@@ -42,12 +42,17 @@ export function DocumentList() {
         </TabsContent>
         <TabsContent value="proform-tab">
           <div className="hidden w-full md:block">
-            <ProformasTable />
+            <ProformaList />
           </div>
         </TabsContent>
-        <TabsContent value="receipt-tab">
+        <TabsContent value="invoice-receipt-tab">
           <div className="hidden w-full md:block">
-            <ReceiptsTable />
+            <InvoiceReceiptList />
+          </div>
+        </TabsContent>
+        <TabsContent value="only-receipt-tab">
+          <div className="hidden w-full md:block">
+            <ReceiptList />
           </div>
         </TabsContent>
       </Tabs>

@@ -2,24 +2,24 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ErrorMessage } from "@/utils/messages";
 import { useModal, currentInvoiceStore } from "@/stores";
 import { ReceiptFormData, ReceiptSchema } from "@/schemas";
-import { useGenerateReceipt } from "@/hooks/invoice";
 import { Button, Input, GlobalModal, ButtonSubmit, RHFSelect } from "@/components";
+import { receiptService } from "@/services/receipt-service";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const paymentOptions = [
-  { label: "Transferência Bancária", value: "bank_transfer" },
-  { label: "Dinheiro", value: "cash" },
-  { label: "Cartão", value: "card" },
+    { label: "Dinheiro", value: "CASH" },
+    { label: "Cartão", value: "CARD" },
+    { label: "Transferência", value: "TRANSFER" },
 ];
 
-export function ReceiptModal() {
+export function GenerateReceiptModal() {
     const { closeModal, open } = useModal();
     const isOpen = open["generate-receipt"];
     const { currentInvoice } = currentInvoiceStore();
-
-    const { mutateAsync: generateReceipt, isPending: isGenerating } = useGenerateReceipt();
+    const queryClient = useQueryClient();
 
     const {
         reset,
@@ -27,21 +27,39 @@ export function ReceiptModal() {
         watch,
         handleSubmit,
         control,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<ReceiptFormData>({
         resolver: zodResolver(ReceiptSchema),
         mode: "onChange",
         defaultValues: {
             issueDate: new Date().toISOString().split("T")[0],
+            paymentMethod: "CASH",
         },
     });
 
+    useEffect(() => {
+        if (currentInvoice && isOpen) {
+            setValue("total", parseFloat(currentInvoice.total) || 0);
+            setValue("originalInvoiceId", currentInvoice.id);
+        }
+    }, [currentInvoice, isOpen, setValue]);
+
     async function onSubmit(data: ReceiptFormData) {
+        if (!currentInvoice?.id) {
+            toast.error("Fatura não selecionada");
+            return;
+        }
+
         try {
-            await generateReceipt(currentInvoice?.id, data);
+            await receiptService.generateReceipt(currentInvoice.id, data);
+            toast.success("Recibo gerado com sucesso!");
+            queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+            queryClient.invalidateQueries({ queryKey: ["receipts"] });
             handleCancel();
         } catch (error: any) {
-            ErrorMessage(error?.response?.data?.message || "Ocorreu um erro ao gerar o recibo.");
+            toast.error(error?.response?.data?.message || "Erro ao gerar recibo");
+            console.error("Error generating receipt:", error);
         }
     }
 
@@ -59,43 +77,57 @@ export function ReceiptModal() {
             title="Gerar Recibo"
             className="!max-h-[85vh] !w-max"
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid gap-4 sm:grid-cols-2">
                     <Input
-                        label="Data de Pagamento"
+                        label="Data de Emissão"
                         type="date"
                         startIcon="Calendar"
                         {...register("issueDate")}
                         error={errors.issueDate?.message}
                     />
 
-                    <div className="relative gap-6">
-                        <RHFSelect
-                            name="paymentMethod.method"
-                            label="Método de Pagamento"
-                            options={paymentOptions}
-                            control={control}
-                        />
-                        {watch("paymentMethod.method") === "bank_transfer" && (
-                            <Input
-                                label="IBAN"
-                                placeholder="Ex: AO06 0000 0000 0000 0000 0000 0"
-                                className="md:col-span-2"
-                                {...register("paymentMethod.bankDetails")}
-                                error={errors.paymentMethod?.bankDetails?.message}
-                            />
-                        )}
-                    </div>
+                    <Input
+                        label="Total"
+                        type="number"
+                        step="0.01"
+                        startIcon="DollarSign"
+                        {...register("total", { valueAsNumber: true })}
+                        error={errors.total?.message}
+                    />
+                    <Input
+                        label="Valor Recebido"
+                        type="number"
+                        step="0.01"
+                        startIcon="DollarSign"
+                        {...register("receivedValue", { valueAsNumber: true })}
+                        error={errors.receivedValue?.message}
+                    />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <RHFSelect
+                        name="paymentMethod"
+                        label="Método de Pagamento"
+                        options={paymentOptions}
+                        control={control}
+                    />
+                </div>
+
+                <div className="col-span-2">
+                    <Input
+                        label="Observações (Opcional)"
+                        placeholder="Ex: Pagamento recebido para pedido #12345"
+                        {...register("notes")}
+                        error={errors.notes?.message}
+                    />
                 </div>
 
                 <div className="flex justify-end gap-4 mt-5">
                     <Button type="button" variant="outline" onClick={handleCancel}>
                         Cancelar
                     </Button>
-                    <ButtonSubmit
-                        className="w-max"
-                        isLoading={isGenerating}
-                    >
+                    <ButtonSubmit className="w-max" isLoading={isSubmitting}>
                         Gerar Recibo
                     </ButtonSubmit>
                 </div>

@@ -50,11 +50,10 @@ export type ItemData = {
   categoryId: string | null;
 };
 
-
 // ========================
 // 💳 PAGAMENTO E PARCELAS
 // ========================
-export type PaymentMethod = "Cash" | "Card" | "Transfer";;
+export type PaymentMethod = "Cash" | "Card" | "Transfer";
 // Estado do pagamento
 export type PaymentStatus = "unpaid" | "paid";
 
@@ -62,8 +61,123 @@ export type PaymentStatus = "unpaid" | "paid";
 export type Payment = {
   method: PaymentMethod;
   bankDetails?: string;
-  status?: PaymentStatus;      // estado do pagamento
-  totalPaid?: number;           // soma já paga
+  status?: PaymentStatus; // estado do pagamento
+  totalPaid?: number; // soma já paga;
+};
+
+export type InvoicePayload = {
+  issueDate: string;
+  dueDate: string;
+  customer:
+    | {
+        id: string;
+        name?: undefined;
+        phone?: undefined;
+        address?: undefined;
+        vatNumber?: undefined;
+      }
+    | {
+        name: string;
+        phone: string | undefined;
+        address: string | undefined;
+        vatNumber?: string | undefined;
+        id?: undefined;
+      };
+  items: (
+    | {
+        id: string;
+        quantity: number;
+        name?: undefined;
+        price?: undefined;
+        type?: undefined;
+      }
+    | {
+        name: string | undefined;
+        price: number;
+        quantity: number;
+        type: "PRODUCT" | "SERVICE";
+        id?: undefined;
+      }
+  )[];
+  total: number;
+  taxAmount: number;
+  discountAmount: number;
+};
+
+export type InvoiceReceiptPayload = {
+  issueDate: string;
+  customer:
+    | {
+        id: string;
+        name?: undefined;
+        phone?: undefined;
+        address?: undefined;
+        email?: undefined;
+      }
+    | {
+        name: string;
+        phone: string | undefined;
+        address: string | undefined;
+        email?: string | undefined;
+        id?: undefined;
+      };
+  items: (
+    | {
+        id: string;
+        quantity: number;
+        name?: undefined;
+        price?: undefined;
+        type?: undefined;
+      }
+    | {
+        name: string | undefined;
+        price: number;
+        quantity: number;
+        type: "PRODUCT" | "SERVICE";
+        id?: undefined;
+      }
+  )[];
+  total: number;
+  taxAmount: number;
+  discountAmount: number;
+};
+
+export type ProformaPayload = {
+  issueDate: string;
+  customer:
+    | {
+        id: string;
+        name?: undefined;
+        phone?: undefined;
+        address?: undefined;
+        email?: undefined;
+      }
+    | {
+        name: string;
+        phone: string | undefined;
+        address: string | undefined;
+        email?: string | undefined;
+        id?: undefined;
+      };
+  items: (
+    | {
+        id: string;
+        quantity: number;
+        name?: undefined;
+        price?: undefined;
+        type?: undefined;
+      }
+    | {
+        name: string | undefined;
+        price: number;
+        quantity: number;
+        type: "PRODUCT" | "SERVICE";
+        id?: undefined;
+      }
+  )[];
+  total: number;
+  taxAmount: number;
+  discountAmount: number;
 };
 
 // ========================
@@ -97,8 +211,6 @@ export type InvoiceData = {
   items: InvoiceItem[];
 };
 
-
-
 export type InvoiceFilters = {
   sortBy?: string;
   status?: string;
@@ -108,6 +220,9 @@ export type InvoiceFilters = {
 
 export type InvoiceResponse = InvoiceData & {
   id: string;
+  client: {
+    name: string;
+  };
   status: any;
   createdAt: string;
   updatedAt: string;

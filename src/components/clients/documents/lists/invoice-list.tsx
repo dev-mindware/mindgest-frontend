@@ -10,11 +10,13 @@ import {
   ButtonOnlyAction,
   Badge,
 } from "@/components";
-import { InvoiceResponse, ManagerResponse } from "@/types";
+import { InvoiceResponse } from "@/types";
 import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
-import { InvoiceFiltersTSX } from "./common";
+import { InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
+import { GenerateReceiptModal } from "../generate-receipt-modal";
+
 
 
 export function InvoiceList() {
@@ -50,6 +52,7 @@ export function InvoiceList() {
     {
       key: "total",
       header: "Valor",
+      render: (_, item) => `${parseFloat(item.total).toFixed(2)} AOA`
     },
     {
       key: "createdAt",
@@ -142,7 +145,8 @@ export function InvoiceList() {
         emptyMessage="Nenhum gerente encontrado"
       />
 
-      
+      <GenerateReceiptModal />
+
     </div>
   );
 }

@@ -2,11 +2,10 @@
 import { useState } from "react";
 import { TitleList } from "@/components/common";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
-import { InvoiceForm, ProformaForm, ReceiptForm } from "./document-forms";
-import { InvoiceCreatedModal } from "./Invoice-created-modal";
+import { InvoiceForm, InvoiceReceiptForm, ProformaForm } from "./document-forms";
 import { useSearchParams } from "next/navigation";
 
-type TabsAloweds = "invoice-tab" | "receipt-invoice-tab" | "proform-tab";
+type TabsAloweds = "invoice-tab" | "invoice-receipt-tab" | "proform-tab";
 
 export function AddDocuments() {
   const invoice = useSearchParams().get("invoice");
@@ -38,8 +37,8 @@ export function AddDocuments() {
             Fatura
           </TabsTrigger>
           <TabsTrigger
-            value="receipt-tab"
-            onClick={() => setCurrentTab("receipt-invoice-tab")}
+            value="invoice-receipt-tab"
+            onClick={() => setCurrentTab("invoice-receipt-tab")}
           >
             Fatura Recibo
           </TabsTrigger>
@@ -54,15 +53,13 @@ export function AddDocuments() {
         <TabsContent value="invoice-tab">
           <InvoiceForm />
         </TabsContent>
-        <TabsContent value="receipt-invoice-tab">
-          <ReceiptForm />
+        <TabsContent value="invoice-receipt-tab">
+          <InvoiceReceiptForm />
         </TabsContent>
         <TabsContent value="proform-tab">
           <ProformaForm />
         </TabsContent>
       </Tabs>
-
-      <InvoiceCreatedModal type={currentTab} />
     </div>
   );
 }

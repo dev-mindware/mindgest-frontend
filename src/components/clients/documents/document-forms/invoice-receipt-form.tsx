@@ -3,15 +3,21 @@
 import { ButtonSubmit, Input } from "@/components";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InvoiceFormData, InvoiceSchema } from "@/schemas";
-import { InvoiceItems } from "./items/invoice-items";
+import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useState } from "react";
 import { InputFetch } from "@/components/common/input-fetch";
-import { invoiceService } from "@/services/invoice-service";
+import { invoiceReceiptService } from "@/services/invoice-receipt-service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { InvoiceReceiptItems } from "./items/invoice-receipt-items";
 
-export function InvoiceForm() {
+export const paymentOptions = [
+  { label: "Transferência Bancária", value: "bank_transfer" },
+  { label: "Dinheiro", value: "cash" },
+  { label: "Cartão", value: "card" },
+];
+
+export function InvoiceReceiptForm() {
   const router = useRouter();
 
   // State for client API handling
@@ -35,17 +41,20 @@ export function InvoiceForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<InvoiceFormData>({
-    resolver: zodResolver(InvoiceSchema),
+  } = useForm<InvoiceReceiptFormData>({
+    resolver: zodResolver(InvoiceReceiptSchema),
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       items: [],
-      isPaid: false,
+      isPaid: true,
+      payment: {
+        method: "cash",
+      },
     },
   });
 
-  const fieldArray = useFieldArray<InvoiceFormData, "items">({
+  const fieldArray = useFieldArray<InvoiceReceiptFormData, "items">({
     control,
     name: "items",
   });
@@ -70,11 +79,10 @@ export function InvoiceForm() {
     }
   };
 
-  async function onSubmit(data: InvoiceFormData) {
+  async function onSubmit(data: InvoiceReceiptFormData) {
     // Construct final payload
     const finalPayload = {
       issueDate: data.issueDate,
-      dueDate: data.dueDate,
       customer: isClientFromAPI && clientApiId
         ? { id: clientApiId }
         : {
@@ -104,9 +112,9 @@ export function InvoiceForm() {
 
     console.log("🚀 Final Invoice Payload:", JSON.stringify(finalPayload, null, 2));
     try {
-      await invoiceService.createInvoice(finalPayload);
+      await invoiceReceiptService.createInvoiceReceipt(finalPayload);
       toast.success("Fatura criada com sucesso!");
-      router.push("/client/documents");
+      router.push("/client/documents",);
     } catch (error) {
       toast.error("Erro ao criar fatura!");
       console.error("Error creating invoice:", error);
@@ -131,12 +139,6 @@ export function InvoiceForm() {
           {...register("issueDate")}
           error={errors.issueDate?.message}
         />
-        <Input
-          type="date"
-          label="Data de Vencimento"
-          {...register("dueDate")}
-          error={errors.dueDate?.message}
-        />
 
         <InputFetch
           startIcon="User"
@@ -149,15 +151,15 @@ export function InvoiceForm() {
           debounceMs={300}
         />
 
-        <div className="relative">
+        {/* <div className="relative">
           <Input
-            label="NIF"
+            label="Email"
             placeholder="123456789"
-            {...register("customer.vatNumber")}
-            error={errors.customer?.vatNumber?.message}
+            {...register("customer.email")}
+            error={errors.customer?.email?.message}
             disabled={isClientFromAPI}
           />
-        </div>
+        </div> */}
 
         <div className="relative">
           <Input
@@ -182,7 +184,7 @@ export function InvoiceForm() {
         </div>
       </div>
 
-      <InvoiceItems
+      <InvoiceReceiptItems
         fieldArray={fieldArray}
         onTotalsChange={setInvoiceTotals}
         globalTax={globalTax}
@@ -193,7 +195,7 @@ export function InvoiceForm() {
 
       <div className="flex justify-end mt-6">
         <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>
-          Criar Fatura
+          Criar Fatura Recibo
         </ButtonSubmit>
       </div>
     </form>

@@ -24,15 +24,16 @@ export const CompanySchema = z.object({
     .optional(),
 });
 
+export type CompanyFormData = z.infer<typeof CompanySchema>;
+
 const CustomerSchema = z.object({
   name: z
     .string()
     .min(3, "O nome do cliente precisa ter pelo menos 3 caracteres"),
-  vatNumber: z
-    .string()
-    .optional(),
+  vatNumber: z.string().optional(),
   address: z.string().min(5, "O endereço deve ter pelo menos 5 caracteres"),
   phone: z.string().optional(),
+  email: z.string().email("O email informado não é válido").optional(),
 });
 
 const ItemSchema = z.object({
@@ -74,7 +75,7 @@ const PaymentSchema = z.object({
  * Invoice (Fatura normal)
  */
 
-export const ReceiptInvoiceSchema = z.object({
+export const InvoiceSchema = z.object({
   company: CompanySchema.optional(),
   customer: CustomerSchema,
   // documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
@@ -83,47 +84,58 @@ export const ReceiptInvoiceSchema = z.object({
   dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
   orderReference: z.string().optional(),
   items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
+  isPaid: z.boolean(),
+  discount: z.number().optional(),
+  liquidationDate: z.string().optional(),
+});
+export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
+
+/**
+ * Proforma (Fatura Proforma)
+ */
+export const ProformaSchema = z.object({
+  company: CompanySchema.optional(),
+  customer: CustomerSchema,
+  categoryId: z.union([z.string(), z.number()]).optional(),
+  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
+  dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
+  orderReference: z.string().optional(),
+  items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
+  discount: z.number().optional(),
+});
+export type ProformaFormData = z.infer<typeof ProformaSchema>;
+
+/**
+ * InvoiceReceipt (Fatura Recibo)
+ */
+
+export const InvoiceReceiptSchema = z.object({
+  company: CompanySchema.optional(),
+  customer: CustomerSchema,
+  // documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
+  categoryId: z.union([z.string(), z.number()]).optional(),
+  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
+  orderReference: z.string().optional(),
+  items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
   payment: PaymentSchema,
   isPaid: z.boolean(),
   discount: z.number().optional(),
   liquidationDate: z.string().optional(),
 });
-export type ReceiptInvoiceFormData = z.infer<typeof ReceiptInvoiceSchema>;
+export type InvoiceReceiptFormData = z.infer<typeof InvoiceReceiptSchema>;
 
 /**
- * Proforma
+ * Receipt (Recibo gerado de fatura)
  */
-export const ProformaSchema = z.object({
-  company: CompanySchema.optional(),
-  customer: CustomerSchema,
-  // documentNumber: z.string().min(1, "O número da proforma é obrigatório"),
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
-  payment: PaymentSchema.optional(),
-});
-export type ProformaFormData = z.infer<typeof ProformaSchema>;
-
-export type CompanyFormData = z.infer<typeof CompanySchema>;
-// ==============================
-// 💵 Recibo - Estrutura Completa
-// ==============================
-
-export const InvoiceSchema = z.object({
-  company: CompanySchema.optional(),
-  customer: CustomerSchema,
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
-  items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
-  discount: z.number().optional(),
-});
-export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
-
 export const ReceiptSchema = z.object({
   issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  total: z.number().min(1, "O total é obrigatório"),
-  taxAmount: z.number().min(1, "O imposto é obrigatório"),
-  discountAmount: z.number().min(1, "O desconto é obrigatório"),
-  paymentMethod: PaymentSchema,
+  total: z.number().positive("O total deve ser maior que 0"),
+  receivedValue: z.number().positive("O valor recebido deve ser maior que 0"),
+  paymentMethod: z.enum(["CASH", "CARD", "TRANSFER"], {
+    errorMap: () => ({ message: "O método de pagamento é obrigatório" }),
+  }),
+  originalInvoiceId: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export type ReceiptFormData = z.infer<typeof ReceiptSchema>;
