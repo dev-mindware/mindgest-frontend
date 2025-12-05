@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Icon } from "@/components";
+import { Icon, TsunamiOnly } from "@/components";
 import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
@@ -53,13 +53,13 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       component: <CollaboratorsPageContent />,
       category: "workplace",
     },
-    {
-      id: "tab-6",
-      label: "Subscrição",
-      icon: "Sparkles",
-      component: <Subscriptions />,
-      category: "workplace",
-    },
+    // {
+    //   id: "tab-6",
+    //   label: "Subscrição",
+    //   icon: "Sparkles",
+    //   component: <Subscriptions />,
+    //   category: "workplace",
+    // },
   ];
 
   const enabledTabs = tabs.filter((tab) => !disabledTabs.includes(tab.id));
@@ -120,6 +120,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
           <div className="h-screen bg-sidebar rounded-md">
             <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
               <div className="p-4 space-y-5">
+                <TsunamiOnly>
                 {generalTabs.length > 0 && (
                   <>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -130,10 +131,10 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
                     </div>
                   </>
                 )}
-
                 {generalTabs.length > 0 && workplaceTabs.length > 0 && (
                   <div className="h-px bg-border" />
                 )}
+                </TsunamiOnly>
 
                 {workplaceTabs.length > 0 && (
                   <>
