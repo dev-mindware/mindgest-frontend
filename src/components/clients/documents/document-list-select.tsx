@@ -1,6 +1,8 @@
 "use client";
+
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { TitleList } from "@/components/common";
 import {
   Tabs,
@@ -9,10 +11,32 @@ import {
   TabsTrigger,
   Button,
 } from "@/components/ui";
-import { InvoiceReceiptList, InvoiceList, ReceiptList, ProformaList } from "./lists";
+import {
+  InvoiceReceiptList,
+  InvoiceList,
+  ReceiptList,
+  ProformaList,
+} from "./lists";
+
+type DocumentTab =
+  | "invoice"
+  | "invoice-receipt"
+  | "proforma"
+  | "only-receipt";
 
 export function DocumentList() {
-  const [activeTab, setActiveTab] = useState("invoice");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = (searchParams.get("tab") as DocumentTab) ?? "invoice";
+
+  const handleTabChange = useCallback(
+    (value: DocumentTab | string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("tab", value);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
 
   return (
     <div className="space-y-6">
@@ -21,44 +45,34 @@ export function DocumentList() {
         suTitle="Crie documentos que ajudaram no controlo das suas atividades"
       />
 
-      <Tabs 
-        defaultValue="invoice" 
-        className="w-full"
-        onValueChange={setActiveTab}
-      >
-        <div className="flex items-center justify-between w-full">
-          <TabsList className="flex justify-center md:justify-start">
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <div className="flex items-center justify-between">
+          <TabsList>
             <TabsTrigger value="invoice">Fatura Normal</TabsTrigger>
             <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
-            <TabsTrigger value="proform">Fatura Proforma</TabsTrigger>
+            <TabsTrigger value="proforma">Fatura Proforma</TabsTrigger>
             <TabsTrigger value="only-receipt">Recibos</TabsTrigger>
           </TabsList>
+
           <Link href={`/client/documents/new?tab=${activeTab}`}>
-            <Button variant="default">Criar Documento</Button>
+            <Button>Criar Documento</Button>
           </Link>
         </div>
 
-        <div className="mt-6" />
-
         <TabsContent value="invoice">
-          <div className="hidden w-full md:block">
-            <InvoiceList />
-          </div>
+          <InvoiceList />
         </TabsContent>
-        <TabsContent value="proform">
-          <div className="hidden w-full md:block">
-            <ProformaList />
-          </div>
+
+        <TabsContent value="proforma">
+          <ProformaList />
         </TabsContent>
+
         <TabsContent value="invoice-receipt">
-          <div className="hidden w-full md:block">
-            <InvoiceReceiptList />
-          </div>
+          <InvoiceReceiptList />
         </TabsContent>
+
         <TabsContent value="only-receipt">
-          <div className="hidden w-full md:block">
-            <ReceiptList />
-          </div>
+          <ReceiptList />
         </TabsContent>
       </Tabs>
     </div>

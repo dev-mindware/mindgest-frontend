@@ -70,9 +70,11 @@ export function ClientsList() {
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          handleDelete={handlerDeleteClient}
-          handleEdit={handlerEditClient}
-          handleSee={handlerDetailsClient}
+          actions={[
+            {label: "Ver detalhes", onClick: handlerDetailsClient},
+            {label: "Editar", onClick: handlerEditClient},
+            {label: "Deletar", onClick: handlerDeleteClient},
+          ]}
         />
       ),
     },

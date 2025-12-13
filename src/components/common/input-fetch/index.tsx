@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Search, icons } from "lucide-react";
+import { icons } from "lucide-react";
 import { api } from "@/services/api";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
@@ -38,13 +38,10 @@ export function InputFetch({
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // React Query para buscar dados
   const { data: options = [], isLoading: loading, error } = useQuery({
     queryKey: ['input-fetch', endpoint, debouncedValue],
     queryFn: async () => {
       if (debouncedValue.trim().length < minChars) return [];
-      
-      console.log(`🔍 Buscando em: ${endpoint}?search=${encodeURIComponent(debouncedValue)}`);
       
       const response = await api.get(`${endpoint}?search=${encodeURIComponent(debouncedValue)}`);
       const responseData = response.data;
@@ -138,7 +135,7 @@ export function InputFetch({
   // Log imediato quando selectedOption mudar
   useEffect(() => {
     if (selectedOption) {
-      console.log('🎯 Estado atualizado: item da API selecionado');
+      console.log('Estado atualizado: item da API selecionado');
     }
   }, [selectedOption]);
 

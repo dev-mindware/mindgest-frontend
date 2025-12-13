@@ -5,27 +5,26 @@ import {
   RequestError,
   GenericTable,
   ListSkeleton,
-  ItemStatusBadge,
   EmptyState,
   ButtonOnlyAction,
-  Badge,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
-import { formatDateTime } from "@/utils";
+import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
-import { InvoiceFiltersTSX } from "../common";
+import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
 
-
-
 export function InvoiceList() {
-  const { search } = useURLSearchParams("search");
+  const { search } = useURLSearchParams("search-invoice");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
-  const { handlerGenerateReceipt, handlerCancelInvoice, handlerDetailsInvoice } =
-    useInvoiceActions();
+  const {
+    handlerGenerateReceipt,
+    handlerCancelInvoice,
+    handlerDetailsInvoice,
+  } = useInvoiceActions();
   const {
     data: invoices,
     total,
@@ -38,11 +37,10 @@ export function InvoiceList() {
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/normal",
     queryKey: ["invoice-normal"],
-    queryParams: { ...filters, page },
+    queryParams: { ...filters /* debounceSearch */, page },
   });
 
   const columns: Column<InvoiceResponse>[] = [
-    { key: "number", header: "Número da Fatura" },
     {
       key: "client",
       header: "Cliente",
@@ -53,12 +51,17 @@ export function InvoiceList() {
     {
       key: "total",
       header: "Valor",
-      render: (_, item) => `${parseFloat(item.total).toFixed(2)} AOA`
+      render: (_, item) => `${formatCurrency(item.total)}`,
     },
     {
       key: "items",
       header: "Total de Itens",
       render: (_, item) => item.items.length,
+    },
+    {
+      key: "status",
+      header: "Estado",
+      render: (_, item) => <DocumentStatusBadge status={item.status} />,
     },
     {
       key: "createdAt",
@@ -70,44 +73,29 @@ export function InvoiceList() {
       ),
     },
     {
-      key: "status",
-      header: "Status",
-      render: (_: any, item: any) => {
-
-        const labelMap: Record<string, string> = {
-          DRAFT: "Pendente",
-          CANCELLED: "Cancelada",
-          PAID: "Paga",
-        };
-
-        const variantMap: Record<string, "default" | "success" | "destructive" | "outline"> = {
-          DRAFT: "default",
-          CANCELLED: "destructive",
-          PAID: "success",
-        };
-
-        const status = item.status ?? "DRAFT";
-
-        return (
-          <Badge variant={variantMap[status] ?? "outline"}>
-            {labelMap[status] || status}
-          </Badge>
-        );
-      },
-    },
-
-    {
       key: "action",
       header: "Ação",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          deleteLabel="Cancelar Fatura"
-          editLabel="Gerar Recibo"
-          seeLabel="Ver Fatura"
-          handleDelete={handlerCancelInvoice}
-          handleEdit={handlerGenerateReceipt}
-          handleSee={handlerDetailsInvoice}
+          actions={[
+            {
+              label: "Cancelar Fatura",
+              onClick: handlerCancelInvoice,
+            },
+            {
+              label: "Gerar Recibo",
+              onClick: handlerGenerateReceipt,
+            },
+            {
+              label: "Ver Fatura",
+              onClick: handlerDetailsInvoice,
+            },
+            {
+              label: "Emitir Nota",
+              onClick: () => console.log("emitir nota"),
+            },
+          ]}
         />
       ),
     },
@@ -117,18 +105,13 @@ export function InvoiceList() {
 
   if (isError) {
     return (
-      <RequestError refetch={refetch} message="Erro ao carregar os gerentes" />
+      <RequestError refetch={refetch} message="Erro ao carregar as faturas" />
     );
   }
 
   if (invoices?.length == 0)
     return (
       <div className="justify-start mt-6 space-y-8">
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-            <InvoiceFiltersTSX />
-          </div>
-        </div>
         <EmptyState
           description="Adicione novas facturas"
           title="Sem Facturas"
@@ -141,7 +124,7 @@ export function InvoiceList() {
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <InvoiceFiltersTSX />
+          <InvoiceFiltersTSX type="invoice" searchText="search-invoice" />
         </div>
       </div>
 
@@ -156,7 +139,6 @@ export function InvoiceList() {
         goToPreviousPage={goToPreviousPage}
         emptyMessage="Nenhum gerente encontrado"
       />
-
       <GenerateReceiptModal />
       <CancelInvoiceModal />
     </div>

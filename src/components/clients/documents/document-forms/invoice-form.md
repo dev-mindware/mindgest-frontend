@@ -1,55 +1,77 @@
 "use client";
-
-import { ButtonSubmit, Input } from "@/components";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ProformaFormData, ProformaSchema } from "@/schemas";
-import { InvoiceItems } from "./items/invoice-items";
-import { useState } from "react";
-import { InputFetch } from "@/components/common/input-fetch";
-import { proformaService } from "@/services/proforma-service";
 import { toast } from "sonner";
+import { ButtonSubmit, Input } from "@/components";
+import {
+  useForm,
+  useFieldArray,
+  useWatch,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InvoiceFormData, InvoiceSchema } from "@/schemas";
+import { InvoiceItems } from "./items/invoice-items";
+import { InputFetch } from "@/components/common/input-fetch";
+import { invoiceService } from "@/services/invoice-service";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export function ProformaForm() {
+export function InvoiceForm() {
   const router = useRouter();
-
-  // State for client API handling
   const [isClientFromAPI, setIsClientFromAPI] = useState(false);
-  const [clientApiId, setClientApiId] = useState<string | undefined>(undefined);
-
-  // Lifted state for totals calculation
-  const [globalTax, setGlobalTax] = useState(0);
-  const [globalRetention, setGlobalRetention] = useState(0);
-  const [globalDiscount, setGlobalDiscount] = useState(0);
-  const [invoiceTotals, setInvoiceTotals] = useState({
-    subtotal: 0,
-    taxAmount: 0,
-    retentionAmount: 0,
-    discountAmount: 0,
-    total: 0,
-  });
-
   const {
-    register,
-    control,
-    setValue,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<ProformaFormData>({
-    resolver: zodResolver(ProformaSchema),
-    mode: "onChange",
-    defaultValues: {
-      issueDate: new Date().toISOString().split("T")[0],
-      items: [],
+  register,
+  control,
+  setValue,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+  reset,
+} = useForm<InvoiceFormData>({
+  resolver: zodResolver(InvoiceSchema),
+  mode: "onChange",
+  defaultValues: {
+    // Valores padrão para campos obrigatórios
+    issueDate: "",
+    dueDate: "",
+    customer: {
+      name: "",
+      address: "",
+      taxNumber: "",
+      phone: "",
+      email: "",
     },
-  });
+    items: [],
+    isPaid: false,
+    globalTax: 0,
+    globalRetention: 0,
+    globalDiscount: 0,
+    invoiceTotals: {
+      subtotal: 0,
+      taxAmount: 0,
+      retentionAmount: 0,
+      discountAmount: 0,
+      total: 0,
+    },
+    
+  },
+});
 
-  const fieldArray = useFieldArray<ProformaFormData, "items">({
-    control,
+  const fieldArray = useFieldArray<InvoiceFormData, "items">({
+    control: control as any,
     name: "items",
   });
+
+  const globalTax = useWatch({ control, name: "globalTax" });
+  const globalRetention = useWatch({ control, name: "globalRetention" });
+  const globalDiscount = useWatch({ control, name: "globalDiscount" });
+  const clientApiId = useWatch({ control, name: "clientApiId" });
+  const invoiceTotals = useWatch({ control, name: "invoiceTotals" });
+
+/* 
+    clientApiId: z.string().optional(),
+    isClientFromAPI: z.boolean().default(false), 
+    globalTax: z.number().optional().default(0),
+    globalRetention: z.number().optional().default(0),
+    globalDiscount: z.number().optional().default(0),
+    invoiceTotals: InvoiceTotalsSchema, */
 
   const handleClientChange = (id: string | number, fullObject: any | null) => {
     if (fullObject && fullObject.name) {
@@ -58,7 +80,7 @@ export function ProformaForm() {
       setValue("customer.taxNumber", fullObject.taxNumber || "");
       setValue("customer.address", fullObject.address || "");
       setValue("customer.phone", fullObject.phone || "");
-      setClientApiId(fullObject.id);
+      setValue("clientApiId", fullObject.id);
       setIsClientFromAPI(true);
     } else {
       // Manual entry
@@ -66,19 +88,19 @@ export function ProformaForm() {
       setValue("customer.taxNumber", "");
       setValue("customer.address", "");
       setValue("customer.phone", "");
-      setClientApiId(undefined);
+      setValue("clientApiId", undefined);
       setIsClientFromAPI(false);
     }
   };
 
-  async function onSubmit(data: ProformaFormData) {
+  async function onSubmit(data: InvoiceFormData) {
     // Construct final payload
     const finalPayload = {
       issueDate: data.issueDate,
       dueDate: data.dueDate,
       customer:
-        isClientFromAPI && clientApiId
-          ? { id: clientApiId }
+        isClientFromAPI && data.clientApiId
+          ? { id: data.clientApiId }
           : {
               name: data.customer.name,
               phone: data.customer.phone || undefined,
@@ -99,29 +121,27 @@ export function ProformaForm() {
         };
       }),
       // Use calculated totals
-      total: invoiceTotals.total,
-      taxAmount: invoiceTotals.taxAmount,
-      retentionAmount: invoiceTotals.retentionAmount,
-      discountAmount: invoiceTotals.discountAmount,
+      total: data.invoiceTotals.total,
+      taxAmount: data.invoiceTotals.taxAmount,
+      retentionAmount: data.invoiceTotals.retentionAmount,
+      discountAmount: data.invoiceTotals.discountAmount,
     };
 
     console.log(
-      "🚀 Final Proforma Payload:",
+      "🚀 Final Invoice Payload:",
       JSON.stringify(finalPayload, null, 2)
     );
     try {
-      await proformaService.createProforma(finalPayload);
-      toast.success("Proforma criada com sucesso!");
+      await invoiceService.createInvoice(finalPayload);
+      toast.success("Fatura criada com sucesso!"); // criar um hook q chama o service
       router.push("/client/documents");
     } catch (error) {
-      toast.error("Erro ao criar proforma!");
-      console.error("Error creating proforma:", error);
+      toast.error("Erro ao criar fatura!");
+      console.error("Error creating invoice:", error);
     }
 
     // Reset form and state
     reset();
-    setIsClientFromAPI(false);
-    setClientApiId(undefined);
   }
 
   return (
@@ -135,7 +155,6 @@ export function ProformaForm() {
           label="Data de Emissão"
           {...register("issueDate")}
           error={errors.issueDate?.message}
-          disabled
         />
         <Input
           type="date"
@@ -143,6 +162,7 @@ export function ProformaForm() {
           {...register("dueDate")}
           error={errors.dueDate?.message}
         />
+
         <InputFetch
           startIcon="User"
           label="Cliente"
@@ -157,7 +177,7 @@ export function ProformaForm() {
         <div className="relative">
           <Input
             label="NIF"
-            placeholder="123456789"
+            placeholder="5566798754"
             {...register("customer.taxNumber")}
             error={errors.customer?.taxNumber?.message}
             disabled={isClientFromAPI}
@@ -167,7 +187,7 @@ export function ProformaForm() {
         <div className="relative">
           <Input
             startIcon="Phone"
-            placeholder=" 923 456 789"
+            placeholder="923 456 789"
             label="Telefone do cliente"
             {...register("customer.phone")}
             error={errors.customer?.phone?.message}
@@ -188,19 +208,19 @@ export function ProformaForm() {
       </div>
 
       <InvoiceItems
-        fieldArray={fieldArray as any}
-        onTotalsChange={setInvoiceTotals}
-        globalTax={globalTax}
-        setGlobalTax={setGlobalTax}
-        globalRetention={globalRetention}
-        setGlobalRetention={setGlobalRetention}
-        globalDiscount={globalDiscount}
-        setGlobalDiscount={setGlobalDiscount}
+        globalTax={globalTax || 0}
+        fieldArray={fieldArray}
+        setGlobalTax={(val) => setValue("globalTax", val)}
+        globalDiscount={globalDiscount || 0}
+        globalRetention={globalRetention || 0}
+        onTotalsChange={(totals) => setValue("invoiceTotals", totals)}
+        setGlobalDiscount={(val) => setValue("globalDiscount", val)}
+        setGlobalRetention={(val) => setValue("globalRetention", val)}
       />
 
       <div className="flex justify-end mt-6">
         <ButtonSubmit className="sm:w-max" isLoading={isSubmitting}>
-          Criar Proforma
+          Criar Fatura
         </ButtonSubmit>
       </div>
     </form>

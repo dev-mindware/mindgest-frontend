@@ -1,14 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { TitleList } from "@/components/common";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
-import { InvoiceForm, InvoiceReceiptForm, ProformaForm } from "./document-forms";
-import { useSearchParams } from "next/navigation";
+import {
+  InvoiceForm,
+  InvoiceReceiptForm,
+  ProformaForm,
+} from "./document-forms";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type TabsAloweds = "invoice" | "invoice-receipt" | "proform";
 
 export function AddDocuments() {
-  const invoice = useSearchParams().get("invoice");
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const current_Tab = useSearchParams().get("tab");
   const [currentTab, setCurrentTab] = useState<TabsAloweds>(() => {
     if (current_Tab) {
@@ -17,6 +22,15 @@ export function AddDocuments() {
     return "invoice";
   });
 
+  const handleTabChange = useCallback(
+    (value: TabsAloweds | string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("tab", value);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
+
   return (
     <div className="space-y-6">
       <TitleList
@@ -24,12 +38,13 @@ export function AddDocuments() {
         suTitle="Crie documentos que ajudaram no controlo das suas atividades."
       />
 
-      <Tabs defaultValue={currentTab} className="w-full">
+      <Tabs
+        defaultValue={currentTab}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="flex justify-center md:justify-start">
-          <TabsTrigger
-            value="invoice"
-            onClick={() => setCurrentTab("invoice")}
-          >
+          <TabsTrigger value="invoice" onClick={() => setCurrentTab("invoice")}>
             Fatura
           </TabsTrigger>
           <TabsTrigger
@@ -38,10 +53,7 @@ export function AddDocuments() {
           >
             Fatura Recibo
           </TabsTrigger>
-          <TabsTrigger
-            value="proform"
-            onClick={() => setCurrentTab("proform")}
-          >
+          <TabsTrigger value="proform" onClick={() => setCurrentTab("proform")}>
             Fatura Proforma
           </TabsTrigger>
         </TabsList>

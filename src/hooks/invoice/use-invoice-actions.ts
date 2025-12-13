@@ -37,7 +37,19 @@ export function useProformaActions() {
     openModal("delete-proforma");
     setCurrentProforma(proforma);
   }
+ 
+  function handlerDetailsProforma(proforma: InvoiceResponse) {
+    // abrir o link da fatura
+  }
+  
+  function hanlderEditProforma(proforma: InvoiceResponse) {
+    // levar ora o formulario da proforma com o id e com os dados já pre renderizados
+  }
+
+
   return {
     handlerDeleteProforma,
+    handlerDetailsProforma,
+    hanlderEditProforma
   };
 }

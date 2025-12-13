@@ -6,15 +6,15 @@ Proforma Invoice API handles **quotations and estimates** (non-binding offers). 
 
 ### Key Differences from Other Invoice Types
 
-| Feature | Proforma | Normal Invoice | Invoice Receipt |
-|---------|----------|---|---|
-| **isPaid** | `false` (always) | `false` (default) | `true` (always) |
-| **Status** | `DRAFT` (default) | `DRAFT` (default) | `PAID` (always) |
-| **Use Case** | Quotations, Estimates | Billing, Invoices | Point-of-Sale, Sales |
-| **Customer** | Optional | Optional | Recommended |
-| **Items** | Required | Required | Required |
-| **Expiry Date** | Supported | N/A | N/A |
-| **Payment Terms** | Supports due date | Supports due date | N/A |
+| Feature           | Proforma              | Normal Invoice    | Invoice Receipt      |
+| ----------------- | --------------------- | ----------------- | -------------------- |
+| **isPaid**        | `false` (always)      | `false` (default) | `true` (always)      |
+| **Status**        | `DRAFT` (default)     | `DRAFT` (default) | `PAID` (always)      |
+| **Use Case**      | Quotations, Estimates | Billing, Invoices | Point-of-Sale, Sales |
+| **Customer**      | Optional              | Optional          | Recommended          |
+| **Items**         | Required              | Required          | Required             |
+| **Expiry Date**   | Supported             | N/A               | N/A                  |
+| **Payment Terms** | Supports due date     | Supports due date | N/A                  |
 
 ---
 
@@ -36,7 +36,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
         "quantity": 2
       },
       {
-        "id": "clm0item2", 
+        "id": "clm0item2",
         "quantity": 1
       }
     ],
@@ -80,8 +80,8 @@ curl -X POST http://localhost:3000/invoice/proforma \
     }
   ],
   "subtotal": 2629.97,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "totalAmount": 2879.97,
   "notes": null,
   "createdAt": "2025-11-24T10:30:00.000Z",
@@ -103,7 +103,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
     "customer": {
       "name": "Maria Santos",
       "email": "maria@example.com",
-      "phone": "+244 923 456 789",
+      "phone": " 923 456 789",
       "address": "Rua Principal, 456, Luanda"
     },
     "items": [
@@ -158,13 +158,13 @@ curl -X POST http://localhost:3000/invoice/proforma \
       "id": "clm0item790",
       "name": "Installation Service",
       "quantity": 1,
-      "unitPrice": 100.00,
-      "total": 100.00
+      "unitPrice": 100.0,
+      "total": 100.0
     }
   ],
   "subtotal": 1099.99,
-  "taxAmount": 150.00,
-  "discountAmount": 0.00,
+  "taxAmount": 150.0,
+  "discountAmount": 0.0,
   "totalAmount": 1249.99,
   "notes": "Valid for 30 days - Subject to stock availability",
   "createdAt": "2025-11-24T10:35:00.000Z",
@@ -226,21 +226,21 @@ curl -X POST http://localhost:3000/invoice/proforma \
       "id": "clm0item101",
       "name": "iPad Pro 12.9",
       "quantity": 5,
-      "unitPrice": 1099.00,
-      "total": 5495.00
+      "unitPrice": 1099.0,
+      "total": 5495.0
     },
     {
       "id": "clm0item102",
       "name": "Bulk Discount Service",
       "quantity": 1,
-      "unitPrice": 150.00,
-      "total": 150.00
+      "unitPrice": 150.0,
+      "total": 150.0
     }
   ],
-  "subtotal": 5645.00,
-  "taxAmount": 0.00,
-  "discountAmount": 100.00,
-  "totalAmount": 5545.00,
+  "subtotal": 5645.0,
+  "taxAmount": 0.0,
+  "discountAmount": 100.0,
+  "totalAmount": 5545.0,
   "notes": "Bulk order quotation - 10% additional discount if ordered by Dec 8",
   "createdAt": "2025-11-24T10:40:00.000Z",
   "updatedAt": "2025-11-24T10:40:00.000Z"
@@ -308,8 +308,8 @@ curl -X POST http://localhost:3000/invoice/proforma \
     }
   ],
   "subtotal": 1359.97,
-  "taxAmount": 200.00,
-  "discountAmount": 0.00,
+  "taxAmount": 200.0,
+  "discountAmount": 0.0,
   "totalAmount": 1559.97,
   "notes": "Quick estimate - for RFQ response",
   "createdAt": "2025-11-24T10:45:00.000Z",
@@ -406,8 +406,8 @@ curl -X GET http://localhost:3000/invoice/proforma/clm0proforma123 \
     }
   ],
   "subtotal": 2629.97,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "totalAmount": 2879.97,
   "notes": null,
   "createdAt": "2025-11-24T10:30:00.000Z",
@@ -422,6 +422,7 @@ curl -X GET http://localhost:3000/invoice/proforma/clm0proforma123 \
 ### Missing Required Fields
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -432,6 +433,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -445,6 +447,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ### Non-existent Customer
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -460,6 +463,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -473,6 +477,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ### Non-existent Item
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -488,6 +493,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -501,12 +507,14 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ### Proforma Invoice Not Found
 
 **Request:**
+
 ```bash
 curl -X GET http://localhost:3000/invoice/proforma/non-existent-id \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 **Response (404):**
+
 ```json
 {
   "statusCode": 404,
@@ -520,6 +528,7 @@ curl -X GET http://localhost:3000/invoice/proforma/non-existent-id \
 ### Invalid Quantity
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -535,6 +544,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -630,16 +640,16 @@ const proforma = await proformaService.findOne(proformaId);
 // Create normal invoice with same details
 const normalInvoice = await normalInvoiceService.create({
   customer: { id: proforma.clientId },
-  items: proforma.items.map(item => ({
+  items: proforma.items.map((item) => ({
     id: item.itemsId,
-    quantity: item.quantity
+    quantity: item.quantity,
   })),
-  issueDate: new Date().toISOString().split('T')[0],
-  dueDate: proforma.dueDate?.toISOString().split('T')[0],
+  issueDate: new Date().toISOString().split("T")[0],
+  dueDate: proforma.dueDate?.toISOString().split("T")[0],
   total: proforma.total,
   taxAmount: proforma.taxAmount,
   discountAmount: proforma.discountAmount,
-  notes: `Converted from proforma ${proforma.number}: ${proforma.notes}`
+  notes: `Converted from proforma ${proforma.number}: ${proforma.notes}`,
 });
 ```
 
@@ -743,16 +753,19 @@ curl -X POST http://localhost:3000/invoice/proforma \
 ## Integration Points
 
 ### With Normal Invoice
+
 - Convert accepted proformas to normal invoices
 - Track quotation-to-invoice ratio
 - Monitor conversion rates
 
 ### With Invoice Receipt
+
 - Quick quote-to-sale workflow for walk-in customers
 - Immediate conversion for point-of-sale items
 - Simplified checkout process
 
 ### Reporting
+
 - Quote pipeline analysis
 - Expired quotations tracking
 - Quotation acceptance rates

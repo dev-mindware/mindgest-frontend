@@ -23,9 +23,9 @@ import { ServiceCardView } from "./service-card-view";
 import { DetailsServiceModal, ServiceModal } from "./service-modals";
 
 export function ServiceList() {
-  const { search } = useURLSearchParams("search-items");
+  const { search } = useURLSearchParams(`service_search`);
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, setViewMode, viewMode, page, setPage } = useItemsFilters();
+  const { filters, setViewMode, viewMode, page, setPage } = useItemsFilters("service");
   const { handlerDeleteService, handlerDetailsService, handlerEditService } =
     useServiceActions();
   const {
@@ -38,9 +38,14 @@ export function ServiceList() {
     isError,
     refetch,
   } = usePagination<ItemResponse>({
-    endpoint: "/items?type=SERVICE",
-    queryKey: ["items"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    endpoint: "/items",
+    queryKey: ["items", "service"],
+    queryParams: {
+      type: "SERVICE",
+      ...filters,
+      search: debounceSearch,
+      page,
+    },
   });
 
   const columns: Column<ItemResponse>[] = [
@@ -58,10 +63,13 @@ export function ServiceList() {
       key: "sku",
       header: "SKU",
       render: (_, item) => (
-        <div className="text-sm text-foreground">
-          {item.sku || "---"}
-        </div>
+        <div className="text-sm text-foreground">{item.sku || "---"}</div>
       ),
+    },
+    {
+      key: "status",
+      header: "Estado",
+      render: (_, item) => <ItemStatusBadge status={item.status} />,
     },
     {
       key: "createdAt",
@@ -72,20 +80,18 @@ export function ServiceList() {
         </div>
       ),
     },
-    {
-      key: "status",
-      header: "Status",
-      render: (_, item) => <ItemStatusBadge status={item.status} />,
-    },
+
     {
       key: "action",
       header: "Ação",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          handleDelete={handlerDeleteService}
-          handleEdit={handlerEditService}
-          handleSee={handlerDetailsService}
+          actions={[
+            { label: "Ver detalhes", onClick: handlerDetailsService },
+            { label: "Editar", onClick: handlerEditService },
+            { label: "Deletar", onClick: handlerDeleteService },
+          ]}
         />
       ),
     },
@@ -97,14 +103,14 @@ export function ServiceList() {
   if (isError) {
     return (
       <RequestError refetch={refetch} message="Erro ao carregar os produtos" />
-    )
+    );
   }
 
   return (
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <ItemsFiltersTSX />
+          <ItemsFiltersTSX prefix="service" />
           <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
         </div>
       </div>

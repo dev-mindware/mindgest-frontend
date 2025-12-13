@@ -3,38 +3,50 @@ import { useState } from "react";
 import { ItemsFilters, ItemStatus } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export function useItemsFilters() {
+export function useItemsFilters(prefix: string) {
   const router = useRouter();
   const query = useSearchParams();
   const [viewMode, setViewMode] = useState<"card" | "table">("table");
 
+  const getKey = (key: string) => `${prefix}_${key}`;
+
   const filters: ItemsFilters = {
-    status: (query.get("status") as ItemStatus) || undefined,
-    categoryId: query.get("categoryId") || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
+    status: (query.get(getKey("status")) as ItemStatus) || undefined,
+    categoryId: query.get(getKey("categoryId")) || undefined,
+    sortBy: query.get(getKey("sortBy")) || undefined,
+    sortOrder: query.get(getKey("sortOrder")) || undefined,
   };
 
+  const page = Number(query.get(getKey("page"))) || 1;
+
   function setFilters(newFilters: Partial<ItemsFilters>) {
-    const updated = { ...filters, ...newFilters };
-    const searchParams = new URLSearchParams();
-
-    if (updated.status) searchParams.set("status", updated.status);
-    if (updated.categoryId) searchParams.set("categoryId", updated.categoryId);
-    if (updated.sortBy) searchParams.set("sortBy", updated.sortBy);
-    if (updated.sortOrder) searchParams.set("sortOrder", updated.sortOrder);
-    searchParams.set("page", "1"); // reset page ao trocar filtro
-
-    router.push(`?${searchParams.toString()}`);
-  }
-
-  function setPage(page: number) {
     const searchParams = new URLSearchParams(query.toString());
-    searchParams.set("page", String(page));
-    router.push(`?${searchParams.toString()}`);
+
+    // Você passa { status: 'ACTIVE' }, o código converte para "product_status=ACTIVE" na URL
+    if (newFilters.status !== undefined) {
+      if (newFilters.status) searchParams.set(getKey("status"), newFilters.status);
+      else searchParams.delete(getKey("status"));
+    }
+    
+    if (newFilters.categoryId !== undefined) {
+      if (newFilters.categoryId) searchParams.set(getKey("categoryId"), newFilters.categoryId);
+      else searchParams.delete(getKey("categoryId"));
+    }
+
+    if (newFilters.sortBy) searchParams.set(getKey("sortBy"), newFilters.sortBy);
+    if (newFilters.sortOrder) searchParams.set(getKey("sortOrder"), newFilters.sortOrder);
+    
+    // Reseta a página específica deste prefixo
+    searchParams.set(getKey("page"), "1"); 
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
   }
 
-  const page = Number(query.get("page")) || 1;
+  function setPage(newPage: number) {
+    const searchParams = new URLSearchParams(query.toString());
+    searchParams.set(getKey("page"), String(newPage));
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
 
   return { filters, setFilters, viewMode, setViewMode, page, setPage };
 }
