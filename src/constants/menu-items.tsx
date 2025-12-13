@@ -114,13 +114,13 @@ export const menuItems: MenuStructure = {
       minPlan: "Base",
       items: [
         {
-          name: "Vendas simplificadas",
-          url: "/client/reports/simple",
+          name: "Vendas",
+          url: "/client/reports/sales",
         },
         {
-          name: "Vendas filtradas por data",
-          url: "/client/reports/by-date",
-          minPlan: "Tsunami",
+          name: "Clientes",
+          url: "/client/reports/clients",
+          // minPlan: "Tsunami",
         },
         {
           name: "Controle de Acesso",
