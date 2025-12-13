@@ -88,18 +88,19 @@ export const InvoiceSchema = z.object({
   // Campos existentes
   company: CompanySchema.optional(),
   customer: CustomerSchema,
+  // documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
   categoryId: z.union([z.string(), z.number()]).optional(),
   issueDate: z.string().min(1, "A data de emissão é obrigatória"),
   dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
   orderReference: z.string().optional(),
   items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
-  isPaid: z.boolean().default(false),
+  isPaid: z.boolean(),
   discount: z.number().optional(),
   liquidationDate: z.string().optional(),
 
   // Novos campos para substituir os useStates
   // Estes campos são usados internamente para cálculos e controle de UI
-  isClientFromAPI: z.boolean().default(false),
+ /*  isClientFromAPI: z.boolean().default(false),
   clientApiId: z.string().optional(),
   globalTax: z.number().default(0),
   globalRetention: z.number().default(0),
@@ -110,7 +111,7 @@ export const InvoiceSchema = z.object({
     retentionAmount: 0,
     discountAmount: 0,
     total: 0,
-  }),
+  }), */
 });
 
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
