@@ -39,7 +39,7 @@ export function FilterPopover({ label, icon, options, value, onChange }: FilterP
               onCheckedChange={(checked) => onChange(checked ? opt.value : undefined)}
             />
             <label htmlFor={`${label}-${opt.value}`} className="text-sm cursor-pointer">
-              {opt.label}
+              {opt.label} 
             </label>
           </div>
         ))}

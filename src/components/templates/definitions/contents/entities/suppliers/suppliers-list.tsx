@@ -26,36 +26,36 @@ export function SuppliersList() {
         nome: "TechnoLda",
         tipoFornecedor: "Empresa",
         nif: "500123456",
-        telefone: "+244 923 456 789"
+        telefone: " 923 456 789",
       },
       {
         id: "2",
         nome: "Carlos Mendes",
         tipoFornecedor: "Particular",
         nif: "123456789",
-        telefone: "+244 912 345 678"
+        telefone: " 912 345 678",
       },
       {
         id: "3",
         nome: "Distribuidora Angola",
         tipoFornecedor: "Empresa",
         nif: "500987654",
-        telefone: "+244 924 567 890"
+        telefone: " 924 567 890",
       },
       {
         id: "4",
         nome: "Isabel Rodrigues",
         tipoFornecedor: "Particular",
         nif: "987654321",
-        telefone: "+244 913 456 789"
+        telefone: " 913 456 789",
       },
       {
         id: "5",
         nome: "Comércio & Cia",
         tipoFornecedor: "Empresa",
         nif: "500456789",
-        telefone: "+244 925 678 901"
-      }
+        telefone: " 925 678 901",
+      },
     ];
 
     setIsLoading(true);
@@ -100,9 +100,7 @@ export function SuppliersList() {
     {
       accessorKey: "nif",
       header: "NIF",
-      cell: ({ row }) => (
-        <div className="font-mono">{row.getValue("nif")}</div>
-      ),
+      cell: ({ row }) => <div className="font-mono">{row.getValue("nif")}</div>,
       size: 120,
     },
     {
@@ -135,13 +133,15 @@ export function SuppliersList() {
             {
               label: "Contactar",
               icon: <Icon name="Phone" size={16} />,
-              onClick: (row) => console.log("Contactar fornecedor:", row.original),
+              onClick: (row) =>
+                console.log("Contactar fornecedor:", row.original),
               shortcut: "⌘C",
             },
             {
               label: "Excluir",
               icon: <Icon name="Trash2" size={16} />,
-              onClick: (row) => console.log("Excluir fornecedor:", row.original),
+              onClick: (row) =>
+                console.log("Excluir fornecedor:", row.original),
               variant: "destructive",
               shortcut: "⌘⌫",
             },

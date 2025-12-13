@@ -21,6 +21,13 @@ export const itemsStatusOptions = [
   // { value: "OUT_OF_STOCK", label: "Fora do Stock" },
 ];
 
+export const invoiceStatusOptions = [
+  { value: "PAID", label: "Paga" },
+  { value: "DRAFT", label: "Pendente" },
+  // { value: "PENDING", label: "Pendente" },
+  { value: "CANCELLED", label: "Cancelada" },
+];
+
 export const itemsByOption = [
   { value: "name", label: "Nome" },
   { value: "sku", label: "SKU" },

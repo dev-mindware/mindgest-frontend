@@ -61,6 +61,7 @@ const ItemSchema = z.object({
 /**
  * Pagamento
  */
+
 const PaymentSchema = z.object({
   method: z.enum(["bank_transfer", "cash", "card"], {
     errorMap: () => ({ message: "O método de pagamento é obrigatório" }),
@@ -75,7 +76,16 @@ const PaymentSchema = z.object({
  * Invoice (Fatura normal)
  */
 
+const InvoiceTotalsSchema = z.object({
+  subtotal: z.number().default(0),
+  taxAmount: z.number().default(0),
+  retentionAmount: z.number().default(0),
+  discountAmount: z.number().default(0),
+  total: z.number().default(0),
+});
+
 export const InvoiceSchema = z.object({
+  // Campos existentes
   company: CompanySchema.optional(),
   customer: CustomerSchema,
   // documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
@@ -87,8 +97,25 @@ export const InvoiceSchema = z.object({
   isPaid: z.boolean(),
   discount: z.number().optional(),
   liquidationDate: z.string().optional(),
+
+  // Novos campos para substituir os useStates
+  // Estes campos são usados internamente para cálculos e controle de UI
+ /*  isClientFromAPI: z.boolean().default(false),
+  clientApiId: z.string().optional(),
+  globalTax: z.number().default(0),
+  globalRetention: z.number().default(0),
+  globalDiscount: z.number().default(0),
+  invoiceTotals: InvoiceTotalsSchema.default({
+    subtotal: 0,
+    taxAmount: 0,
+    retentionAmount: 0,
+    discountAmount: 0,
+    total: 0,
+  }), */
 });
+
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
+
 
 /**
  * Proforma (Fatura Proforma)

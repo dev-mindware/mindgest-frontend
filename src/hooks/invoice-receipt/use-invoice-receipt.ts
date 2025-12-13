@@ -1,17 +1,22 @@
-import { InvoiceData } from "@/types";
-import { invoiceReceiptService } from "@/services/invoice-receipt-service";
+import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SucessMessage } from "@/utils/messages";
+import { receiptService } from "@/services/receipt-service";
+import { ReceiptFormData } from "@/schemas";
 
+type Data = {
+  data: ReceiptFormData;
+  originalInvoiceId: string;
+}
 
-
-export function viewInvoice(invoice: InvoiceData) {
+export function useGenerateReceipt() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => invoiceReceiptService.getInvoiceReceipt(id),
+    mutationFn: ({ data, originalInvoiceId } :Data) =>  receiptService.generateReceipt(originalInvoiceId, data),
     onSuccess: () => {
-      SucessMessage("Fatura visualizada com sucesso!");
+      toast.success("Recibo gerado com sucesso!");
+       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["receipts"] });
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
     },
   });

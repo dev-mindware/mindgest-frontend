@@ -3,6 +3,7 @@
 ## 1. Create Invoice with Existing Customer and Items
 
 ### Request
+
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -17,7 +18,7 @@ curl -X POST http://localhost:3000/invoice/normal \
         "quantity": 2
       },
       {
-        "id": "clm0item2", 
+        "id": "clm0item2",
         "quantity": 1
       }
     ],
@@ -30,6 +31,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 ### Response
+
 ```json
 {
   "id": "clm0invoice123",
@@ -59,8 +61,8 @@ curl -X POST http://localhost:3000/invoice/normal \
     }
   ],
   "subtotal": 2629.97,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "totalAmount": 2879.97,
   "notes": null,
   "createdAt": "2025-11-24T10:30:00.000Z",
@@ -73,6 +75,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ## 2. Create Invoice with New Customer and New Items
 
 ### Request
+
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -81,7 +84,7 @@ curl -X POST http://localhost:3000/invoice/normal \
     "customer": {
       "name": "Maria Santos",
       "email": "maria@example.com",
-      "phone": "+244 923 456 789",
+      "phone": " 923 456 789",
       "address": "Rua Principal, 456, Luanda",
       "companyId": "clm0company123"
     },
@@ -112,6 +115,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 ### Response
+
 ```json
 {
   "id": "clm0invoice456",
@@ -136,13 +140,13 @@ curl -X POST http://localhost:3000/invoice/normal \
       "id": "clm0item790",
       "name": "Tech Support Service",
       "quantity": 2,
-      "unitPrice": 50.00,
-      "total": 100.00
+      "unitPrice": 50.0,
+      "total": 100.0
     }
   ],
   "subtotal": 1099.99,
-  "taxAmount": 150.00,
-  "discountAmount": 0.00,
+  "taxAmount": 150.0,
+  "discountAmount": 0.0,
   "totalAmount": 1249.99,
   "notes": "Delivery on 2025-12-20",
   "createdAt": "2025-11-24T10:35:00.000Z",
@@ -155,6 +159,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ## 3. Create Invoice with Mixed Customer and Items
 
 ### Request
+
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -184,6 +189,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 ### Response
+
 ```json
 {
   "id": "clm0invoice789",
@@ -201,21 +207,21 @@ curl -X POST http://localhost:3000/invoice/normal \
       "id": "clm0item101",
       "name": "iPad Pro 12.9",
       "quantity": 3,
-      "unitPrice": 1099.00,
-      "total": 3297.00
+      "unitPrice": 1099.0,
+      "total": 3297.0
     },
     {
       "id": "clm0item102",
       "name": "Shipping Service",
       "quantity": 1,
-      "unitPrice": 25.00,
-      "total": 25.00
+      "unitPrice": 25.0,
+      "total": 25.0
     }
   ],
-  "subtotal": 3322.00,
-  "taxAmount": 0.00,
-  "discountAmount": 15.00,
-  "totalAmount": 3307.00,
+  "subtotal": 3322.0,
+  "taxAmount": 0.0,
+  "discountAmount": 15.0,
+  "totalAmount": 3307.0,
   "notes": "Rush delivery requested",
   "createdAt": "2025-11-24T10:40:00.000Z",
   "updatedAt": "2025-11-24T10:40:00.000Z"
@@ -227,12 +233,14 @@ curl -X POST http://localhost:3000/invoice/normal \
 ## 4. List Invoices with Pagination
 
 ### Request
+
 ```bash
 curl -X GET "http://localhost:3000/invoice/normal?page=1&limit=20&clientId=clm0client123" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ### Response
+
 ```json
 {
   "data": [
@@ -270,12 +278,14 @@ curl -X GET "http://localhost:3000/invoice/normal?page=1&limit=20&clientId=clm0c
 ## 5. Get Single Invoice
 
 ### Request
+
 ```bash
 curl -X GET http://localhost:3000/invoice/normal/clm0invoice123 \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ### Response
+
 ```json
 {
   "id": "clm0invoice123",
@@ -305,8 +315,8 @@ curl -X GET http://localhost:3000/invoice/normal/clm0invoice123 \
     }
   ],
   "subtotal": 2629.97,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "totalAmount": 2879.97,
   "notes": null,
   "createdAt": "2025-11-24T10:30:00.000Z",
@@ -319,6 +329,7 @@ curl -X GET http://localhost:3000/invoice/normal/clm0invoice123 \
 ## Error Responses
 
 ### Missing Required Fields
+
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -329,6 +340,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -338,6 +350,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 ### Non-existent Customer
+
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -353,6 +366,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -362,12 +376,14 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 ### Invoice Not Found
+
 ```bash
 curl -X GET http://localhost:3000/invoice/normal/non-existent-id \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 **Response (404):**
+
 ```json
 {
   "statusCode": 404,
@@ -377,6 +393,7 @@ curl -X GET http://localhost:3000/invoice/normal/non-existent-id \
 ```
 
 ### Invalid Email
+
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -394,6 +411,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -407,6 +425,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 ## Validation Rules Summary
 
 ### Customer
+
 - `id` (optional): Existing customer ID
 - `name` (conditional): Required if creating new customer, min 2 chars, max 100 chars
 - `email` (optional): Valid email format
@@ -416,6 +435,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 - `companyId` (conditional): Required if creating new customer
 
 ### Items
+
 - `id` (optional): Existing item ID
 - `name` (conditional): Required if creating new item, min 2 chars, max 200 chars
 - `price` (conditional): Required if creating new item, positive number, max 2 decimals
@@ -429,6 +449,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 - And 10+ other optional fields (minStock, maxStock, unit, weight, dimensions, image, etc.)
 
 ### Invoice
+
 - `issueDate` (required): ISO 8601 date
 - `dueDate` (optional): ISO 8601 date
 - `total` (required): Positive number with max 2 decimals
@@ -449,4 +470,3 @@ curl -X POST http://localhost:3000/invoice/normal \
 6. **Include notes for special instructions** - Helps with fulfillment
 7. **Handle pagination properly** - Use page/limit for large datasets
 8. **Store invoice IDs** - For future reference and updates
-

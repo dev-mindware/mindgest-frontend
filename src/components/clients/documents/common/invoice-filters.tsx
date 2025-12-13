@@ -1,18 +1,22 @@
 "use client";
 import { Button } from "@/components/ui";
 import { ItemStatus } from "@/types/items";
-import {
-  usersByOption,
-  itemsStatusOptions,
-} from "@/constants";
+import { usersByOption, invoiceStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useManagerFilters } from "@/hooks/collaborators";
 
-export function InvoiceFiltersTSX() {
+type InvoiceType = "proforma" | "receipt" | "invoice-receipt" | "invoice";
+
+type Props = {
+  type?: InvoiceType;
+  searchText: string;
+};
+
+export function InvoiceFiltersTSX({ searchText, type }: Props) {
   const { filters, setFilters } = useManagerFilters();
-  const { search, setSearch } = useURLSearchParams("search");
+  const { search, setSearch } = useURLSearchParams(searchText);
 
   function clearFilters() {
     setFilters({
@@ -25,6 +29,8 @@ export function InvoiceFiltersTSX() {
   const hasFilter =
     filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
 
+  const showStatusFilter = type === "invoice";
+
   return (
     <SearchHandlerWrapper
       search={search}
@@ -32,13 +38,15 @@ export function InvoiceFiltersTSX() {
       className="flex flex-col sm:flex-row"
     >
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
-        <FilterPopover
-          icon="Tag"
-          label="Status"
-          options={itemsStatusOptions}
-          value={filters.status}
-          onChange={(status) => setFilters({ status: status as ItemStatus })}
-        />
+        {showStatusFilter && (
+          <FilterPopover
+            icon="Tag"
+            label="Status"
+            value={filters.status}
+            options={invoiceStatusOptions}
+            onChange={(status) => setFilters({ status })}
+          />
+        )}
 
         <FilterPopover
           icon="List"

@@ -11,9 +11,9 @@ import { Icon, RequestError, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 
-export function ItemsFiltersTSX() {
-  const { filters, setFilters } = useItemsFilters();
-  const { search, setSearch } = useURLSearchParams("search-items");
+export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
+  const { filters, setFilters } = useItemsFilters(prefix);
+  const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
   const { categories, isLoading, error, refetch } = useGetCategories();
 
   function clearFilters() {
@@ -23,6 +23,7 @@ export function ItemsFiltersTSX() {
       categoryId: undefined,
       sortOrder: undefined,
     });
+    setSearch("")
   }
 
   const hasFilter =

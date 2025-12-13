@@ -20,7 +20,7 @@ import { formatCurrency, parseCurrency } from "@/utils";
 
 export function EditProductModal() {
   const { openModal, closeModal, open } = useModal();
-  const isOpen = ["edit-product"];
+  const isOpen = open["edit-product"];
   const { currentProduct } = currentProductStore();
   const {
     register,

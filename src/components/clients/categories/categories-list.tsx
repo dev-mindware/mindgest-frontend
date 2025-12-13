@@ -82,11 +82,15 @@ export function CategoriesList() {
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          handleDelete={handlerDeleteCategory}
-          handleEdit={handlerEditCategory}
-          handleSee={handlerDetailsCategory}
-          auxAction={toggleStatusCategory}
-          auxActionLabel={item.isActive ? "Desativar" : "Ativar"}
+          actions={[
+            { label: "Cancelar", onClick: handlerDeleteCategory },
+            { label: "Editar", onClick: handlerEditCategory },
+            { label: "Ver detalhes", onClick: handlerDetailsCategory },
+            {
+              label: `${item.isActive} ? "Desativar" : "Ativar"`,
+              onClick: toggleStatusCategory,
+            },
+          ]}
         />
       ),
     },

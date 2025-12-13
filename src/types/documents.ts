@@ -206,6 +206,18 @@ export type InvoiceResponse = InvoiceData & {
   updatedAt: string;
 };
 
-export type ReceiptData = InvoiceData & {
+export type ReceiptData = {
+  id: string;
+  number: string;
+  customerId: string;
+  total: string;
+  paymentMethodStr: string;
+  client: {
+    name: string;
+  };
+  originalInvoiceId: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
   paymentMethod: PaymentMethod;
 };

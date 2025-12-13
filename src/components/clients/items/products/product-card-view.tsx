@@ -37,13 +37,15 @@ export function ProductCardView({ product }: ProductCardProps) {
           </div>
           <ButtonOnlyAction
             data={product}
-            handleDelete={handlerDeleteProduct}
-            handleEdit={handlerEditProduct}
-            handleSee={handlerDetailsProduct}
-            auxAction={toggleStatusProduct}
-            auxActionLabel={
-              product.status === "ACTIVE" ? "Desativar" : "Ativar"
-            }
+            actions={[
+              { label: "Ver detalhes", onClick: handlerDetailsProduct },
+              { label: "Editar", onClick: handlerEditProduct },
+              { label: "Deletar", onClick: handlerDeleteProduct },
+              {
+                label: `${product.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
+                onClick: toggleStatusProduct,
+              },
+            ]}
           />
         </div>
       </CardHeader>

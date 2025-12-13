@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+
+import { useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Tabs,
   TabsList,
@@ -18,24 +20,31 @@ import { useModal } from "@/stores";
 
 type ItemTab = "product" | "service";
 
+const TAB_LABELS: Record<ItemTab, string> = {
+  product: "Produto",
+  service: "Serviço",
+};
+
+const TAB_MODALS: Record<ItemTab, string> = {
+  product: "add-product",
+  service: "add-service",
+};
+
 export function ItemsPageContent() {
-  const [currentTab, setCurrentTab] = useState<ItemTab>("product");
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { openModal, open } = useModal();
+  const activeTab = (searchParams.get("tab") as ItemTab) ?? "product";
 
-  const itemLabels: Record<ItemTab, string> = {
-    product: "Produto",
-    service: "Serviço",
-  };
+  const handleTabChange = useCallback(
+    (value: ItemTab | string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("tab", value);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
 
-  const itemModals: Record<ItemTab, string> = {
-    product: "add-product",
-    service: "add-service",
-  };
-
-  const currentLabel = `Novo ${itemLabels[currentTab]}`;
-  const currentModal = itemModals[currentTab];
-
-  // fazer o seguinte: quando escolher produto ou serviço, redirecioznar para a pagina de criaçãoz
   return (
     <div className="space-y-6">
       <TitleList
@@ -43,32 +52,23 @@ export function ItemsPageContent() {
         suTitle="Faça a gestão dos seus produtos e serviços listados."
       />
 
-      <Tabs defaultValue="product-tab" className="w-full">
-        <div className="flex items-center justify-between w-full">
-          <TabsList className="flex justify-center md:justify-start">
-            <TabsTrigger
-              value="product-tab"
-              onClick={() => setCurrentTab("product")}
-            >
-              Produtos
-            </TabsTrigger>
-            <TabsTrigger
-              value="service-tab"
-              onClick={() => setCurrentTab("service")}
-            >
-              Serviços
-            </TabsTrigger>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <div className="flex items-center justify-between">
+          <TabsList>
+            <TabsTrigger value="product">Produtos</TabsTrigger>
+            <TabsTrigger value="service">Serviços</TabsTrigger>
           </TabsList>
 
-          <Button onClick={() => openModal(currentModal)} variant="default">
-            {currentLabel}
+          <Button onClick={() => openModal(TAB_MODALS[activeTab])}>
+            {`Novo ${TAB_LABELS[activeTab]}`}
           </Button>
         </div>
 
-        <TabsContent value="product-tab">
+        <TabsContent value="product">
           <ProductList />
         </TabsContent>
-        <TabsContent value="service-tab">
+
+        <TabsContent value="service">
           <ServiceList />
         </TabsContent>
       </Tabs>

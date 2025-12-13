@@ -35,11 +35,15 @@ export function CategoryCardView({ category }: CategoryCardProps) {
           </div>
           <ButtonOnlyAction
             data={category}
-            handleDelete={handlerDeleteCategory}
-            handleEdit={handlerEditCategory}
-            handleSee={handlerDetailsCategory}
-            auxAction={toggleStatusCategory}
-            auxActionLabel={category.isActive ? "Desativar" : "Ativar"}
+            actions={[
+              { label: "Ver detalhes", onClick: handlerDetailsCategory },
+              { label: "Editar", onClick: handlerEditCategory },
+              { label: "Deletar", onClick: handlerDeleteCategory },
+              {
+                label: `${category.isActive ? "Desativar" : "Ativar"}`,
+                onClick: toggleStatusCategory,
+              },
+            ]}
           />
         </div>
       </CardHeader>

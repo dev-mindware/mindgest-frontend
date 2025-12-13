@@ -31,9 +31,11 @@ export function ServiceCardView({ service }: ProductCardProps) {
           </div>
           <ButtonOnlyAction
             data={service}
-            handleDelete={handlerDeleteService}
-            handleEdit={handlerEditService}
-            handleSee={handlerDetailsService}
+            actions={[
+              { label: "Ver detalhes", onClick: handlerDetailsService },
+              { label: "Editar", onClick: handlerEditService },
+              { label: "Deletar", onClick: handlerDeleteService },
+            ]}
           />
         </div>
       </CardHeader>

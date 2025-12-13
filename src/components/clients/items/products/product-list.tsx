@@ -23,10 +23,16 @@ import {
 import { useDebounce } from "use-debounce";
 
 export function ProductList() {
-  const { search } = useURLSearchParams("search-items");
+  const { search } = useURLSearchParams(`search_product`);
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, setViewMode, viewMode, page, setPage } = useItemsFilters();
-  const { handlerDeleteProduct, handlerDetailsProduct, handlerEditProduct, toggleStatusProduct } = useProductActions();
+  const { filters, setViewMode, viewMode, page, setPage } =
+    useItemsFilters("product");
+  const {
+    handlerDeleteProduct,
+    handlerDetailsProduct,
+    handlerEditProduct,
+    toggleStatusProduct,
+  } = useProductActions();
   const {
     data: items,
     total,
@@ -37,10 +43,17 @@ export function ProductList() {
     isError,
     refetch,
   } = usePagination<ItemResponse>({
-    endpoint: "/items?type=PRODUCT",
-    queryKey: ["items"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    endpoint: "/items",
+    queryKey: ["items", "product"],
+    queryParams: {
+      type: "PRODUCT",
+      ...filters,
+      search: debounceSearch,
+      page,
+    },
   });
+
+  // ... resto do código
 
   const columns: Column<ItemResponse>[] = [
     { key: "name", header: "Nome" },
@@ -53,7 +66,18 @@ export function ProductList() {
         </div>
       ),
     },
-    { key: "sku", header: "SKU" },
+    {
+      key: "sku",
+      header: "SKU",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.sku || "------"}</div>
+      ),
+    },
+    {
+      key: "status",
+      header: "Estado",
+      render: (_, item) => <ItemStatusBadge status={item.status} />,
+    },
     {
       key: "createdAt",
       header: "Criado em",
@@ -64,21 +88,20 @@ export function ProductList() {
       ),
     },
     {
-      key: "status",
-      header: "Status",
-      render: (_, item) => <ItemStatusBadge status={item.status} />,
-    },
-    {
       key: "action",
       header: "Ação",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          handleDelete={handlerDeleteProduct}
-          handleEdit={handlerEditProduct}
-          handleSee={handlerDetailsProduct}
-          auxAction={toggleStatusProduct}
-          auxActionLabel={item.status === "ACTIVE" ? "Desativar" : "Ativar"}
+          actions={[
+            { label: "Ver detalhes", onClick: handlerDetailsProduct },
+            { label: "Editar", onClick: handlerEditProduct },
+            { label: "Deletar", onClick: handlerDeleteProduct },
+            {
+              label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
+              onClick: toggleStatusProduct,
+            },
+          ]}
         />
       ),
     },
@@ -97,7 +120,7 @@ export function ProductList() {
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <ItemsFiltersTSX />
+          <ItemsFiltersTSX prefix="product" />
           <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
         </div>
       </div>

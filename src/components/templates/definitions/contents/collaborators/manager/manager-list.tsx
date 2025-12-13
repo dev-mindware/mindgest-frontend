@@ -14,8 +14,11 @@ import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { ManagerFiltersTSX } from "./common";
 import { useManagerActions, useManagerFilters } from "@/hooks/collaborators";
-import { ManagerModal, DeleteManagerModal, DetailsManagerModal } from "./manager-modals";
-
+import {
+  ManagerModal,
+  DeleteManagerModal,
+  DetailsManagerModal,
+} from "./manager-modals";
 
 export function ManagerList() {
   const { search } = useURLSearchParams("search");
@@ -41,13 +44,13 @@ export function ManagerList() {
   const columns: Column<ManagerResponse>[] = [
     { key: "name", header: "Nome" },
     {
-    key: "role",
-    header: "Função",
-    render: (_, item) => {
-      if (item.role === "MANAGER") return "GERENTE";
-      return item.role;
+      key: "role",
+      header: "Função",
+      render: (_, item) => {
+        if (item.role === "MANAGER") return "GERENTE";
+        return item.role;
+      },
     },
-  },
     {
       key: "email",
       header: "Email",
@@ -65,9 +68,7 @@ export function ManagerList() {
     {
       key: "status",
       header: "Status",
-      render: (_, item) => (
-        <ItemStatusBadge status={item.status} />
-      ),
+      render: (_, item) => <ItemStatusBadge status={item.status} />,
     },
     {
       key: "action",
@@ -75,9 +76,11 @@ export function ManagerList() {
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          handleDelete={handlerDeleteManager}
-          handleEdit={handlerEditManager}
-          handleSee={handlerDetailsManager}
+          actions={[
+            { label: "Cancelar", onClick: handlerDeleteManager },
+            { label: "Editar", onClick: handlerEditManager },
+            { label: "Ver detalhes", onClick: handlerDetailsManager },
+          ]}
         />
       ),
     },
@@ -94,15 +97,15 @@ export function ManagerList() {
   if (managers?.length == 0)
     return (
       <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <ManagerFiltersTSX />
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+            <ManagerFiltersTSX />
+          </div>
         </div>
-      </div>
-      <EmptyState
-        description="Adicione novos gerentes"
-        title="Sem Gerentes"
-        icon="Users"
+        <EmptyState
+          description="Adicione novos gerentes"
+          title="Sem Gerentes"
+          icon="Users"
         />
       </div>
     );

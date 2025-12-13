@@ -6,7 +6,7 @@ import { Button, DetailRow, GlobalModal, Icon, ItemStatusBadge } from "@/compone
 
 export function DetailsProductModal() {
   const { closeModal, open } = useModal();
-  const isOpen = ["view-product"]
+  const isOpen = open["view-product"]
   const { currentProduct } = currentProductStore();
 
   if (!currentProduct || !isOpen) return null;

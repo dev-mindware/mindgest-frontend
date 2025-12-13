@@ -6,14 +6,14 @@ Invoice Receipt API handles **point-of-sale transactions** (completed sales). Un
 
 ### Key Differences from Normal Invoice
 
-| Feature | Normal Invoice | Invoice Receipt |
-|---------|---|---|
-| **isPaid** | `false` (default) | `true` (always) |
-| **Status** | `DRAFT` (default) | `PAID` (always) |
-| **Use Case** | Billing, Quotations | Point-of-Sale, Completed Sales |
-| **Customer** | Optional | Recommended (optional for walk-in) |
-| **Items** | Required | Required |
-| **Payment Terms** | Supports due date | N/A (already paid) |
+| Feature           | Normal Invoice      | Invoice Receipt                    |
+| ----------------- | ------------------- | ---------------------------------- |
+| **isPaid**        | `false` (default)   | `true` (always)                    |
+| **Status**        | `DRAFT` (default)   | `PAID` (always)                    |
+| **Use Case**      | Billing, Quotations | Point-of-Sale, Completed Sales     |
+| **Customer**      | Optional            | Recommended (optional for walk-in) |
+| **Items**         | Required            | Required                           |
+| **Payment Terms** | Supports due date   | N/A (already paid)                 |
 
 ---
 
@@ -35,7 +35,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
         "quantity": 2
       },
       {
-        "id": "clm0item2", 
+        "id": "clm0item2",
         "quantity": 1
       }
     ],
@@ -77,8 +77,8 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
     }
   ],
   "subtotal": 2629.97,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "totalAmount": 2879.97,
   "notes": null,
   "createdAt": "2025-11-24T10:30:00.000Z",
@@ -100,7 +100,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
     "customer": {
       "name": "Maria Santos",
       "email": "maria@example.com",
-      "phone": "+244 923 456 789",
+      "phone": " 923 456 789",
       "address": "Rua Principal, 456, Luanda"
     },
     "items": [
@@ -152,13 +152,13 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
       "id": "clm0item790",
       "name": "Tech Support Service",
       "quantity": 2,
-      "unitPrice": 50.00,
-      "total": 100.00
+      "unitPrice": 50.0,
+      "total": 100.0
     }
   ],
   "subtotal": 1099.99,
-  "taxAmount": 150.00,
-  "discountAmount": 0.00,
+  "taxAmount": 150.0,
+  "discountAmount": 0.0,
   "totalAmount": 1249.99,
   "notes": "Walk-in sale - no delivery needed",
   "createdAt": "2025-11-24T10:35:00.000Z",
@@ -218,21 +218,21 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
       "id": "clm0item101",
       "name": "iPad Pro 12.9",
       "quantity": 3,
-      "unitPrice": 1099.00,
-      "total": 3297.00
+      "unitPrice": 1099.0,
+      "total": 3297.0
     },
     {
       "id": "clm0item102",
       "name": "Shipping Service",
       "quantity": 1,
-      "unitPrice": 25.00,
-      "total": 25.00
+      "unitPrice": 25.0,
+      "total": 25.0
     }
   ],
-  "subtotal": 3322.00,
-  "taxAmount": 0.00,
-  "discountAmount": 15.00,
-  "totalAmount": 3307.00,
+  "subtotal": 3322.0,
+  "taxAmount": 0.0,
+  "discountAmount": 15.0,
+  "totalAmount": 3307.0,
   "notes": "Same-day delivery completed",
   "createdAt": "2025-11-24T10:40:00.000Z",
   "updatedAt": "2025-11-24T10:40:00.000Z"
@@ -297,8 +297,8 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
     }
   ],
   "subtotal": 1359.97,
-  "taxAmount": 200.00,
-  "discountAmount": 0.00,
+  "taxAmount": 200.0,
+  "discountAmount": 0.0,
   "totalAmount": 1559.97,
   "notes": null,
   "createdAt": "2025-11-24T10:45:00.000Z",
@@ -393,8 +393,8 @@ curl -X GET http://localhost:3000/invoice/invoice-receipt/clm0receipt123 \
     }
   ],
   "subtotal": 2629.97,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "totalAmount": 2879.97,
   "notes": null,
   "createdAt": "2025-11-24T10:30:00.000Z",
@@ -409,6 +409,7 @@ curl -X GET http://localhost:3000/invoice/invoice-receipt/clm0receipt123 \
 ### Missing Required Fields
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -419,6 +420,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -432,6 +434,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ### Non-existent Customer
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -447,6 +450,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -460,6 +464,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ### Non-existent Item
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -475,6 +480,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -488,12 +494,14 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ### Invoice Receipt Not Found
 
 **Request:**
+
 ```bash
 curl -X GET http://localhost:3000/invoice/invoice-receipt/non-existent-id \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 **Response (404):**
+
 ```json
 {
   "statusCode": 404,
@@ -507,6 +515,7 @@ curl -X GET http://localhost:3000/invoice/invoice-receipt/non-existent-id \
 ### Invalid Email (for new customer)
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -523,6 +532,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ```
 
 **Response (400):**
+
 ```json
 {
   "statusCode": 400,
@@ -586,15 +596,15 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 
 ## Key Differences from Normal Invoice API
 
-| Aspect | Details |
-|--------|---------|
-| **Endpoint** | `/invoice/invoice-receipt` vs `/invoice/normal` |
-| **Invoice Number Prefix** | `RECIP-` vs `FACT-` |
-| **isPaid Behavior** | Always `true` | Defaults to `false` |
-| **Status Behavior** | Always `PAID` | Defaults to `DRAFT` |
-| **Type Field** | `INVOICE_RECEIPT` | `NORMAL_INVOICE` |
-| **Use Case** | Point-of-Sale Transactions | Billing & Quotations |
-| **Immutable Fields** | `isPaid` and `status` | Can be updated (if needed) |
+| Aspect                    | Details                                         |
+| ------------------------- | ----------------------------------------------- | -------------------------- |
+| **Endpoint**              | `/invoice/invoice-receipt` vs `/invoice/normal` |
+| **Invoice Number Prefix** | `RECIP-` vs `FACT-`                             |
+| **isPaid Behavior**       | Always `true`                                   | Defaults to `false`        |
+| **Status Behavior**       | Always `PAID`                                   | Defaults to `DRAFT`        |
+| **Type Field**            | `INVOICE_RECEIPT`                               | `NORMAL_INVOICE`           |
+| **Use Case**              | Point-of-Sale Transactions                      | Billing & Quotations       |
+| **Immutable Fields**      | `isPaid` and `status`                           | Can be updated (if needed) |
 
 ---
 

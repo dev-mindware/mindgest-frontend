@@ -4,7 +4,7 @@ import { AddDocuments } from "@/components/clients";
 export default function AddDocsPage() {
   return (
     <PageWrapper
-      routePath="/client/documents"
+      routePath="/client/documents?tab=invoice"
       routeLabel="Documentos"
       subRoute="Novo Documento"
       showSeparator={true}
