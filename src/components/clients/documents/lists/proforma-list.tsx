@@ -17,12 +17,14 @@ import { useState } from "react";
 import { proformaService } from "@/services/proforma-service";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useProformaActions } from "@/hooks";
 
 export function ProformaList() {
     const { search } = useURLSearchParams("search");
     const [debounceSearch] = useDebounce(search, 400);
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
+    const { handlerDeleteProforma } = useProformaActions();
 
     const {
         data: proformas,
@@ -38,22 +40,6 @@ export function ProformaList() {
         queryKey: ["proforma"],
         queryParams: { page, search: debounceSearch },
     });
-
-    const handleDetailsProforma = (proforma: InvoiceResponse) => {
-        console.log("View proforma:", proforma);
-        // TODO: Implement view proforma details
-    };
-
-    const handleCancelProforma = async (proforma: InvoiceResponse) => {
-        try {
-            await proformaService.cancelProforma(proforma.id);
-            toast.success("Proforma cancelada com sucesso!");
-            queryClient.invalidateQueries({ queryKey: ["proforma"] });
-        } catch (error: any) {
-            toast.error(error?.response?.data?.message || "Erro ao cancelar proforma");
-            console.error("Error canceling proforma:", error);
-        }
-    };
 
     const columns: Column<InvoiceResponse>[] = [
         { key: "number", header: "Número da Proforma" },
@@ -105,8 +91,7 @@ export function ProformaList() {
                     data={item}
                     deleteLabel="Cancelar Proforma"
                     seeLabel="Ver Proforma"
-                    handleDelete={handleCancelProforma}
-                    handleSee={handleDetailsProforma}
+                    handleDelete={handlerDeleteProforma}
                 />
             ),
         },

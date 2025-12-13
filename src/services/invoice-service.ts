@@ -9,7 +9,7 @@ export const invoiceService = {
     return api.post(`/invoice/${id}/receipt`, data);
   },
   cancelInvoice: async (id: string) => {
-    return api.delete(`/invoice/${id}/cancel`);
+    return api.patch(`/invoice/normal/${id}/cancel`);
   },
 };
 

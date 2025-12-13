@@ -3,7 +3,6 @@ import { api } from "./api";
 export type GenerateReceiptPayload = {
   issueDate: string;
   total: number;
-  receivedValue: number;
   paymentMethod: "CASH" | "CARD" | "TRANSFER";
   originalInvoiceId?: string;
   notes?: string;

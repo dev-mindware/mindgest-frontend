@@ -85,6 +85,7 @@ export function GenerateReceiptModal() {
                         startIcon="Calendar"
                         {...register("issueDate")}
                         error={errors.issueDate?.message}
+                        disabled
                     />
 
                     <Input
@@ -94,14 +95,7 @@ export function GenerateReceiptModal() {
                         startIcon="DollarSign"
                         {...register("total", { valueAsNumber: true })}
                         error={errors.total?.message}
-                    />
-                    <Input
-                        label="Valor Recebido"
-                        type="number"
-                        step="0.01"
-                        startIcon="DollarSign"
-                        {...register("receivedValue", { valueAsNumber: true })}
-                        error={errors.receivedValue?.message}
+                        disabled
                     />
                 </div>
 

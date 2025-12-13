@@ -54,7 +54,7 @@ export function InvoiceForm() {
     if (fullObject && fullObject.name) {
       // Client from API
       setValue("customer.name", fullObject.name);
-      setValue("customer.vatNumber", fullObject.taxNumber || "");
+      setValue("customer.taxNumber", fullObject.taxNumber || "");
       setValue("customer.address", fullObject.address || "");
       setValue("customer.phone", fullObject.phone || "");
       setClientApiId(fullObject.id);
@@ -62,7 +62,7 @@ export function InvoiceForm() {
     } else {
       // Manual entry
       setValue("customer.name", typeof id === 'string' ? id : '');
-      setValue("customer.vatNumber", "");
+      setValue("customer.taxNumber", "");
       setValue("customer.address", "");
       setValue("customer.phone", "");
       setClientApiId(undefined);
@@ -153,8 +153,8 @@ export function InvoiceForm() {
           <Input
             label="NIF"
             placeholder="123456789"
-            {...register("customer.vatNumber")}
-            error={errors.customer?.vatNumber?.message}
+            {...register("customer.taxNumber")}
+            error={errors.customer?.taxNumber?.message}
             disabled={isClientFromAPI}
           />
         </div>

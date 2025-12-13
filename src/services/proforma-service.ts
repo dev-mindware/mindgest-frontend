@@ -11,7 +11,10 @@ export const proformaService = {
   getProformaById: async (id: string) => {
     return api.get(`/invoice/proforma/${id}`);
   },
-  cancelProforma: async (id: string) => {
-    return api.delete(`/invoice/proforma/${id}/cancel`);
+  deleteProforma: async (id: string) => {
+    return api.delete(`/invoices/${id}`);
+  },
+  updateProforma: async (id: string, data: ProformaPayload) => {
+    return api.put(`/invoices/${id}`, data);
   },
 };

@@ -15,7 +15,8 @@ import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
-import { GenerateReceiptModal } from "../generate-receipt-modal";
+import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
+import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
 
 
 
@@ -55,6 +56,11 @@ export function InvoiceList() {
       render: (_, item) => `${parseFloat(item.total).toFixed(2)} AOA`
     },
     {
+      key: "items",
+      header: "Total de Itens",
+      render: (_, item) => item.items.length,
+    },
+    {
       key: "createdAt",
       header: "Criado em",
       render: (_, item) => (
@@ -67,23 +73,29 @@ export function InvoiceList() {
       key: "status",
       header: "Status",
       render: (_: any, item: any) => {
-        const map: Record<string, string> = {
-          DRAFT: "Rascunho",
+
+        const labelMap: Record<string, string> = {
+          DRAFT: "Pendente",
           CANCELLED: "Cancelada",
           PAID: "Paga",
         };
 
+        const variantMap: Record<string, "default" | "success" | "destructive" | "outline"> = {
+          DRAFT: "default",
+          CANCELLED: "destructive",
+          PAID: "success",
+        };
 
         const status = item.status ?? "DRAFT";
 
-
         return (
-          <Badge>
-            {map[status] || status}
+          <Badge variant={variantMap[status] ?? "outline"}>
+            {labelMap[status] || status}
           </Badge>
         );
       },
     },
+
     {
       key: "action",
       header: "Ação",
@@ -118,9 +130,9 @@ export function InvoiceList() {
           </div>
         </div>
         <EmptyState
-          description="Adicione novos gerentes"
-          title="Sem Gerentes"
-          icon="Users"
+          description="Adicione novas facturas"
+          title="Sem Facturas"
+          icon="FileText"
         />
       </div>
     );
@@ -146,7 +158,7 @@ export function InvoiceList() {
       />
 
       <GenerateReceiptModal />
-
+      <CancelInvoiceModal />
     </div>
   );
 }

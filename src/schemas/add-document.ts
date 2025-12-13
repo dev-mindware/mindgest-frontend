@@ -5,7 +5,7 @@ export const CompanySchema = z.object({
     .string()
     .min(3, "O nome da empresa precisa ter pelo menos 3 caracteres")
     .optional(),
-  vatNumber: z
+  taxNumber: z
     .string()
     .regex(/^\d{9}$/, "O NIF deve ter 9 dígitos numéricos")
     .optional(),
@@ -30,7 +30,7 @@ const CustomerSchema = z.object({
   name: z
     .string()
     .min(3, "O nome do cliente precisa ter pelo menos 3 caracteres"),
-  vatNumber: z.string().optional(),
+  taxNumber: z.string().optional(),
   address: z.string().min(5, "O endereço deve ter pelo menos 5 caracteres"),
   phone: z.string().optional(),
   email: z.string().email("O email informado não é válido").optional(),
@@ -130,7 +130,6 @@ export type InvoiceReceiptFormData = z.infer<typeof InvoiceReceiptSchema>;
 export const ReceiptSchema = z.object({
   issueDate: z.string().min(1, "A data de emissão é obrigatória"),
   total: z.number().positive("O total deve ser maior que 0"),
-  receivedValue: z.number().positive("O valor recebido deve ser maior que 0"),
   paymentMethod: z.enum(["CASH", "CARD", "TRANSFER"], {
     errorMap: () => ({ message: "O método de pagamento é obrigatório" }),
   }),

@@ -63,7 +63,7 @@ export function InvoiceReceiptForm() {
     if (fullObject && fullObject.name) {
       // Client from API
       setValue("customer.name", fullObject.name);
-      setValue("customer.vatNumber", fullObject.taxNumber || "");
+      setValue("customer.taxNumber", fullObject.taxNumber || "");
       setValue("customer.address", fullObject.address || "");
       setValue("customer.phone", fullObject.phone || "");
       setClientApiId(fullObject.id);
@@ -71,7 +71,7 @@ export function InvoiceReceiptForm() {
     } else {
       // Manual entry
       setValue("customer.name", typeof id === 'string' ? id : '');
-      setValue("customer.vatNumber", "");
+      setValue("customer.taxNumber", "");
       setValue("customer.address", "");
       setValue("customer.phone", "");
       setClientApiId(undefined);
@@ -151,15 +151,15 @@ export function InvoiceReceiptForm() {
           debounceMs={300}
         />
 
-        {/* <div className="relative">
+        <div className="relative">
           <Input
-            label="Email"
+            label="NIF"
             placeholder="123456789"
-            {...register("customer.email")}
-            error={errors.customer?.email?.message}
+            {...register("customer.taxNumber")}
+            error={errors.customer?.taxNumber?.message}
             disabled={isClientFromAPI}
           />
-        </div> */}
+        </div>
 
         <div className="relative">
           <Input

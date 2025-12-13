@@ -1,6 +1,7 @@
 import { useModal } from "@/stores/use-modal-store";
 import { InvoiceResponse } from "@/types";
 import { currentInvoiceStore } from "@/stores/documents";
+import { currentProformaStore } from "@/stores/documents";
 
 export function useInvoiceActions() {
   const { openModal } = useModal();
@@ -25,5 +26,18 @@ export function useInvoiceActions() {
     handlerGenerateReceipt,
     handlerCancelInvoice,
     handlerDetailsInvoice,
+  };
+}
+
+export function useProformaActions() {
+  const { openModal } = useModal();
+  const { setCurrentProforma } = currentProformaStore();
+
+  function handlerDeleteProforma(proforma: InvoiceResponse) {
+    openModal("delete-proforma");
+    setCurrentProforma(proforma);
+  }
+  return {
+    handlerDeleteProforma,
   };
 }
