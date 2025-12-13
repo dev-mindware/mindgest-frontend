@@ -26,10 +26,12 @@ export function InvoiceReceiptForm() {
 
   // Lifted state for totals calculation
   const [globalTax, setGlobalTax] = useState(0);
+  const [globalRetention, setGlobalRetention] = useState(0);
   const [globalDiscount, setGlobalDiscount] = useState(0);
   const [invoiceTotals, setInvoiceTotals] = useState({
     subtotal: 0,
     taxAmount: 0,
+    retentionAmount: 0,
     discountAmount: 0,
     total: 0,
   });
@@ -107,6 +109,7 @@ export function InvoiceReceiptForm() {
       // Use calculated totals
       total: invoiceTotals.total,
       taxAmount: invoiceTotals.taxAmount,
+      retentionAmount: invoiceTotals.retentionAmount,
       discountAmount: invoiceTotals.discountAmount,
     };
 
@@ -114,7 +117,7 @@ export function InvoiceReceiptForm() {
     try {
       await invoiceReceiptService.createInvoiceReceipt(finalPayload);
       toast.success("Fatura criada com sucesso!");
-      router.push("/client/documents",);
+      router.push("/client/documents&current_tab=invoice-receipt",);
     } catch (error) {
       toast.error("Erro ao criar fatura!");
       console.error("Error creating invoice:", error);
@@ -189,6 +192,8 @@ export function InvoiceReceiptForm() {
         onTotalsChange={setInvoiceTotals}
         globalTax={globalTax}
         setGlobalTax={setGlobalTax}
+        globalRetention={globalRetention}
+        setGlobalRetention={setGlobalRetention}
         globalDiscount={globalDiscount}
         setGlobalDiscount={setGlobalDiscount}
       />

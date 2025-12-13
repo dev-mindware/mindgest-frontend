@@ -5,16 +5,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 import { InvoiceForm, InvoiceReceiptForm, ProformaForm } from "./document-forms";
 import { useSearchParams } from "next/navigation";
 
-type TabsAloweds = "invoice-tab" | "invoice-receipt-tab" | "proform-tab";
+type TabsAloweds = "invoice" | "invoice-receipt" | "proform";
 
 export function AddDocuments() {
   const invoice = useSearchParams().get("invoice");
-  const current_Tab = useSearchParams().get("current_tab");
+  const current_Tab = useSearchParams().get("tab");
   const [currentTab, setCurrentTab] = useState<TabsAloweds>(() => {
     if (current_Tab) {
       return current_Tab as TabsAloweds;
     }
-    return "invoice-tab";
+    return "invoice";
   });
 
   return (
@@ -27,32 +27,32 @@ export function AddDocuments() {
       <Tabs defaultValue={currentTab} className="w-full">
         <TabsList className="flex justify-center md:justify-start">
           <TabsTrigger
-            value="invoice-tab"
-            onClick={() => setCurrentTab("invoice-tab")}
+            value="invoice"
+            onClick={() => setCurrentTab("invoice")}
           >
             Fatura
           </TabsTrigger>
           <TabsTrigger
-            value="invoice-receipt-tab"
-            onClick={() => setCurrentTab("invoice-receipt-tab")}
+            value="invoice-receipt"
+            onClick={() => setCurrentTab("invoice-receipt")}
           >
             Fatura Recibo
           </TabsTrigger>
           <TabsTrigger
-            value="proform-tab"
-            onClick={() => setCurrentTab("proform-tab")}
+            value="proform"
+            onClick={() => setCurrentTab("proform")}
           >
             Fatura Proforma
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="invoice-tab">
+        <TabsContent value="invoice">
           <InvoiceForm />
         </TabsContent>
-        <TabsContent value="invoice-receipt-tab">
+        <TabsContent value="invoice-receipt">
           <InvoiceReceiptForm />
         </TabsContent>
-        <TabsContent value="proform-tab">
+        <TabsContent value="proform">
           <ProformaForm />
         </TabsContent>
       </Tabs>

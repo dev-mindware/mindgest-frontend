@@ -10,11 +10,14 @@ interface InvoiceReceiptItemsProps {
   onTotalsChange?: (totals: {
     subtotal: number;
     taxAmount: number;
+    retentionAmount: number;
     discountAmount: number;
     total: number;
   }) => void;
   globalTax: number;
   setGlobalTax: (value: number) => void;
+  globalRetention: number;
+  setGlobalRetention: (value: number) => void;
   globalDiscount: number;
   setGlobalDiscount: (value: number) => void;
 }
@@ -24,6 +27,8 @@ export function InvoiceReceiptItems({
   onTotalsChange,
   globalTax,
   setGlobalTax,
+  globalRetention,
+  setGlobalRetention,
   globalDiscount,
   setGlobalDiscount
 }: InvoiceReceiptItemsProps) {
@@ -45,8 +50,9 @@ export function InvoiceReceiptItems({
   }, 0);
 
   const taxAmount = Number((subtotal * (globalTax / 100)).toFixed(2));
+  const retentionAmount = Number((subtotal * (globalRetention / 100)).toFixed(2));
   const discountAmount = Number((subtotal * (globalDiscount / 100)).toFixed(2));
-  const total = Number((subtotal + taxAmount - discountAmount).toFixed(2));
+  const total = Number((subtotal + taxAmount - retentionAmount - discountAmount).toFixed(2));
 
   // Notify parent of changes
   useEffect(() => {
@@ -54,11 +60,12 @@ export function InvoiceReceiptItems({
       onTotalsChange({
         subtotal: Number(subtotal.toFixed(2)),
         taxAmount,
+        retentionAmount,
         discountAmount,
         total,
       });
     }
-  }, [subtotal, taxAmount, discountAmount, total, onTotalsChange]);
+  }, [subtotal, taxAmount, retentionAmount, discountAmount, total, onTotalsChange]);
 
   function handleAddItem() {
     const { name, quantity, price, apiId } = itemDraft;
@@ -69,6 +76,7 @@ export function InvoiceReceiptItems({
       unitPrice: price,
       quantity,
       tax: globalTax,
+      retention: globalRetention,
       discount: globalDiscount,
       total: price * quantity,
       type: itemDraft.type,
@@ -263,6 +271,18 @@ export function InvoiceReceiptItems({
                   className="w-full"
                 />
 
+                <SelectField
+                  label="Retenção"
+                  value={globalRetention}
+                  onValueChange={(value) => setGlobalRetention(Number(value))}
+                  options={[
+                    { value: 0, label: "0%" },
+                    { value: 6.5, label: "6.5%" },
+                    { value: 10, label: "10%" }
+                  ]}
+                  className="w-full"
+                />
+
                 <Input
                   type="number"
                   label="Desconto (%)"
@@ -287,6 +307,14 @@ export function InvoiceReceiptItems({
                       <span className="text-muted-foreground">IVA ({globalTax}%):</span>
                       <span className="font-medium">
                         +{formatCurrency(taxAmount)}
+                      </span>
+                    </div>
+                  )}
+                  {globalRetention > 0 && (
+                    <div className="flex justify-between text-md gap-4">
+                      <span className="text-muted-foreground">Retenção ({globalRetention}%):</span>
+                      <span className="font-medium text-destructive">
+                        -{formatCurrency(retentionAmount)}
                       </span>
                     </div>
                   )}

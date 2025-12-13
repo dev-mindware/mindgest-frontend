@@ -66,8 +66,6 @@ export function InvoiceReceiptList() {
       header: "Status",
       render: (_: any, item: any) => {
         const map: Record<string, string> = {
-          DRAFT: "Rascunho",
-          CANCELLED: "Cancelada",
           PAID: "Paga",
         };
 
@@ -76,7 +74,7 @@ export function InvoiceReceiptList() {
 
 
         return (
-          <Badge>
+          <Badge variant={"success"}>
             {map[status] || status}
           </Badge>
         );

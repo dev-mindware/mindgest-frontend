@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import { TitleList } from "@/components/common";
 import {
   Tabs,
@@ -10,9 +11,9 @@ import {
 } from "@/components/ui";
 import { InvoiceReceiptList, InvoiceList, ReceiptList, ProformaList } from "./lists";
 
-
-
 export function DocumentList() {
+  const [activeTab, setActiveTab] = useState("invoice");
+
   return (
     <div className="space-y-6">
       <TitleList
@@ -20,37 +21,41 @@ export function DocumentList() {
         suTitle="Crie documentos que ajudaram no controlo das suas atividades"
       />
 
-      <Tabs defaultValue="invoice-tab" className="w-full">
+      <Tabs 
+        defaultValue="invoice" 
+        className="w-full"
+        onValueChange={setActiveTab}
+      >
         <div className="flex items-center justify-between w-full">
           <TabsList className="flex justify-center md:justify-start">
-            <TabsTrigger value="invoice-tab">Fatura Normal</TabsTrigger>
-            <TabsTrigger value="invoice-receipt-tab">Fatura Recibo</TabsTrigger>
-            <TabsTrigger value="proform-tab">Fatura Proforma</TabsTrigger>
-            <TabsTrigger value="only-receipt-tab">Recibos</TabsTrigger>
+            <TabsTrigger value="invoice">Fatura Normal</TabsTrigger>
+            <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
+            <TabsTrigger value="proform">Fatura Proforma</TabsTrigger>
+            <TabsTrigger value="only-receipt">Recibos</TabsTrigger>
           </TabsList>
-          <Link href="/client/documents/new">
+          <Link href={`/client/documents/new?tab=${activeTab}`}>
             <Button variant="default">Criar Documento</Button>
           </Link>
         </div>
 
         <div className="mt-6" />
 
-        <TabsContent value="invoice-tab">
+        <TabsContent value="invoice">
           <div className="hidden w-full md:block">
             <InvoiceList />
           </div>
         </TabsContent>
-        <TabsContent value="proform-tab">
+        <TabsContent value="proform">
           <div className="hidden w-full md:block">
             <ProformaList />
           </div>
         </TabsContent>
-        <TabsContent value="invoice-receipt-tab">
+        <TabsContent value="invoice-receipt">
           <div className="hidden w-full md:block">
             <InvoiceReceiptList />
           </div>
         </TabsContent>
-        <TabsContent value="only-receipt-tab">
+        <TabsContent value="only-receipt">
           <div className="hidden w-full md:block">
             <ReceiptList />
           </div>

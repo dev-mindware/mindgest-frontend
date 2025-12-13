@@ -20,10 +20,12 @@ export function ProformaForm() {
 
     // Lifted state for totals calculation
     const [globalTax, setGlobalTax] = useState(0);
+    const [globalRetention, setGlobalRetention] = useState(0);
     const [globalDiscount, setGlobalDiscount] = useState(0);
     const [invoiceTotals, setInvoiceTotals] = useState({
         subtotal: 0,
         taxAmount: 0,
+        retentionAmount: 0,
         discountAmount: 0,
         total: 0,
     });
@@ -98,6 +100,7 @@ export function ProformaForm() {
             // Use calculated totals
             total: invoiceTotals.total,
             taxAmount: invoiceTotals.taxAmount,
+            retentionAmount: invoiceTotals.retentionAmount,
             discountAmount: invoiceTotals.discountAmount,
         };
 
@@ -186,6 +189,8 @@ export function ProformaForm() {
                 onTotalsChange={setInvoiceTotals}
                 globalTax={globalTax}
                 setGlobalTax={setGlobalTax}
+                globalRetention={globalRetention}
+                setGlobalRetention={setGlobalRetention}
                 globalDiscount={globalDiscount}
                 setGlobalDiscount={setGlobalDiscount}
             />
