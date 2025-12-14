@@ -16,6 +16,7 @@ import {
   InvoiceList,
   ReceiptList,
   ProformaList,
+  CreditNotesList,
 } from "./lists";
 
 type DocumentTab =
@@ -23,7 +24,7 @@ type DocumentTab =
   | "invoice-receipt"
   | "proforma"
   | "only-receipt"
-  | "credit-note";
+  | "credit-notes";
 
 export function DocumentList() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export function DocumentList() {
             <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
             <TabsTrigger value="proforma">Fatura Proforma</TabsTrigger>
             <TabsTrigger value="only-receipt">Recibos</TabsTrigger>
-            <TabsTrigger value="credit-note">Notas</TabsTrigger>
+            <TabsTrigger value="credit-notes">Notas de Crédito</TabsTrigger>
           </TabsList>
 
           <Link href={`/client/documents/new?tab=${activeTab}`}>
@@ -75,6 +76,10 @@ export function DocumentList() {
 
         <TabsContent value="only-receipt">
           <ReceiptList />
+        </TabsContent>
+        
+        <TabsContent value="credit-notes">
+          <CreditNotesList />
         </TabsContent>
       </Tabs>
     </div>

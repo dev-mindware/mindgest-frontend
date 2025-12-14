@@ -6,20 +6,20 @@ import { DynamicDrawer } from "./index";
 import { InvoiceTemplate } from "./templates/invoice-template";
 
 export function InvoicePreviewDrawer() {
-    const { open, closeModal } = useModal();
-    const { currentInvoice } = currentInvoiceStore();
-    const isOpen = open["details-invoice"];
+  const { open, closeModal } = useModal();
+  const { currentInvoice } = currentInvoiceStore();
+  const isOpen = open["details-invoice"];
 
-    if (!currentInvoice) return null;
+  if (!currentInvoice) return null;
 
-    return (
-        <DynamicDrawer
-            open={!!isOpen}
-            onOpenChange={(val) => !val && closeModal("details-invoice")}
-            title="Pré-visualização da Fatura"
-            description={`Detalhes da fatura ${currentInvoice.number}`}
-        >
-            <InvoiceTemplate data={currentInvoice} />
-        </DynamicDrawer>
-    );
+  return (
+    <DynamicDrawer
+      open={!!isOpen}
+      onOpenChange={(val) => !val && closeModal("details-invoice")}
+      title="Pré-visualização da Fatura"
+      description={`Detalhes da fatura ${currentInvoice.number}`}
+    >
+      <InvoiceTemplate data={currentInvoice} />
+    </DynamicDrawer>
+  );
 }

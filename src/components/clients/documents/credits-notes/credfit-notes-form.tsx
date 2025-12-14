@@ -1,11 +1,17 @@
+"use client";
+
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { ButtonSubmit, Input, RHFSelect, Textarea } from "@/components";
+
 import { CreditNoteSchema, CreditNoteFormData } from "@/schemas";
+
 import { useCreateCreditNote, useAnnulationNote } from "@/hooks";
+
 import { InvoiceDetails } from "@/types/credit-note";
 
 type Props = {
@@ -33,7 +39,9 @@ export function CreditNoteForm({ invoice }: Props) {
         client: {
           id: invoice.clientId,
           name: invoice.clientName,
-          email: invoice.clientEmail,
+          email:
+            invoice.clientEmail ||
+            `${invoice.clientName.toLowerCase()}@gmail.com`,
         },
         items: invoice.items.map((item) => ({
           id: item.id,
@@ -42,41 +50,42 @@ export function CreditNoteForm({ invoice }: Props) {
         })),
         issueDate: invoice.issueDate,
         dueDate: invoice.dueDate,
-        total: invoice.totalAmount,
-        taxAmount: invoice.taxAmount,
         subtotal: invoice.subtotal,
+        taxAmount: invoice.taxAmount,
         discountAmount: invoice.discountAmount,
+        total: invoice.totalAmount,
       },
     },
   });
 
   const reason = useWatch({ control, name: "reason" });
 
+  /* =========================
+     Reset body ao mudar motivo
+     ========================= */
   useEffect(() => {
-    if (reason === "ANNULATION") {
-      setValue("invoiceBody", undefined as never);
-    }
+    if (reason === "ANNULATION") return;
 
-    if (reason === "CORRECTION") {
-      setValue("invoiceBody", {
-        client: {
-          id: invoice.clientId,
-          name: invoice.clientName,
-          email: invoice.clientEmail,
-        },
-        items: invoice.items.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
-          price: item.unitPrice,
-        })),
-        issueDate: invoice.issueDate,
-        dueDate: invoice.dueDate,
-        total: invoice.totalAmount,
-        taxAmount: invoice.taxAmount,
-        subtotal: invoice.subtotal,
-        discountAmount: invoice.discountAmount,
-      });
-    }
+    setValue("invoiceBody", {
+      client: {
+        id: invoice.clientId,
+        name: invoice.clientName,
+        email: invoice.clientEmail
+          ? invoice.clientEmail
+          : `${invoice.clientName.toLowerCase()}@gmail.com`,
+      },
+      items: invoice.items.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+        price: item.unitPrice,
+      })),
+      issueDate: invoice.issueDate,
+      dueDate: invoice.dueDate,
+      subtotal: invoice.subtotal,
+      taxAmount: invoice.taxAmount,
+      discountAmount: invoice.discountAmount,
+      total: invoice.totalAmount,
+    });
   }, [reason, setValue, invoice]);
 
   const { fields } = useFieldArray({
@@ -84,6 +93,9 @@ export function CreditNoteForm({ invoice }: Props) {
     name: "invoiceBody.items",
   });
 
+  /* =========================
+     Submit
+     ========================= */
   async function onSubmit(data: CreditNoteFormData) {
     try {
       if (data.reason === "ANNULATION") {
@@ -93,10 +105,12 @@ export function CreditNoteForm({ invoice }: Props) {
           notes: data.notes!,
         });
       } else {
-        await createCreditNote({ id: invoice.id, data });
+        await createCreditNote({
+          id: invoice.id,
+          data,
+        });
       }
 
-      toast.success("Nota de Crédito emitida com sucesso!");
       router.push("/client/documents?tab=credit-notes");
     } catch (error: any) {
       toast.error(
@@ -105,11 +119,16 @@ export function CreditNoteForm({ invoice }: Props) {
     }
   }
 
+  console.log("ERROS: ");
+  console.log(errors);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="p-8 space-y-8 border rounded-lg"
     >
+      {/* =========================
+          Cabeçalho
+         ========================= */}
       <div className="grid gap-4 md:grid-cols-2">
         <RHFSelect
           label="Motivo"
@@ -133,9 +152,12 @@ export function CreditNoteForm({ invoice }: Props) {
       <Textarea
         label="Notas / Descrição"
         {...register("notes")}
-        error={errors.notes?.message}
+        error={errors?.notes?.message}
       />
 
+      {/* =========================
+          CORRECTION
+         ========================= */}
       {reason === "CORRECTION" && (
         <>
           <div className="space-y-4">
@@ -148,19 +170,23 @@ export function CreditNoteForm({ invoice }: Props) {
                   label="ID"
                   {...register(`invoiceBody.items.${index}.id`)}
                 />
+
                 <Input
                   type="number"
                   label="Quantidade"
                   {...register(`invoiceBody.items.${index}.quantity`, {
                     valueAsNumber: true,
                   })}
+                  error={errors.invoiceBody?.items?.[index]?.quantity?.message}
                 />
+
                 <Input
                   type="number"
                   label="Preço"
                   {...register(`invoiceBody.items.${index}.price`, {
                     valueAsNumber: true,
                   })}
+                  error={errors.invoiceBody?.items?.[index]?.price?.message}
                 />
               </div>
             ))}
@@ -170,29 +196,45 @@ export function CreditNoteForm({ invoice }: Props) {
             <Input
               type="number"
               label="Subtotal"
-              {...register("invoiceBody.subtotal", { valueAsNumber: true })}
+              {...register("invoiceBody.subtotal", {
+                valueAsNumber: true,
+              })}
+              error={errors.invoiceBody?.subtotal?.message}
             />
+
             <Input
               type="number"
               label="Imposto"
-              {...register("invoiceBody.taxAmount", { valueAsNumber: true })}
+              {...register("invoiceBody.taxAmount", {
+                valueAsNumber: true,
+              })}
+              error={errors.invoiceBody?.taxAmount?.message}
             />
+
             <Input
               type="number"
               label="Desconto"
               {...register("invoiceBody.discountAmount", {
                 valueAsNumber: true,
               })}
+              error={errors.invoiceBody?.discountAmount?.message}
             />
+
             <Input
               type="number"
               label="Total"
-              {...register("invoiceBody.total", { valueAsNumber: true })}
+              {...register("invoiceBody.total", {
+                valueAsNumber: true,
+              })}
+              error={errors.invoiceBody?.total?.message}
             />
           </div>
         </>
       )}
 
+      {/* =========================
+          Botão
+         ========================= */}
       <div className="flex justify-end">
         <ButtonSubmit className="w-full sm:w-max" isLoading={isSubmitting}>
           {reason === "ANNULATION"

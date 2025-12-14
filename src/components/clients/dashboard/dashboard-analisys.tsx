@@ -1,4 +1,3 @@
-// components/StatsGrid.tsx
 import { TrendingUp, TrendingDown } from "lucide-react"
 import { StatCard } from "./stat-card"
 

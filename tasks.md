@@ -1,6 +1,7 @@
 ## FAZER HJ
-  - Lista e adição de produtos []
-  - Lista e adição de serviços []
-  - Usar a Generic table e usePagination []
-  - Terminar o Fluxo de pagamento se plano []
-  - 
+  - NOTAS DE CREDITO
+  - AS ACÇOES DE TODOS DOCUMENTOS
+  - O DRAWER DE VISUALIZAÇÃO DE FATURA
+  - REFATORAR AS VENDAS
+  - APLICAR UMA ARQUITETURA FIXE NO FRONT END
+  - FAZER O REFRESHTOKEN

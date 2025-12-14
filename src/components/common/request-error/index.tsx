@@ -9,7 +9,7 @@ type Props = {
 
 export function RequestError({ refetch, message }: Props) {
   return (
-    <Card className="p-8">
+    <Card className="p-8 mt-4">
       <CardContent className="space-y-6 flex flex-col items-center justify-center">
         <Image
           src="/error-req.svg"
@@ -18,13 +18,13 @@ export function RequestError({ refetch, message }: Props) {
           height={250}
           priority
         />
-        <h2 className="text-xl font-semibold text-gray-600">
+        <h2 className="text-xl font-semibold text-foreground">
           {message
             ? message
             : "Ocorreu um erro ao carregar os dados do servidor."}
         </h2>
         <Button
-          className="bg-gray-100 w-max px-4 hover:bg-gray-50 transition-colors text-gray-600"
+          className="bg-background w-max px-4 transition-colors text-foreground"
           onClick={() => refetch()}
         >
           <Icon name="RefreshCcw" size={20} />

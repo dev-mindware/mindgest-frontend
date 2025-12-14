@@ -1,6 +1,6 @@
 import { ItemData } from "./items";
 
-export type InvoiceStatus = "Paid" | "Pending" | "Canceled";
+export type InvoiceStatus = "DRAFT" | "CANCELLED" | "PAID";
 
 export type ContactInfo = {
   phone?: string;
@@ -199,7 +199,7 @@ export type InvoiceResponse = InvoiceData & {
   client: {
     name: string;
   };
-  status: any;
+  status: InvoiceStatus;
   createdAt: string;
   updatedAt: string;
 };
@@ -219,3 +219,24 @@ export type ReceiptData = {
   updatedAt: string;
   paymentMethod: PaymentMethod;
 };
+
+export type CreditNoteData = {
+  id: string;
+  number: string;
+  invoiceNumber: string;
+  reason: "CORRECTION" | "ANNULATION";
+  status: "DRAFT" | "ISSUED" | "CANCELLED";
+  total: number; // valor negativo
+  taxAmount: number; // idealmente number, não string
+  createdAt: string; // ISO Date
+};
+
+export interface CreditNoteFilters {
+  search?: string;
+  reason?: "CORRECTION" | "RETURN" | "DISCOUNT" | "CANCELLATION" | string;
+  status?: InvoiceStatus;
+  sortBy?: string;
+  sortOrder?: string;
+  startDate?: string;
+  endDate?: string;
+}

@@ -1,14 +1,14 @@
 "use client";
 import { toast } from "sonner";
 import { useModal, currentInvoiceStore } from "@/stores";
-import { Button, GlobalModal } from "@/components";
+import { Button, ButtonSubmit, GlobalModal } from "@/components";
 import { useCancelInvoice } from "@/hooks";
 
 export function CancelInvoiceModal() {
   const { closeModal, open } = useModal();
   const isOpen = open["cancel-invoice"];
   const { currentInvoice } = currentInvoiceStore();
-  const { mutateAsync: cancelInvoice } = useCancelInvoice();
+  const { mutateAsync: cancelInvoice, isPending } = useCancelInvoice();
 
   async function handleCancelInvoice() {
     if (!currentInvoice?.id) {
@@ -43,7 +43,7 @@ export function CancelInvoiceModal() {
       title="Cancelar Fatura"
       className="!max-h-[85vh] !w-max"
     >
-      <div className="space-y-6">
+      <form onSubmit={handleCancelInvoice} className="space-y-6">
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
             Tem certeza que deseja cancelar a fatura{" "}
@@ -70,14 +70,14 @@ export function CancelInvoiceModal() {
           <Button type="button" variant="outline" onClick={handleClose}>
             Voltar
           </Button>
-          <Button
+          <ButtonSubmit
+            isLoading={isPending}
             className="w-max bg-destructive hover:bg-destructive/90"
-            onClick={handleCancelInvoice}
           >
             Cancelar Fatura
-          </Button>
+          </ButtonSubmit>
         </div>
-      </div>
+      </form>
     </GlobalModal>
   );
 }

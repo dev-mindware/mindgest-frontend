@@ -82,33 +82,38 @@ export function InvoiceList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            ...(item.status !== "CANCELLED" || item.status !== "PAID"
+            ...(item.status !== "CANCELLED"
               ? [
-                {
-                  label: "Cancelar Fatura",
-                  onClick: handlerCancelInvoice,
-                },
-              ]
+                  {
+                    label: "Cancelar Fatura",
+                    onClick: handlerCancelInvoice,
+                  },
+                ]
               : []),
 
-            ...(item.status !== "PAID"
+            ...(item.status === "DRAFT"
               ? [
-                {
-                  label: "Gerar Recibo",
-                  onClick: handlerGenerateReceipt,
-                },
-              ]
+                  {
+                    label: "Gerar Recibo",
+                    onClick: handlerGenerateReceipt,
+                  },
+                ]
               : []),
             {
               label: "Ver Fatura",
               onClick: handlerDetailsInvoice,
             },
-            {
-              label: "Emitir Nota",
-              onClick: () => {
-                router.push(`/client/documents/notes/${item.id}`);
-              },
-            },
+
+            ...(item.status === "DRAFT"
+              ? [
+                  {
+                    label: "Emitir Nota",
+                    onClick: () => {
+                      router.push(`/client/documents/notes/${item.id}`);
+                    },
+                  },
+                ]
+              : []),
           ]}
         />
       ),

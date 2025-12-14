@@ -22,9 +22,7 @@ export const itemsStatusOptions = [
 ];
 
 export const invoiceStatusOptions = [
-  { value: "PAID", label: "Paga" },
   { value: "DRAFT", label: "Pendente" },
-  // { value: "PENDING", label: "Pendente" },
   { value: "CANCELLED", label: "Cancelada" },
 ];
 

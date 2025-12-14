@@ -11,6 +11,7 @@ export function useGenerateReceipt() {
     onSuccess: () => {
       toast.success("Recibo gerado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });
 }

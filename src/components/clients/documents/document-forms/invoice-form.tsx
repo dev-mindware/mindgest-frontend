@@ -41,7 +41,6 @@ export function InvoiceForm() {
     },
   });
 
-  // Watch form values
   const clientApiId = useWatch({ control, name: "clientApiId" });
   const globalTax = useWatch({ control, name: "globalTax" }) ?? 0;
   const globalRetention = useWatch({ control, name: "globalRetention" }) ?? 0;

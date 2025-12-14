@@ -7,7 +7,7 @@ export const CreditNoteSchema = z.object({
     client: z.object({
       id: z.string().nonempty("Campo obrigatório"),
       name: z.string().nonempty("Campo obrigatório"),
-      email: z.string().email(),
+      email: z.string().nonempty("Campo obrigatório"),
     }),
 
     items: z
@@ -27,7 +27,7 @@ export const CreditNoteSchema = z.object({
     taxAmount: z.number(),
     subtotal: z.number(),
     discountAmount: z.number(),
-  }),
+  }).optional(),
 
   notes: z.string().optional(),
 });
