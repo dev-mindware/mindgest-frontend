@@ -14,6 +14,7 @@ import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
+import { InvoicePreviewDrawer } from "@/components/common/dynamic-drawer/invoice-preview-drawer";
 
 
 export function InvoiceReceiptList() {
@@ -63,7 +64,7 @@ export function InvoiceReceiptList() {
     {
       key: "status",
       header: "Estado",
-      render: (_, item) => <DocumentStatusBadge status={item.status} /> 
+      render: (_, item) => <DocumentStatusBadge status={item.status} />
     },
     {
       key: "action",
@@ -74,13 +75,13 @@ export function InvoiceReceiptList() {
           actions={[
             {
               label: "Ver Factura",
-              onClick: handlerCancelInvoice,
+              onClick: handlerDetailsInvoice,
             },
             {
               label: "Emitir Nota",
               onClick: handlerCancelInvoice,
             },
-           
+
           ]}
         />
       ),
@@ -91,7 +92,7 @@ export function InvoiceReceiptList() {
 
   if (isError) {
     return (
-      <RequestError refetch={refetch} message="Erro ao carregar os gerentes" />
+      <RequestError refetch={refetch} message="Erro ao carregar os documentos" />
     );
   }
 
@@ -99,8 +100,8 @@ export function InvoiceReceiptList() {
     return (
       <div className="justify-start mt-6 space-y-8">
         <EmptyState
-          description="Adicione novos gerentes"
-          title="Sem Gerentes"
+          description="Adicione novos documentos"
+          title="Sem Documentos"
           icon="Users"
         />
       </div>
@@ -123,8 +124,9 @@ export function InvoiceReceiptList() {
         setPage={setPage}
         goToNextPage={goToNextPage}
         goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhum gerente encontrado"
+        emptyMessage="Nenhum documento encontrado"
       />
+      <InvoicePreviewDrawer />
     </div>
   );
 }

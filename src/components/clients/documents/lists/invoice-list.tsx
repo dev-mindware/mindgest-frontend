@@ -16,6 +16,7 @@ import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
 import { useRouter } from "next/navigation";
+import { InvoicePreviewDrawer } from "@/components/common/dynamic-drawer/invoice-preview-drawer";
 
 export function InvoiceList() {
   const router = useRouter();
@@ -83,20 +84,20 @@ export function InvoiceList() {
           actions={[
             ...(item.status !== "CANCELLED" || item.status !== "PAID"
               ? [
-                  {
-                    label: "Cancelar Fatura",
-                    onClick: handlerCancelInvoice,
-                  },
-                ]
+                {
+                  label: "Cancelar Fatura",
+                  onClick: handlerCancelInvoice,
+                },
+              ]
               : []),
 
             ...(item.status !== "PAID"
               ? [
-                  {
-                    label: "Gerar Recibo",
-                    onClick: handlerGenerateReceipt,
-                  },
-                ]
+                {
+                  label: "Gerar Recibo",
+                  onClick: handlerGenerateReceipt,
+                },
+              ]
               : []),
             {
               label: "Ver Fatura",
@@ -154,6 +155,7 @@ export function InvoiceList() {
       />
       <GenerateReceiptModal />
       <CancelInvoiceModal />
+      <InvoicePreviewDrawer />
     </div>
   );
 }

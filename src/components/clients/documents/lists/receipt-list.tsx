@@ -15,6 +15,8 @@ import { paymentMethodMap } from "@/constants";
 import { ReceiptData } from "@/types/documents";
 import { useInvoiceFilters } from "@/hooks/invoice-receipt";
 import { InvoiceFiltersTSX } from "../common";
+import { useReceiptActions } from "@/hooks";
+import { ReceiptPreviewDrawer } from "@/components/common/dynamic-drawer/receipt-preview-drawer";
 
 export function ReceiptList() {
   const { search } = useURLSearchParams("search-receipt");
@@ -35,9 +37,10 @@ export function ReceiptList() {
     queryParams: { ...filters, search: debounceSearch, page },
   });
 
+  const { handlerDetailsReceipt } = useReceiptActions();
+
   const handleViewReceipt = (receipt: ReceiptData) => {
-    console.log("View receipt:", receipt);
-    // TODO: Implement view receipt details
+    handlerDetailsReceipt(receipt);
   };
 
   const columns: Column<ReceiptData>[] = [
@@ -124,6 +127,7 @@ export function ReceiptList() {
         goToPreviousPage={goToPreviousPage}
         emptyMessage="Nenhum recibo encontrado"
       />
+      <ReceiptPreviewDrawer />
     </div>
   );
 }

@@ -16,7 +16,7 @@ export function useInvoiceActions() {
     openModal("cancel-invoice");
     setCurrentInvoice(invoice);
   }
-  
+
   function handlerDetailsInvoice(invoice: InvoiceResponse) {
     openModal("details-invoice");
     setCurrentInvoice(invoice);
@@ -37,19 +37,19 @@ export function useProformaActions() {
     openModal("delete-proforma");
     setCurrentProforma(proforma);
   }
- 
+
   function handlerDetailsProforma(proforma: InvoiceResponse) {
-    // abrir o link da fatura
+    openModal("details-proforma");
+    setCurrentProforma(proforma);
   }
-  
+
   function hanlderEditProforma(proforma: InvoiceResponse) {
     // levar ora o formulario da proforma com o id e com os dados já pre renderizados
   }
 
-
   return {
     handlerDeleteProforma,
     handlerDetailsProforma,
-    hanlderEditProforma
+    hanlderEditProforma,
   };
 }

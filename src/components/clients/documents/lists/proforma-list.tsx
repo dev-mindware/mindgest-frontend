@@ -14,6 +14,7 @@ import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useState } from "react";
 import { useInvoiceFilters, useProformaActions } from "@/hooks";
+import { ProformaPreviewDrawer } from "@/components/common/dynamic-drawer/proforma-preview-drawer";
 
 // colocar filtros menos o estado
 
@@ -120,6 +121,7 @@ export function ProformaList() {
         goToPreviousPage={goToPreviousPage}
         emptyMessage="Nenhuma proforma encontrada"
       />
+      <ProformaPreviewDrawer />
     </div>
   );
 }
