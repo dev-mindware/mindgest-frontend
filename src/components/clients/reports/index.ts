@@ -1,1 +1,2 @@
-export * from "./clients-reports-content"
+export * from "./clients";
+export * from "./sales";

@@ -1,10 +1,9 @@
-import { PageWrapper } from "@/components";
-import { ClientsReportsContent } from "@/components/clients/reports"; 
+import { PageWrapper, ClientsReportsContent } from "@/components";
 
 export default function ClientsReports() {
-  return (
-    <PageWrapper subRoute="Relatórios de Clientes" >
-      <ClientsReportsContent />
-    </PageWrapper>
-  );
+    return (
+        <PageWrapper subRoute="Relatórios de Clientes" >
+            <ClientsReportsContent />
+        </PageWrapper>
+    );
 }
