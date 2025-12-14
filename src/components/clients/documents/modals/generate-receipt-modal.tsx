@@ -12,14 +12,14 @@ import {
   RHFSelect,
 } from "@/components";
 import { toast } from "sonner";
-import { useGenerateReceipt } from "@/hooks/invoice-receipt";
+import { useGenerateReceipt } from "@/hooks/invoice";
+import { ReceiptData } from "@/services/invoice-service";
 
 export function GenerateReceiptModal() {
   const { closeModal, open } = useModal();
   const isOpen = open["generate-receipt"];
   const { currentInvoice } = currentInvoiceStore();
   const { mutateAsync: generateReceipt } = useGenerateReceipt();
-
   const {
     reset,
     register,
@@ -50,8 +50,10 @@ export function GenerateReceiptModal() {
       return;
     }
 
+    const { total, ...rest } = data;
+
     try {
-      await generateReceipt({ data, originalInvoiceId: currentInvoice.id });
+      await generateReceipt(rest as ReceiptData);
       handleCancel();
     } catch (error: any) {
       if (error?.response) {

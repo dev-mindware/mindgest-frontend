@@ -39,7 +39,7 @@ export function RHFSelect<T extends FieldValues>({
 }: RHFSelectProps<T>) {
   return (
     <div className="">
-      {label && <Label className="mb-1" htmlFor={name}>{label}</Label>}
+      {label && <Label className="text-sm font-medium mb-1">{label}</Label>}
 
       <Controller
         control={control}

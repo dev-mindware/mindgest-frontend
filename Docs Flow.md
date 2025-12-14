@@ -9,7 +9,7 @@ Documento formatado para leitura suave e clara, próprio para um repositório Gi
 ```ts
 enum ItemType {
   SERVICE,
-  PRODUCT
+  PRODUCT,
 }
 ```
 
@@ -32,10 +32,10 @@ items {
 
 ---
 
-## **Customer**
+## **Client**
 
 ```ts
-customer {
+client {
   id?: string,   // Caso já exista na plataforma
   name?: string  // Caso ainda não exista na plataforma
 }
@@ -49,7 +49,7 @@ customer {
 
 ```ts
 interface Invoice {
-  customer: Customer; // Necessário prisma transaction: criação de Invoice + Customer
+  client: Client; // Necessário prisma transaction: criação de Invoice + Client
   issueDate: string;
   dueDate: string;
   items: Item[]; // Pode ser enviado ID ou corpo completo. Copilot irá decidir a abordagem mais segura.
@@ -68,16 +68,16 @@ interface Invoice {
 
 ```ts
 interface receipt {
-  customerId: string;
-  issueDate: string;        // Ex: 8/11/2025
-  invoiceValue: number;     // Valor total da fatura
-  discounts?: number;       // Valor descontado
-  receivedValue: number;    // Valor efetivamente recebido
-  taxes?: number;           // Impostos, se aplicável
-  userId: string;           // Operador responsável
+  clientId: string;
+  issueDate: string; // Ex: 8/11/2025
+  invoiceValue: number; // Valor total da fatura
+  discounts?: number; // Valor descontado
+  receivedValue: number; // Valor efetivamente recebido
+  taxes?: number; // Impostos, se aplicável
+  userId: string; // Operador responsável
   referenceInvoice: string; // Referência da factura
-  paymentMethod?: string;   // Ex: "Transferência", "Cash"
-  notes?: string;           // Observações adicionais
+  paymentMethod?: string; // Ex: "Transferência", "Cash"
+  notes?: string; // Observações adicionais
 }
 ```
 
@@ -87,7 +87,7 @@ interface receipt {
 
 ```ts
 interface InvoiceReceipt {
-  customer: Customer;
+  client: Client;
   issueDate: string;
   dueDate: string;
   items: Item[]; // Mesmo comportamento da interface Invoice
@@ -107,7 +107,7 @@ interface InvoiceReceipt {
 ```ts
 interface InvoiceProform {
   companyId: string; // Obtido no backend a partir do utilizador logado
-  customer: Customer;
+  client: Client;
   issueDate: string;
   items: Item[];
   subtotal: number;
@@ -121,7 +121,7 @@ interface InvoiceProform {
 
 ```ts
 interface InvoiceProform {
-  customer: Customer;
+  client: Client;
   issueDate: string;
   items: Item[];
   subtotal: number;
@@ -151,7 +151,7 @@ enum PaymentMethod {
   CASH,
   CARD,
   TRANSFER,
-  MOBILE_MONEY
+  MOBILE_MONEY,
 }
 ```
 

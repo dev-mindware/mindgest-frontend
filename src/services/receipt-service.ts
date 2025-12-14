@@ -9,11 +9,8 @@ export type GenerateReceiptPayload = {
 };
 
 export const receiptService = {
-  generateReceipt: async (invoiceId: string, data: GenerateReceiptPayload) => {
-    return api.post(`/invoice/receipt`, {
-      ...data,
-      originalInvoiceId: invoiceId,
-    });
+  generateReceipt: async (data: GenerateReceiptPayload) => {
+    return api.post(`/invoice/${data.originalInvoiceId}/receipt`, data);
   },
   getReceipts: async () => {
     return api.get("/receipts");

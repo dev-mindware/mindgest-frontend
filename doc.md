@@ -7,7 +7,9 @@ Este documento define os **tipos TypeScript** utilizados na comunicação entre 
 ## 🧩 Tipos Base
 
 ### `ContactInfo`
+
 Representa informações de contacto genéricas.
+
 ```ts
 export type ContactInfo = {
   phone?: string;
@@ -16,7 +18,9 @@ export type ContactInfo = {
 ```
 
 ### `CompanyInfo`
+
 Informações da empresa emissora.
+
 ```ts
 export type CompanyInfo = {
   name?: string;
@@ -26,10 +30,12 @@ export type CompanyInfo = {
 };
 ```
 
-### `CustomerInfo`
+### `ClientInfo`
+
 Informações do cliente.
+
 ```ts
-export type CustomerInfo = {
+export type ClientInfo = {
   name: string;
   address: string;
   vatNumber?: string;
@@ -37,7 +43,9 @@ export type CustomerInfo = {
 ```
 
 ### `Item`
+
 Item individual listado no documento (produto ou serviço).
+
 ```ts
 export type Item = {
   quantity: number;
@@ -49,7 +57,9 @@ export type Item = {
 ```
 
 ### `Totals`
+
 Representa totais monetários do documento.
+
 ```ts
 export type Totals = {
   subtotal?: number;
@@ -59,7 +69,9 @@ export type Totals = {
 ```
 
 ### `Payment`
+
 Define o método de pagamento utilizado.
+
 ```ts
 export type PaymentMethod = "bank_transfer" | "cash" | "card";
 
@@ -74,27 +86,31 @@ export type Payment = {
 ## 📜 Tipos de Documentos
 
 ### `ReceiptFormData`
+
 Recibo simples, geralmente emitido após pagamento.
+
 ```ts
 export type ReceiptFormData = {
   documentNumber: string;
   issueDate: string;
-  totals: Pick<Totals, 'totalDue'>;
+  totals: Pick<Totals, "totalDue">;
   referenceInvoice: string;
   company?: CompanyInfo;
-  customer?: CustomerInfo;
-  items?: Omit<Item, 'total'>[];
+  client?: ClientInfo;
+  items?: Omit<Item, "total">[];
   payment?: Payment;
 };
 ```
 
 ### `ProformaFormData`
+
 Documento proforma (cotação ou proposta comercial), não fiscal.
+
 ```ts
 export type ProformaFormData = {
   documentNumber: string;
   issueDate: string;
-  customer: CustomerInfo;
+  client: ClientInfo;
   items: Item[];
   totals: Required<Totals>;
   company?: CompanyInfo;
@@ -103,13 +119,15 @@ export type ProformaFormData = {
 ```
 
 ### `InvoiceFormData`
+
 Fatura normal, documento fiscal completo.
+
 ```ts
 export type InvoiceFormData = {
   documentNumber: string;
   issueDate: string;
   dueDate: string;
-  customer: CustomerInfo;
+  client: ClientInfo;
   items: Item[];
   totals: Required<Totals>;
   payment: Payment;
@@ -123,6 +141,7 @@ export type InvoiceFormData = {
 ---
 
 ## 🧠 Observações
+
 - **Totais:** o `totalDue` é obrigatório em todos os documentos.
 - **Faturas e Proformas** usam `Required<Totals>` pois exigem todos os valores detalhados.
 - **Recibos** podem ter apenas o valor total, por isso usam `Pick<Totals, 'totalDue'>`.

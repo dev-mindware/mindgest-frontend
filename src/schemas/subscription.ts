@@ -34,7 +34,7 @@ export const subscriptionSchema = z.object({
   canceledAt: z.string().datetime().nullable().optional(),
 
   paymentProvider: z.string().optional(),
-  providerCustomerId: z.string().optional(),
+  providerClientId: z.string().optional(),
   providerSubscriptionId: z.string().optional(),
 
   plan: PlanSchema,

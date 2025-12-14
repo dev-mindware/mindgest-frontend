@@ -1,9 +1,18 @@
-import { useState, useEffect } from "react";
-import { Button, EmptyState, Input, SelectField, Separator } from "@/components";
+"use client";
+
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import {
+  Button,
+  EmptyState,
+  Input,
+  SelectField,
+  Separator,
+} from "@/components";
 import { UseFieldArrayReturn } from "react-hook-form";
 import { InvoiceFormData } from "@/schemas";
 import { InputFetch } from "@/components/common/input-fetch";
 import { Trash2 } from "lucide-react";
+import { formatCurrency } from "@/utils";
 
 interface InvoiceItemsProps {
   fieldArray: UseFieldArrayReturn<InvoiceFormData, "items">;
@@ -30,7 +39,7 @@ export function InvoiceItems({
   globalRetention,
   setGlobalRetention,
   globalDiscount,
-  setGlobalDiscount
+  setGlobalDiscount,
 }: InvoiceItemsProps) {
   const { fields, append, remove } = fieldArray;
 
@@ -44,49 +53,70 @@ export function InvoiceItems({
 
   const [isItemFromAPI, setIsItemFromAPI] = useState(false);
 
-  // Calculate totals
-  const subtotal = fields.reduce((acc, item) => {
-    return acc + (item.unitPrice * item.quantity);
-  }, 0);
+  /* =========================
+     Totais (lógica nova)
+     ========================= */
+  const totals = useMemo(() => {
+    const subtotal = fields.reduce(
+      (acc, item) => acc + item.unitPrice * item.quantity,
+      0
+    );
 
-  const taxAmount = Number((subtotal * (globalTax / 100)).toFixed(2));
-  const retentionAmount = Number((subtotal * (globalRetention / 100)).toFixed(2));
-  const discountAmount = Number((subtotal * (globalDiscount / 100)).toFixed(2));
-  const total = Number((subtotal + taxAmount - retentionAmount - discountAmount).toFixed(2));
+    const taxAmount = +(subtotal * (globalTax / 100)).toFixed(2);
+    const retentionAmount = +(subtotal * (globalRetention / 100)).toFixed(2);
+    const discountAmount = +(subtotal * (globalDiscount / 100)).toFixed(2);
 
-  // Notify parent of changes
+    const total = +(
+      subtotal +
+      taxAmount -
+      retentionAmount -
+      discountAmount
+    ).toFixed(2);
+
+    return {
+      subtotal: +subtotal.toFixed(2),
+      taxAmount,
+      retentionAmount,
+      discountAmount,
+      total,
+    };
+  }, [fields, globalTax, globalRetention, globalDiscount]);
+
+  /* =========================
+     Notificar pai sem loop
+     ========================= */
+  const lastTotalsRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (onTotalsChange) {
-      onTotalsChange({
-        subtotal: Number(subtotal.toFixed(2)),
-        taxAmount,
-        retentionAmount,
-        discountAmount,
-        total,
-      });
-    }
-  }, [subtotal, taxAmount, retentionAmount, discountAmount, total, onTotalsChange]);
+    if (!onTotalsChange) return;
 
-  function handleAddItem() {
-    const { name, quantity, price, apiId } = itemDraft;
+    const serialized = JSON.stringify(totals);
+    if (serialized !== lastTotalsRef.current) {
+      lastTotalsRef.current = serialized;
+      onTotalsChange(totals);
+    }
+  }, [totals, onTotalsChange]);
+
+  /* =========================
+     Handlers
+     ========================= */
+  const handleAddItem = useCallback(() => {
+    const { name, quantity, price, apiId, type } = itemDraft;
     if (!name || quantity <= 0 || price < 0) return;
 
-    const newItem = {
+    append({
       description: name,
       unitPrice: price,
       quantity,
       tax: globalTax,
-      retention: globalRetention,
+      /* retention: globalRetention, */
       discount: globalDiscount,
       total: price * quantity,
-      type: itemDraft.type,
+      type,
       isFromAPI: isItemFromAPI,
       ...(isItemFromAPI && apiId ? { id: apiId } : {}),
-    };
+    });
 
-    append(newItem);
-
-    // Reset form
     setItemDraft({
       name: "",
       quantity: 1,
@@ -95,243 +125,242 @@ export function InvoiceItems({
       apiId: undefined,
     });
     setIsItemFromAPI(false);
-  }
+  }, [
+    append,
+    itemDraft,
+    globalTax,
+    globalRetention,
+    globalDiscount,
+    isItemFromAPI,
+  ]);
 
-  const handleItemFetchChange = (id: string | number, fullObject: any | null) => {
-    if (fullObject && fullObject.price) {
-      const price = parseFloat(fullObject.price);
-      setItemDraft((prev) => ({
-        ...prev,
-        name: fullObject.name || "",
-        price: price,
-        type: fullObject.type || "PRODUCT",
-        apiId: fullObject.id,
-      }));
-      setIsItemFromAPI(true);
-    } else {
-      setItemDraft((prev) => ({
-        ...prev,
-        name: typeof id === "string" ? id : "",
-        price: 0,
-        apiId: undefined,
-      }));
-      setIsItemFromAPI(false);
-    }
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-AO", {
-      style: "currency",
-      currency: "AOA",
-    }).format(value);
-  };
+  const handleItemFetchChange = useCallback(
+    (id: string | number, fullObject: any | null) => {
+      if (fullObject?.price) {
+        setItemDraft((prev) => ({
+          ...prev,
+          name: fullObject.name ?? "",
+          price: Number(fullObject.price),
+          type: fullObject.type ?? "PRODUCT",
+          apiId: fullObject.id,
+        }));
+        setIsItemFromAPI(true);
+      } else {
+        setItemDraft((prev) => ({
+          ...prev,
+          name: typeof id === "string" ? id : "",
+          price: 0,
+          apiId: undefined,
+        }));
+        setIsItemFromAPI(false);
+      }
+    },
+    []
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Itens da Fatura</h3>
-      </div>
-
+      <h3 className="text-lg font-semibold">Itens da Fatura</h3>
       <Separator />
 
-      {/* Add Item Form */}
-      <div className="pt-6">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <InputFetch
-              startIcon="ShoppingBasket"
-              label="Nome do Item"
-              placeholder="Nome do produto ou serviço"
-              endpoint="/items"
-              displayFields={["name", "description"]}
-              onValueChange={handleItemFetchChange}
-              minChars={1}
-              debounceMs={300}
-            />
+      {/* FORM ADICIONAR ITEM */}
+      <div className="pt-6 space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <InputFetch
+            startIcon="ShoppingBasket"
+            label="Nome do Item"
+            endpoint="/items"
+            displayFields={["name", "description"]}
+            onValueChange={handleItemFetchChange}
+          />
 
-            <Input
-              type="number"
-              label="Quantidade"
-              name="quantity"
-              min={1}
-              value={itemDraft.quantity}
-              onChange={(e) => {
-                const newValue = Number(e.target.value);
-                if (!isNaN(newValue) && newValue >= 0) {
-                  setItemDraft({ ...itemDraft, quantity: newValue });
-                }
-              }}
-              className="w-full"
-            />
+          <Input
+            type="number"
+            label="Quantidade"
+            min={1}
+            value={itemDraft.quantity}
+            onChange={(e) =>
+              setItemDraft({
+                ...itemDraft,
+                quantity: Math.max(1, Number(e.target.value)),
+              })
+            }
+          />
 
-            <Input
-              type="number"
-              label="Preço Unitário"
-              min="0"
-              step="0.01"
-              value={itemDraft.price}
-              onChange={(e) =>
-                setItemDraft({ ...itemDraft, price: Number(e.target.value) })
+          <Input
+            type="number"
+            label="Preço Unitário"
+            min="0"
+            step="0.01"
+            value={itemDraft.price}
+            disabled={isItemFromAPI}
+            onChange={(e) =>
+              setItemDraft({
+                ...itemDraft,
+                price: Number(e.target.value),
+              })
+            }
+          />
+
+          {!isItemFromAPI && (
+            <SelectField
+              label="Tipo"
+              value={itemDraft.type}
+              onValueChange={(value) =>
+                setItemDraft({
+                  ...itemDraft,
+                  type: value as "PRODUCT" | "SERVICE",
+                })
               }
-              className="w-full"
-              disabled={isItemFromAPI}
+              options={[
+                { value: "PRODUCT", label: "Produto" },
+                { value: "SERVICE", label: "Serviço" },
+              ]}
             />
+          )}
+        </div>
 
-            {!isItemFromAPI && (
-              <SelectField
-                label="Tipo"
-                value={itemDraft.type}
-                onValueChange={(value) =>
-                  setItemDraft({ ...itemDraft, type: value as "PRODUCT" | "SERVICE" })
-                }
-                options={[
-                  { value: "PRODUCT", label: "Produto" },
-                  { value: "SERVICE", label: "Serviço" },
-                ]}
-                className="w-full"
-              />
-            )}
-          </div>
-
-          <div className="flex justify-end">
-            <Button type="button" onClick={handleAddItem}>
-              Adicionar Item
-            </Button>
-          </div>
+        <div className="flex justify-end">
+          <Button type="button" onClick={handleAddItem}>
+            Adicionar Item
+          </Button>
         </div>
       </div>
 
-      {/* Items List */}
+      {/* LISTA */}
       {fields.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center">
+        <div className="flex justify-center py-12">
           <EmptyState icon="ShoppingBasket" />
         </div>
       ) : (
-        <div className="space-y-4">
-          <div className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b bg-muted/50 ">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Item</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Tipo</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium">Qtd</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium">Preço Unit.</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium">Subtotal</th>
-                    <th className="px-4 py-3 w-[50px]"></th>
+        <div className="space-y-6">
+          {/* TABELA ORIGINAL */}
+          <div className="overflow-x-auto rounded-lg border">
+            <table className="w-full">
+              <thead className="border-b bg-muted/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm">Item</th>
+                  <th className="px-4 py-3 text-left text-sm">Tipo</th>
+                  <th className="px-4 py-3 text-right text-sm">Qtd</th>
+                  <th className="px-4 py-3 text-right text-sm">Preço Unit.</th>
+                  <th className="px-4 py-3 text-right text-sm">Subtotal</th>
+                  <th className="px-4 py-3 w-[50px]" />
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {fields.map((item, index) => (
+                  <tr key={item.id}>
+                    <td className="px-4 py-3">{item.description}</td>
+                    <td className="px-4 py-3">
+                      {item.type === "PRODUCT" ? "Produto" : "Serviço"}
+                    </td>
+                    <td className="px-4 py-3 text-right">{item.quantity}</td>
+                    <td className="px-4 py-3 text-right">
+                      {formatCurrency(item.unitPrice)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      {formatCurrency(item.unitPrice * item.quantity)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => remove(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {fields.map((item, index) => (
-                    <tr key={item.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium">{item.description}</td>
-                      <td className="px-4 py-3">
-                        {item.type === "PRODUCT" ? "Produto" : "Serviço"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right">{item.quantity}</td>
-                      <td className="px-4 py-3 text-sm text-right">
-                        {formatCurrency(item.unitPrice)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right">
-                        {formatCurrency(item.unitPrice * item.quantity)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => remove(index)}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          {/* Totals Card */}
-          <div className="pt-6">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 pb-4">
-                <SelectField
-                  label="Imposto (IVA) sobre o total"
-                  value={globalTax}
-                  onValueChange={(value) => setGlobalTax(Number(value))}
-                  options={[
-                    { value: 0, label: "0%" },
-                    { value: 5, label: "5%" },
-                    { value: 7, label: "7%" },
-                    { value: 14, label: "14%" },
-                    { value: 20, label: "20%" },
-                  ]}
-                  className="w-full"
-                />
+          {/* CONTROLOS DE IMPOSTOS */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <SelectField
+              label="Imposto (IVA)"
+              value={globalTax}
+              onValueChange={(v) => setGlobalTax(Number(v))}
+              options={[
+                { value: 0, label: "0%" },
+                { value: 5, label: "5%" },
+                { value: 7, label: "7%" },
+                { value: 14, label: "14%" },
+                { value: 20, label: "20%" },
+              ]}
+            />
 
-                <SelectField
-                  label="Retenção"
-                  value={globalRetention}
-                  onValueChange={(value) => setGlobalRetention(Number(value))}
-                  options={[
-                    { value: 0, label: "0%" },
-                    { value: 6.5, label: "6.5%" },
-                    { value: 10, label: "10%" }
-                  ]}
-                  className="w-full"
-                />
+            <SelectField
+              label="Retenção"
+              value={globalRetention}
+              onValueChange={(v) => setGlobalRetention(Number(v))}
+              options={[
+                { value: 0, label: "0%" },
+                { value: 6.5, label: "6.5%" },
+                { value: 10, label: "10%" },
+              ]}
+            />
 
-                <Input
-                  type="number"
-                  label="Desconto (%)"
-                  startIcon="Percent"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={globalDiscount}
-                  onChange={(e) => setGlobalDiscount(Number(e.target.value))}
-                  className="w-full"
-                />
+            <Input
+              type="number"
+              label="Desconto (%)"
+              min={0}
+              max={100}
+              step="0.01"
+              value={globalDiscount}
+              onChange={(e) =>
+                setGlobalDiscount(Number(e.target.value))
+              }
+            />
+          </div>
+
+          {/* CARD DE TOTAIS (ORIGINAL) */}
+          <div className="flex justify-start">
+            <div className="min-w-[280px] space-y-3 border border-dashed rounded-md p-4">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span>{formatCurrency(totals.subtotal)}</span>
               </div>
 
-              <div className="flex justify-start">
-                <div className="space-y-3 min-w-70 border border-dashed border-muted p-4 rounded-md">
-                  <div className="flex justify-between text-md gap-4">
-                    <span className="text-muted-foreground">Subtotal:</span>
-                    <span className="font-medium">{formatCurrency(subtotal)}</span>
-                  </div>
-                  {globalTax > 0 && (
-                    <div className="flex justify-between text-md gap-4">
-                      <span className="text-muted-foreground">IVA ({globalTax}%):</span>
-                      <span className="font-medium">
-                        +{formatCurrency(taxAmount)}
-                      </span>
-                    </div>
-                  )}
-                  {globalRetention > 0 && (
-                    <div className="flex justify-between text-md gap-4">
-                      <span className="text-muted-foreground">Retenção ({globalRetention}%):</span>
-                      <span className="font-medium text-destructive">
-                        -{formatCurrency(retentionAmount)}
-                      </span>
-                    </div>
-                  )}
-                  {globalDiscount > 0 && (
-                    <div className="flex justify-between text-md gap-4">
-                      <span className="text-muted-foreground">Desconto ({globalDiscount}%):</span>
-                      <span className="font-medium text-destructive">
-                        -{formatCurrency(discountAmount)}
-                      </span>
-                    </div>
-                  )}
-                  <Separator />
-                  <div className="flex justify-between text-xl font-bold gap-4">
-                    <span>Total:</span>
-                    <span className="text-2xl text-primary">{formatCurrency(total)}</span>
-                  </div>
+              {globalTax > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    IVA ({globalTax}%)
+                  </span>
+                  <span>+{formatCurrency(totals.taxAmount)}</span>
                 </div>
+              )}
+
+              {globalRetention > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    Retenção ({globalRetention}%)
+                  </span>
+                  <span className="text-destructive">
+                    -{formatCurrency(totals.retentionAmount)}
+                  </span>
+                </div>
+              )}
+
+              {globalDiscount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    Desconto ({globalDiscount}%)
+                  </span>
+                  <span className="text-destructive">
+                    -{formatCurrency(totals.discountAmount)}
+                  </span>
+                </div>
+              )}
+
+              <Separator />
+
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total</span>
+                <span className="text-primary">
+                  {formatCurrency(totals.total)}
+                </span>
               </div>
             </div>
           </div>

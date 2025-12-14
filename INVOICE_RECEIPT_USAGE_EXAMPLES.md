@@ -11,13 +11,13 @@ Invoice Receipt API handles **point-of-sale transactions** (completed sales). Un
 | **isPaid**        | `false` (default)   | `true` (always)                    |
 | **Status**        | `DRAFT` (default)   | `PAID` (always)                    |
 | **Use Case**      | Billing, Quotations | Point-of-Sale, Completed Sales     |
-| **Customer**      | Optional            | Recommended (optional for walk-in) |
+| **Client**        | Optional            | Recommended (optional for walk-in) |
 | **Items**         | Required            | Required                           |
 | **Payment Terms** | Supports due date   | N/A (already paid)                 |
 
 ---
 
-## 1. Create Invoice Receipt with Existing Customer and Items
+## 1. Create Invoice Receipt with Existing Client and Items
 
 ### Request
 
@@ -26,7 +26,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [
@@ -55,9 +55,9 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   "invoiceType": "INVOICE_RECEIPT",
   "status": "PAID",
   "isPaid": true,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-22",
   "dueDate": null,
   "items": [
@@ -88,7 +88,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 
 ---
 
-## 2. Create Invoice Receipt with New Customer and New Items
+## 2. Create Invoice Receipt with New Client and New Items
 
 ### Request
 
@@ -97,7 +97,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "name": "Maria Santos",
       "email": "maria@example.com",
       "phone": " 923 456 789",
@@ -135,9 +135,9 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   "invoiceType": "INVOICE_RECEIPT",
   "status": "PAID",
   "isPaid": true,
-  "customerId": "clm0client456",
-  "customerName": "Maria Santos",
-  "customerEmail": "maria@example.com",
+  "clientId": "clm0client456",
+  "clientName": "Maria Santos",
+  "clientEmail": "maria@example.com",
   "issueDate": "2025-11-24",
   "dueDate": null,
   "items": [
@@ -168,7 +168,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 
 ---
 
-## 3. Create Invoice Receipt with Mixed Customer and Items
+## 3. Create Invoice Receipt with Mixed Client and Items
 
 ### Request
 
@@ -177,7 +177,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client789"
     },
     "items": [
@@ -208,9 +208,9 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   "invoiceType": "INVOICE_RECEIPT",
   "status": "PAID",
   "isPaid": true,
-  "customerId": "clm0client789",
-  "customerName": "Paulo Costa",
-  "customerEmail": "paulo@example.com",
+  "clientId": "clm0client789",
+  "clientName": "Paulo Costa",
+  "clientEmail": "paulo@example.com",
   "issueDate": "2025-11-24",
   "dueDate": null,
   "items": [
@@ -241,7 +241,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 
 ---
 
-## 4. Create Walk-In Sale (No Customer ID)
+## 4. Create Walk-In Sale (No Client ID)
 
 ### Request
 
@@ -275,9 +275,9 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   "invoiceType": "INVOICE_RECEIPT",
   "status": "PAID",
   "isPaid": true,
-  "customerId": null,
-  "customerName": "Walk-in Customer",
-  "customerEmail": null,
+  "clientId": null,
+  "clientName": "Walk-in Client",
+  "clientEmail": null,
   "issueDate": "2025-11-24",
   "dueDate": null,
   "items": [
@@ -328,9 +328,9 @@ curl -X GET "http://localhost:3000/invoice/invoice-receipt?page=1&limit=20&clien
       "invoiceType": "INVOICE_RECEIPT",
       "status": "PAID",
       "isPaid": true,
-      "customerId": "clm0client123",
-      "customerName": "João Silva",
-      "customerEmail": "joao@example.com",
+      "clientId": "clm0client123",
+      "clientName": "João Silva",
+      "clientEmail": "joao@example.com",
       "issueDate": "2025-11-22",
       "dueDate": null,
       "items": [...],
@@ -371,9 +371,9 @@ curl -X GET http://localhost:3000/invoice/invoice-receipt/clm0receipt123 \
   "invoiceType": "INVOICE_RECEIPT",
   "status": "PAID",
   "isPaid": true,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-22",
   "dueDate": null,
   "items": [
@@ -431,7 +431,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 
 ---
 
-### Non-existent Customer
+### Non-existent Client
 
 **Request:**
 
@@ -440,7 +440,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "non-existent-id"
     },
     "items": [{"id": "clm0item1", "quantity": 1}],
@@ -470,7 +470,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [{"id": "non-existent-item", "quantity": 1}],
@@ -512,7 +512,7 @@ curl -X GET http://localhost:3000/invoice/invoice-receipt/non-existent-id \
 
 ---
 
-### Invalid Email (for new customer)
+### Invalid Email (for new client)
 
 **Request:**
 
@@ -521,7 +521,7 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "name": "Test User",
       "email": "invalid-email"
     },
@@ -545,10 +545,10 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 
 ## Validation Rules Summary
 
-### Customer
+### Client
 
-- `id` (optional): Existing customer ID
-- `name` (conditional): Required if creating new customer, min 2 chars, max 100 chars
+- `id` (optional): Existing client ID
+- `name` (conditional): Required if creating new client, min 2 chars, max 100 chars
 - `email` (optional): Valid email format
 - `phone` (optional): Max 20 characters
 - `address` (optional): Max 255 characters
@@ -582,8 +582,8 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ## Best Practices
 
 1. **Always provide item details** - Include quantity and either existing item ID or full item details
-2. **Customer is optional** - Walk-in sales can omit the customer object entirely
-3. **Use existing customers when possible** - Provides better data consistency
+2. **Client is optional** - Walk-in sales can omit the client object entirely
+3. **Use existing clients when possible** - Provides better data consistency
 4. **Validate amounts before sending** - Total should equal subtotal + tax - discount
 5. **Use ISO 8601 dates** - Format: YYYY-MM-DD
 6. **Include notes for context** - Helps with reconciliation and auditing
@@ -613,8 +613,8 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
 ### Complete Transaction Flow
 
 ```
-1. Customer arrives at store
-   └─ Search for existing customer (or leave empty for walk-in)
+1. Client arrives at store
+   └─ Search for existing client (or leave empty for walk-in)
 
 2. Scan/Select items
    └─ Add quantities
@@ -631,11 +631,11 @@ curl -X POST http://localhost:3000/invoice/invoice-receipt \
    └─ Receipt is immediately finalized
 
 5. Retrieve Receipt (GET /invoice/invoice-receipt/:id)
-   └─ Print or email receipt to customer
+   └─ Print or email receipt to client
 
 6. Reconciliation
    └─ List all receipts (GET /invoice/invoice-receipt)
-   └─ Filter by date range or customer
+   └─ Filter by date range or client
    └─ Generate sales reports
 ```
 
@@ -651,9 +651,9 @@ When converting to response DTO:
   invoiceNumber: invoice.number,           // System-generated (RECIP-xxx)
   invoiceType: invoice.type,               // Always 'INVOICE_RECEIPT'
   isPaid: invoice.isPaid,                  // Always true
-  customerId: invoice.clientId,            // Can be null for walk-in
-  customerName: invoice.client?.name || 'Walk-in Customer',
-  customerEmail: invoice.client?.email,    // Can be null
+  clientId: invoice.clientId,            // Can be null for walk-in
+  clientName: invoice.client?.name || 'Walk-in Client',
+  clientEmail: invoice.client?.email,    // Can be null
   issueDate: formatted(invoice.createdAt),
   dueDate: formatted(invoice.dueDate),     // Usually null for receipts
   items: invoice.items.map(formatItem),    // Detailed line items

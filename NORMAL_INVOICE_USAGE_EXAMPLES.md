@@ -1,6 +1,6 @@
 # Normal Invoice API - Usage Examples
 
-## 1. Create Invoice with Existing Customer and Items
+## 1. Create Invoice with Existing Client and Items
 
 ### Request
 
@@ -9,7 +9,7 @@ curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [
@@ -39,9 +39,9 @@ curl -X POST http://localhost:3000/invoice/normal \
   "invoiceType": "NORMAL_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-22",
   "dueDate": "2025-12-22",
   "items": [
@@ -72,7 +72,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 
 ---
 
-## 2. Create Invoice with New Customer and New Items
+## 2. Create Invoice with New Client and New Items
 
 ### Request
 
@@ -81,7 +81,7 @@ curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "name": "Maria Santos",
       "email": "maria@example.com",
       "phone": " 923 456 789",
@@ -123,9 +123,9 @@ curl -X POST http://localhost:3000/invoice/normal \
   "invoiceType": "NORMAL_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client456",
-  "customerName": "Maria Santos",
-  "customerEmail": "maria@example.com",
+  "clientId": "clm0client456",
+  "clientName": "Maria Santos",
+  "clientEmail": "maria@example.com",
   "issueDate": "2025-11-24",
   "dueDate": "2025-12-24",
   "items": [
@@ -156,7 +156,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 
 ---
 
-## 3. Create Invoice with Mixed Customer and Items
+## 3. Create Invoice with Mixed Client and Items
 
 ### Request
 
@@ -165,7 +165,7 @@ curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client789"
     },
     "items": [
@@ -197,9 +197,9 @@ curl -X POST http://localhost:3000/invoice/normal \
   "invoiceType": "NORMAL_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client789",
-  "customerName": "Paulo Costa",
-  "customerEmail": "paulo@example.com",
+  "clientId": "clm0client789",
+  "clientName": "Paulo Costa",
+  "clientEmail": "paulo@example.com",
   "issueDate": "2025-11-24",
   "dueDate": null,
   "items": [
@@ -250,9 +250,9 @@ curl -X GET "http://localhost:3000/invoice/normal?page=1&limit=20&clientId=clm0c
       "invoiceType": "NORMAL_INVOICE",
       "status": "DRAFT",
       "isPaid": false,
-      "customerId": "clm0client123",
-      "customerName": "João Silva",
-      "customerEmail": "joao@example.com",
+      "clientId": "clm0client123",
+      "clientName": "João Silva",
+      "clientEmail": "joao@example.com",
       "issueDate": "2025-11-22",
       "dueDate": "2025-12-22",
       "items": [...],
@@ -293,9 +293,9 @@ curl -X GET http://localhost:3000/invoice/normal/clm0invoice123 \
   "invoiceType": "NORMAL_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-22",
   "dueDate": "2025-12-22",
   "items": [
@@ -349,14 +349,14 @@ curl -X POST http://localhost:3000/invoice/normal \
 }
 ```
 
-### Non-existent Customer
+### Non-existent Client
 
 ```bash
 curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "non-existent-id"
     },
     "items": [{"id": "clm0item1", "quantity": 1}],
@@ -399,7 +399,7 @@ curl -X POST http://localhost:3000/invoice/normal \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "name": "Test User",
       "email": "invalid-email",
       "companyId": "clm0company123"
@@ -424,15 +424,15 @@ curl -X POST http://localhost:3000/invoice/normal \
 
 ## Validation Rules Summary
 
-### Customer
+### Client
 
-- `id` (optional): Existing customer ID
-- `name` (conditional): Required if creating new customer, min 2 chars, max 100 chars
+- `id` (optional): Existing client ID
+- `name` (conditional): Required if creating new client, min 2 chars, max 100 chars
 - `email` (optional): Valid email format
 - `phone` (optional): Max 20 characters
 - `address` (optional): Max 255 characters
 - `taxNumber` (optional): Max 20 characters
-- `companyId` (conditional): Required if creating new customer
+- `companyId` (conditional): Required if creating new client
 
 ### Items
 
@@ -462,7 +462,7 @@ curl -X POST http://localhost:3000/invoice/normal \
 
 ## Best Practices
 
-1. **Always provide customer ID or full customer details** - Avoid typos by reusing existing customers when possible
+1. **Always provide client ID or full client details** - Avoid typos by reusing existing clients when possible
 2. **Always provide item ID or full item details** - Use existing items for consistency
 3. **Validate amounts before sending** - Total should equal subtotal + tax - discount
 4. **Use ISO 8601 dates** - Format: YYYY-MM-DD

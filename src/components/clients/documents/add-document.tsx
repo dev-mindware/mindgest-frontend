@@ -39,9 +39,9 @@ export function AddDocuments() {
       />
 
       <Tabs
+        className="w-full"
         defaultValue={currentTab}
         onValueChange={handleTabChange}
-        className="w-full"
       >
         <TabsList className="flex justify-center md:justify-start">
           <TabsTrigger value="invoice" onClick={() => setCurrentTab("invoice")}>

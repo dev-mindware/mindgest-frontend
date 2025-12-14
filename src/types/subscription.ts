@@ -9,7 +9,7 @@ export interface Subscription {
   updatedAt?: string;
   billingInterval: string;
   paymentProvider: string;
-  providerCustomerId: string;
+  providerClientId: string;
   providerSubscriptionId: string;
   billingPeriodInMonths: string | null;
   plan: Plan;

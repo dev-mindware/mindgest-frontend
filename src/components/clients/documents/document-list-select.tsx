@@ -22,7 +22,8 @@ type DocumentTab =
   | "invoice"
   | "invoice-receipt"
   | "proforma"
-  | "only-receipt";
+  | "only-receipt"
+  | "credit-note";
 
 export function DocumentList() {
   const router = useRouter();
@@ -52,6 +53,7 @@ export function DocumentList() {
             <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
             <TabsTrigger value="proforma">Fatura Proforma</TabsTrigger>
             <TabsTrigger value="only-receipt">Recibos</TabsTrigger>
+            <TabsTrigger value="credit-note">Notas</TabsTrigger>
           </TabsList>
 
           <Link href={`/client/documents/new?tab=${activeTab}`}>

@@ -26,8 +26,6 @@ export type InvoiceItem = {
   tax: any;
 };
 
-
-
 // ========================
 // 💳 PAGAMENTO E PARCELAS
 // ========================
@@ -46,7 +44,7 @@ export type Payment = {
 export type InvoicePayload = {
   issueDate: string;
   dueDate: string;
-  customer:
+  client:
     | {
         id: string;
         name?: undefined;
@@ -84,7 +82,7 @@ export type InvoicePayload = {
 
 export type InvoiceReceiptPayload = {
   issueDate: string;
-  customer:
+  client:
     | {
         id: string;
         name?: undefined;
@@ -122,7 +120,7 @@ export type InvoiceReceiptPayload = {
 
 export type ProformaPayload = {
   issueDate: string;
-  customer:
+  client:
     | {
         id: string;
         name?: undefined;
@@ -209,7 +207,7 @@ export type InvoiceResponse = InvoiceData & {
 export type ReceiptData = {
   id: string;
   number: string;
-  customerId: string;
+  clientId: string;
   total: string;
   paymentMethodStr: string;
   client: {

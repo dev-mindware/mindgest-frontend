@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Receipt API handles immediate payment sales transactions. A receipt represents a completed sale where the customer pays at the point of sale. Receipts are always marked as paid (isPaid=true) and include change calculation functionality.
+The Receipt API handles immediate payment sales transactions. A receipt represents a completed sale where the client pays at the point of sale. Receipts are always marked as paid (isPaid=true) and include change calculation functionality.
 
 ## Key Features
 
@@ -26,14 +26,15 @@ The Receipt API handles immediate payment sales transactions. A receipt represen
 **Required Roles:** ADMIN, OWNER, MANAGER, CASHIER
 
 **Request Body:**
+
 ```json
 {
-  "customerId": "clm0client123",
+  "clientId": "clm0client123",
   "issueDate": "2025-11-24",
-  "total": 1500.50,
-  "receivedValue": 2000.00,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
+  "total": 1500.5,
+  "receivedValue": 2000.0,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
   "paymentMethod": "CASH",
   "originalInvoiceId": "clm0invoice123",
   "notes": "Payment received for order #12345"
@@ -41,22 +42,23 @@ The Receipt API handles immediate payment sales transactions. A receipt represen
 ```
 
 **Response (201):**
+
 ```json
 {
   "id": "clm0receipt001",
   "receiptNumber": "REC-LG1W2BW-A3K5N9",
   "receiptType": "RECEIPT",
   "isPaid": true,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-24",
-  "subtotal": 1250.50,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
-  "totalAmount": 1500.50,
-  "receivedValue": 2000.00,
-  "changeAmount": 499.50,
+  "subtotal": 1250.5,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
+  "totalAmount": 1500.5,
+  "receivedValue": 2000.0,
+  "changeAmount": 499.5,
   "paymentMethod": "CASH",
   "originalInvoiceId": "clm0invoice123",
   "notes": "Payment received for order #12345",
@@ -82,16 +84,18 @@ The Receipt API handles immediate payment sales transactions. A receipt represen
 |-----------|------|----------|-------------|
 | page | string | No | Page number (default: 1) |
 | limit | string | No | Items per page (default: 10, max: 100) |
-| customerId | string | No | Filter by customer ID |
+| clientId | string | No | Filter by client ID |
 | startDate | string | No | Start date (ISO 8601) for range filter |
 | endDate | string | No | End date (ISO 8601) for range filter |
 
 **Example Request:**
+
 ```bash
-GET /invoice/receipt?page=1&limit=20&customerId=clm0client123&startDate=2025-11-01&endDate=2025-11-30
+GET /invoice/receipt?page=1&limit=20&clientId=clm0client123&startDate=2025-11-01&endDate=2025-11-30
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -100,16 +104,16 @@ GET /invoice/receipt?page=1&limit=20&customerId=clm0client123&startDate=2025-11-
       "receiptNumber": "REC-LG1W2BW-A3K5N9",
       "receiptType": "RECEIPT",
       "isPaid": true,
-      "customerId": "clm0client123",
-      "customerName": "João Silva",
-      "customerEmail": "joao@example.com",
+      "clientId": "clm0client123",
+      "clientName": "João Silva",
+      "clientEmail": "joao@example.com",
       "issueDate": "2025-11-24",
-      "subtotal": 1250.50,
-      "taxAmount": 300.00,
-      "discountAmount": 50.00,
-      "totalAmount": 1500.50,
-      "receivedValue": 2000.00,
-      "changeAmount": 499.50,
+      "subtotal": 1250.5,
+      "taxAmount": 300.0,
+      "discountAmount": 50.0,
+      "totalAmount": 1500.5,
+      "receivedValue": 2000.0,
+      "changeAmount": 499.5,
       "paymentMethod": "CASH",
       "operatorId": "clm0user456",
       "operatorName": "Maria Santos",
@@ -140,27 +144,29 @@ GET /invoice/receipt?page=1&limit=20&customerId=clm0client123&startDate=2025-11-
 | id | string | Yes | Receipt ID |
 
 **Example Request:**
+
 ```bash
 GET /invoice/receipt/clm0receipt001
 ```
 
 **Response:**
+
 ```json
 {
   "id": "clm0receipt001",
   "receiptNumber": "REC-LG1W2BW-A3K5N9",
   "receiptType": "RECEIPT",
   "isPaid": true,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-24",
-  "subtotal": 1250.50,
-  "taxAmount": 300.00,
-  "discountAmount": 50.00,
-  "totalAmount": 1500.50,
-  "receivedValue": 2000.00,
-  "changeAmount": 499.50,
+  "subtotal": 1250.5,
+  "taxAmount": 300.0,
+  "discountAmount": 50.0,
+  "totalAmount": 1500.5,
+  "receivedValue": 2000.0,
+  "changeAmount": 499.5,
   "paymentMethod": "CASH",
   "originalInvoiceId": "clm0invoice123",
   "notes": "Payment received for order #12345",
@@ -187,31 +193,33 @@ GET /invoice/receipt/clm0receipt001
 | id | string | Yes | Receipt ID to refund |
 
 **Request Body:**
+
 ```json
 {
-  "reason": "Customer returned items due to defect"
+  "reason": "Client returned items due to defect"
 }
 ```
 
 **Response (201):**
+
 ```json
 {
   "id": "clm0receipt002",
   "receiptNumber": "REFUND-LG1W2BW-B7M2K8",
   "receiptType": "RECEIPT",
   "isPaid": true,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-24",
-  "subtotal": -1250.50,
-  "taxAmount": -300.00,
-  "discountAmount": -50.00,
-  "totalAmount": -1500.50,
-  "receivedValue": -2000.00,
-  "changeAmount": -499.50,
+  "subtotal": -1250.5,
+  "taxAmount": -300.0,
+  "discountAmount": -50.0,
+  "totalAmount": -1500.5,
+  "receivedValue": -2000.0,
+  "changeAmount": -499.5,
   "originalInvoiceId": "clm0receipt001",
-  "notes": "Refund: Customer returned items due to defect",
+  "notes": "Refund: Client returned items due to defect",
   "operatorId": "clm0user456",
   "operatorName": "Maria Santos",
   "createdAt": "2025-11-24T11:00:00.000Z",
@@ -225,14 +233,14 @@ GET /invoice/receipt/clm0receipt001
 
 ### Example 1: Simple Cash Sale
 
-**Scenario:** Customer buys items worth 500 AOA and pays with 1000 AOA in cash.
+**Scenario:** Client buys items worth 500 AOA and pays with 1000 AOA in cash.
 
 ```bash
 curl -X POST http://localhost:3000/invoice/receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customerId": "clm0client123",
+    "clientId": "clm0client123",
     "issueDate": "2025-11-24",
     "total": 500.00,
     "receivedValue": 1000.00,
@@ -242,6 +250,7 @@ curl -X POST http://localhost:3000/invoice/receipt \
 ```
 
 **Result:**
+
 - Receipt created with automatic change calculation: 500 AOA
 - Marked as paid immediately
 - Can be used for sales reporting
@@ -250,14 +259,14 @@ curl -X POST http://localhost:3000/invoice/receipt \
 
 ### Example 2: Sale with Taxes and Discount
 
-**Scenario:** Customer buys items with IVA tax and applies a discount.
+**Scenario:** Client buys items with IVA tax and applies a discount.
 
 ```bash
 curl -X POST http://localhost:3000/invoice/receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customerId": "clm0client456",
+    "clientId": "clm0client456",
     "issueDate": "2025-11-24",
     "total": 2200.00,
     "receivedValue": 2500.00,
@@ -269,6 +278,7 @@ curl -X POST http://localhost:3000/invoice/receipt \
 ```
 
 **Calculation:**
+
 - Subtotal: 2200.00 - 400.00 + 100.00 = 1900.00
 - Total: 2200.00
 - Change: 2500.00 - 2200.00 = 300.00
@@ -277,14 +287,14 @@ curl -X POST http://localhost:3000/invoice/receipt \
 
 ### Example 3: Receipt Linked to Original Invoice
 
-**Scenario:** Converting a normal invoice to a receipt (customer pays now).
+**Scenario:** Converting a normal invoice to a receipt (client pays now).
 
 ```bash
 curl -X POST http://localhost:3000/invoice/receipt \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customerId": "clm0client789",
+    "clientId": "clm0client789",
     "issueDate": "2025-11-24",
     "total": 5000.00,
     "receivedValue": 5000.00,
@@ -310,18 +320,19 @@ curl -X GET "http://localhost:3000/invoice/receipt?startDate=2025-11-24&endDate=
 
 ### Example 5: Refund a Receipt
 
-**Scenario:** Customer returns items and needs refund.
+**Scenario:** Client returns items and needs refund.
 
 ```bash
 curl -X POST http://localhost:3000/invoice/receipt/clm0receipt001/refund \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "reason": "Customer changed mind - items defective"
+    "reason": "Client changed mind - items defective"
   }'
 ```
 
 **Result:**
+
 - Refund receipt created with negative amounts
 - Linked to original receipt via originalInvoiceId
 - Can be used to track refunds separately
@@ -331,21 +342,23 @@ curl -X POST http://localhost:3000/invoice/receipt/clm0receipt001/refund \
 ## Validation Rules
 
 ### Required Fields
-| Field | Type | Validation |
-|-------|------|-----------|
-| customerId | string | Must be existing customer ID |
-| issueDate | string | ISO 8601 format (YYYY-MM-DD) |
-| total | number | Must be > 0, max 2 decimals |
+
+| Field         | Type   | Validation                       |
+| ------------- | ------ | -------------------------------- |
+| clientId      | string | Must be existing client ID       |
+| issueDate     | string | ISO 8601 format (YYYY-MM-DD)     |
+| total         | number | Must be > 0, max 2 decimals      |
 | receivedValue | number | Must be >= total, max 2 decimals |
 
 ### Optional Fields
-| Field | Type | Validation | Notes |
-|-------|------|-----------|-------|
-| taxAmount | number | Must be >= 0, max 2 decimals | |
-| discountAmount | number | Must be >= 0, max 2 decimals | |
-| paymentMethod | enum | CASH, CARD, TRANSFER, MOBILE_MONEY | |
-| originalInvoiceId | string | Must be existing invoice ID | Link to source invoice |
-| notes | string | No validation | Free text field |
+
+| Field             | Type   | Validation                         | Notes                  |
+| ----------------- | ------ | ---------------------------------- | ---------------------- |
+| taxAmount         | number | Must be >= 0, max 2 decimals       |                        |
+| discountAmount    | number | Must be >= 0, max 2 decimals       |                        |
+| paymentMethod     | enum   | CASH, CARD, TRANSFER, MOBILE_MONEY |                        |
+| originalInvoiceId | string | Must be existing invoice ID        | Link to source invoice |
+| notes             | string | No validation                      | Free text field        |
 
 ---
 
@@ -353,16 +366,18 @@ curl -X POST http://localhost:3000/invoice/receipt/clm0receipt001/refund \
 
 ### 400 - Bad Request
 
-**Customer Not Found:**
+**Client Not Found:**
+
 ```json
 {
   "statusCode": 400,
-  "message": "Customer with ID non-existent-id not found",
+  "message": "Client with ID non-existent-id not found",
   "error": "Bad Request"
 }
 ```
 
 **Received Amount Less Than Total:**
+
 ```json
 {
   "statusCode": 400,
@@ -372,6 +387,7 @@ curl -X POST http://localhost:3000/invoice/receipt/clm0receipt001/refund \
 ```
 
 **Invalid Original Invoice:**
+
 ```json
 {
   "statusCode": 400,
@@ -419,7 +435,7 @@ curl -X POST http://localhost:3000/invoice/receipt/clm0receipt001/refund \
 ```
 POST /invoice/receipt
     ↓
-Validate customer exists
+Validate client exists
     ↓
 Validate original invoice (if provided)
     ↓
@@ -434,7 +450,7 @@ Create receipt with:
 Return formatted response with:
   - changeAmount calculated
   - operatorName resolved
-  - customerName resolved
+  - clientName resolved
 ```
 
 ---
@@ -442,28 +458,34 @@ Return formatted response with:
 ## Common Use Cases
 
 ### Daily Sales Tracking
+
 Use receipts to track all daily cash transactions for reconciliation.
 
 ### POS Integration
-Create receipt directly when customer pays at checkout.
+
+Create receipt directly when client pays at checkout.
 
 ### Multi-Payment Support
+
 Create separate receipts for split payments or partial payments.
 
 ### Refund Management
+
 Use refund endpoint to handle returns without deleting original receipt.
 
 ### Sales Reporting
+
 Receipts are automatically included in sales reports (filtered by isPaid=true).
 
 ### Cash Flow Analysis
+
 Use receivedValue field to track actual cash received vs invoiced amounts.
 
 ---
 
 ## Best Practices
 
-1. **Always Provide Customer ID** - Ensures proper tracking and reporting
+1. **Always Provide Client ID** - Ensures proper tracking and reporting
 2. **Include Payment Method** - Helps with reconciliation
 3. **Link to Original Invoice** - Track invoice-to-receipt conversion
 4. **Add Notes** - Document any special circumstances
@@ -479,4 +501,3 @@ Use receivedValue field to track actual cash received vs invoiced amounts.
 - Use `isPaid=true` filter to identify completed transactions
 - Receipt amounts are included in profit/margin calculations
 - Change amounts can be tracked separately for cash management
-

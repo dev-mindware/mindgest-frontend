@@ -64,18 +64,18 @@ export function InvoiceReceiptForm() {
   const handleClientChange = (id: string | number, fullObject: any | null) => {
     if (fullObject && fullObject.name) {
       // Client from API
-      setValue("customer.name", fullObject.name);
-      setValue("customer.taxNumber", fullObject.taxNumber || "");
-      setValue("customer.address", fullObject.address || "");
-      setValue("customer.phone", fullObject.phone || "");
+      setValue("client.name", fullObject.name);
+      setValue("client.taxNumber", fullObject.taxNumber || "");
+      setValue("client.address", fullObject.address || "");
+      setValue("client.phone", fullObject.phone || "");
       setClientApiId(fullObject.id);
       setIsClientFromAPI(true);
     } else {
       // Manual entry
-      setValue("customer.name", typeof id === 'string' ? id : '');
-      setValue("customer.taxNumber", "");
-      setValue("customer.address", "");
-      setValue("customer.phone", "");
+      setValue("client.name", typeof id === "string" ? id : "");
+      setValue("client.taxNumber", "");
+      setValue("client.address", "");
+      setValue("client.phone", "");
       setClientApiId(undefined);
       setIsClientFromAPI(false);
     }
@@ -85,13 +85,14 @@ export function InvoiceReceiptForm() {
     // Construct final payload
     const finalPayload = {
       issueDate: data.issueDate,
-      customer: isClientFromAPI && clientApiId
-        ? { id: clientApiId }
-        : {
-          name: data.customer.name,
-          phone: data.customer.phone || undefined,
-          address: data.customer.address || undefined,
-        },
+      client:
+        isClientFromAPI && clientApiId
+          ? { id: clientApiId }
+          : {
+              name: data.client.name,
+              phone: data.client.phone || undefined,
+              address: data.client.address || undefined,
+            },
       items: data.items.map((item) => {
         if (item.isFromAPI && item.id) {
           return {
@@ -113,16 +114,18 @@ export function InvoiceReceiptForm() {
       discountAmount: invoiceTotals.discountAmount,
     };
 
-    console.log("🚀 Final Invoice Payload:", JSON.stringify(finalPayload, null, 2));
+    console.log(
+      "🚀 Final Invoice Payload:",
+      JSON.stringify(finalPayload, null, 2)
+    );
     try {
       await invoiceReceiptService.createInvoiceReceipt(finalPayload);
       toast.success("Fatura criada com sucesso!");
-      router.push("/client/documents&current_tab=invoice-receipt",);
+      router.push("/client/documents&current_tab=invoice-receipt");
     } catch (error) {
       toast.error("Erro ao criar fatura!");
       console.error("Error creating invoice:", error);
     }
-
 
     // Reset form and state
     reset();
@@ -148,7 +151,7 @@ export function InvoiceReceiptForm() {
           label="Cliente"
           placeholder="Digite o nome do cliente..."
           endpoint="/clients"
-          displayFields={['name', 'email']}
+          displayFields={["name", "email"]}
           onValueChange={handleClientChange}
           minChars={1}
           debounceMs={300}
@@ -158,8 +161,8 @@ export function InvoiceReceiptForm() {
           <Input
             label="NIF"
             placeholder="123456789"
-            {...register("customer.taxNumber")}
-            error={errors.customer?.taxNumber?.message}
+            {...register("client.taxNumber")}
+            error={errors.client?.taxNumber?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -169,8 +172,8 @@ export function InvoiceReceiptForm() {
             startIcon="Phone"
             placeholder="+244 923 456 789"
             label="Telefone do cliente"
-            {...register("customer.phone")}
-            error={errors.customer?.phone?.message}
+            {...register("client.phone")}
+            error={errors.client?.phone?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -180,8 +183,8 @@ export function InvoiceReceiptForm() {
             startIcon="MapPin"
             placeholder="Luanda"
             label="Endereço do cliente"
-            {...register("customer.address")}
-            error={errors.customer?.address?.message}
+            {...register("client.address")}
+            error={errors.client?.address?.message}
             disabled={isClientFromAPI}
           />
         </div>

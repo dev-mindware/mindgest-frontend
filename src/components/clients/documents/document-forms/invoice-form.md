@@ -2,9 +2,9 @@
 import { toast } from "sonner";
 import { ButtonSubmit, Input } from "@/components";
 import {
-  useForm,
-  useFieldArray,
-  useWatch,
+useForm,
+useFieldArray,
+useWatch,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
@@ -15,117 +15,117 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function InvoiceForm() {
-  const router = useRouter();
-  const [isClientFromAPI, setIsClientFromAPI] = useState(false);
-  const {
-  register,
-  control,
-  setValue,
-  handleSubmit,
-  formState: { errors, isSubmitting },
-  reset,
+const router = useRouter();
+const [isClientFromAPI, setIsClientFromAPI] = useState(false);
+const {
+register,
+control,
+setValue,
+handleSubmit,
+formState: { errors, isSubmitting },
+reset,
 } = useForm<InvoiceFormData>({
-  resolver: zodResolver(InvoiceSchema),
-  mode: "onChange",
-  defaultValues: {
-    // Valores padrão para campos obrigatórios
-    issueDate: "",
-    dueDate: "",
-    customer: {
-      name: "",
-      address: "",
-      taxNumber: "",
-      phone: "",
-      email: "",
-    },
-    items: [],
-    isPaid: false,
-    globalTax: 0,
-    globalRetention: 0,
-    globalDiscount: 0,
-    invoiceTotals: {
-      subtotal: 0,
-      taxAmount: 0,
-      retentionAmount: 0,
-      discountAmount: 0,
-      total: 0,
-    },
-    
-  },
+resolver: zodResolver(InvoiceSchema),
+mode: "onChange",
+defaultValues: {
+// Valores padrão para campos obrigatórios
+issueDate: "",
+dueDate: "",
+client: {
+name: "",
+address: "",
+taxNumber: "",
+phone: "",
+email: "",
+},
+items: [],
+isPaid: false,
+globalTax: 0,
+globalRetention: 0,
+globalDiscount: 0,
+invoiceTotals: {
+subtotal: 0,
+taxAmount: 0,
+retentionAmount: 0,
+discountAmount: 0,
+total: 0,
+},
+
+},
 });
 
-  const fieldArray = useFieldArray<InvoiceFormData, "items">({
-    control: control as any,
-    name: "items",
-  });
+const fieldArray = useFieldArray<InvoiceFormData, "items">({
+control: control as any,
+name: "items",
+});
 
-  const globalTax = useWatch({ control, name: "globalTax" });
-  const globalRetention = useWatch({ control, name: "globalRetention" });
-  const globalDiscount = useWatch({ control, name: "globalDiscount" });
-  const clientApiId = useWatch({ control, name: "clientApiId" });
-  const invoiceTotals = useWatch({ control, name: "invoiceTotals" });
+const globalTax = useWatch({ control, name: "globalTax" });
+const globalRetention = useWatch({ control, name: "globalRetention" });
+const globalDiscount = useWatch({ control, name: "globalDiscount" });
+const clientApiId = useWatch({ control, name: "clientApiId" });
+const invoiceTotals = useWatch({ control, name: "invoiceTotals" });
 
-/* 
-    clientApiId: z.string().optional(),
-    isClientFromAPI: z.boolean().default(false), 
-    globalTax: z.number().optional().default(0),
-    globalRetention: z.number().optional().default(0),
-    globalDiscount: z.number().optional().default(0),
-    invoiceTotals: InvoiceTotalsSchema, */
+/_
+clientApiId: z.string().optional(),
+isClientFromAPI: z.boolean().default(false),
+globalTax: z.number().optional().default(0),
+globalRetention: z.number().optional().default(0),
+globalDiscount: z.number().optional().default(0),
+invoiceTotals: InvoiceTotalsSchema, _/
 
-  const handleClientChange = (id: string | number, fullObject: any | null) => {
-    if (fullObject && fullObject.name) {
-      // Client from API
-      setValue("customer.name", fullObject.name);
-      setValue("customer.taxNumber", fullObject.taxNumber || "");
-      setValue("customer.address", fullObject.address || "");
-      setValue("customer.phone", fullObject.phone || "");
-      setValue("clientApiId", fullObject.id);
-      setIsClientFromAPI(true);
-    } else {
-      // Manual entry
-      setValue("customer.name", typeof id === "string" ? id : "");
-      setValue("customer.taxNumber", "");
-      setValue("customer.address", "");
-      setValue("customer.phone", "");
-      setValue("clientApiId", undefined);
-      setIsClientFromAPI(false);
-    }
-  };
+const handleClientChange = (id: string | number, fullObject: any | null) => {
+if (fullObject && fullObject.name) {
+// Client from API
+setValue("client.name", fullObject.name);
+setValue("client.taxNumber", fullObject.taxNumber || "");
+setValue("client.address", fullObject.address || "");
+setValue("client.phone", fullObject.phone || "");
+setValue("clientApiId", fullObject.id);
+setIsClientFromAPI(true);
+} else {
+// Manual entry
+setValue("client.name", typeof id === "string" ? id : "");
+setValue("client.taxNumber", "");
+setValue("client.address", "");
+setValue("client.phone", "");
+setValue("clientApiId", undefined);
+setIsClientFromAPI(false);
+}
+};
 
-  async function onSubmit(data: InvoiceFormData) {
-    // Construct final payload
-    const finalPayload = {
-      issueDate: data.issueDate,
-      dueDate: data.dueDate,
-      customer:
-        isClientFromAPI && data.clientApiId
-          ? { id: data.clientApiId }
-          : {
-              name: data.customer.name,
-              phone: data.customer.phone || undefined,
-              address: data.customer.address || undefined,
-            },
-      items: data.items.map((item) => {
-        if (item.isFromAPI && item.id) {
-          return {
-            id: item.id,
-            quantity: item.quantity,
-          };
-        }
-        return {
-          name: item.description,
-          price: item.unitPrice,
-          quantity: item.quantity,
-          type: item.type,
-        };
-      }),
-      // Use calculated totals
-      total: data.invoiceTotals.total,
-      taxAmount: data.invoiceTotals.taxAmount,
-      retentionAmount: data.invoiceTotals.retentionAmount,
-      discountAmount: data.invoiceTotals.discountAmount,
-    };
+async function onSubmit(data: InvoiceFormData) {
+// Construct final payload
+const finalPayload = {
+issueDate: data.issueDate,
+dueDate: data.dueDate,
+client:
+isClientFromAPI && data.clientApiId
+? { id: data.clientApiId }
+: {
+name: data.client.name,
+phone: data.client.phone || undefined,
+address: data.client.address || undefined,
+},
+items: data.items.map((item) => {
+if (item.isFromAPI && item.id) {
+return {
+id: item.id,
+quantity: item.quantity,
+};
+}
+return {
+name: item.description,
+price: item.unitPrice,
+quantity: item.quantity,
+type: item.type,
+};
+}),
+// Use calculated totals
+total: data.invoiceTotals.total,
+taxAmount: data.invoiceTotals.taxAmount,
+retentionAmount: data.invoiceTotals.retentionAmount,
+discountAmount: data.invoiceTotals.discountAmount,
+};
 
     console.log(
       "🚀 Final Invoice Payload:",
@@ -142,26 +142,27 @@ export function InvoiceForm() {
 
     // Reset form and state
     reset();
-  }
 
-  return (
-    <form
+}
+
+return (
+<form
       onSubmit={handleSubmit(onSubmit)}
       className="p-8 mt-4 space-y-8 border rounded-lg"
     >
-      <div className="grid gap-6 md:grid-cols-3">
-        <Input
-          type="date"
-          label="Data de Emissão"
-          {...register("issueDate")}
-          error={errors.issueDate?.message}
-        />
-        <Input
-          type="date"
-          label="Data de Vencimento"
-          {...register("dueDate")}
-          error={errors.dueDate?.message}
-        />
+<div className="grid gap-6 md:grid-cols-3">
+<Input
+type="date"
+label="Data de Emissão"
+{...register("issueDate")}
+error={errors.issueDate?.message}
+/>
+<Input
+type="date"
+label="Data de Vencimento"
+{...register("dueDate")}
+error={errors.dueDate?.message}
+/>
 
         <InputFetch
           startIcon="User"
@@ -178,8 +179,8 @@ export function InvoiceForm() {
           <Input
             label="NIF"
             placeholder="5566798754"
-            {...register("customer.taxNumber")}
-            error={errors.customer?.taxNumber?.message}
+            {...register("client.taxNumber")}
+            error={errors.client?.taxNumber?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -189,8 +190,8 @@ export function InvoiceForm() {
             startIcon="Phone"
             placeholder="923 456 789"
             label="Telefone do cliente"
-            {...register("customer.phone")}
-            error={errors.customer?.phone?.message}
+            {...register("client.phone")}
+            error={errors.client?.phone?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -200,8 +201,8 @@ export function InvoiceForm() {
             startIcon="MapPin"
             placeholder="Luanda"
             label="Endereço do cliente"
-            {...register("customer.address")}
-            error={errors.customer?.address?.message}
+            {...register("client.address")}
+            error={errors.client?.address?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -224,5 +225,6 @@ export function InvoiceForm() {
         </ButtonSubmit>
       </div>
     </form>
-  );
+
+);
 }

@@ -11,14 +11,14 @@ Proforma Invoice API handles **quotations and estimates** (non-binding offers). 
 | **isPaid**        | `false` (always)      | `false` (default) | `true` (always)      |
 | **Status**        | `DRAFT` (default)     | `DRAFT` (default) | `PAID` (always)      |
 | **Use Case**      | Quotations, Estimates | Billing, Invoices | Point-of-Sale, Sales |
-| **Customer**      | Optional              | Optional          | Recommended          |
+| **Client**        | Optional              | Optional          | Recommended          |
 | **Items**         | Required              | Required          | Required             |
 | **Expiry Date**   | Supported             | N/A               | N/A                  |
 | **Payment Terms** | Supports due date     | Supports due date | N/A                  |
 
 ---
 
-## 1. Create Proforma Invoice with Existing Customer and Items
+## 1. Create Proforma Invoice with Existing Client and Items
 
 ### Request
 
@@ -27,7 +27,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [
@@ -57,9 +57,9 @@ curl -X POST http://localhost:3000/invoice/proforma \
   "invoiceType": "PROFORMA_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-22",
   "dueDate": null,
   "proformaExpiresAt": "2025-12-22",
@@ -91,7 +91,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ---
 
-## 2. Create Proforma Invoice with New Customer and New Items
+## 2. Create Proforma Invoice with New Client and New Items
 
 ### Request
 
@@ -100,7 +100,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "name": "Maria Santos",
       "email": "maria@example.com",
       "phone": " 923 456 789",
@@ -140,9 +140,9 @@ curl -X POST http://localhost:3000/invoice/proforma \
   "invoiceType": "PROFORMA_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client456",
-  "customerName": "Maria Santos",
-  "customerEmail": "maria@example.com",
+  "clientId": "clm0client456",
+  "clientName": "Maria Santos",
+  "clientEmail": "maria@example.com",
   "issueDate": "2025-11-24",
   "dueDate": "2025-12-31",
   "proformaExpiresAt": "2025-12-24",
@@ -174,7 +174,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ---
 
-## 3. Create Proforma Invoice with Mixed Customer and Items
+## 3. Create Proforma Invoice with Mixed Client and Items
 
 ### Request
 
@@ -183,7 +183,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client789"
     },
     "items": [
@@ -215,9 +215,9 @@ curl -X POST http://localhost:3000/invoice/proforma \
   "invoiceType": "PROFORMA_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client789",
-  "customerName": "Paulo Costa",
-  "customerEmail": "paulo@example.com",
+  "clientId": "clm0client789",
+  "clientName": "Paulo Costa",
+  "clientEmail": "paulo@example.com",
   "issueDate": "2025-11-24",
   "dueDate": null,
   "proformaExpiresAt": "2025-12-08",
@@ -249,7 +249,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ---
 
-## 4. Create Simple Proforma Invoice (No Customer)
+## 4. Create Simple Proforma Invoice (No Client)
 
 ### Request
 
@@ -285,9 +285,9 @@ curl -X POST http://localhost:3000/invoice/proforma \
   "invoiceType": "PROFORMA_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": null,
-  "customerName": "Unknown",
-  "customerEmail": null,
+  "clientId": null,
+  "clientName": "Unknown",
+  "clientEmail": null,
   "issueDate": "2025-11-24",
   "dueDate": null,
   "proformaExpiresAt": "2025-11-30",
@@ -339,9 +339,9 @@ curl -X GET "http://localhost:3000/invoice/proforma?page=1&limit=20&clientId=clm
       "invoiceType": "PROFORMA_INVOICE",
       "status": "DRAFT",
       "isPaid": false,
-      "customerId": "clm0client123",
-      "customerName": "João Silva",
-      "customerEmail": "joao@example.com",
+      "clientId": "clm0client123",
+      "clientName": "João Silva",
+      "clientEmail": "joao@example.com",
       "issueDate": "2025-11-22",
       "dueDate": null,
       "proformaExpiresAt": "2025-12-22",
@@ -383,9 +383,9 @@ curl -X GET http://localhost:3000/invoice/proforma/clm0proforma123 \
   "invoiceType": "PROFORMA_INVOICE",
   "status": "DRAFT",
   "isPaid": false,
-  "customerId": "clm0client123",
-  "customerName": "João Silva",
-  "customerEmail": "joao@example.com",
+  "clientId": "clm0client123",
+  "clientName": "João Silva",
+  "clientEmail": "joao@example.com",
   "issueDate": "2025-11-22",
   "dueDate": null,
   "proformaExpiresAt": "2025-12-22",
@@ -444,7 +444,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ---
 
-### Non-existent Customer
+### Non-existent Client
 
 **Request:**
 
@@ -453,7 +453,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "non-existent-id"
     },
     "items": [{"id": "clm0item1", "quantity": 1}],
@@ -483,7 +483,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [{"id": "non-existent-item", "quantity": 1}],
@@ -534,7 +534,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [{"id": "clm0item1", "quantity": 0}],
@@ -557,10 +557,10 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ## Validation Rules Summary
 
-### Customer
+### Client
 
-- `id` (optional): Existing customer ID
-- `name` (conditional): Required if creating new customer, min 2 chars, max 100 chars
+- `id` (optional): Existing client ID
+- `name` (conditional): Required if creating new client, min 2 chars, max 100 chars
 - `email` (optional): Valid email format
 - `phone` (optional): Max 20 characters
 - `address` (optional): Max 255 characters
@@ -594,9 +594,9 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ## Best Practices
 
-1. **Always provide customer details** - Helps with quotation management
+1. **Always provide client details** - Helps with quotation management
 2. **Set proformaExpiresAt** - Indicates quote validity period
-3. **Use dueDate for follow-up** - When customer should respond
+3. **Use dueDate for follow-up** - When client should respond
 4. **Include detailed notes** - Reference numbers, special terms, conditions
 5. **Use ISO 8601 dates** - Format: YYYY-MM-DD
 6. **Validate amounts before sending** - Total should equal subtotal + tax - discount
@@ -613,10 +613,10 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ```
 1. Create Proforma Invoice (Quotation)
-   └─ Customer reviews quote
+   └─ Client reviews quote
    └─ Valid until proformaExpiresAt
 
-2. Customer Accepts Quote
+2. Client Accepts Quote
    └─ Create Normal Invoice from proforma details
    └─ OR create Invoice Receipt for immediate payment
 
@@ -639,7 +639,7 @@ const proforma = await proformaService.findOne(proformaId);
 
 // Create normal invoice with same details
 const normalInvoice = await normalInvoiceService.create({
-  customer: { id: proforma.clientId },
+  client: { id: proforma.clientId },
   items: proforma.items.map((item) => ({
     id: item.itemsId,
     quantity: item.quantity,
@@ -665,9 +665,9 @@ When converting to response DTO:
   invoiceNumber: invoice.number,                    // PROFORM-xxx
   invoiceType: invoice.type,                        // Always 'PROFORMA_INVOICE'
   isPaid: invoice.isPaid,                           // Always false
-  customerId: invoice.clientId,                     // Can be null
-  customerName: invoice.client?.name || 'Unknown',
-  customerEmail: invoice.client?.email,
+  clientId: invoice.clientId,                     // Can be null
+  clientName: invoice.client?.name || 'Unknown',
+  clientEmail: invoice.client?.email,
   issueDate: formatted(invoice.createdAt),
   dueDate: formatted(invoice.dueDate),              // Optional follow-up date
   proformaExpiresAt: formatted(invoice.proformaExpiresAt),  // Quote expiry
@@ -693,7 +693,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "name": "Acme Corporation",
       "email": "procurement@acme.com"
     },
@@ -717,7 +717,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer": {
+    "client": {
       "id": "clm0client123"
     },
     "items": [
@@ -760,7 +760,7 @@ curl -X POST http://localhost:3000/invoice/proforma \
 
 ### With Invoice Receipt
 
-- Quick quote-to-sale workflow for walk-in customers
+- Quick quote-to-sale workflow for walk-in clients
 - Immediate conversion for point-of-sale items
 - Simplified checkout process
 

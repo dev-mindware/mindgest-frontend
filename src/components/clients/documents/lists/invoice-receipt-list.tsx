@@ -34,7 +34,7 @@ export function InvoiceReceiptList() {
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/invoice-receipt",
     queryKey: ["invoice-receipt"],
-    queryParams: { ...filters, page },
+    queryParams: { ...filters, search: debounceSearch, page },
   });
 
   const columns: Column<InvoiceResponse>[] = [

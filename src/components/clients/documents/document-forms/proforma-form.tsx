@@ -54,18 +54,18 @@ export function ProformaForm() {
   const handleClientChange = (id: string | number, fullObject: any | null) => {
     if (fullObject && fullObject.name) {
       // Client from API
-      setValue("customer.name", fullObject.name);
-      setValue("customer.taxNumber", fullObject.taxNumber || "");
-      setValue("customer.address", fullObject.address || "");
-      setValue("customer.phone", fullObject.phone || "");
+      setValue("client.name", fullObject.name);
+      setValue("client.taxNumber", fullObject.taxNumber || "");
+      setValue("client.address", fullObject.address || "");
+      setValue("client.phone", fullObject.phone || "");
       setClientApiId(fullObject.id);
       setIsClientFromAPI(true);
     } else {
       // Manual entry
-      setValue("customer.name", typeof id === "string" ? id : "");
-      setValue("customer.taxNumber", "");
-      setValue("customer.address", "");
-      setValue("customer.phone", "");
+      setValue("client.name", typeof id === "string" ? id : "");
+      setValue("client.taxNumber", "");
+      setValue("client.address", "");
+      setValue("client.phone", "");
       setClientApiId(undefined);
       setIsClientFromAPI(false);
     }
@@ -76,13 +76,13 @@ export function ProformaForm() {
     const finalPayload = {
       issueDate: data.issueDate,
       dueDate: data.dueDate,
-      customer:
+      client:
         isClientFromAPI && clientApiId
           ? { id: clientApiId }
           : {
-              name: data.customer.name,
-              phone: data.customer.phone || undefined,
-              address: data.customer.address || undefined,
+              name: data.client.name,
+              phone: data.client.phone || undefined,
+              address: data.client.address || undefined,
             },
       items: data.items.map((item) => {
         if (item.isFromAPI && item.id) {
@@ -158,8 +158,8 @@ export function ProformaForm() {
           <Input
             label="NIF"
             placeholder="123456789"
-            {...register("customer.taxNumber")}
-            error={errors.customer?.taxNumber?.message}
+            {...register("client.taxNumber")}
+            error={errors.client?.taxNumber?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -169,8 +169,8 @@ export function ProformaForm() {
             startIcon="Phone"
             placeholder=" 923 456 789"
             label="Telefone do cliente"
-            {...register("customer.phone")}
-            error={errors.customer?.phone?.message}
+            {...register("client.phone")}
+            error={errors.client?.phone?.message}
             disabled={isClientFromAPI}
           />
         </div>
@@ -180,8 +180,8 @@ export function ProformaForm() {
             startIcon="MapPin"
             placeholder="Luanda"
             label="Endereço do cliente"
-            {...register("customer.address")}
-            error={errors.customer?.address?.message}
+            {...register("client.address")}
+            error={errors.client?.address?.message}
             disabled={isClientFromAPI}
           />
         </div>

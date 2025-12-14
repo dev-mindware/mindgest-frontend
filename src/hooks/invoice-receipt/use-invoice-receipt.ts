@@ -5,19 +5,17 @@ import { ReceiptFormData } from "@/schemas";
 
 type Data = {
   data: ReceiptFormData;
-  originalInvoiceId: string;
-}
+};
 
 export function useGenerateReceipt() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data, originalInvoiceId } :Data) =>  receiptService.generateReceipt(originalInvoiceId, data),
+    mutationFn: ({ data }: Data) => receiptService.generateReceipt(data),
     onSuccess: () => {
       toast.success("Recibo gerado com sucesso!");
-       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
       queryClient.invalidateQueries({ queryKey: ["receipts"] });
-      queryClient.invalidateQueries({ queryKey: ["invoices"] });
     },
   });
 }

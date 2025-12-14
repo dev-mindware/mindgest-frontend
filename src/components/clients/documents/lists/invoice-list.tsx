@@ -15,8 +15,10 @@ import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
+import { useRouter } from "next/navigation";
 
 export function InvoiceList() {
+  const router = useRouter();
   const { search } = useURLSearchParams("search-invoice");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
@@ -37,7 +39,7 @@ export function InvoiceList() {
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/normal",
     queryKey: ["invoice-normal"],
-    queryParams: { ...filters /* debounceSearch */, page },
+    queryParams: { ...filters, search: debounceSearch, page },
   });
 
   const columns: Column<InvoiceResponse>[] = [
@@ -79,21 +81,32 @@ export function InvoiceList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            {
-              label: "Cancelar Fatura",
-              onClick: handlerCancelInvoice,
-            },
-            {
-              label: "Gerar Recibo",
-              onClick: handlerGenerateReceipt,
-            },
+            ...(item.status !== "CANCELLED" || item.status !== "PAID"
+              ? [
+                  {
+                    label: "Cancelar Fatura",
+                    onClick: handlerCancelInvoice,
+                  },
+                ]
+              : []),
+
+            ...(item.status !== "PAID"
+              ? [
+                  {
+                    label: "Gerar Recibo",
+                    onClick: handlerGenerateReceipt,
+                  },
+                ]
+              : []),
             {
               label: "Ver Fatura",
               onClick: handlerDetailsInvoice,
             },
             {
               label: "Emitir Nota",
-              onClick: () => console.log("emitir nota"),
+              onClick: () => {
+                router.push(`/client/documents/notes/${item.id}`);
+              },
             },
           ]}
         />
