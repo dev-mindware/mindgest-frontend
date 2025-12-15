@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
   Button,
@@ -42,6 +41,7 @@ export function InvoiceItems({
   setGlobalDiscount,
 }: InvoiceItemsProps) {
   const { fields, append, remove } = fieldArray;
+  const firstInputRef = useRef<HTMLInputElement>(null);
 
   const [itemDraft, setItemDraft] = useState({
     name: "",
@@ -53,9 +53,6 @@ export function InvoiceItems({
 
   const [isItemFromAPI, setIsItemFromAPI] = useState(false);
 
-  /* =========================
-     Totais (lógica nova)
-     ========================= */
   const totals = useMemo(() => {
     const subtotal = fields.reduce(
       (acc, item) => acc + item.unitPrice * item.quantity,
@@ -82,9 +79,6 @@ export function InvoiceItems({
     };
   }, [fields, globalTax, globalRetention, globalDiscount]);
 
-  /* =========================
-     Notificar pai sem loop
-     ========================= */
   const lastTotalsRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -97,9 +91,6 @@ export function InvoiceItems({
     }
   }, [totals, onTotalsChange]);
 
-  /* =========================
-     Handlers
-     ========================= */
   const handleAddItem = useCallback(() => {
     const { name, quantity, price, apiId, type } = itemDraft;
     if (!name || quantity <= 0 || price < 0) return;
@@ -125,6 +116,11 @@ export function InvoiceItems({
       apiId: undefined,
     });
     setIsItemFromAPI(false);
+
+    // Pequeno timeout para garantir que o estado foi processado antes do foco
+    setTimeout(() => {
+      firstInputRef.current?.focus();
+    }, 0);
   }, [
     append,
     itemDraft,
@@ -163,7 +159,6 @@ export function InvoiceItems({
       <h3 className="text-lg font-semibold">Itens da Fatura</h3>
       <Separator />
 
-      {/* FORM ADICIONAR ITEM */}
       <div className="pt-6 space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <InputFetch
@@ -172,6 +167,8 @@ export function InvoiceItems({
             endpoint="/items"
             displayFields={["name", "description"]}
             onValueChange={handleItemFetchChange}
+            ref={firstInputRef}
+            value={itemDraft.name}
           />
 
           <Input
@@ -227,7 +224,6 @@ export function InvoiceItems({
         </div>
       </div>
 
-      {/* LISTA */}
       {fields.length === 0 ? (
         <div className="flex justify-center py-12">
           <EmptyState icon="ShoppingBasket" />

@@ -34,7 +34,7 @@ export function ButtonOnlyAction<T>({ data, actions }: Props<T>) {
       <DropdownMenuContent>
         {actions.map((action, index) => (
           <DropdownMenuItem
-            key={action.label + index} // Using label + index for a simple unique key
+            key={action.label + index}
             onClick={() => action.onClick(data)}
             className={action.className}
           >

@@ -1,28 +1,17 @@
 import { z } from "zod";
-import { ItemSchema } from "./helps";
+import { ItemSchema, phoneNumberSchema, taxNumberSchema } from "./helps";
 
 export const CompanySchema = z.object({
   name: z
     .string()
     .min(3, "O nome da empresa precisa ter pelo menos 3 caracteres")
     .optional(),
-  taxNumber: z
-    .string()
-    .regex(/^\d{9}$/, "O NIF deve ter 9 dígitos numéricos")
-    .optional(),
+  taxNumber: taxNumberSchema.optional(),
   address: z
     .string()
     .min(5, "O endereço deve ter pelo menos 5 caracteres")
     .optional(),
-  contact: z
-    .object({
-      phone: z
-        .string()
-        .regex(/^\d{9,}$/, "O telefone deve ter pelo menos 9 dígitos")
-        .optional(),
-      email: z.string().email("O email informado não é válido").optional(),
-    })
-    .optional(),
+  contact: phoneNumberSchema.optional(),
 });
 
 export type CompanyFormData = z.infer<typeof CompanySchema>;
@@ -31,9 +20,9 @@ const ClientSchema = z.object({
   name: z
     .string()
     .min(3, "O nome do cliente precisa ter pelo menos 3 caracteres"),
-  taxNumber: z.string().optional(),
+  taxNumber: taxNumberSchema.optional(),
   address: z.string().min(5, "O endereço deve ter pelo menos 5 caracteres"),
-  phone: z.string().optional(),
+  phone: phoneNumberSchema.optional(),
   email: z.string().email("O email informado não é válido").optional(),
 });
 
@@ -139,6 +128,34 @@ export const InvoiceReceiptSchema = z.object({
   isPaid: z.boolean(),
   discount: z.number().optional(),
   liquidationDate: z.string().optional(),
+
+  // novos campos compartilhados
+  clientApiId: z.string().optional(),
+  globalTax: z
+    .number({ invalid_type_error: "O imposto global deve ser um número" })
+    .min(0, "O imposto global não pode ser negativo")
+    .max(100, "O imposto global não pode ser maior que 100%")
+    .optional()
+    .default(0),
+  globalRetention: z
+    .number({ invalid_type_error: "A retenção global deve ser um número" })
+    .min(0, "A retenção global não pode ser negativa")
+    .max(100, "A retenção global não pode ser maior que 100%")
+    .optional()
+    .default(0),
+  globalDiscount: z
+    .number({ invalid_type_error: "O desconto global deve ser um número" })
+    .min(0, "O desconto global não pode ser negativo")
+    .max(100, "O desconto global não pode ser maior que 100%")
+    .optional()
+    .default(0),
+  invoiceTotals: InvoiceTotalsSchema.optional().default({
+    subtotal: 0,
+    taxAmount: 0,
+    retentionAmount: 0,
+    discountAmount: 0,
+    total: 0,
+  }),
 });
 export type InvoiceReceiptFormData = z.infer<typeof InvoiceReceiptSchema>;
 
@@ -147,12 +164,20 @@ export type InvoiceReceiptFormData = z.infer<typeof InvoiceReceiptSchema>;
  */
 export const ReceiptSchema = z.object({
   issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  total: z.number().positive("O total deve ser maior que 0"),
+  total: z.string().nonempty("Campo obrigatório"),
   paymentMethod: z.enum(["CASH", "CARD", "TRANSFER"], {
     errorMap: () => ({ message: "O método de pagamento é obrigatório" }),
   }),
-  originalInvoiceId: z.string().optional(),
   notes: z.string().optional(),
+  originalInvoiceId: z.string().nonempty("Campo obrigatório"),
+  taxAmount: z.string().nonempty("Campo obrigatório"),
+  discountAmount: z.string().nonempty("Campo obrigatório"),
+  retentionAmount: z.string().nonempty("Campo obrigatório"),
 });
 
 export type ReceiptFormData = z.infer<typeof ReceiptSchema>;
+
+
+// JSON VINDO DA API
+
+

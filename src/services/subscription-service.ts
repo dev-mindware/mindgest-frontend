@@ -1,5 +1,5 @@
-import { Subscription } from "@/types";
 import { api } from "./api";
+import { Subscription } from "@/types";
 import { SubscriptionFormData } from "@/schemas";
 
 type Data = Pick<SubscriptionFormData, "planId"| "billingPeriodInMonths">

@@ -1,11 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { ButtonSubmit, Input } from "@/components";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import { InvoiceItems } from "./items/invoice-items";
-import { useState } from "react";
 import { InputFetch } from "@/components/common/input-fetch";
 import { toast } from "sonner";
 import { useCreateInvoice } from "@/hooks";
@@ -79,7 +79,6 @@ export function InvoiceForm() {
   };
 
   async function onSubmit(data: InvoiceFormData) {
-    // Construct final payload
     const finalPayload = {
       issueDate: data.issueDate,
       dueDate: data.dueDate,
@@ -105,17 +104,12 @@ export function InvoiceForm() {
           type: item.type,
         };
       }),
-      // Use calculated totals
       total: invoiceTotals?.total ?? 0,
       taxAmount: invoiceTotals?.taxAmount ?? 0,
       retentionAmount: invoiceTotals?.retentionAmount ?? 0,
       discountAmount: invoiceTotals?.discountAmount ?? 0,
     };
 
-    console.log(
-      "🚀 Final Invoice Payload:",
-      JSON.stringify(finalPayload, null, 2)
-    );
     try {
       await createInvoice(finalPayload);
       reset();
@@ -137,6 +131,7 @@ export function InvoiceForm() {
     >
       <div className="grid gap-6 md:grid-cols-3">
         <Input
+          disabled
           type="date"
           label="Data de Emissão"
           {...register("issueDate")}
@@ -154,7 +149,7 @@ export function InvoiceForm() {
           label="Cliente"
           placeholder="Digite o nome do cliente..."
           endpoint="/clients"
-          displayFields={["name", "email"]}
+          displayFields={["name"]}
           onValueChange={handleClientChange}
           minChars={1}
           debounceMs={300}
@@ -173,7 +168,7 @@ export function InvoiceForm() {
         <div className="relative">
           <Input
             startIcon="Phone"
-            placeholder="+244 923 456 789"
+            placeholder="9xxxxxxx"
             label="Telefone do cliente"
             {...register("client.phone")}
             error={errors.client?.phone?.message}
@@ -212,34 +207,3 @@ export function InvoiceForm() {
     </form>
   );
 }
-
-/*
-  POST: /api/credit-note/{invoiceId}/correction 
-{
-
-  "reason": "PRICE_REDUCTION",
-  "invoiceBody": {
-    "client": {
-      "id": "cmj49a2jg0003s05oxpxtheu9",
-      "name": "Java Simon Script",
-      "email": "java.simon@js.com",
-      "address": "São Paulo, Luanda"
-    },
-    "items": [
-      {
-        "id": "sample-item-1",
-        "quantity": 4,
-        "price": 1500
-      }
-    ],
-    "issueDate": "2025-12-13",
-    "dueDate": "2025-12-31",
-    "total": 1500,
-    "taxAmount": 14,
-    "subtotal": 1000,
-    "discountAmount": 10
-  },
-  "notes": "Cliente solicitou redução de preço no item Samsung - update"
-}
-
-*/

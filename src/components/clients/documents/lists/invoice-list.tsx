@@ -7,6 +7,7 @@ import {
   ListSkeleton,
   EmptyState,
   ButtonOnlyAction,
+  InvoicePreviewDrawer,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
@@ -16,7 +17,6 @@ import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
 import { useRouter } from "next/navigation";
-import { InvoicePreviewDrawer } from "@/components/common/dynamic-drawer/invoice-preview-drawer";
 
 export function InvoiceList() {
   const router = useRouter();
@@ -82,38 +82,42 @@ export function InvoiceList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            ...(item.status !== "CANCELLED"
-              ? [
-                  {
-                    label: "Cancelar Fatura",
-                    onClick: handlerCancelInvoice,
-                  },
-                ]
-              : []),
 
-            ...(item.status === "DRAFT"
-              ? [
-                  {
-                    label: "Gerar Recibo",
-                    onClick: handlerGenerateReceipt,
-                  },
-                ]
-              : []),
             {
               label: "Ver Fatura",
               onClick: handlerDetailsInvoice,
             },
 
+            ...(item.status !== "CANCELLED"
+              ? [
+                {
+                  label: "Cancelar Fatura",
+                  onClick: handlerCancelInvoice,
+                },
+              ]
+              : []),
+
             ...(item.status === "DRAFT"
               ? [
-                  {
-                    label: "Emitir Nota",
-                    onClick: () => {
-                      router.push(`/client/documents/notes/${item.id}`);
-                    },
-                  },
-                ]
+                {
+                  label: "Gerar Recibo",
+                  onClick: handlerGenerateReceipt,
+                },
+              ]
               : []),
+
+            ...(item.status === "DRAFT"
+              ? [
+                {
+                  label: "Emitir Nota",
+                  onClick: () => {
+                    router.push(`/client/documents/notes/${item.id}`);
+                  },
+                },
+              ]
+              : []),
+
+
           ]}
         />
       ),

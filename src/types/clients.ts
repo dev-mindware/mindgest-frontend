@@ -4,3 +4,16 @@ export type clientsFilters = {
   sortOrder?: string;
   search?: string;
 };
+
+export interface Client {
+  id: string
+  name: string
+  email?: string
+  phone: string
+  address: string
+  taxNumber?: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+  companyId: string
+}

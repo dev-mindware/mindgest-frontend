@@ -1,7 +1,8 @@
 import { toast } from "sonner";
-import { invoiceService, ReceiptData } from "@/services/invoice-service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { invoiceService } from "@/services/invoice-service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreditNoteFormData } from "@/schemas";
+import { ReceiptData } from "@/types/receipt";
 
 export function useGenerateReceipt() {
   const queryClient = useQueryClient();
@@ -37,14 +38,6 @@ export function useCreateInvoice() {
       toast.success("Fatura criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
-  });
-}
-
-export function useGetInvoice(id: string | undefined) {
-  return useQuery({
-    queryKey: ["invoice", id],
-    queryFn: () => invoiceService.getInvoice(id!),
-    enabled: !!id,
   });
 }
 

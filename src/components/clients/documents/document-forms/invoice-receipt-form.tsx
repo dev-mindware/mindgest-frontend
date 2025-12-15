@@ -1,15 +1,13 @@
 "use client";
-
+import { useState } from "react";
+import { toast } from "sonner";
 import { ButtonSubmit, Input } from "@/components";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
-import { useState } from "react";
 import { InputFetch } from "@/components/common/input-fetch";
-import { invoiceReceiptService } from "@/services/invoice-receipt-service";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { InvoiceReceiptItems } from "./items/invoice-receipt-items";
+import { InvoiceItems } from "./items/invoice-items";
+import { useCreateInvoiceReceipt } from "@/hooks";
 
 export const paymentOptions = [
   { label: "Transferência Bancária", value: "bank_transfer" },
@@ -18,24 +16,8 @@ export const paymentOptions = [
 ];
 
 export function InvoiceReceiptForm() {
-  const router = useRouter();
-
-  // State for client API handling
+  const { mutateAsync: createInvoiceReceipt } = useCreateInvoiceReceipt()
   const [isClientFromAPI, setIsClientFromAPI] = useState(false);
-  const [clientApiId, setClientApiId] = useState<string | undefined>(undefined);
-
-  // Lifted state for totals calculation
-  const [globalTax, setGlobalTax] = useState(0);
-  const [globalRetention, setGlobalRetention] = useState(0);
-  const [globalDiscount, setGlobalDiscount] = useState(0);
-  const [invoiceTotals, setInvoiceTotals] = useState({
-    subtotal: 0,
-    taxAmount: 0,
-    retentionAmount: 0,
-    discountAmount: 0,
-    total: 0,
-  });
-
   const {
     register,
     control,
@@ -44,14 +26,22 @@ export function InvoiceReceiptForm() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<InvoiceReceiptFormData>({
-    resolver: zodResolver(InvoiceReceiptSchema),
+    resolver: zodResolver(InvoiceReceiptSchema) as any,
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       items: [],
-      isPaid: true,
-      payment: {
-        method: "cash",
+      isPaid: false,
+      clientApiId: undefined,
+      globalTax: 0,
+      globalRetention: 0,
+      globalDiscount: 0,
+      invoiceTotals: {
+        subtotal: 0,
+        taxAmount: 0,
+        retentionAmount: 0,
+        discountAmount: 0,
+        total: 0,
       },
     },
   });
@@ -61,6 +51,19 @@ export function InvoiceReceiptForm() {
     name: "items",
   });
 
+  const clientApiId = useWatch({ control, name: "clientApiId" });
+  const globalTax = useWatch({ control, name: "globalTax" }) ?? 0;
+  const globalRetention = useWatch({ control, name: "globalRetention" }) ?? 0;
+  const globalDiscount = useWatch({ control, name: "globalDiscount" }) ?? 0;
+  const invoiceTotals = useWatch({ control, name: "invoiceTotals" }) ?? {
+    subtotal: 0,
+    taxAmount: 0,
+    retentionAmount: 0,
+    discountAmount: 0,
+    total: 0,
+  };
+
+  // criar um hook pra isso
   const handleClientChange = (id: string | number, fullObject: any | null) => {
     if (fullObject && fullObject.name) {
       // Client from API
@@ -68,31 +71,35 @@ export function InvoiceReceiptForm() {
       setValue("client.taxNumber", fullObject.taxNumber || "");
       setValue("client.address", fullObject.address || "");
       setValue("client.phone", fullObject.phone || "");
-      setClientApiId(fullObject.id);
-      setIsClientFromAPI(true);
+      setValue("clientApiId", fullObject.id);
+      setIsClientFromAPI(false);
     } else {
       // Manual entry
       setValue("client.name", typeof id === "string" ? id : "");
       setValue("client.taxNumber", "");
       setValue("client.address", "");
       setValue("client.phone", "");
-      setClientApiId(undefined);
-      setIsClientFromAPI(false);
+      setValue("clientApiId", undefined);
+      setIsClientFromAPI(true);
     }
   };
 
+  console.log("ERROS DO FORMULARIO: ")
+  console.log(errors)
+
+
   async function onSubmit(data: InvoiceReceiptFormData) {
-    // Construct final payload
     const finalPayload = {
       issueDate: data.issueDate,
+      /*  dueDate: data.dueDate, */
       client:
         isClientFromAPI && clientApiId
           ? { id: clientApiId }
           : {
-              name: data.client.name,
-              phone: data.client.phone || undefined,
-              address: data.client.address || undefined,
-            },
+            name: data.client.name,
+            phone: data.client.phone || undefined,
+            address: data.client.address || undefined,
+          },
       items: data.items.map((item) => {
         if (item.isFromAPI && item.id) {
           return {
@@ -107,30 +114,24 @@ export function InvoiceReceiptForm() {
           type: item.type,
         };
       }),
-      // Use calculated totals
-      total: invoiceTotals.total,
-      taxAmount: invoiceTotals.taxAmount,
-      retentionAmount: invoiceTotals.retentionAmount,
-      discountAmount: invoiceTotals.discountAmount,
+      total: invoiceTotals?.total ?? 0,
+      taxAmount: invoiceTotals?.taxAmount ?? 0,
+      retentionAmount: invoiceTotals?.retentionAmount ?? 0,
+      discountAmount: invoiceTotals?.discountAmount ?? 0,
     };
 
-    console.log(
-      "🚀 Final Invoice Payload:",
-      JSON.stringify(finalPayload, null, 2)
-    );
     try {
-      await invoiceReceiptService.createInvoiceReceipt(finalPayload);
-      toast.success("Fatura criada com sucesso!");
-      router.push("/client/documents&current_tab=invoice-receipt");
-    } catch (error) {
-      toast.error("Erro ao criar fatura!");
-      console.error("Error creating invoice:", error);
+      await createInvoiceReceipt(finalPayload);
+      reset();
+      setIsClientFromAPI(false);
+      setValue("clientApiId", undefined);
+    } catch (error: any) {
+      if (error?.response) {
+        toast.error(error?.response?.data?.message || "Erro ao criar fatura!");
+      } else {
+        toast.error("Ecorreu um erro desconhecido. Tente novamente");
+      }
     }
-
-    // Reset form and state
-    reset();
-    setIsClientFromAPI(false);
-    setClientApiId(undefined);
   }
 
   return (
@@ -170,7 +171,7 @@ export function InvoiceReceiptForm() {
         <div className="relative">
           <Input
             startIcon="Phone"
-            placeholder="+244 923 456 789"
+            placeholder="  923 456 789"
             label="Telefone do cliente"
             {...register("client.phone")}
             error={errors.client?.phone?.message}
@@ -190,15 +191,15 @@ export function InvoiceReceiptForm() {
         </div>
       </div>
 
-      <InvoiceReceiptItems
-        fieldArray={fieldArray}
-        onTotalsChange={setInvoiceTotals}
+      <InvoiceItems
+        fieldArray={fieldArray as any}
+        onTotalsChange={(totals) => setValue("invoiceTotals", totals)}
         globalTax={globalTax}
-        setGlobalTax={setGlobalTax}
+        setGlobalTax={(value) => setValue("globalTax", value)}
         globalRetention={globalRetention}
-        setGlobalRetention={setGlobalRetention}
+        setGlobalRetention={(value) => setValue("globalRetention", value)}
         globalDiscount={globalDiscount}
-        setGlobalDiscount={setGlobalDiscount}
+        setGlobalDiscount={(value) => setValue("globalDiscount", value)}
       />
 
       <div className="flex justify-end mt-6">

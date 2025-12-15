@@ -153,11 +153,9 @@ export function CreditNoteForm({ invoice }: Props) {
         label="Notas / Descrição"
         {...register("notes")}
         error={errors?.notes?.message}
+        placeholder="Descreva aqui a nota..."
       />
 
-      {/* =========================
-          CORRECTION
-         ========================= */}
       {reason === "CORRECTION" && (
         <>
           <div className="space-y-4">

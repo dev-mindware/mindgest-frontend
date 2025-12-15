@@ -22,7 +22,7 @@ export function ProformaList() {
   const { search } = useURLSearchParams("search-proforma");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
-  const { handlerDeleteProforma, handlerDetailsProforma, hanlderEditProforma } =
+  const { handlerDeleteProforma, handlerDetailsProforma, hanlderEditProforma,  } =
     useProformaActions();
   const {
     data: proformas,
@@ -77,6 +77,14 @@ export function ProformaList() {
             { label: "Ver Proforma", onClick: handlerDetailsProforma },
             { label: "Editar", onClick: hanlderEditProforma },
             { label: "Cancelar Proforma", onClick: handlerDeleteProforma },
+            ...(item.status !== "CANCELLED"
+              ? [
+                {
+                  label: "Deletar",
+                  onClick: () => { },
+                },
+              ]
+              : []),
           ]}
         />
       ),

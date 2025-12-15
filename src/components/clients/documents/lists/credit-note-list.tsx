@@ -32,8 +32,8 @@ export function CreditNotesList() {
     refetch,
   } = usePagination<CreditNoteData>({
     endpoint: "/credit-note",
-    queryKey: ["credit-note"],
- /*    queryParams: { ...filters, search: debounceSearch, page }, */
+    queryKey: ["credit-notes"],
+    queryParams: { ...filters, search: debounceSearch, page },
   });
 
   const handleViewCreditNote = (note: CreditNoteData) => {
@@ -116,7 +116,6 @@ export function CreditNotesList() {
   return (
     <div className="mt-6 space-y-8">
       <CreditNotesFiltersTSX />
-
       <GenericTable<CreditNoteData>
         page={page}
         data={creditNotes}

@@ -165,25 +165,25 @@ export type InvoiceData = {
   status: string;
   subtotal: string;
   taxAmount: string;
-  discountAmount: string | null;
+  discountAmount: string;
+  receivedValue: string;
   total: string;
-  notes: string | null;
+  notes?: string;
   dueDate: string;
-  paidAt: string | null;
+  paidAt?: string ;
   createdAt: string;
   updatedAt: string;
   paymentMethod: any[];
   type: string;
   isPaid: boolean;
-  proformaExpiresAt: string | null;
+  proformaExpiresAt: string;
   originalInvoiceId: string;
-  receivedValue: string | null;
-  paymentMethodStr: string | null;
+  paymentMethodStr: string;
   companyId: string;
-  storeId: string | null;
+  storeId: string;
   userId: string;
   clientId: string;
-  discountId: string | null;
+  discountId: string;
   items: InvoiceItem[];
 };
 
@@ -202,22 +202,6 @@ export type InvoiceResponse = InvoiceData & {
   status: InvoiceStatus;
   createdAt: string;
   updatedAt: string;
-};
-
-export type ReceiptData = {
-  id: string;
-  number: string;
-  clientId: string;
-  total: string;
-  paymentMethodStr: string;
-  client: {
-    name: string;
-  };
-  originalInvoiceId: string;
-  notes: string | null;
-  createdAt: string;
-  updatedAt: string;
-  paymentMethod: PaymentMethod;
 };
 
 export type CreditNoteData = {

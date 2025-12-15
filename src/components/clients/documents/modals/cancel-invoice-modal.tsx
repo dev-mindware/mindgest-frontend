@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useModal, currentInvoiceStore } from "@/stores";
 import { Button, ButtonSubmit, GlobalModal } from "@/components";
 import { useCancelInvoice } from "@/hooks";
+import { formatCurrency } from "@/utils";
 
 export function CancelInvoiceModal() {
   const { closeModal, open } = useModal();
@@ -59,7 +60,7 @@ export function CancelInvoiceModal() {
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Valor:</span>
                 <span className="font-medium">
-                  {parseFloat(currentInvoice?.total || "0").toFixed(2)} AOA
+                  {formatCurrency(currentInvoice?.total || "0")}
                 </span>
               </div>
             </div>

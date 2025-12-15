@@ -12,11 +12,11 @@ import {
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { paymentMethodMap } from "@/constants";
-import { ReceiptData } from "@/types/documents";
 import { useInvoiceFilters } from "@/hooks/invoice-receipt";
 import { InvoiceFiltersTSX } from "../common";
 import { useReceiptActions } from "@/hooks";
 import { ReceiptPreviewDrawer } from "@/components/common/dynamic-drawer/receipt-preview-drawer";
+import { ReceiptResponse } from "@/types/receipt";
 
 export function ReceiptList() {
   const { search } = useURLSearchParams("search-receipt");
@@ -31,7 +31,7 @@ export function ReceiptList() {
     isLoading,
     isError,
     refetch,
-  } = usePagination<ReceiptData>({
+  } = usePagination<ReceiptResponse>({
     endpoint: "/invoice/receipt",
     queryKey: ["receipt"],
     queryParams: { ...filters, search: debounceSearch, page },
@@ -39,11 +39,11 @@ export function ReceiptList() {
 
   const { handlerDetailsReceipt } = useReceiptActions();
 
-  const handleViewReceipt = (receipt: ReceiptData) => {
+  const handleViewReceipt = (receipt: ReceiptResponse) => {
     handlerDetailsReceipt(receipt);
   };
 
-  const columns: Column<ReceiptData>[] = [
+  const columns: Column<ReceiptResponse>[] = [
     {
       key: "originalInvoiceId",
       header: "Referência",
@@ -86,10 +86,10 @@ export function ReceiptList() {
           actions={[{ label: "Ver Recibo", onClick: handleViewReceipt }]}
         />
       ),
-    },
+    }, 
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) return <ListSkeleton />
 
   if (isError) {
     return (
@@ -116,7 +116,7 @@ export function ReceiptList() {
         </div>
       </div>
 
-      <GenericTable<ReceiptData>
+      <GenericTable<ReceiptResponse>
         page={page}
         data={receipts}
         columns={columns}

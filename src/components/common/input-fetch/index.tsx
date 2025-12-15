@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -19,6 +19,7 @@ interface InputFetchProps {
   placeholder?: string;
   debounceMs?: number;
   minChars?: number;
+  value?: string;
 }
 
 interface Option {
@@ -26,7 +27,7 @@ interface Option {
   [key: string]: any;
 }
 
-export function InputFetch({
+export const InputFetch = forwardRef<HTMLInputElement, InputFetchProps>(({
   startIcon: StartIcon,
   label,
   endpoint,
@@ -35,12 +36,23 @@ export function InputFetch({
   placeholder = "Digite para buscar...",
   debounceMs = 300,
   minChars = 2,
-}: InputFetchProps) {
-  const [inputValue, setInputValue] = useState("");
+  value: propValue, // Rename to avoid conflict
+}, ref) => {
+  const [inputValue, setInputValue] = useState(propValue || "");
   const [debouncedValue] = useDebounce(inputValue, debounceMs);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const internalRef = useRef<HTMLInputElement>(null);
+  useImperativeHandle(ref, () => internalRef.current!);
+
+  useEffect(() => {
+    if (propValue !== undefined) {
+      setInputValue(propValue);
+      if (propValue === "") {
+        setSelectedOption(null);
+      }
+    }
+  }, [propValue]);
 
   const {
     data: options = [],
@@ -158,7 +170,7 @@ export function InputFetch({
         <div className="w-full">
           <div className="relative">
             <Input
-              ref={inputRef}
+              ref={internalRef}
               startIcon={StartIcon}
               label={label}
               value={inputValue}
@@ -243,7 +255,7 @@ export function InputFetch({
       </PopoverContent>
     </Popover>
   );
-}
+});
 
 /*
 

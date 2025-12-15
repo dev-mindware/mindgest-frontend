@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui";
+import { Button, DatePicker } from "@/components/ui";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
@@ -54,17 +54,21 @@ export function CreditNotesFiltersTSX() {
           label="Status"
           value={filters.status}
           options={invoiceStatusOptions}
-          onChange={(status) => setFilters({ status })}
+          onChange={(status) => setFilters({ status: status as any })}
         />
 
-        {/*    
-
-<DatePicker
+        <DatePicker
+          value={filters.endDate ? new Date(filters.endDate) : undefined}
+          onChange={(date) => setFilters({ endDate: date?.toISOString() })}
+          placeholder="Data de inicio"
+        />
+        <DatePicker
           value={filters.startDate ? new Date(filters.startDate) : undefined}
-          onChange={(date) => handleChange({ startDate: date?.toISOString() })}
-          placeholder="Escolha a data"
+          onChange={(date) => setFilters({ startDate: date?.toISOString() })}
+          placeholder="Data de fim"
         />
-*/}
+
+
         {/* Ordenar por */}
         <FilterPopover
           icon="List"
