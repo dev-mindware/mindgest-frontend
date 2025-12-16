@@ -1,6 +1,6 @@
 import { ItemData } from "./items";
 
-export type InvoiceStatus = "DRAFT" | "CANCELLED" | "PAID";
+export type InvoiceStatus = 'DRAFT' | 'PENDING' | 'PAID' | 'CANCELLED' | 'OVERDUE';
 
 export type ContactInfo = {
   phone?: string;
@@ -189,10 +189,18 @@ export type InvoiceData = {
 
 export type InvoiceFilters = {
   sortBy?: string;
-  status?: string;
-  sortOrder?: string;
+  sortOrder?: string
+  status?: InvoiceStatus;
   search?: string;
+  invoiceNumber?: string;
+  clientName?: string;
+  startDate?: string; 
+  endDate?: string;   
+  storeId?: string;
+  minAmount?: number;
+  maxAmount?: number;
 };
+
 
 export type InvoiceResponse = InvoiceData & {
   id: string;

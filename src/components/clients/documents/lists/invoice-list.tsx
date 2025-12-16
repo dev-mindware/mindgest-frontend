@@ -1,5 +1,5 @@
 "use client";
-import { usePagination, useURLSearchParams } from "@/hooks/common";
+import { usePagination } from "@/hooks/common";
 import {
   Column,
   RequestError,
@@ -20,9 +20,9 @@ import { useRouter } from "next/navigation";
 
 export function InvoiceList() {
   const router = useRouter();
-  const { search } = useURLSearchParams("search-invoice");
-  const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
+  const [debounceSearch] = useDebounce(filters.search || "", 400);
+
   const {
     handlerGenerateReceipt,
     handlerCancelInvoice,

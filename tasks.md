@@ -1,23 +1,49 @@
 ## FAZER HJ
   - NOTAS DE CREDITO []
   - AS ACÇOES DE TODOS DOCUMENTOS []
+  
+    * COLOCAR FILTRO DE DATA EM TODOS OS DOCUMENTOS E MAIS
     * FATURA NORMAL
-      - LISTAGEM [X]
-      - VER FATURA [X]
-      - CANCELAR [x]
-      - GERAR RECIBO [X]
-      - EMITIR NOTA DE CRÉDITO []
+      - LISTAGEM✅
+      - VER FATURA✅
+      - CANCELAR✅
+      - GERAR RECIBO✅
+      - EMITIR NOTA DE CRÉDITO [] - À espera do Java
+      - FILTROS ESSENCIAIS []
 
    * FATURA RECIBO
-      - LISTAGEM [X]
-      - VER FATURA [X]
+      - LISTAGEM✅
+      - VER FATURA✅
       - CANCELAR []
       - GERAR RECIBO []
-      - EMITIR NOTA DE CRÉDITO []
+      - GERAR O PDF []
+      - FILTROS ESSENCIAIS []
+
+   * FATURA PROFORMA
+      - LISTAGEM✅
+      - VER FATURA✅
+      - EDITAR  []
+      - ELIMINAR []
+      - GERAR O PDF []
+      - FILTROS ESSENCIAIS []
+
+   * RECIBO
+      - LISTAGEM✅
+      - VER RECIBO✅
+      - GERAR O PDF []
+      - FILTROS ESSENCIAIS []
+
+   * NOTAS DE CRÉDITO RECIBO
+      - LISTAGEM✅
+      - VER NOTA DE CRÉDITO✅
+      - GERAR O PDF []
+      - FILTROS ESSENCIAIS []
+
+   * ITEMS E SEUS FILTROS
+
 
   * REFATORAR O INPUT DE PESUISA DE PRODUTO E CLIENTE, USAR O REACT SELECT
     
-
   - O DRAWER DE VISUALIZAÇÃO DE FATURA []
   - REFATORAR AS VENDAS []
   - APLICAR UMA ARQUITETURA FIXE NO FRONT END []

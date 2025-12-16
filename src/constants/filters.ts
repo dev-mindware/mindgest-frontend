@@ -41,6 +41,14 @@ export const usersByOption = [
   { value: "updatedAt", label: "Mais Antigo" },
 ];
 
+export const invoiceByOption = [
+  { value: "createdAt", label: "Mais Recente" },
+  { value: "dueDate", label: "Mais Antigo" },
+  { value: "invoiceNumber", label: "Nº Fatura" },
+  { value: "clientName", label: "Cliente" },
+  { value: "total", label: "Total" },
+];
+
 export const itemsOrderOption = [
   { value: "asc", label: "A-Z" },
   { value: "desc", label: "Z-A" },
