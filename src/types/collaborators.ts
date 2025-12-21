@@ -1,4 +1,4 @@
-export type ManagerData = {
+export type CollaboratorData = {
   name: string;
   email?: string;
   password?: string;
@@ -8,9 +8,16 @@ export type ManagerData = {
   storeId?: string;
 };
 
-export type ManagerResponse = ManagerData & {
+export type CollaboratorResponse = CollaboratorData & {
   id: string;
   status: any;
   createdAt: string;
   updatedAt: string;
+};
+
+export type CollaboratorFilters = {
+  sortBy?: string;
+  status?: string;
+  sortOrder?: string;
+  search?: string;
 };
