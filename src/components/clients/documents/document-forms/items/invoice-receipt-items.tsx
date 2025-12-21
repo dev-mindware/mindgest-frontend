@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
-import { Button, EmptyState, Input, SelectField, Separator } from "@/components";
+import {
+  Button,
+  EmptyState,
+  Input,
+  SelectField,
+  Separator,
+} from "@/components";
 import { UseFieldArrayReturn } from "react-hook-form";
 import { InvoiceReceiptFormData } from "@/schemas";
 import { InputFetch } from "@/components/common/input-fetch";
-import { Trash2 } from "lucide-react";
+import { ShoppingBasket, Trash2 } from "lucide-react";
 
 interface InvoiceReceiptItemsProps {
   fieldArray: UseFieldArrayReturn<InvoiceReceiptFormData, "items">;
@@ -30,7 +36,7 @@ export function InvoiceReceiptItems({
   globalRetention,
   setGlobalRetention,
   globalDiscount,
-  setGlobalDiscount
+  setGlobalDiscount,
 }: InvoiceReceiptItemsProps) {
   const { fields, append, remove } = fieldArray;
 
@@ -44,17 +50,19 @@ export function InvoiceReceiptItems({
 
   const [isItemFromAPI, setIsItemFromAPI] = useState(false);
 
-  // Calculate totals
   const subtotal = fields.reduce((acc, item) => {
-    return acc + (item.unitPrice * item.quantity);
+    return acc + item.unitPrice * item.quantity;
   }, 0);
 
   const taxAmount = Number((subtotal * (globalTax / 100)).toFixed(2));
-  const retentionAmount = Number((subtotal * (globalRetention / 100)).toFixed(2));
+  const retentionAmount = Number(
+    (subtotal * (globalRetention / 100)).toFixed(2)
+  );
   const discountAmount = Number((subtotal * (globalDiscount / 100)).toFixed(2));
-  const total = Number((subtotal + taxAmount - retentionAmount - discountAmount).toFixed(2));
+  const total = Number(
+    (subtotal + taxAmount - retentionAmount - discountAmount).toFixed(2)
+  );
 
-  // Notify parent of changes
   useEffect(() => {
     if (onTotalsChange) {
       onTotalsChange({
@@ -65,7 +73,14 @@ export function InvoiceReceiptItems({
         total,
       });
     }
-  }, [subtotal, taxAmount, retentionAmount, discountAmount, total, onTotalsChange]);
+  }, [
+    subtotal,
+    taxAmount,
+    retentionAmount,
+    discountAmount,
+    total,
+    onTotalsChange,
+  ]);
 
   function handleAddItem() {
     const { name, quantity, price, apiId } = itemDraft;
@@ -86,7 +101,6 @@ export function InvoiceReceiptItems({
 
     append(newItem);
 
-    // Reset form
     setItemDraft({
       name: "",
       quantity: 1,
@@ -97,7 +111,10 @@ export function InvoiceReceiptItems({
     setIsItemFromAPI(false);
   }
 
-  const handleItemFetchChange = (id: string | number, fullObject: any | null) => {
+  const handleItemFetchChange = (
+    id: string | number,
+    fullObject: any | null
+  ) => {
     if (fullObject && fullObject.price) {
       const price = parseFloat(fullObject.price);
       setItemDraft((prev) => ({
@@ -134,7 +151,6 @@ export function InvoiceReceiptItems({
 
       <Separator />
 
-      {/* Add Item Form */}
       <div className="pt-6">
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -182,7 +198,10 @@ export function InvoiceReceiptItems({
                 label="Tipo"
                 value={itemDraft.type}
                 onValueChange={(value) =>
-                  setItemDraft({ ...itemDraft, type: value as "PRODUCT" | "SERVICE" })
+                  setItemDraft({
+                    ...itemDraft,
+                    type: value as "PRODUCT" | "SERVICE",
+                  })
                 }
                 options={[
                   { value: "PRODUCT", label: "Produto" },
@@ -201,11 +220,9 @@ export function InvoiceReceiptItems({
         </div>
       </div>
 
-      {/* Items List */}
       {fields.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center">
-          <EmptyState icon="ShoppingBasket" />
-        </div>
+        <ShoppingBasket />
+        // <EmptyState icon="ShoppingBasket" />
       ) : (
         <div className="space-y-4">
           <div className="p-0">
@@ -213,22 +230,39 @@ export function InvoiceReceiptItems({
               <table className="w-full">
                 <thead className="border-b bg-muted/50 ">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Item</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Tipo</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium">Qtd</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium">Preço Unit.</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium">Subtotal</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium">
+                      Item
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-medium">
+                      Tipo
+                    </th>
+                    <th className="px-4 py-3 text-right text-sm font-medium">
+                      Qtd
+                    </th>
+                    <th className="px-4 py-3 text-right text-sm font-medium">
+                      Preço Unit.
+                    </th>
+                    <th className="px-4 py-3 text-right text-sm font-medium">
+                      Subtotal
+                    </th>
                     <th className="px-4 py-3 w-[50px]"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   {fields.map((item, index) => (
-                    <tr key={item.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium">{item.description}</td>
+                    <tr
+                      key={item.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="px-4 py-3 text-sm font-medium">
+                        {item.description}
+                      </td>
                       <td className="px-4 py-3">
                         {item.type === "PRODUCT" ? "Produto" : "Serviço"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-right">{item.quantity}</td>
+                      <td className="px-4 py-3 text-sm text-right">
+                        {item.quantity}
+                      </td>
                       <td className="px-4 py-3 text-sm text-right">
                         {formatCurrency(item.unitPrice)}
                       </td>
@@ -253,7 +287,6 @@ export function InvoiceReceiptItems({
             </div>
           </div>
 
-          {/* Totals Card */}
           <div className="pt-6">
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 pb-4">
@@ -278,7 +311,7 @@ export function InvoiceReceiptItems({
                   options={[
                     { value: 0, label: "0%" },
                     { value: 6.5, label: "6.5%" },
-                    { value: 10, label: "10%" }
+                    { value: 10, label: "10%" },
                   ]}
                   className="w-full"
                 />
@@ -300,11 +333,15 @@ export function InvoiceReceiptItems({
                 <div className="space-y-3 min-w-70 border border-dashed border-muted p-4 rounded-md">
                   <div className="flex justify-between text-md gap-4">
                     <span className="text-muted-foreground">Subtotal:</span>
-                    <span className="font-medium">{formatCurrency(subtotal)}</span>
+                    <span className="font-medium">
+                      {formatCurrency(subtotal)}
+                    </span>
                   </div>
                   {globalTax > 0 && (
                     <div className="flex justify-between text-md gap-4">
-                      <span className="text-muted-foreground">IVA ({globalTax}%):</span>
+                      <span className="text-muted-foreground">
+                        IVA ({globalTax}%):
+                      </span>
                       <span className="font-medium">
                         +{formatCurrency(taxAmount)}
                       </span>
@@ -312,7 +349,9 @@ export function InvoiceReceiptItems({
                   )}
                   {globalRetention > 0 && (
                     <div className="flex justify-between text-md gap-4">
-                      <span className="text-muted-foreground">Retenção ({globalRetention}%):</span>
+                      <span className="text-muted-foreground">
+                        Retenção ({globalRetention}%):
+                      </span>
                       <span className="font-medium text-destructive">
                         -{formatCurrency(retentionAmount)}
                       </span>
@@ -320,7 +359,9 @@ export function InvoiceReceiptItems({
                   )}
                   {globalDiscount > 0 && (
                     <div className="flex justify-between text-md gap-4">
-                      <span className="text-muted-foreground">Desconto ({globalDiscount}%):</span>
+                      <span className="text-muted-foreground">
+                        Desconto ({globalDiscount}%):
+                      </span>
                       <span className="font-medium text-destructive">
                         -{formatCurrency(discountAmount)}
                       </span>
@@ -329,7 +370,9 @@ export function InvoiceReceiptItems({
                   <Separator />
                   <div className="flex justify-between text-xl font-bold gap-4">
                     <span>Total:</span>
-                    <span className="text-2xl text-primary">{formatCurrency(total)}</span>
+                    <span className="text-2xl text-primary">
+                      {formatCurrency(total)}
+                    </span>
                   </div>
                 </div>
               </div>

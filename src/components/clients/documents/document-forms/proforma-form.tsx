@@ -8,6 +8,7 @@ import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { InvoiceItems } from "./items/invoice-items";
 import { useCreateProforma } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
+import { watch } from "fs";
 
 interface ClientSelectOption {
   value: string | number;
@@ -34,7 +35,7 @@ export function ProformaForm() {
     reset,
     setValue,
   } = useForm<ProformaFormData>({
-    resolver: zodResolver(ProformaSchema) as any,
+    resolver: zodResolver(ProformaSchema),
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
@@ -49,6 +50,7 @@ export function ProformaForm() {
       globalTax: 0,
       globalRetention: 0,
       globalDiscount: 0,
+      // proformaExpiresAt: watch("dueDate") || new Date().toISOString().split("T")[0],
     },
   });
 
@@ -61,6 +63,11 @@ export function ProformaForm() {
   const globalTax = watch("globalTax") || 0;
   const globalRetention = watch("globalRetention") || 0;
   const globalDiscount = watch("globalDiscount") || 0;
+
+  const paymentMethod = watch("paymentMethod");
+  const proformaExpiresAt = watch("proformaExpiresAt");
+  const subtotal = watch("subtotal") || 0;
+  const notes = watch("notes") || "";
 
   const invoiceTotals = useMemo(() => {
     const subtotal = items.reduce(
@@ -85,7 +92,6 @@ export function ProformaForm() {
   const handleClientChange = useCallback(
     (option: ClientSelectOption | null) => {
       if (!option) {
-        // Limpa todos os campos de uma vez
         setValue("client", {
           name: "",
           taxNumber: "",
@@ -103,20 +109,18 @@ export function ProformaForm() {
           phone: "",
         });
       } else if (option.data) {
-        // Cliente da API - preenche tudo de uma vez
         setValue("client", {
           name: option.data.name,
           taxNumber: option.data.taxNumber || "",
           address: option.data.address || "",
           phone: option.data.phone || "",
         });
-        
+
         setValue("clientId", option.data.id as any);
       }
     },
     [setValue]
   );
-
 
   const onSubmit = useCallback(
     async (data: ProformaFormData) => {
@@ -156,11 +160,11 @@ export function ProformaForm() {
           discountAmount: invoiceTotals.discountAmount,
         };
 
-        console.log(finalPayload);
-       // await createProforma(finalPayload);
-       // toast.success("Proforma criada com sucesso!");
+        console.log(JSON.stringify(finalPayload));
+        await createProforma(finalPayload as any);
+        // toast.success("Proforma criada com sucesso!");
 
-       // reset();
+        // reset();
       } catch (error: any) {
         const errorMessage =
           error?.response?.data?.message || "Erro ao criar proforma";
@@ -191,12 +195,17 @@ export function ProformaForm() {
   );
   const clientName = watch("client.name");
   const hasClient = Boolean(clientName);
-  
+
   const clientId = watch("clientId" as any);
   const isNewClient = hasClient && !clientId;
 
+  console.log("Erros no formulario:  ");
+  console.log(errors);
   return (
-    <div className="p-8 mt-4 space-y-8 border rounded-lg">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="p-8 mt-4 space-y-8 border rounded-lg"
+    >
       <div className="grid gap-6 md:grid-cols-3">
         <Input
           type="date"
@@ -205,7 +214,7 @@ export function ProformaForm() {
           error={errors.issueDate?.message}
           disabled
         />
-        
+
         <Input
           type="date"
           label="Data de Vencimento"
@@ -229,15 +238,13 @@ export function ProformaForm() {
           onChange={handleClientChange}
           displayFields={["name", "email"]}
           minChars={2}
-          formatCreateLabel={(inputValue: string) =>
-            `➕ Criar "${inputValue}"`
-          }
+          formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
           error={errors.client?.name?.message}
         />
       </div>
 
       {hasClient && (
-        <div className="grid gap-6 md:grid-cols-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="grid gap-6 md:grid-cols-3">
           <Input
             label="NIF"
             placeholder="123456789"
@@ -245,7 +252,7 @@ export function ProformaForm() {
             error={errors.client?.taxNumber?.message}
             disabled={!isNewClient}
           />
-          
+
           <Input
             startIcon="Phone"
             placeholder="923 456 789"
@@ -254,7 +261,7 @@ export function ProformaForm() {
             error={errors.client?.phone?.message}
             disabled={!isNewClient}
           />
-          
+
           <Input
             startIcon="MapPin"
             placeholder="Luanda"
@@ -276,30 +283,10 @@ export function ProformaForm() {
         setGlobalDiscount={setGlobalDiscount}
       />
       <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleCancel}
-          disabled={isSubmitting || isPending}
-        >
-          Cancelar
-        </Button>
-        
-        <Button
-          onClick={handleSubmit(onSubmit)}
-          disabled={isSubmitting || isPending}
-          className="min-w-[200px]"
-        >
-          {isPending || isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <span className="animate-spin">⏳</span>
-              Criando Proforma...
-            </span>
-          ) : (
-            "Criar Proforma"
-          )}
+        <Button type="submit" disabled={isSubmitting || isPending}>
+          {isPending || isSubmitting ? "Criando Proforma..." : "Criar Proforma"}
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

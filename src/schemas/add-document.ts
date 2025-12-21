@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 import { ItemSchema, phoneNumberSchema, taxNumberSchema } from "./helps";
 
 export const CompanySchema = z.object({
@@ -111,13 +111,16 @@ export const ProformaSchema = z.object({
   items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
   discount: z.number().optional(),
   // Adicione estes campos
-  globalTax: z.number().min(0).max(100).default(0),
-  globalRetention: z.number().min(0).max(100).default(0),
-  globalDiscount: z.number().min(0).max(100).default(0),
+  globalTax: z.number().min(0),
+  globalRetention: z.number().min(0),
+  globalDiscount: z.number().min(0),
+      
+  paymentMethod: z.string(),
+  proformaExpiresAt: z.string(),
+  subtotal: z.number(),
+  notes: z.string().optional(),
 });
-
 export type ProformaFormData = z.infer<typeof ProformaSchema>;
-
 /**
  * InvoiceReceipt (Fatura Recibo)
  */
