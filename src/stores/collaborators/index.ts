@@ -1,2 +1,1 @@
-export * from "./current-collaborators-store"
-export * from "./current-manager-store"
+export * from "./current-collaborator-store"
