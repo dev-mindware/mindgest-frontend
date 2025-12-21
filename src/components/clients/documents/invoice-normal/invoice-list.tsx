@@ -17,12 +17,13 @@ import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
 import { useRouter } from "next/navigation";
+import { useURLSearchParams } from "@/hooks/common";
 
 export function InvoiceList() {
   const router = useRouter();
+  const { search } = useURLSearchParams("search-invoice");
   const { filters, page, setPage } = useInvoiceFilters();
-  const [debounceSearch] = useDebounce(filters.search || "", 400);
-
+  const [debounceSearch] = useDebounce(search, 400);
   const {
     handlerGenerateReceipt,
     handlerCancelInvoice,
@@ -45,11 +46,14 @@ export function InvoiceList() {
 
   const columns: Column<InvoiceResponse>[] = [
     {
+      key: "inv-number",
+      header: "N° da Fatura",
+      render: (_, item) => item.number,
+    },
+    {
       key: "client",
       header: "Cliente",
-      render: (_, item) => {
-        return item.clientId;
-      },
+      render: (_, item) => item.client.name,
     },
     {
       key: "total",
@@ -69,11 +73,7 @@ export function InvoiceList() {
     {
       key: "createdAt",
       header: "Criado em",
-      render: (_, item) => (
-        <div className="text-sm text-foreground">
-          {formatDateTime(item.createdAt)}
-        </div>
-      ),
+      render: (_, item) => formatDateTime(item.createdAt),
     },
     {
       key: "action",
@@ -82,7 +82,6 @@ export function InvoiceList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-
             {
               label: "Ver Fatura",
               onClick: handlerDetailsInvoice,
@@ -90,34 +89,32 @@ export function InvoiceList() {
 
             ...(item.status !== "CANCELLED"
               ? [
-                {
-                  label: "Cancelar Fatura",
-                  onClick: handlerCancelInvoice,
-                },
-              ]
-              : []),
-
-            ...(item.status === "DRAFT"
-              ? [
-                {
-                  label: "Gerar Recibo",
-                  onClick: handlerGenerateReceipt,
-                },
-              ]
-              : []),
-
-            ...(item.status === "DRAFT"
-              ? [
-                {
-                  label: "Emitir Nota",
-                  onClick: () => {
-                    router.push(`/client/documents/notes/${item.id}`);
+                  {
+                    label: "Cancelar Fatura",
+                    onClick: handlerCancelInvoice,
                   },
-                },
-              ]
+                ]
               : []),
 
+            ...(item.status === "DRAFT"
+              ? [
+                  {
+                    label: "Gerar Recibo",
+                    onClick: handlerGenerateReceipt,
+                  },
+                ]
+              : []),
 
+            ...(item.status === "DRAFT"
+              ? [
+                  {
+                    label: "Emitir Nota",
+                    onClick: () => {
+                      router.push(`/client/documents/notes/${item.id}`);
+                    },
+                  },
+                ]
+              : []),
           ]}
         />
       ),
@@ -132,39 +129,38 @@ export function InvoiceList() {
     );
   }
 
-  if (invoices?.length == 0)
-    return (
-      <div className="justify-start mt-6 space-y-8">
-        <EmptyState
-          description="Adicione novas facturas"
-          title="Sem Facturas"
-          icon="FileText"
-        />
-      </div>
-    );
-
   return (
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <InvoiceFiltersTSX type="invoice" searchText="search-invoice" />
+      <InvoiceFiltersTSX type="invoice" searchText="search-invoice" />
+      {invoices.length > 0 ? (
+        <GenericTable<InvoiceResponse>
+          page={page}
+          data={invoices}
+          columns={columns}
+          total={total}
+          totalPages={totalPages}
+          setPage={setPage}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhum gerente encontrado"
+        />
+      ) : (
+        <div className="justify-start mt-6 space-y-8">
+          <EmptyState
+            description="Adicione novas facturas"
+            title="Sem Facturas"
+            icon="FileText"
+          />
         </div>
-      </div>
+      )}
 
-      <GenericTable<InvoiceResponse>
-        page={page}
-        data={invoices}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhum gerente encontrado"
-      />
-      <GenerateReceiptModal />
-      <CancelInvoiceModal />
-      <InvoicePreviewDrawer />
+      {invoices.length !== 0 && (
+        <>
+          <GenerateReceiptModal />
+          <CancelInvoiceModal />
+          <InvoicePreviewDrawer />
+        </>
+      )}
     </div>
   );
 }

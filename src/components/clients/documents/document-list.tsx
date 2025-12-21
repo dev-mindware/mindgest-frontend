@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,13 +10,11 @@ import {
   TabsTrigger,
   Button,
 } from "@/components/ui";
-import {
-  InvoiceReceiptList,
-  InvoiceList,
-  ReceiptList,
-  ProformaList,
-  CreditNotesList,
-} from "./lists";
+import { InvoiceList } from "./invoice-normal";
+import { ProformaList } from "./invoice-proforma";
+import { InvoiceReceiptList } from "./invoice-receipt";
+import { ReceiptList } from "./receipts";
+import { CreditNotesList } from "./credits-notes";
 
 type DocumentTab =
   | "invoice"

@@ -1,14 +1,13 @@
 "use client";
-
+import { CreditNoteFilters } from "@/types/credit-note";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CreditNoteFilters } from "@/types";
 
 export function useCreditNotesFilters() {
   const router = useRouter();
   const query = useSearchParams();
 
   const filters: CreditNoteFilters = {
-    search: query.get("search") || undefined,
+    creditNoteNumber: query.get("creditNoteNumber") || undefined,
     reason: query.get("reason") || undefined,
     status: query.get("status") || undefined,
     sortBy: query.get("sortBy") || undefined,
@@ -21,7 +20,7 @@ export function useCreditNotesFilters() {
     const updated = { ...filters, ...newFilters };
     const searchParams = new URLSearchParams();
 
-    if (updated.search) searchParams.set("search", updated.search);
+    if (updated.creditNoteNumber)searchParams.set("creditNoteNumber", updated.creditNoteNumber);
     if (updated.reason) searchParams.set("reason", updated.reason);
     if (updated.status) searchParams.set("status", updated.status);
     if (updated.sortBy) searchParams.set("sortBy", updated.sortBy);

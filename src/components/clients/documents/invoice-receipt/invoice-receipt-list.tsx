@@ -7,24 +7,25 @@ import {
   ListSkeleton,
   EmptyState,
   ButtonOnlyAction,
-  Badge,
+  InvoicePreviewDrawer,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
-import { InvoicePreviewDrawer } from "@/components/common/dynamic-drawer/invoice-preview-drawer";
-
 
 export function InvoiceReceiptList() {
   const { search } = useURLSearchParams("search-invoice-receipt");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
-  const { handlerGenerateReceipt, handlerCancelInvoice, handlerDetailsInvoice } =
-    useInvoiceActions();
   const {
-    data: invoices,
+    handlerGenerateReceipt,
+    handlerCancelInvoice,
+    handlerDetailsInvoice,
+  } = useInvoiceActions();
+  const {
+    data: invoicesReceipts,
     total,
     totalPages,
     goToNextPage,
@@ -43,29 +44,24 @@ export function InvoiceReceiptList() {
     {
       key: "client",
       header: "Cliente",
-      render: (_, item) => {
-        return item.client.name;
-      },
+      render: (_, item) => item.client.name,
     },
     {
       key: "total",
       header: "Valor",
-      render: (_, item) => formatCurrency(item.total)
-    },
-    {
-      key: "createdAt",
-      header: "Criado em",
-      render: (_, item) => (
-        <div className="text-sm text-foreground">
-          {formatDateTime(item.createdAt)}
-        </div>
-      ),
+      render: (_, item) => formatCurrency(item.total),
     },
     {
       key: "status",
       header: "Estado",
-      render: (_, item) => <DocumentStatusBadge status={item.status} />
+      render: (_, item) => <DocumentStatusBadge status={item.status} />,
     },
+    {
+      key: "createdAt",
+      header: "Criado em",
+      render: (_, item) => formatDateTime(item.createdAt),
+    },
+
     {
       key: "action",
       header: "Ação",
@@ -81,7 +77,6 @@ export function InvoiceReceiptList() {
               label: "Emitir Nota",
               onClick: handlerCancelInvoice,
             },
-
           ]}
         />
       ),
@@ -92,40 +87,38 @@ export function InvoiceReceiptList() {
 
   if (isError) {
     return (
-      <RequestError refetch={refetch} message="Erro ao carregar os documentos" />
+      <RequestError
+        refetch={refetch}
+        message="Erro ao carregar os documentos"
+      />
     );
   }
 
-  if (invoices?.length == 0)
-    return (
-      <div className="justify-start mt-6 space-y-8">
-        <EmptyState
-          description="Adicione novos documentos"
-          title="Sem Documentos"
-          icon="Users"
-        />
-      </div>
-    );
-
   return (
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <InvoiceFiltersTSX searchText="search-invoice-receipt" />
-        </div>
-      </div>
+      <InvoiceFiltersTSX searchText="search-invoice-receipt" />
 
-      <GenericTable<InvoiceResponse>
-        page={page}
-        data={invoices}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhum documento encontrado"
-      />
+      {invoicesReceipts.length > 0 ? (
+        <GenericTable<InvoiceResponse>
+          page={page}
+          data={invoicesReceipts}
+          columns={columns}
+          total={total}
+          totalPages={totalPages}
+          setPage={setPage}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhum documento encontrado"
+        />
+      ) : (
+        <div className="justify-start mt-6 space-y-8">
+          <EmptyState
+            description="Adicione novos documentos"
+            title="Sem Documentos"
+            icon="Users"
+          />
+        </div>
+      )}
       <InvoicePreviewDrawer />
     </div>
   );

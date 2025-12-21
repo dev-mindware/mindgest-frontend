@@ -15,3 +15,4 @@ export * from "./services";
 export * from "./stats";
 export * from "./subscription";
 export * from "./upload";
+export * from "./invoice-proforma";

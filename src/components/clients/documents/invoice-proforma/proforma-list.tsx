@@ -7,22 +7,20 @@ import {
   ListSkeleton,
   EmptyState,
   ButtonOnlyAction,
+  ProformaPreviewDrawer,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
-import { useState } from "react";
 import { useInvoiceFilters, useProformaActions } from "@/hooks";
-import { ProformaPreviewDrawer } from "@/components/common/dynamic-drawer/proforma-preview-drawer";
-
-// colocar filtros menos o estado
+import { DeleteProformaModal } from "../modals";
 
 export function ProformaList() {
   const { search } = useURLSearchParams("search-proforma");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
-  const { handlerDeleteProforma, handlerDetailsProforma, hanlderEditProforma,  } =
+  const { handlerDeleteProforma, handlerDetailsProforma, hanlderEditProforma } =
     useProformaActions();
   const {
     data: proformas,
@@ -35,7 +33,7 @@ export function ProformaList() {
     refetch,
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/proforma",
-    queryKey: ["proforma"],
+    queryKey: ["invoice-proforma"],
     queryParams: { ...filters, search: debounceSearch, page },
   });
 
@@ -44,9 +42,7 @@ export function ProformaList() {
     {
       key: "client",
       header: "Cliente",
-      render: (_, item) => {
-        return item.client?.name || item.clientId;
-      },
+      render: (_, item) => item.client?.name || "N/A",
     },
     {
       key: "total",
@@ -76,16 +72,15 @@ export function ProformaList() {
           actions={[
             { label: "Ver Proforma", onClick: handlerDetailsProforma },
             { label: "Editar", onClick: hanlderEditProforma },
-            { label: "Cancelar Proforma", onClick: handlerDeleteProforma },
             ...(item.status !== "CANCELLED"
               ? [
-                {
-                  label: "Deletar",
-                  onClick: () => { },
-                },
-              ]
+                  {
+                    label: "Deletar",
+                    onClick: handlerDeleteProforma,
+                  },
+                ]
               : []),
-          ]}
+        ]}
         />
       ),
     },
@@ -99,37 +94,33 @@ export function ProformaList() {
     );
   }
 
-  if (proformas?.length == 0)
-    return (
-      <div className="justify-start mt-6 space-y-8">
-        <EmptyState
-          description="Nenhuma proforma encontrada"
-          title="Sem Proformas"
-          icon="FileText"
-        />
-      </div>
-    );
-
   return (
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <InvoiceFiltersTSX type="proforma" searchText="search-proforma" />
+      <InvoiceFiltersTSX searchText="search-proforma" />
+      {proformas.length > 0 ? (
+        <GenericTable<InvoiceResponse>
+          page={page}
+          data={proformas}
+          columns={columns}
+          total={total}
+          totalPages={totalPages}
+          setPage={setPage}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhuma proforma encontrada"
+        />
+      ) : (
+        <div className="justify-start mt-6 space-y-8">
+          <EmptyState
+            description="Nenhuma proforma encontrada"
+            title="Sem Proformas"
+            icon="FileText"
+          />
         </div>
-      </div>
+      )}
 
-      <GenericTable<InvoiceResponse>
-        page={page}
-        data={proformas}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhuma proforma encontrada"
-      />
       <ProformaPreviewDrawer />
+      <DeleteProformaModal />
     </div>
   );
 }

@@ -1,17 +1,18 @@
 import { useModal } from "@/stores/use-modal-store";
 import { InvoiceResponse } from "@/types";
-import { currentInvoiceStore } from "@/stores/documents";
+import { currentCreditNoteStore } from "@/stores/documents";
+import { CreditNotesResponse } from "@/types/credit-note";
 
 export function useCreditNotesActions() {
   const { openModal } = useModal();
-  const { setCurrentInvoice } = currentInvoiceStore();
+  const { setCurrentCreditNote } = currentCreditNoteStore();
   
-  function handlerDetailsInvoice(invoice: InvoiceResponse) {
-    openModal("details-credit-notes");
-    setCurrentInvoice(invoice);
+  function handlerDetailsCreditNote(creditNote: CreditNotesResponse) {
+    openModal("details-credit-note");
+    setCurrentCreditNote(creditNote);
   }
 
   return {
-    handlerDetailsInvoice,
+    handlerDetailsCreditNote,
   };
 }

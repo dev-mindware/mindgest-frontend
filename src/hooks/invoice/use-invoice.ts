@@ -3,6 +3,7 @@ import { invoiceService } from "@/services/invoice-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreditNoteFormData } from "@/schemas";
 import { ReceiptData } from "@/types/receipt";
+import { DownloadType } from "@/types";
 
 export function useGenerateReceipt() {
   const queryClient = useQueryClient();
@@ -70,6 +71,16 @@ export function useAnnulationNote() {
     onSuccess: () => {
       toast.success("Nota de Anulada criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+    },
+  });
+}
+
+export function useDownloadInvoice() {
+  return useMutation({
+    mutationFn: ({ id, type }: { id: string; type: DownloadType }) =>
+      invoiceService.downloadInvoice(id, type),
+    onSuccess: () => {
+      toast.success("Documento baixado com sucesso!");
     },
   });
 }

@@ -1,56 +1,68 @@
-import { proformaService } from "@/services/proforma-service";
-import { Button, GlobalModal } from "@/components";
+import { toast } from "sonner";
 import { currentProformaStore } from "@/stores";
 import { useModal } from "@/stores/use-modal-store";
-import { toast } from "sonner";
-import { queryClient } from "@/lib";
+import { Button, GlobalModal } from "@/components";
+import { useDeleteProforma } from "@/hooks/invoice-proforma";
 
 export function DeleteProformaModal() {
-    const { closeModal, open } = useModal();
-    const isOpen = open["delete-proforma"]
-    const { currentProforma } = currentProformaStore();
+  const { closeModal, open } = useModal();
+  const isOpen = open["delete-proforma"];
+  const { mutateAsync: deleteProforma, isPending } = useDeleteProforma();
+  const { currentProforma } = currentProformaStore();
 
-    async function handlerDeleteProforma() {
-        if (!currentProforma?.id) {
-            toast.error("Proforma não selecionada");
-            return;
-        }
-
-        try {
-            await proformaService.deleteProforma(currentProforma.id);
-            toast.success("Proforma apagada com sucesso!");
-            queryClient.invalidateQueries({ queryKey: ["proform"] });
-            handleClose();
-        } catch (error: any) {
-            toast.error(error?.response?.data?.message || "Erro ao cancelar fatura");
-        }
+  async function handlerDeleteProforma() {
+    if (!currentProforma?.id) {
+      toast.error("Proforma não selecionada");
+      return;
     }
-    const handleClose = () => {
-        closeModal("delete-proforma");
-    };
 
-    if (!isOpen) return null;
+    try {
+      await deleteProforma(currentProforma.id);
+      handleClose();
+    } catch (error: any) {
+      if (error?.response) {
+        toast.error(
+          error?.response?.data?.message || "Erro ao deletar proforma"
+        );
+      } else {
+        toast.error("Ocorreu um erro desconhecido");
+      }
+    }
+  }
+  const handleClose = () => {
+    closeModal("delete-proforma");
+  };
 
-    return (
-        <GlobalModal
-            warning
-            canClose
-            className="!w-max"
-            id="delete-proforma"
-            title={`Tem certeza que deseja apagar a proforma? ${currentProforma?.number}`}
-            description="Lembre-se que esta ação não pode ser desfeita."
+  if (!isOpen) return null;
+
+  return (
+    <GlobalModal
+      warning
+      canClose
+      className="!w-max"
+      id="delete-proforma"
+      title="Tem certeza que deseja apagar a proforma?"
+      description="Lembre-se que esta ação não pode ser desfeita."
+    >
+      <div className="flex justify-end gap-4">
+        <Button
+          disabled={isPending}
+          className="disable:cursor-not-alowed"
+          onClick={handleClose}
+          variant="outline"
         >
-            <div className="flex justify-end gap-4">
-                <Button onClick={() => closeModal("delete-proforma")} variant="outline">
-                    Cancelar
-                </Button>
-                <Button
-                    variant="destructive"
-                    onClick={() => handlerDeleteProforma()}
-                >
-                    Apagar Proforma
-                </Button>
-            </div>
-        </GlobalModal>
-    );
+          Cancelar
+        </Button>
+
+        <Button
+          disabled={isPending}
+          variant="destructive"
+          className="w-max bg-destructive hover:bg-destructive/90"
+          onClick={handlerDeleteProforma}
+        >
+          {isPending ? "Apagando..." : "Apagar Proforma"}
+        </Button>
+      </div>
+    </GlobalModal>
+  );
 }

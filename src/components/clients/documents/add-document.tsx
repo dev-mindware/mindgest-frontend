@@ -9,7 +9,7 @@ import {
 } from "./document-forms";
 import { useRouter, useSearchParams } from "next/navigation";
 
-type TabsAloweds = "invoice" | "invoice-receipt" | "proform";
+type TabsAloweds = "invoice" | "invoice-receipt" | "proforma";
 
 export function AddDocuments() {
   const router = useRouter();
@@ -44,18 +44,9 @@ export function AddDocuments() {
         onValueChange={handleTabChange}
       >
         <TabsList className="flex justify-center md:justify-start">
-          <TabsTrigger value="invoice" onClick={() => setCurrentTab("invoice")}>
-            Fatura
-          </TabsTrigger>
-          <TabsTrigger
-            value="invoice-receipt"
-            onClick={() => setCurrentTab("invoice-receipt")}
-          >
-            Fatura Recibo
-          </TabsTrigger>
-          <TabsTrigger value="proform" onClick={() => setCurrentTab("proform")}>
-            Fatura Proforma
-          </TabsTrigger>
+          <TabsTrigger value="invoice">Fatura</TabsTrigger>
+          <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
+          <TabsTrigger value="proforma">Fatura Proforma</TabsTrigger>
         </TabsList>
 
         <TabsContent value="invoice">
@@ -64,7 +55,7 @@ export function AddDocuments() {
         <TabsContent value="invoice-receipt">
           <InvoiceReceiptForm />
         </TabsContent>
-        <TabsContent value="proform">
+        <TabsContent value="proforma">
           <ProformaForm />
         </TabsContent>
       </Tabs>

@@ -11,8 +11,8 @@ export function DocumentStatusBadge({ status }: DocumentoStatusBadgeProps) {
     PAID: "Paga",
   };
 
-  const variantMap: Record<string, "default" | "success" | "destructive" | "outline"> = {
-    DRAFT: "default",
+  const variantMap: Record<string, "default" | "success" | "destructive" | "outline" | "pending"> = {
+    DRAFT: "pending",
     CANCELLED: "destructive",
     PAID: "success",
   };

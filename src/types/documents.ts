@@ -1,6 +1,8 @@
+import { Client } from "./clients";
 import { ItemData } from "./items";
 
-export type InvoiceStatus = 'DRAFT' | 'PENDING' | 'PAID' | 'CANCELLED' | 'OVERDUE';
+export type InvoiceStatus = 'DRAFT' | 'PENDING' | 'PAID' | 'CANCELLED' | 'OVERDUE' | string;
+export type DownloadType = "docx" | "pdf" | "xml"
 
 export type ContactInfo = {
   phone?: string;
@@ -191,7 +193,6 @@ export type InvoiceFilters = {
   sortBy?: string;
   sortOrder?: string
   status?: InvoiceStatus;
-  search?: string;
   invoiceNumber?: string;
   clientName?: string;
   startDate?: string; 
@@ -201,12 +202,9 @@ export type InvoiceFilters = {
   maxAmount?: number;
 };
 
-
 export type InvoiceResponse = InvoiceData & {
   id: string;
-  client: {
-    name: string;
-  };
+  client: Client;
   status: InvoiceStatus;
   createdAt: string;
   updatedAt: string;
@@ -223,12 +221,3 @@ export type CreditNoteData = {
   createdAt: string; // ISO Date
 };
 
-export interface CreditNoteFilters {
-  search?: string;
-  reason?: "CORRECTION" | "RETURN" | "DISCOUNT" | "CANCELLATION" | string;
-  status?: InvoiceStatus;
-  sortBy?: string;
-  sortOrder?: string;
-  startDate?: string;
-  endDate?: string;
-}

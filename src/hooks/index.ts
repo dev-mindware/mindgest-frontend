@@ -9,4 +9,5 @@ export * from "./auth";
 export * from "./receipt";
 export * from "./items";
 export * from "./invoice";
+export * from "./invoice-proforma";
 export * from "./credit-notes";

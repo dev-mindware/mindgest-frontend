@@ -103,13 +103,19 @@ export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
 export const ProformaSchema = z.object({
   company: CompanySchema.optional(),
   client: ClientSchema,
+  clientId: z.union([z.string(), z.number()]).optional(), // Adicione isto
   categoryId: z.union([z.string(), z.number()]).optional(),
   issueDate: z.string().min(1, "A data de emissão é obrigatória"),
   dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
   orderReference: z.string().optional(),
   items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
   discount: z.number().optional(),
+  // Adicione estes campos
+  globalTax: z.number().min(0).max(100).default(0),
+  globalRetention: z.number().min(0).max(100).default(0),
+  globalDiscount: z.number().min(0).max(100).default(0),
 });
+
 export type ProformaFormData = z.infer<typeof ProformaSchema>;
 
 /**

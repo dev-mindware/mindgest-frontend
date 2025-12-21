@@ -1,5 +1,5 @@
 import { PageWrapper } from "@/components";
-import { AddDocuments } from "@/components/clients";
+import { AddDocuments } from "@/components/clients/documents/add-document";
 
 export default function AddDocsPage() {
   return (

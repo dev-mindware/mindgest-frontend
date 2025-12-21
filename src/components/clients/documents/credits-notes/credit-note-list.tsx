@@ -1,5 +1,4 @@
 "use client";
-
 import { useDebounce } from "use-debounce";
 import {
   Column,
@@ -9,18 +8,20 @@ import {
   EmptyState,
   ButtonOnlyAction,
   Badge,
+  CreditNotesFiltersTSX,
+  CreditNotePreviewDrawer,
 } from "@/components";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { usePagination, useURLSearchParams } from "@/hooks/common";
-import { CreditNotesFiltersTSX, DocumentStatusBadge } from "../common";
-import { CreditNoteData } from "@/types/documents";
-import { useCreditNotesFilters } from "@/hooks";
+import { DocumentStatusBadge } from "../common";
+import { CreditNotesResponse } from "@/types/credit-note";
+import { useCreditNotesActions, useCreditNotesFilters } from "@/hooks";
 
 export function CreditNotesList() {
   const { search } = useURLSearchParams("search-credit-notes");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useCreditNotesFilters();
-
+  const { handlerDetailsCreditNote } = useCreditNotesActions()
   const {
     data: creditNotes,
     total,
@@ -30,18 +31,13 @@ export function CreditNotesList() {
     isLoading,
     isError,
     refetch,
-  } = usePagination<CreditNoteData>({
+  } = usePagination<CreditNotesResponse>({
     endpoint: "/credit-note",
     queryKey: ["credit-notes"],
     queryParams: { ...filters, search: debounceSearch, page },
   });
 
-  const handleViewCreditNote = (note: CreditNoteData) => {
-    // aqui podes abrir drawer, modal ou navegar
-    console.log("Ver nota de crédito:", note);
-  };
-
-  const columns: Column<CreditNoteData>[] = [
+  const columns: Column<CreditNotesResponse>[] = [
     {
       key: "number",
       header: "Nota de Crédito",
@@ -50,7 +46,7 @@ export function CreditNotesList() {
     {
       key: "invoiceNumber",
       header: "Fatura",
-      render: (_, item) => item.invoiceNumber,
+      render: (_, item) => item.invoice.number || "N/A",
     },
     {
       key: "reason",
@@ -70,7 +66,9 @@ export function CreditNotesList() {
       key: "total",
       header: "Valor",
       render: (_, item) => (
-        <span className="text-destructive">{formatCurrency(item.total)}</span>
+        <span className="text-destructive">
+          {formatCurrency(item.invoice.total)}
+        </span>
       ),
     },
     {
@@ -84,7 +82,7 @@ export function CreditNotesList() {
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          actions={[{ label: "Ver Nota", onClick: handleViewCreditNote }]}
+          actions={[{ label: "Ver Nota", onClick: handlerDetailsCreditNote }]}
         />
       ),
     },
@@ -101,32 +99,33 @@ export function CreditNotesList() {
     );
   }
 
-  if (!creditNotes || creditNotes.length === 0) {
-    return (
-      <div className="mt-6">
-        <EmptyState
-          title="Sem Notas de Crédito"
-          description="Nenhuma nota de crédito encontrada"
-          icon="FileMinus"
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="mt-6 space-y-8">
       <CreditNotesFiltersTSX />
-      <GenericTable<CreditNoteData>
-        page={page}
-        data={creditNotes}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhuma nota de crédito encontrada"
-      />
+
+      {creditNotes.length === 0 ? (
+        <div className="mt-6">
+          <EmptyState
+            title="Sem Notas de Crédito"
+            description="Nenhuma nota de crédito encontrada"
+            icon="FileMinus"
+          />
+        </div>
+      ) : (
+        <GenericTable<CreditNotesResponse>
+          page={page}
+          total={total}
+          columns={columns}
+          setPage={setPage}
+          data={creditNotes}
+          totalPages={totalPages}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhuma nota de crédito encontrada"
+        />
+      )}
+      F
+      <CreditNotePreviewDrawer />
     </div>
   );
 }

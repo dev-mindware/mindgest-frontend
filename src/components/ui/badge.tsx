@@ -18,10 +18,10 @@ const badgeVariants = cva(
           "border-red-500/40 bg-red-500/20 text-red-600 hover:bg-red-500/30 hover:text-red-500 dark:border-red-400/40 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20",
         outline:
           "border-black/30 bg-black/5 text-foreground/80 hover:bg-black/20 hover:text-foreground  dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white/90",
-    
         success:
           "border-green-500/40 bg-green-500/20 text-green-600 hover:bg-green-500/30 hover:text-green-500 dark:border-green-400/40 dark:bg-green-500/10 dark:text-green-300 dark:hover:bg-green-500/20",
-    
+        pending:
+          "border-amber-500/40 bg-amber-500/20 text-amber-600 hover:bg-amber-500/30 hover:text-amber-500 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20",
         },
     },
     defaultVariants: {

@@ -3,7 +3,7 @@ import { Button, DatePicker, Input } from "@/components/ui";
 import { invoiceByOption, invoiceStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
-import { useInvoiceFilters } from "@/hooks";
+import { useInvoiceFilters, useURLSearchParams } from "@/hooks";
 import { InvoiceStatus } from "@/types";
 
 type InvoiceType = "proforma" | "receipt" | "invoice-receipt" | "invoice";
@@ -15,57 +15,86 @@ type Props = {
 
 export function InvoiceFiltersTSX({ searchText, type }: Props) {
   const { filters, setFilters } = useInvoiceFilters();
+  const { search, setSearch } = useURLSearchParams(searchText);
 
   function clearFilters() {
     setFilters({
       sortBy: undefined,
       status: undefined,
       sortOrder: undefined,
-      search: undefined,
       invoiceNumber: undefined,
       clientName: undefined,
       startDate: undefined,
       endDate: undefined,
-      storeId: undefined,
-      minAmount: undefined,
-      maxAmount: undefined,
     });
+    setSearch("");
   }
 
   const hasFilter =
     filters.status ||
     filters.sortBy ||
     filters.sortOrder ||
-    filters.search ||
+    search.length > 0 ||
     filters.invoiceNumber ||
     filters.clientName ||
     filters.startDate ||
-    filters.endDate ||
-    filters.storeId ||
-    filters.minAmount ||
-    filters.maxAmount;
+    filters.endDate;
 
   const showStatusFilter = type === "invoice";
 
   return (
-    <SearchHandlerWrapper
-      search={filters.search || ""}
-      setSearch={(val) => setFilters({ search: val })}
-      className="w-full flex flex-col gap-4"
-    >
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="w-full flex flex-col gap-4">
+      <SearchHandlerWrapper
+        search={search || ""}
+        setSearch={(val) => setSearch(val)}
+        className="w-full flex gap-4"
+      >
+        <div className="flex items-center gap-2">
+          {showStatusFilter && (
+            <FilterPopover
+              icon="Tag"
+              label="Status"
+              value={filters.status}
+              options={invoiceStatusOptions}
+              onChange={(status) =>
+                setFilters({ status: status as InvoiceStatus })
+              }
+            />
+          )}
+
+          <FilterPopover
+            icon="List"
+            label="Ordenar por"
+            options={invoiceByOption}
+            value={filters.sortBy}
+            onChange={(sortBy) => setFilters({ sortBy })}
+          />
+
+          <FilterPopover
+            label="Ordem"
+            icon="ArrowDownUp"
+            options={[
+              { value: "asc", label: "ASC" },
+              { value: "desc", label: "DESC" },
+            ]}
+            value={filters.sortOrder}
+            onChange={(sortOrder) => setFilters({ sortOrder })}
+          />
+        </div>
+      </SearchHandlerWrapper>
+      <div className="w-full flex items-center gap-3">
         <div className="flex items-center gap-2">
           <Input
+            type="search"
             placeholder="Nº Fatura"
             value={filters.invoiceNumber || ""}
             onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
-            className="w-[150px]"
           />
           <Input
+            type="search"
             placeholder="Cliente"
             value={filters.clientName || ""}
             onChange={(e) => setFilters({ clientName: e.target.value })}
-            className="w-[150px]"
           />
         </div>
 
@@ -82,42 +111,6 @@ export function InvoiceFiltersTSX({ searchText, type }: Props) {
           />
         </div>
 
-        {showStatusFilter && (
-          <FilterPopover
-            icon="Tag"
-            label="Status"
-            value={filters.status}
-            options={invoiceStatusOptions}
-            onChange={(status) => setFilters({ status: status as InvoiceStatus })}
-          />
-        )}
-
-        <FilterPopover
-          icon="List"
-          label="Ordenar por"
-          options={invoiceByOption}
-          value={filters.sortBy}
-          onChange={(sortBy) => setFilters({ sortBy })}
-        />
-
-        <FilterPopover
-          label="Ordem"
-          icon="ArrowDownUp"
-          options={[
-            { value: "asc", label: "ASC" },
-            { value: "desc", label: "DESC" },
-          ]}
-          value={filters.sortOrder}
-          onChange={(sortOrder) => setFilters({ sortOrder })}
-        />
-
-        {/*   <Input
-          placeholder="Loja ID"
-          value={filters.storeId || ""}
-          onChange={(e) => setFilters({ storeId: e.target.value })}
-          className="w-24"
-        /> */}
-
         {hasFilter && (
           <Button
             size="sm"
@@ -130,25 +123,6 @@ export function InvoiceFiltersTSX({ searchText, type }: Props) {
           </Button>
         )}
       </div>
-    </SearchHandlerWrapper>
+    </div>
   );
 }
-
-/*
- <div className="flex items-center gap-2">
-          <Input
-            type="number"
-            placeholder="Min €"
-            value={filters.minAmount || ""}
-            onChange={(e) => setFilters({ minAmount: Number(e.target.value) })}
-            className="w-20"
-          />
-          <Input
-            type="number"
-            placeholder="Max €"
-            value={filters.maxAmount || ""}
-            onChange={(e) => setFilters({ maxAmount: Number(e.target.value) })}
-            className="w-20"
-          />
-        </div>
-*/

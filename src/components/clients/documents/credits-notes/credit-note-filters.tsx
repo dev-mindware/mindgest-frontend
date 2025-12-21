@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, DatePicker } from "@/components/ui";
+import { Button, DatePicker, Input } from "@/components/ui";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
@@ -17,7 +17,9 @@ export function CreditNotesFiltersTSX() {
       status: undefined,
       sortBy: undefined,
       sortOrder: undefined,
-      search: undefined,
+      creditNoteNumber: undefined,
+      endDate: undefined,
+      startDate: undefined,
     });
     setSearch("");
   }
@@ -25,38 +27,27 @@ export function CreditNotesFiltersTSX() {
   const hasFilter =
     !!filters.reason ||
     !!filters.status ||
+    search.length > 0 ||
     !!filters.sortBy ||
     !!filters.sortOrder ||
-    search.length > 0;
+    !!filters.creditNoteNumber ||
+    !!filters.endDate ||
+    !!filters.startDate;
 
   return (
-    <SearchHandlerWrapper
-      search={search}
-      setSearch={setSearch}
-      className="flex flex-col sm:flex-row"
-    >
+    <div className="w-full flex flex-col gap-4">
+      <SearchHandlerWrapper
+        search={search}
+        setSearch={setSearch}
+        className="flex flex-col sm:flex-row"
+      >
+        <Input
+          placeholder="Nº da Nota"
+          value={filters.creditNoteNumber || ""}
+          onChange={(e) => setFilters({ creditNoteNumber: e.target.value })}
+        />
+      </SearchHandlerWrapper>
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
-        {/* Motivo da Nota de Crédito */}
-        <FilterPopover
-          icon="FileMinus"
-          label="Motivo"
-          value={filters.reason}
-          options={[
-            { label: "Anulação", value: "ANNULATION" },
-            { label: "Correção", value: "CORRETION" },
-          ]}
-          onChange={(reason) => setFilters({ reason })}
-        />
-
-        {/* Status */}
-        <FilterPopover
-          icon="Tag"
-          label="Status"
-          value={filters.status}
-          options={invoiceStatusOptions}
-          onChange={(status) => setFilters({ status: status as any })}
-        />
-
         <DatePicker
           value={filters.endDate ? new Date(filters.endDate) : undefined}
           onChange={(date) => setFilters({ endDate: date?.toISOString() })}
@@ -68,17 +59,36 @@ export function CreditNotesFiltersTSX() {
           placeholder="Data de fim"
         />
 
+        <FilterPopover
+          icon="FileMinus"
+          label="Motivo"
+          value={filters.reason}
+          options={[
+            { label: "Anulação", value: "ANNULATION" },
+            { label: "Correção", value: "CORRETION" },
+          ]}
+          onChange={(reason) => setFilters({ reason })}
+        />
 
-        {/* Ordenar por */}
+        <FilterPopover
+          icon="Tag"
+          label="Status"
+          value={filters.status}
+          options={invoiceStatusOptions}
+          onChange={(status) => setFilters({ status: status as any })}
+        />
+
         <FilterPopover
           icon="List"
           label="Ordenar por"
-          options={usersByOption}
           value={filters.sortBy}
           onChange={(sortBy) => setFilters({ sortBy })}
+          options={[
+            { value: "createdAt", label: "Mais Recente" },
+            { value: "updatedAt", label: "Mais Antigo" },
+          ]}
         />
 
-        {/* Ordem */}
         <FilterPopover
           label="Ordem"
           icon="ArrowDownUp"
@@ -102,6 +112,6 @@ export function CreditNotesFiltersTSX() {
           </Button>
         )}
       </div>
-    </SearchHandlerWrapper>
+    </div>
   );
 }

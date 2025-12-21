@@ -21,7 +21,6 @@ export function CreditNotes({ noteId }: { noteId: string }) {
         title="Notas de Crédito"
         suTitle="Emita notas de crédito para as suas faturas."
       />
-
       <CreditNoteForm invoice={data} />
     </div>
   );
