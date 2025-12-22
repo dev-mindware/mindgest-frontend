@@ -174,6 +174,7 @@ export function StockList() {
                             onClick: handlerAdjustStock,
                             icon: "SlidersHorizontal",
                         },
+                        { type: "separator" },
                         {
                             label: "Reservar",
                             onClick: handlerReserveStock,
