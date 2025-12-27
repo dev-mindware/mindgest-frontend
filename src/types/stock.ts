@@ -52,3 +52,16 @@ export type StockUnreserveData = {
   amount: number;
   reason: string;
 };
+
+export type StockSummaryResponse = {
+  totalItems: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  adequateStockCount: number;
+  totalUnits: number;
+  totalAvailable: number;
+  totalReserved: number;
+  lowStockPercentage: number;
+  outOfStockPercentage: number;
+  lastUpdated: string;
+};

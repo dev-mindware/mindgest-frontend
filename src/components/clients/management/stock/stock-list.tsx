@@ -174,6 +174,7 @@ export function StockList() {
                             onClick: handlerAdjustStock,
                             icon: "SlidersHorizontal",
                         },
+                        { type: "separator" },
                         {
                             label: "Reservar",
                             onClick: handlerReserveStock,
@@ -233,19 +234,17 @@ export function StockList() {
                     <StockFilters />
                 </div>
 
-                <div className="bg-card rounded-lg border p-6">
-                    <GenericTable<StockResponse>
-                        page={page}
-                        data={stock}
-                        columns={columns}
-                        total={total}
-                        totalPages={totalPages}
-                        setPage={setPage}
-                        goToNextPage={goToNextPage}
-                        goToPreviousPage={goToPreviousPage}
-                        emptyMessage="Nenhum item em estoque encontrado"
-                    />
-                </div>
+                <GenericTable<StockResponse>
+                    page={page}
+                    data={stock}
+                    columns={columns}
+                    total={total}
+                    totalPages={totalPages}
+                    setPage={setPage}
+                    goToNextPage={goToNextPage}
+                    goToPreviousPage={goToPreviousPage}
+                    emptyMessage="Nenhum item em estoque encontrado"
+                />
             </div>
 
             {/* Modals */}

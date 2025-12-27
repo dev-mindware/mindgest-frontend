@@ -10,6 +10,9 @@ export const stockService = {
   getStock: async () => {
     return api.get("/stocks");
   },
+  getSummary: async () => {
+    return api.get("/stocks/summary");
+  },
   addStock: async (data: StockCreateData) => {
     return api.post("/stocks", data);
   },

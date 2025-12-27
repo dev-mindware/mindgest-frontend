@@ -145,15 +145,14 @@ body {
 }
 
 .dark {
-  /* Tons de Cinza – mais escuros e com melhor contraste */
-  --gray-950: #0a0a0b;  /* fundo mais profundo */
-  --gray-900: #13141a;  /* fundo principal */
-  --gray-800: #1c1d26;  /* cards / sidebar */
-  --gray-700: #252632;  /* inputs / accents */
-  --gray-600: #34354a;  /* borders */
-  --gray-500: #52536a;  /* borders hover */
-  --gray-400: #8b8d9e;  /* texto muted */
-  --gray-300: #b5b7c8;  /* texto secondary */
+  --gray-950: #050505;
+  --gray-900: #0a0a0a;
+  --gray-800: #141414;
+  --gray-700: #1f1f1f;
+  --gray-600: #2e2e2e;
+  --gray-500: #444444;
+  --gray-400: #6a6a6a;
+  --gray-300: #9a9a9a;
 
   --background: var(--gray-900);
   --foreground: #f5f5f7;
@@ -162,17 +161,15 @@ body {
   --popover: var(--gray-800);
   --popover-foreground: #f5f5f7;
 
-  /* Primary - Lilás vibrante otimizado para dark mode */
-  --primary: #a855f7;  /* Mais claro e vibrante para dark */
+  --primary: #a855f7;
   --primary-foreground: #ffffff;
 
-  /* Escala otimizada para dark mode - mais luminosa */
   --primary-50: #faf5ff;
   --primary-100: #f3e8ff;
   --primary-200: #e9d5ff;
   --primary-300: #d8b4fe;
   --primary-400: #c084fc;
-  --primary-500: #a855f7;  /* Base principal */
+  --primary-500: #a855f7;
   --primary-600: #9333ea;
   --primary-700: #7e22ce;
   --primary-800: #6b21a8;
@@ -194,12 +191,11 @@ body {
   --input: var(--gray-700);
   --ring: #a855f7;
 
-  /* Charts - tons vibrantes para boa visibilidade */
-  --chart-1: #a855f7;  /* Primary */
-  --chart-2: #ec4899;  /* Pink */
-  --chart-3: #06b6d4;  /* Cyan */
-  --chart-4: #8b5cf6;  /* Violet */
-  --chart-5: #f59e0b;  /* Amber */
+  --chart-1: #a855f7;
+  --chart-2: #ec4899;
+  --chart-3: #06b6d4;
+  --chart-4: #8b5cf6;
+  --chart-5: #f59e0b;
 
   /* Sidebar */
   --sidebar: var(--gray-800);
@@ -210,16 +206,6 @@ body {
   --sidebar-accent-foreground: #f5f5f7;
   --sidebar-border: var(--gray-600);
   --sidebar-ring: #a855f7;
-
-  /* Estados de interação otimizados */
-  --hover: var(--gray-700);
-  --focus: var(--gray-600);
-  --active: var(--gray-500);
-
-  /* Sombras sutis para profundidade */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
 }
 
 @layer base {
@@ -231,7 +217,6 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
-
 
 /* src/components/Loader.css */
 
@@ -278,7 +263,6 @@ body {
   animation-name: ringD;
   stroke: #5e14e4;
 }
-
 
 /* Animations */
 @keyframes ringA {
@@ -444,15 +428,14 @@ body {
   }
 }
 
-
 /* scroll para tabs mobile */
 @layer utilities {
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
-    
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
