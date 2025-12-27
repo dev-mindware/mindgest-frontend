@@ -9,3 +9,4 @@ export * from "./current-notification-store";
 export * from "./collaborators";
 export * from "./documents";
 export * from "./stock";
+export * from "./pos/current-cashier-store";

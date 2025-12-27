@@ -10,6 +10,7 @@ import { useSalesReports } from "@/hooks/reports";
 import { SalesPeriod } from "@/types/reports";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DynamicMetricCardSkeleton } from "@/components";
 
 function SalesSkeleton() {
     return (
@@ -36,16 +37,7 @@ function SalesSkeleton() {
                 {/* Metrics Cards */}
                 <div className="md:col-span-3 grid gap-4 md:grid-cols-3">
                     {[1, 2, 3].map((i) => (
-                        <Card key={i}>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <Skeleton className="h-4 w-24" />
-                                <Skeleton className="h-4 w-4 rounded-full" />
-                            </CardHeader>
-                            <CardContent>
-                                <Skeleton className="h-8 w-32 mb-1" />
-                                <Skeleton className="h-3 w-40" />
-                            </CardContent>
-                        </Card>
+                        <DynamicMetricCardSkeleton key={i} />
                     ))}
                 </div>
 
