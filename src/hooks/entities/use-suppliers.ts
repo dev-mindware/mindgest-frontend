@@ -1,12 +1,10 @@
-import { SupplierData, ItemData } from "@/types";
+import { ItemData, SupplierData } from "@/types";
 import { suppliersService } from "@/services/suppliers-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage } from "@/utils/messages";
-import { useAuthStore } from "@/stores";
 
 export function useAddSupplier() {
   const queryClient = useQueryClient();
-  const { user } = useAuthStore();
 
   return useMutation({
     mutationFn: (data: SupplierData) => suppliersService.addSupplier(data),

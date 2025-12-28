@@ -20,9 +20,9 @@ export function NotificationList({
 }: NotificationListProps) {
   if (notifications.length === 0) {
     return (
-      <div className="p-12 text-center">
+      <div className="p-12 text-center bg-sidebar">
         <div className="mb-4 text-4xl">📭</div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <h3 className="text-lg font-medium text-foreground mb-2">
           Nenhuma notificação encontrada
         </h3>
         <p className="text-gray-500">
@@ -35,12 +35,12 @@ export function NotificationList({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="divide-y divide-gray-100">
+    <div className="bg-sidebar rounded-lg border border-border overflow-hidden">
+      <div className="divide-y divide-border">
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className="hover:bg-gray-50 transition-colors"
+            className="hover:bg-sidebar transition-colors"
           >
             <NotificationItem
               notification={notification}

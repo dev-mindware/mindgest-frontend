@@ -1,5 +1,5 @@
 import { CollaboratorData } from "@/types";
-import { collaboratorDataService } from "@/services";
+import { collaboratorDataService } from "@/services/collaborator-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage } from "@/utils/messages";
 
@@ -50,7 +50,8 @@ export function useToggleStatusCollaborator() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => collaboratorDataService.toggleStatusCollaborator(id),
+    mutationFn: (id: string) =>
+      collaboratorDataService.toggleStatusCollaborator(id),
     onSuccess: () => {
       SucessMessage("Status alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["collaborators"] });

@@ -8,7 +8,7 @@ import {
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
-import { useCollaboratorFilters } from "@/hooks/collaborators";
+import { useCollaboratorFilters } from "@/hooks/collaborators/collaborator-filters";
 
 export function CollaboratorFiltersTSX() {
   const { filters, setFilters } = useCollaboratorFilters();

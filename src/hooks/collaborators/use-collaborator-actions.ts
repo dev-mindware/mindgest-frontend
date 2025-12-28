@@ -1,7 +1,7 @@
-import { useModal } from "@/stores/use-modal-store";
 import { CollaboratorResponse } from "@/types";
-import { currentCollaboratorStore } from "@/stores/collaborators";
-import { useToggleStatusCollaborator } from "../collaborators";
+import { useModal } from "@/stores/use-modal-store";
+import { useToggleStatusCollaborator } from "./use-collaborator";
+import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
 
 export function useCollaboratorActions() {
   const { openModal } = useModal();

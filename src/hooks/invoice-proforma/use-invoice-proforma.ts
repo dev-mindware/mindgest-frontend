@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { proformaService } from "@/services";
+import { EditProformaFormData, ProformaFormData } from "@/schemas";
 import { ProformData } from "@/types";
 
 export function useDeleteProforma() {
@@ -26,3 +27,15 @@ export function useCreateProforma() {
     },
   });
 }
+
+export function useEditProforma() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: EditProformaFormData }) => proformaService.updateProforma(id, data),
+    onSuccess: () => {
+      toast.success("Proforma editada com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["invoice-proforma"] });
+    },
+  });
+} 

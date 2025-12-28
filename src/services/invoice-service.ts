@@ -28,6 +28,6 @@ export const invoiceService = {
     return api.post(`/credit-note/${id}/correction`, data);
   },
   annulationNote: async (id: string, reason: string, notes: string) => {
-    return api.post(`/credit-note/${id}/annulment`, { reason, notes });
+    return api.delete(`/credit-note/${id}/annulment`, { data: { reason, notes } });
   },
 };

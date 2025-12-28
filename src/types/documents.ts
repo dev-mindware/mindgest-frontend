@@ -1,8 +1,14 @@
 import { Client } from "./clients";
 import { ItemData } from "./items";
 
-export type InvoiceStatus = 'DRAFT' | 'PENDING' | 'PAID' | 'CANCELLED' | 'OVERDUE' | string;
-export type DownloadType = "docx" | "pdf" | "xml"
+export type InvoiceStatus =
+  | "DRAFT"
+  | "PENDING"
+  | "PAID"
+  | "CANCELLED"
+  | "OVERDUE"
+  | string;
+export type DownloadType = "docx" | "pdf" | "xml";
 
 export type ContactInfo = {
   phone?: string;
@@ -25,13 +31,13 @@ export type InvoiceItem = {
   itemsId: string;
   taxId: string | null;
   item: ItemData;
-  tax: any;
+  tax: string | number;
 };
 
 // ========================
 // 💳 PAGAMENTO E PARCELAS
 // ========================
-export type PaymentMethod = "Cash" | "Card" | "Transfer";
+export type PaymentMethod = "CASH" | "CARD" | "TRANSFER";
 // Estado do pagamento
 export type PaymentStatus = "unpaid" | "paid";
 
@@ -80,6 +86,7 @@ export type InvoicePayload = {
   total: number;
   taxAmount: number;
   discountAmount: number;
+  storeId?: string;
 };
 
 export type InvoiceReceiptPayload = {
@@ -118,44 +125,7 @@ export type InvoiceReceiptPayload = {
   total: number;
   taxAmount: number;
   discountAmount: number;
-};
-
-export type ProformaPayload = {
-  issueDate: string;
-  client:
-    | {
-        id: string;
-        name?: undefined;
-        phone?: undefined;
-        address?: undefined;
-        email?: undefined;
-      }
-    | {
-        name: string;
-        phone: string | undefined;
-        address: string | undefined;
-        email?: string | undefined;
-        id?: undefined;
-      };
-  items: (
-    | {
-        id: string;
-        quantity: number;
-        name?: undefined;
-        price?: undefined;
-        type?: undefined;
-      }
-    | {
-        name: string | undefined;
-        price: number;
-        quantity: number;
-        type: "PRODUCT" | "SERVICE";
-        id?: undefined;
-      }
-  )[];
-  total: number;
-  taxAmount: number;
-  discountAmount: number;
+  storeId?: string;
 };
 
 // ========================
@@ -172,11 +142,11 @@ export type InvoiceData = {
   total: string;
   notes?: string;
   dueDate: string;
-  paidAt?: string ;
+  paidAt?: string;
   createdAt: string;
   updatedAt: string;
-  paymentMethod: any[];
-  type: string;
+  paymentMethod: PaymentMethod;
+  type: "PRODUCT" | "SERVICE";
   isPaid: boolean;
   proformaExpiresAt: string;
   originalInvoiceId: string;
@@ -191,12 +161,12 @@ export type InvoiceData = {
 
 export type InvoiceFilters = {
   sortBy?: string;
-  sortOrder?: string
+  sortOrder?: string;
   status?: InvoiceStatus;
   invoiceNumber?: string;
   clientName?: string;
-  startDate?: string; 
-  endDate?: string;   
+  startDate?: string;
+  endDate?: string;
   storeId?: string;
   minAmount?: number;
   maxAmount?: number;
@@ -220,4 +190,3 @@ export type CreditNoteData = {
   taxAmount: number; // idealmente number, não string
   createdAt: string; // ISO Date
 };
-

@@ -9,23 +9,28 @@ import {
   EmptyState,
   ButtonOnlyAction,
 } from "@/components";
-import { CollaboratorResponse } from "@/types";
 import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { CollaboratorFiltersTSX } from "./common";
-import { useCollaboratorActions, useCollaboratorFilters } from "@/hooks/collaborators";
 import {
   CollaboratorModal,
   DeleteCollaboratorModal,
   DetailsCollaboratorModal,
 } from "./collaborator-modals";
+import { useCollaboratorActions } from "@/hooks/collaborators/use-collaborator-actions";
+import { useCollaboratorFilters } from "@/hooks/collaborators/collaborator-filters";
+import { CollaboratorResponse } from "@/types/collaborators";
 
 export function CollaboratorList() {
   const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useCollaboratorFilters();
-  const { handlerDeleteCollaborator, handlerDetailsCollaborator, handlerEditCollaborator, toggleStatusCollaborator } =
-    useCollaboratorActions();
+  const {
+    handlerDeleteCollaborator,
+    handlerDetailsCollaborator,
+    handlerEditCollaborator,
+    toggleStatusCollaborator,
+  } = useCollaboratorActions();
 
   const {
     data: allCollaborators,
@@ -39,14 +44,15 @@ export function CollaboratorList() {
   } = usePagination<CollaboratorResponse>({
     endpoint: "/users",
     queryKey: ["collaborators"],
-    queryParams: { 
-      ...filters, 
-      search: debounceSearch, 
-      page 
+    queryParams: {
+      ...filters,
+      search: debounceSearch,
+      page,
     },
   });
 
-  const filteredList = allCollaborators?.filter((user) => user.role !== "OWNER") || [];
+  const filteredList =
+    allCollaborators?.filter((user) => user.role !== "OWNER") || [];
 
   const columns: Column<CollaboratorResponse>[] = [
     { key: "name", header: "Nome" },
@@ -85,9 +91,15 @@ export function CollaboratorList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: () => handlerDetailsCollaborator(item) },
+            {
+              label: "Ver detalhes",
+              onClick: () => handlerDetailsCollaborator(item),
+            },
             { label: "Editar", onClick: () => handlerEditCollaborator(item) },
-            { label: "Deletar", onClick: () => handlerDeleteCollaborator(item) },
+            {
+              label: "Deletar",
+              onClick: () => handlerDeleteCollaborator(item),
+            },
             {
               label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
               onClick: toggleStatusCollaborator,
@@ -102,7 +114,10 @@ export function CollaboratorList() {
 
   if (isError) {
     return (
-      <RequestError refetch={refetch} message="Erro ao carregar os colaboradores" />
+      <RequestError
+        refetch={refetch}
+        message="Erro ao carregar os colaboradores"
+      />
     );
   }
 
@@ -132,7 +147,7 @@ export function CollaboratorList() {
 
       <GenericTable<CollaboratorResponse>
         page={page}
-        data={filteredList} 
+        data={filteredList}
         columns={columns}
         total={total}
         totalPages={totalPages}

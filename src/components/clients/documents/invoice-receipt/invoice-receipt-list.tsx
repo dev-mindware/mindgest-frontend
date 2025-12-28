@@ -19,11 +19,7 @@ export function InvoiceReceiptList() {
   const { search } = useURLSearchParams("search-invoice-receipt");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
-  const {
-    handlerGenerateReceipt,
-    handlerCancelInvoice,
-    handlerDetailsInvoice,
-  } = useInvoiceActions();
+  const { handlerCancelInvoice, handlerDetailsInvoice } = useInvoiceActions();
   const {
     data: invoicesReceipts,
     total,
@@ -40,7 +36,7 @@ export function InvoiceReceiptList() {
   });
 
   const columns: Column<InvoiceResponse>[] = [
-    { key: "number", header: "Número da Fatura" },
+    { key: "number", header: "N° da Fatura" },
     {
       key: "client",
       header: "Cliente",

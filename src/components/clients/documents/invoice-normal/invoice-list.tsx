@@ -105,7 +105,7 @@ export function InvoiceList() {
                 ]
               : []),
 
-            ...(item.status === "DRAFT"
+            ...(item.status === "PAID"
               ? [
                   {
                     label: "Emitir Nota",

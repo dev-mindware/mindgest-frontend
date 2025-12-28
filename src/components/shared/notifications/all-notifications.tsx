@@ -61,7 +61,7 @@ export function AllNotifications() {
         setFilterStatus={setFilterStatus}
       />
 
-      <div className="bg-white p-4 w-full rounded-lg">
+      <div className="bg-sidebar p-4 w-full rounded-lg border-border">
         <NotificationList
           searchTerm={searchTerm}
           filterStatus={filterStatus}

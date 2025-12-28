@@ -1,25 +1,56 @@
 "use client";
-import { TitleList } from "@/components/common";
+import {
+  CreditNoteFormSkeleton,
+  EmptyState,
+  RequestError,
+  TitleList,
+} from "@/components/common";
 import { useFetchById } from "@/hooks/common";
 import { CreditNoteForm } from "./credfit-notes-form";
 import { InvoiceDetails } from "@/types/credit-note";
 
 export function CreditNotes({ noteId }: { noteId: string }) {
-  const { data, isLoading, isError } = useFetchById<InvoiceDetails>(
+  const { data, isLoading, isError, refetch } = useFetchById<InvoiceDetails>(
     "invoice",
     "/invoice/normal",
     noteId
   );
 
-  if (isLoading) return <div>Carregando...</div>;
-  if (isError) return <div>Erro ao carregar</div>;
-  if (!data) return <div>Não encontrado</div>;
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <TitleList
+          title="Notas de Crédito"
+          suTitle="Emita notas de crédito para as suas faturas."
+        />
+        <CreditNoteFormSkeleton />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <RequestError
+        refetch={refetch}
+        message="Erro ao carregar dados da fatura. Verifique a sua conexão."
+      />
+    );
+  }
+
+  if (!data) {
+    return (
+      <EmptyState
+        icon="FileDiff"
+        description="Fatura não encontrada ou ID inválido."
+      />
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <TitleList
         title="Notas de Crédito"
-        suTitle="Emita notas de crédito para as suas faturas."
+        suTitle={`Referente à Fatura: ${data.invoiceNumber}`}
       />
       <CreditNoteForm invoice={data} />
     </div>

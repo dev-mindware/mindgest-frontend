@@ -26,7 +26,7 @@ type ServiceModalProps = {
 
 export function ServiceModal({ action }: ServiceModalProps) {
   const { user } = useAuth();
-  const { openModal, closeModal, open } = useModal();
+  const { closeModal, open } = useModal();
   const { currentService } = currentServiceStore();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
   const { categories, isLoading, error, refetch } = useGetCategories();
@@ -63,7 +63,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
     } else {
       console.log("Editando serviço:", data);
     }
-  }
+  };
 
   const handleCancel = () => {
     reset();
@@ -79,25 +79,17 @@ export function ServiceModal({ action }: ServiceModalProps) {
       />
     );
 
-    if(!open[`${action}-service`]) return null;
+  if (!open[`${action}-service`]) return null;
 
   return (
     <GlobalModal
       canClose
       id={`${action}-service`}
       title={
-        <div className="flex items-center justify-between w-full gap-2 mb-4">
+        <div className="flex items-center w-full mb-4">
           <span>
             {action === "add" ? "Adicionar Serviço" : "Editar Serviço"}
           </span>
-          <Button
-            size="sm"
-            className="sticky right-0"
-            variant="outline"
-            onClick={() => openModal("add-category")}
-          >
-            Adicionar Categoria
-          </Button>
         </div>
       }
       className="!max-h-[85vh] !w-max"

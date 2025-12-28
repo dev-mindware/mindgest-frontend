@@ -49,15 +49,13 @@ export function CreditNoteTemplate({ data }: Props) {
         </div>
       </div>
 
-      {/* Reason */}
       <div>
         <h3 className="font-semibold mb-1 text-muted-foreground">
           Motivo da Nota de Crédito
         </h3>
-        <p>{data.reason}</p>
+        <p>{data.reason === "CORRECTION" ? "Correção" : "Cancelamento"}</p>
       </div>
 
-      {/* Items */}
       <div className="border rounded-lg overflow-hidden">
         <table className="w-full">
           <thead className="bg-muted">
@@ -98,7 +96,6 @@ export function CreditNoteTemplate({ data }: Props) {
         </table>
       </div>
 
-      {/* Totals (from Invoice) */}
       <div className="flex flex-col items-end gap-2">
         <div className="w-full sm:w-1/2 space-y-2">
           <div className="flex justify-between">
@@ -119,7 +116,7 @@ export function CreditNoteTemplate({ data }: Props) {
                 Number(invoice.discountAmount ?? 0)
               )}
             </span>
-          </div>
+        </div>
 
           <div className="flex justify-between">
             <span className="text-muted-foreground">

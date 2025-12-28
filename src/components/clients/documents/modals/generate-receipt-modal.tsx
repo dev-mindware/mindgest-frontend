@@ -95,9 +95,6 @@ export function GenerateReceiptModal() {
       className="!max-h-[85vh] !w-max"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/*   <code>
-          {JSON.stringify(currentInvoice, null, 2)}
-        </code> */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             readOnly

@@ -19,13 +19,13 @@ export const ItemSchema = z.object({
     .positive("O preço unitário deve ser maior que 0"),
   tax: z
     .number({ invalid_type_error: "O imposto deve ser numérico" })
-    .min(0, "O imposto não pode ser negativo"),
+    .min(0, "O imposto não pode ser negativo").optional(),
   discount: z
     .number({ invalid_type_error: "O desconto deve ser numérico" })
-    .min(0, "O desconto não pode ser negativo"),
+    .min(0, "O desconto não pode ser negativo").optional(),
   total: z
     .number({ invalid_type_error: "O total deve ser um número" })
-    .positive("O total deve ser maior que 0"),
+    .positive("O total deve ser maior que 0").optional(),
   isFromAPI: z.boolean().optional(),
 });
 

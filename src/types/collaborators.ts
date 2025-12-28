@@ -1,3 +1,20 @@
+export type ManagerData = {
+  name: string;
+  email?: string;
+  password?: string;
+  phone: string;
+  role: string;
+  companyId?: string;
+  storeId?: string;
+};
+
+export type ManagerResponse = ManagerData & {
+  id: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type CollaboratorData = {
   name: string;
   email?: string;
@@ -20,4 +37,20 @@ export type CollaboratorFilters = {
   status?: string;
   sortOrder?: string;
   search?: string;
+};
+
+export type SupplierData = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  taxNumber: string;
+  companyId?: string;
+};
+
+export type SupplierResponse = SupplierData & {
+  id: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 };

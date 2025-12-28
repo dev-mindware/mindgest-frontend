@@ -1,5 +1,6 @@
 import { api } from "./api";
-import type { ProformaPayload, ProformData } from "@/types";
+import type { EditProformaFormData } from "@/schemas";
+import type { ProformData } from "@/types";
 
 export const proformaService = {
   createProforma: async (data: ProformData) => {
@@ -8,7 +9,7 @@ export const proformaService = {
   deleteProforma: async (id: string) => {
     return api.delete(`/invoice/proforma/${id}`);
   },
-  updateProforma: async (id: string, data: ProformaPayload) => {
+  updateProforma: async (id: string, data: EditProformaFormData) => {
     return api.put(`/invoice/proforma/${id}`, data);
   },
 };

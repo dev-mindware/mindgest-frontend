@@ -1,0 +1,160 @@
+"use client";
+
+import React from "react";
+import { Input, SelectField, Separator } from "@/components";
+import { formatCurrency } from "@/utils";
+
+interface InvoiceSummaryProps {
+  totals: {
+    subtotal: number;
+    taxAmount: number;
+    retentionAmount: number;
+    discountAmount: number;
+    total: number;
+  };
+  globalTax: number;
+  setGlobalTax: (value: number) => void;
+  globalRetention: number;
+  setGlobalRetention: (value: number) => void;
+  globalDiscount: number;
+  setGlobalDiscount: (value: number) => void;
+}
+
+export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
+  ({
+    totals,
+    globalTax,
+    setGlobalTax,
+    globalRetention,
+    setGlobalRetention,
+    globalDiscount,
+    setGlobalDiscount,
+  }) => {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <SelectField
+            label="Imposto (IVA)"
+            value={globalTax}
+            onValueChange={(v) => setGlobalTax(Number(v))}
+            options={[
+              { value: 0, label: "Isento (0%)" },
+              { value: 5, label: "5%" },
+              { value: 7, label: "7%" },
+              { value: 14, label: "14%" },
+              { value: 20, label: "20%" },
+            ]}
+          />
+
+          <SelectField
+            label="Retenção na Fonte"
+            value={globalRetention}
+            onValueChange={(v) => setGlobalRetention(Number(v))}
+            options={[
+              { value: 0, label: "Sem retenção (0%)" },
+              { value: 6.5, label: "6.5%" },
+              { value: 10, label: "10%" },
+            ]}
+          />
+
+          <Input
+            min={0}
+            max={100}
+            type="number"
+            label="Desconto (%)"
+            value={globalDiscount}
+            onChange={(e) => setGlobalDiscount(Number(e.target.value))}
+          />
+        </div>
+
+        <div className="flex justify-end">
+          <InvoiceTotalsSummary
+            subtotal={totals.subtotal}
+            total={totals.total}
+            taxPercent={globalTax}
+            taxAmount={totals.taxAmount}
+            discountPercent={globalDiscount}
+            discountAmount={totals.discountAmount}
+            retentionPercent={globalRetention}
+            retentionAmount={totals.retentionAmount}
+          />
+        </div>
+      </div>
+    );
+  }
+);
+
+InvoiceSummary.displayName = "InvoiceSummary";
+
+export interface InvoiceTotalsSummaryProps {
+  subtotal: number;
+  total: number;
+  taxPercent?: number;
+  taxAmount?: number;
+  discountPercent?: number;
+  discountAmount?: number;
+  retentionPercent?: number;
+  retentionAmount?: number;
+}
+
+export function InvoiceTotalsSummary({
+  subtotal,
+  total,
+
+  taxPercent = 0,
+  taxAmount = 0,
+
+  discountPercent = 0,
+  discountAmount = 0,
+
+  retentionPercent = 0,
+  retentionAmount = 0,
+}: InvoiceTotalsSummaryProps) {
+  return (
+    <div className="w-full space-y-3 border border-dashed rounded-lg p-6 bg-card">
+      {/* Subtotal */}
+      <div className="flex justify-between items-center text-gray-600">
+        <span className="text-sm">Subtotal</span>
+        <span className="font-mono text-base">{formatCurrency(subtotal)}</span>
+      </div>
+
+      {/* IVA */}
+      {taxPercent > 0 && (
+        <div className="flex justify-between items-center text-green-600">
+          <span className="text-sm">IVA ({taxPercent}%)</span>
+          <span className="font-mono text-base">
+            +{formatCurrency(taxAmount)}
+          </span>
+        </div>
+      )}
+
+      {/* Retenção */}
+      {retentionPercent > 0 && (
+        <div className="flex justify-between items-center text-red-600">
+          <span className="text-sm">Retenção ({retentionPercent}%)</span>
+          <span className="font-mono text-base">
+            -{formatCurrency(retentionAmount)}
+          </span>
+        </div>
+      )}
+
+      {/* Desconto */}
+      {discountPercent > 0 && (
+        <div className="flex justify-between items-center text-red-600">
+          <span className="text-sm">Desconto ({discountPercent}%)</span>
+          <span className="font-mono text-base">
+            -{formatCurrency(discountAmount)}
+          </span>
+        </div>
+      )}
+
+      <Separator className="my-3" />
+
+      {/* Total */}
+      <div className="flex justify-between items-center text-lg font-bold">
+        <span className="text-foreground">Total a Pagar</span>
+        <span className="font-mono text-primary">{formatCurrency(total)}</span>
+      </div>
+    </div>
+  );
+}

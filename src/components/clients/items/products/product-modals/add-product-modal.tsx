@@ -21,7 +21,7 @@ import { useAuth } from "@/hooks/auth";
 
 export function AddProductModal() {
   const { user } = useAuth();
-  const { openModal, closeModal } = useModal();
+  const { closeModal } = useModal();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
   const { categories, isLoading, error, refetch } = useGetCategories();
   const {
@@ -48,7 +48,7 @@ export function AddProductModal() {
       if (error?.response) {
         ErrorMessage(
           error?.response?.data?.message ||
-          "Ocorreu um erro ao adicionar o item"
+            "Ocorreu um erro ao adicionar o item"
         );
       } else {
         ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
@@ -75,17 +75,7 @@ export function AddProductModal() {
       canClose
       id="add-product"
       title={
-        <div className="flex items-center justify-between w-full gap-2 mb-4">
-          Adicionar Produto
-          <Button
-            size="sm"
-            className="sticky right-0"
-            variant="outline"
-            onClick={() => openModal("add-category")}
-          >
-            Adicionar Categoria
-          </Button>
-        </div>
+        <div className="flex items-center w-full mb-4">Adicionar Produto</div>
       }
       className="!max-h-[85vh] !w-max"
     >

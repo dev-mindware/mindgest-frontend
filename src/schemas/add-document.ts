@@ -1,4 +1,4 @@
-import { string, z } from "zod";
+import { z } from "zod";
 import { ItemSchema, phoneNumberSchema, taxNumberSchema } from "./helps";
 
 export const CompanySchema = z.object({
@@ -40,132 +40,76 @@ const PaymentSchema = z.object({
     .optional(),
 });
 
+// schema base
+
+const InvoiceBaseSchema = z.object({
+  company: CompanySchema.optional(),
+  client: ClientSchema,
+  clientId: z.string().optional(),
+  categoryId: z.union([z.string(), z.number()]).optional(),
+  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
+  orderReference: z.string().optional(),
+  items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
+  discount: z.number().optional(),
+  globalTax: z.number().min(0),
+  globalRetention: z.number().min(0),
+  globalDiscount: z.number().min(0),
+  notes: z.string().optional(),
+});
+
 /**
  * Invoice (Fatura normal)
  */
 
-const InvoiceTotalsSchema = z.object({
-  subtotal: z.number().min(0).default(0),
-  taxAmount: z.number().min(0).default(0),
-  retentionAmount: z.number().min(0).default(0),
-  discountAmount: z.number().min(0).default(0),
-  total: z.number().min(0).default(0),
-});
-
-export const InvoiceSchema = z.object({
-  // Campos existentes
-  company: CompanySchema.optional(),
-  client: ClientSchema,
-  // documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
-  categoryId: z.union([z.string(), z.number()]).optional(),
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
+export const InvoiceSchema = InvoiceBaseSchema.extend({
+  storeId: z.string(),
   dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
-  orderReference: z.string().optional(),
-  items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
-  isPaid: z.boolean(),
-  discount: z.number().optional(),
-  liquidationDate: z.string().optional(),
-
-  // Campos para cálculos e controle de UI
-  clientApiId: z.string().optional(),
-  globalTax: z
-    .number({ invalid_type_error: "O imposto global deve ser um número" })
-    .min(0, "O imposto global não pode ser negativo")
-    .max(100, "O imposto global não pode ser maior que 100%")
-    .optional()
-    .default(0),
-  globalRetention: z
-    .number({ invalid_type_error: "A retenção global deve ser um número" })
-    .min(0, "A retenção global não pode ser negativa")
-    .max(100, "A retenção global não pode ser maior que 100%")
-    .optional()
-    .default(0),
-  globalDiscount: z
-    .number({ invalid_type_error: "O desconto global deve ser um número" })
-    .min(0, "O desconto global não pode ser negativo")
-    .max(100, "O desconto global não pode ser maior que 100%")
-    .optional()
-    .default(0),
-  invoiceTotals: InvoiceTotalsSchema.optional().default({
-    subtotal: 0,
-    taxAmount: 0,
-    retentionAmount: 0,
-    discountAmount: 0,
-    total: 0,
-  }),
-});
+}).refine(
+  (data) => {
+    if (!data.issueDate || !data.dueDate) return true;
+    return new Date(data.dueDate) >= new Date(data.issueDate);
+  },
+  {
+    message: "A data de vencimento não pode ser anterior à data de emissão",
+    path: ["dueDate"],
+  }
+);
 
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
 
-/**
- * Proforma (Fatura Proforma)
- */
-export const ProformaSchema = z.object({
-  company: CompanySchema.optional(),
-  client: ClientSchema,
-  clientId: z.union([z.string(), z.number()]).optional(), // Adicione isto
-  categoryId: z.union([z.string(), z.number()]).optional(),
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
-  orderReference: z.string().optional(),
-  items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
-  discount: z.number().optional(),
-  // Adicione estes campos
-  globalTax: z.number().min(0),
-  globalRetention: z.number().min(0),
-  globalDiscount: z.number().min(0),
-      
-  paymentMethod: z.string(),
-  proformaExpiresAt: z.string(),
-  subtotal: z.number(),
-  notes: z.string().optional(),
-});
+export const ProformaSchema = InvoiceBaseSchema.extend({
+  proformaExpiresAt: z.string().nonempty("Campo obrigatório"),
+  paymentMethod: z.string().nonempty("O método de pagamento é obrigatório"),
+  storeId: z.string().optional(),
+}).refine(
+  (data) => {
+    if (!data.issueDate || !data.proformaExpiresAt) return true;
+    return new Date(data.proformaExpiresAt) >= new Date(data.issueDate);
+  },
+  {
+    message: "A data de vencimento não pode ser anterior à data de emissão",
+    path: ["proformaExpiresAt"],
+  }
+);
 export type ProformaFormData = z.infer<typeof ProformaSchema>;
-/**
- * InvoiceReceipt (Fatura Recibo)
- */
 
-export const InvoiceReceiptSchema = z.object({
-  company: CompanySchema.optional(),
-  client: ClientSchema,
-  // documentNumber: z.string().min(1, "O número da fatura é obrigatório"),
-  categoryId: z.union([z.string(), z.number()]).optional(),
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
-  orderReference: z.string().optional(),
-  items: z.array(ItemSchema).min(1, "A fatura deve conter pelo menos 1 item"),
-  payment: PaymentSchema,
-  isPaid: z.boolean(),
-  discount: z.number().optional(),
-  liquidationDate: z.string().optional(),
-
-  // novos campos compartilhados
-  clientApiId: z.string().optional(),
-  globalTax: z
-    .number({ invalid_type_error: "O imposto global deve ser um número" })
-    .min(0, "O imposto global não pode ser negativo")
-    .max(100, "O imposto global não pode ser maior que 100%")
-    .optional()
-    .default(0),
-  globalRetention: z
-    .number({ invalid_type_error: "A retenção global deve ser um número" })
-    .min(0, "A retenção global não pode ser negativa")
-    .max(100, "A retenção global não pode ser maior que 100%")
-    .optional()
-    .default(0),
-  globalDiscount: z
-    .number({ invalid_type_error: "O desconto global deve ser um número" })
-    .min(0, "O desconto global não pode ser negativo")
-    .max(100, "O desconto global não pode ser maior que 100%")
-    .optional()
-    .default(0),
-  invoiceTotals: InvoiceTotalsSchema.optional().default({
-    subtotal: 0,
-    taxAmount: 0,
-    retentionAmount: 0,
-    discountAmount: 0,
-    total: 0,
-  }),
-});
+export const InvoiceReceiptSchema = InvoiceBaseSchema.extend({
+  paymentMethod: z
+    .string()
+    .nonempty("O método de pagamento é obrigatório")
+    .optional(),
+  storeId: z.string(),
+  dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
+}).refine(
+  (data) => {
+    if (!data.issueDate || !data.dueDate) return true;
+    return new Date(data.dueDate) >= new Date(data.issueDate);
+  },
+  {
+    message: "A data de vencimento não pode ser anterior à data de emissão",
+    path: ["dueDate"],
+  }
+);
 export type InvoiceReceiptFormData = z.infer<typeof InvoiceReceiptSchema>;
 
 /**
@@ -185,8 +129,3 @@ export const ReceiptSchema = z.object({
 });
 
 export type ReceiptFormData = z.infer<typeof ReceiptSchema>;
-
-
-// JSON VINDO DA API
-
-

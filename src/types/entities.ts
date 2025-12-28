@@ -14,34 +14,22 @@ export type ClientResponse = ClientData & {
   updatedAt: string;
 };
 
-export type SupplierData = {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  taxNumber: string;
-  companyId?: string;
-};
+export interface storesResponse {
+  data: Stores[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
 
-export type SupplierResponse = SupplierData & {
-  id: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type StoreData = {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-};
-
-export type StoreResponse = StoreData & {
-  id: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type StoreList = StoreData[];
+export interface Stores {
+  id: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  isActive: boolean
+  companyId: string
+  createdAt: string
+  updatedAt: string
+}

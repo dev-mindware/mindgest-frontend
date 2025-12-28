@@ -2,12 +2,10 @@
 import { useCallback, useState } from "react";
 import { TitleList } from "@/components/common";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
-import {
-  InvoiceForm,
-  InvoiceReceiptForm,
-  ProformaForm,
-} from "./document-forms";
 import { useRouter, useSearchParams } from "next/navigation";
+import { InvoiceForm } from "./invoice-normal";
+import { InvoiceReceiptForm } from "./invoice-receipt";
+import { ProformaForm } from "./invoice-proforma";
 
 type TabsAloweds = "invoice" | "invoice-receipt" | "proforma";
 

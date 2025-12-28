@@ -1,8 +1,6 @@
-import { ItemBody } from "./credit-note";
-
 type Client =
   | {
-      id: any;
+      id: string;
       name?: undefined;
       phone?: undefined;
       address?: undefined;
@@ -13,7 +11,7 @@ type Client =
       phone: string | undefined;
       address: string | undefined;
       taxNumber: string | undefined;
-      id?: undefined;
+      id?: any;
     };
 
 type SimpleItem = {
@@ -22,11 +20,11 @@ type SimpleItem = {
   quantity: number;
   type: "PRODUCT" | "SERVICE";
 };
+
 export interface ProformData {
   client: Client;
   items: SimpleItem[];
   issueDate: string;
-  dueDate: string;
   total: number;
   taxAmount: number;
   discountAmount: number;
@@ -36,7 +34,6 @@ export interface ProformData {
   proformaExpiresAt?: string;
   notes?: string;
 }
-
 
 export interface Item {
   id: string;

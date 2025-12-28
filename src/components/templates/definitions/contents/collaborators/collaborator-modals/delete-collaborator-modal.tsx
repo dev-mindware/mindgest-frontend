@@ -1,8 +1,8 @@
 import { Button, GlobalModal } from "@/components";
-import { currentCollaboratorStore } from "@/stores";
+import { useDeleteCollaborator } from "@/hooks/collaborators/use-collaborator";
+import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
 import { useModal } from "@/stores/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
-import { useDeleteCollaborator } from "@/hooks/collaborators";
 
 export function DeleteCollaboratorModal() {
   const { closeModal, open } = useModal();
@@ -40,7 +40,10 @@ export function DeleteCollaboratorModal() {
       description="Lembre-se que esta ação não pode ser desfeita."
     >
       <div className="flex justify-end gap-4">
-        <Button onClick={() => closeModal("delete-collaborator")} variant="outline">
+        <Button
+          onClick={() => closeModal("delete-collaborator")}
+          variant="outline"
+        >
           Cancelar
         </Button>
         <Button

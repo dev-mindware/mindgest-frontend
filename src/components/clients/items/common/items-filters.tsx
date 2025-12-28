@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 import { useGetCategories, useItemsFilters } from "@/hooks";
 import { ItemStatus } from "@/types/items";
 import {
@@ -22,8 +22,10 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
       status: undefined,
       categoryId: undefined,
       sortOrder: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
     });
-    setSearch("")
+    setSearch("");
   }
 
   const hasFilter =
@@ -31,6 +33,8 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     filters.categoryId ||
     filters.sortBy ||
     filters.sortOrder ||
+    filters.minPrice ||
+    filters.maxPrice ||
     search.length > 0;
 
   if (isLoading) return <div>Loading...</div>;
@@ -43,43 +47,56 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     );
 
   return (
-    <SearchHandlerWrapper
-      search={search}
-      setSearch={setSearch}
-      className="flex flex-col sm:flex-row"
-    >
-      <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
-        <FilterPopover
-          label="Categoria"
-          icon="ChartBarStacked"
-          options={categories}
-          value={filters.categoryId}
-          onChange={(categoryId) => setFilters({ categoryId })}
-        />
+    <div className="w-full flex flex-col gap-4">
+      <SearchHandlerWrapper
+        search={search}
+        setSearch={setSearch}
+        className="flex flex-col sm:flex-row"
+      />
 
-        <FilterPopover
-          icon="Tag"
-          label="Status"
-          options={itemsStatusOptions}
-          value={filters.status}
-          onChange={(status) => setFilters({ status: status as ItemStatus })}
-        />
+      <div className="w-full flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <FilterPopover
+            label="Categoria"
+            icon="ChartBarStacked"
+            options={categories}
+            value={filters.categoryId}
+            onChange={(categoryId) => setFilters({ categoryId })}
+          />
 
-        <FilterPopover
-          icon="List"
-          label="Ordenar por"
-          options={itemsByOption}
-          value={filters.sortBy}
-          onChange={(sortBy) => setFilters({ sortBy })}
-        />
+          <FilterPopover
+            icon="Tag"
+            label="Status"
+            options={itemsStatusOptions}
+            value={filters.status}
+            onChange={(status) => setFilters({ status: status as ItemStatus })}
+          />
+          <FilterPopover
+            icon="List"
+            label="Ordenar por"
+            options={itemsByOption}
+            value={filters.sortBy}
+            onChange={(sortBy) => setFilters({ sortBy })}
+          />
 
-        <FilterPopover
-          label="Ordem"
-          icon="ListOrdered"
-          options={itemsOrderOption}
-          value={filters.sortOrder}
-          onChange={(sortOrder) => setFilters({ sortOrder })}
-        />
+          <FilterPopover
+            label="Ordem"
+            icon="ListOrdered"
+            options={itemsOrderOption}
+            value={filters.sortOrder}
+            onChange={(sortOrder) => setFilters({ sortOrder })}
+          />
+          <Input
+            placeholder="Preço mínimo"
+            value={filters.minPrice}
+            onChange={(e) => setFilters({ minPrice: e.target.value })}
+          />
+          <Input
+            placeholder="Preço máximo"
+            value={filters.minPrice}
+            onChange={(e) => setFilters({ maxPrice: e.target.value })}
+          />
+        </div>
 
         {hasFilter && (
           <Button
@@ -93,6 +110,6 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
           </Button>
         )}
       </div>
-    </SearchHandlerWrapper>
+    </div>
   );
 }

@@ -1,4 +1,5 @@
 import { InvoiceResponse } from "@/types";
+import { InvoiceDetails } from "@/types/credit-note";
 import { create } from "zustand";
 
 interface InvoiceStore {

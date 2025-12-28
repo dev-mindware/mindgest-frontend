@@ -1,11 +1,11 @@
-import { ReceiptData } from "@/types";
+import { ReceiptResponse } from "@/types/receipt";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { paymentMethodMap } from "@/constants";
 
 interface ReceiptTemplateProps {
-    data: ReceiptData;
+    data: ReceiptResponse;
 }
 
 export function ReceiptTemplate({ data }: ReceiptTemplateProps) {

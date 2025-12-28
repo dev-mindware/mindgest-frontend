@@ -19,7 +19,7 @@ import { AddProductFormData, addProductSchema } from "@/schemas";
 import { formatCurrency, parseCurrency } from "@/utils";
 
 export function EditProductModal() {
-  const { openModal, closeModal, open } = useModal();
+  const { closeModal, open } = useModal();
   const isOpen = open["edit-product"];
   const { currentProduct } = currentProductStore();
   const {
@@ -46,26 +46,15 @@ export function EditProductModal() {
     closeModal("edit-product");
   };
 
-
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <GlobalModal
       id="edit-product"
       title={
-        <>
-          <div className="flex items-center justify-between w-full gap-2 mb-4">
-            <span>Editar Produto</span>
-            <Button
-              size="sm"
-              className="sticky right-0"
-              variant="outline"
-              onClick={() => openModal("add-category")}
-            >
-              Adicionar Categoria
-            </Button>
-          </div>
-        </>
+        <div className="flex items-center w-full mb-4">
+          <span>Editar Produto</span>
+        </div>
       }
       className="!max-h-[85vh] !w-max"
       canClose

@@ -1,8 +1,8 @@
 "use client";
 import { useModal } from "@/stores/use-modal-store";
 import { Icon, Button, DetailRow, GlobalModal, Badge } from "@/components";
-import { formatDateTime } from "@/utils";
-import { currentCollaboratorStore } from "@/stores";
+import { formatDateTime } from "@/utils/format-date";
+import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
 
 export function DetailsCollaboratorModal() {
   const { closeModal, open } = useModal();
@@ -26,21 +26,29 @@ export function DetailsCollaboratorModal() {
             <div className="flex items-center justify-center gap-2">
               <span className="text-xs text-muted-foreground">
                 Cargo: {currentCollaborator.role}
-            </span>
+              </span>
               <Badge
-                variant={currentCollaborator.status === "ACTIVE" ? "success" : "destructive"}
+                variant={
+                  currentCollaborator.status === "ACTIVE"
+                    ? "success"
+                    : "destructive"
+                }
               >
-                {currentCollaborator.status === "ACTIVE" ? "Activo" : "Inactivo"}
+                {currentCollaborator.status === "ACTIVE"
+                  ? "Activo"
+                  : "Inactivo"}
               </Badge>
             </div>
           </div>
         </>
       }
       className="!max-w-md !w-[90vw] md:!w-full"
-
       footer={
         <div className="flex justify-end">
-          <Button variant="outline" onClick={() => closeModal("view-collaborator")}>
+          <Button
+            variant="outline"
+            onClick={() => closeModal("view-collaborator")}
+          >
             Fechar
           </Button>
         </div>
@@ -48,16 +56,16 @@ export function DetailsCollaboratorModal() {
     >
       <div className="space-y-6 text-sm">
         <section className="space-y-2">
-          <h3 className="font-semibold text-foreground">  
+          <h3 className="font-semibold text-foreground">
             Informações Pessoais
           </h3>
           <DetailRow label="Nome" value={currentCollaborator.name} />
           <DetailRow label="Email" value={currentCollaborator.email} />
-          <DetailRow label="Telefone" value={currentCollaborator.phone} /> 
+          <DetailRow label="Telefone" value={currentCollaborator.phone} />
         </section>
 
         {/* Empresa e Identificação */}
-        {(currentCollaborator.companyId) && (
+        {currentCollaborator.companyId && (
           <section className="space-y-2">
             <h3 className="font-semibold text-foreground">
               Identificação e Empresa

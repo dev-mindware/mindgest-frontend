@@ -93,6 +93,13 @@ export const menuItems: MenuStructure = {
       minPlan: "Base",
     },
     {
+      name: "Clientes",
+      url: "/client/clients",
+      icon: <Icon name="Users" />,
+      roles: ["ADMIN", "MANAGER", "OWNER"],
+      minPlan: "Base",
+    },
+    {
       name: "Documentos",
       url: "/client/documents",
       icon: <Icon name="ScrollText" />,
@@ -105,23 +112,6 @@ export const menuItems: MenuStructure = {
       icon: <Icon name="ShoppingBasket" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
-    },
-    {
-      name: "Gestão",
-      url: "#",
-      icon: <Icon name="Waypoints" />,
-      roles: ["OWNER", "MANAGER"],
-      minPlan: "Base",
-      items: [
-        {
-          name: "POS",
-          url: "/client/management/pos",
-        },
-        {
-          name: "Stock",
-          url: "/client/management/stock",
-        },
-      ],
     },
     {
       name: "Relatórios",
@@ -144,6 +134,11 @@ export const menuItems: MenuStructure = {
           url: "/client/reports/access-control",
           minPlan: "Smart Pro",
         },
+        {
+          name: "Controle de Estoque",
+          url: "/client/reports/stock-control",
+          minPlan: "Smart Pro",
+        },
       ],
     },
     {
@@ -159,6 +154,31 @@ export const menuItems: MenuStructure = {
       icon: <Icon name="Settings" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
+    },
+    // AQUI COMEÇA O TSUNAMI
+    {
+      name: "Estoque",
+      url: "/client/stock",
+      icon: <Icon name="Boxes" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Tsunami",
+    },
+    {
+      name: "POS",
+      url: "/client/pos",
+      icon: <Icon name="Monitor" />,
+      roles: ["CASHIER", "OWNER", "MANAGER"],
+      minPlan: "Tsunami",
+      items: [
+        { name: "Novo ponto de Venda", url: "/client/pos/new" },
+        { name: "Movimentos de Caixa", url: "/client/pos/moviments-box" },
+        {
+          name: "Configurações",
+          url: "/client/pos/settings",
+          roles: ["CASHIER", "CASHIER", "OWNER", "MANAGER"],
+          minPlan: "Smart Pro",
+        },
+      ],
     },
     {
       name: "Aparência",

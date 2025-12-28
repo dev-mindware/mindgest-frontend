@@ -2,15 +2,15 @@ import { z } from "zod";
 
 export const storeSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+  email: z.string().email("Email inválido"),
   phone: z
     .string()
-    .max(9, "O número deve ter 9 dígitos")
-    .refine(
-      (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
-      "Insira número de telemovél válido"
-    ),
-  email: z.string().email("Email inválido"),
+    .regex(/^\d{9}$/, "Telefone deve ter 9 dígitos"),
   address: z.string().min(5, "Endereço muito curto"),
+  status: z.enum(["act", "des", "sus"], {
+    required_error: "Selecione o status",
+  }),
+  manager: z.string().nonempty("Selecione um gerente"),
 });
 
 export type StoreFormData = z.infer<typeof storeSchema>;

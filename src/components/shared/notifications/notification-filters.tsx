@@ -15,7 +15,7 @@ export function NotificationFilters({
   setFilterStatus,
 }: NotificationFiltersProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+    <div className="bg-sidebar rounded-lg border border-border p-4 mb-6 mt-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <Icon

@@ -15,6 +15,8 @@ export function useItemsFilters(prefix: string) {
     categoryId: query.get(getKey("categoryId")) || undefined,
     sortBy: query.get(getKey("sortBy")) || undefined,
     sortOrder: query.get(getKey("sortOrder")) || undefined,
+    maxPrice: query.get(getKey("maxPrice")) || undefined,
+    minPrice: query.get(getKey("minPrice")) || undefined,
   };
 
   const page = Number(query.get(getKey("page"))) || 1;

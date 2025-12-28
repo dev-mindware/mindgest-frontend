@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { ReceiptData } from "@/types";
+import { ReceiptResponse } from "@/types/receipt";
 
 interface ReceiptStore {
-  currentReceipt: ReceiptData | undefined;
-  setCurrentReceipt: (receipt: ReceiptData) => void;
+  currentReceipt: ReceiptResponse | undefined;
+  setCurrentReceipt: (receipt: ReceiptResponse) => void;
 }
 
 export const currentReceiptStore = create<ReceiptStore>((set) => ({

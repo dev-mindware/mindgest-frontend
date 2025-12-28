@@ -18,8 +18,8 @@ export function useProformaActions() {
   }
 
   function hanlderEditProforma(proforma: InvoiceResponse) {
-    // levar ora o formulario da proforma com o id e com os dados já pre renderizados
-    // abrir o modalde edição da proforma
+    openModal("edit-proforma");
+    setCurrentProforma(proforma);
   }
 
   return {

@@ -3,7 +3,7 @@ import { invoiceService } from "@/services/invoice-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreditNoteFormData } from "@/schemas";
 import { ReceiptData } from "@/types/receipt";
-import { DownloadType } from "@/types";
+import { DownloadType, InvoicePayload } from "@/types";
 
 export function useGenerateReceipt() {
   const queryClient = useQueryClient();
@@ -34,7 +34,7 @@ export function useCreateInvoice() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: any) => invoiceService.createInvoice(data),
+    mutationFn: (data: InvoicePayload) => invoiceService.createInvoice(data),
     onSuccess: () => {
       toast.success("Fatura criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
@@ -69,7 +69,7 @@ export function useAnnulationNote() {
       notes: string;
     }) => invoiceService.annulationNote(id, reason, notes),
     onSuccess: () => {
-      toast.success("Nota de Anulada criada com sucesso!");
+      toast.success("Nota de crédito anulada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });

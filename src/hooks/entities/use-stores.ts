@@ -1,8 +1,36 @@
-import { StoreData, ItemData, StoreList } from "@/types";
-import { storesService } from "@/services/stores-service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SucessMessage } from "@/utils/messages";
+import { storesResponse } from "@/types/entities";
 import { useFetch } from "../common/use-fetch";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { storesService } from "@/services/stores-service";
+import { SucessMessage } from "@/utils/messages";
+import { ItemData, StoreData } from "@/types";
+
+export function useGetStores() {
+  const { data, error, isLoading, refetch } = useFetch<storesResponse>(
+    "stores",
+    "/stores?page=1&limit=10"
+  );
+
+  const stores =
+    data?.data.map((store) => ({
+      label: `${store.name}`,
+      value: store.id,
+    })) || [];
+
+  return { stores, error, isLoading, refetch };
+} 
+
+export function useDeleteStore() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => storesService.deleteStore(id),
+    onSuccess: () => {
+      SucessMessage("Loja removida com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["stores"] });
+    },
+  });
+}
 
 export function useAddStore() {
   const queryClient = useQueryClient();
@@ -27,33 +55,6 @@ export function useUpdateStore() {
       queryClient.invalidateQueries({ queryKey: ["stores"] });
     },
   });
-}
-
-export function useDeleteStore() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => storesService.deleteStore(id),
-    onSuccess: () => {
-      SucessMessage("Loja removida com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["stores"] });
-    },
-  });
-}
-
-export function useGetStores() {
-  const { data, error, isLoading, refetch } = useFetch<any>(
-    "stores",
-    "/stores?page=1&limit=10"
-  );
-
-  const stores =
-    data?.data?.map((store: StoreData) => ({
-      label: store.name,
-      value: store.id,
-    })) || [];
-
-  return { stores, error, isLoading, refetch };
 }
 
 export function useToggleStatusStore() {

@@ -119,7 +119,7 @@ export function ProductList() {
   return (
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+        <div className="flex flex-col w-full items-ce gap-3 sm:flex-row sm:justify-between sm:gap-4">
           <ItemsFiltersTSX prefix="product" />
           <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
         </div>

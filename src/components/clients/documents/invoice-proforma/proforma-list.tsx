@@ -2,10 +2,10 @@
 import { usePagination, useURLSearchParams } from "@/hooks/common";
 import {
   Column,
+  EmptyState,
   RequestError,
   GenericTable,
   ListSkeleton,
-  EmptyState,
   ButtonOnlyAction,
   ProformaPreviewDrawer,
 } from "@/components";
@@ -15,13 +15,17 @@ import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceFilters, useProformaActions } from "@/hooks";
 import { DeleteProformaModal } from "../modals";
+import { useRouter } from "next/navigation";
 
 export function ProformaList() {
+  const router = useRouter();
   const { search } = useURLSearchParams("search-proforma");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters();
-  const { handlerDeleteProforma, handlerDetailsProforma, hanlderEditProforma } =
-    useProformaActions();
+  const {
+    handlerDeleteProforma,
+    handlerDetailsProforma 
+  } = useProformaActions();
   const {
     data: proformas,
     total,
@@ -38,7 +42,7 @@ export function ProformaList() {
   });
 
   const columns: Column<InvoiceResponse>[] = [
-    { key: "number", header: "Número da Proforma" },
+    { key: "number", header: "N° da Proforma" },
     {
       key: "client",
       header: "Cliente",
@@ -71,7 +75,12 @@ export function ProformaList() {
           data={item}
           actions={[
             { label: "Ver Proforma", onClick: handlerDetailsProforma },
-            { label: "Editar", onClick: hanlderEditProforma },
+            {
+              label: "Editar",
+              onClick: () => {
+                router.push(`/client/documents/${item.id}/edit`);
+              },
+            },
             ...(item.status !== "CANCELLED"
               ? [
                   {
@@ -80,7 +89,7 @@ export function ProformaList() {
                   },
                 ]
               : []),
-        ]}
+          ]}
         />
       ),
     },

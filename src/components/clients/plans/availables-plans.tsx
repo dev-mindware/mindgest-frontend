@@ -18,7 +18,6 @@ interface AvailablePlansProps {
   hasActiveSubscription: boolean;
 }
 
-
 export function AvailablePlans({
   plans,
   currentPlanId,
@@ -46,7 +45,6 @@ export function AvailablePlans({
     hasPosManagement: "Gestão de POS",
   };
 
-  // 👉 se não tiver plano atual, o "popular" será o ativo
   const activePlanId = currentPlanId || plans[1]?.id;
 
   return (
@@ -83,10 +81,9 @@ export function AvailablePlans({
                   : "border border-border bg-card"
               }`}
             >
-              {/* Badge quando for ativo */}
               {isActive && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary-600 text-white">
+                  <Badge className="bg-primary-500/10 text-foreground">
                     <Icon
                       name={currentPlanId ? "Crown" : "Star"}
                       className="h-3 w-3 mr-1"

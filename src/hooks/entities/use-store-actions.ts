@@ -1,7 +1,7 @@
-import { useModal } from "@/stores/use-modal-store";
 import { StoreResponse } from "@/types";
-import { currentStoreStore } from "@/stores/entities";
-import { useToggleStatusStore } from "../entities";
+import { currentStoreStore } from "@/stores/entities/current-store-store";
+import { useModal } from "@/stores/use-modal-store";
+import { useToggleStatusStore } from "./use-stores";
 
 export function useStoreActions() {
   const { openModal } = useModal();

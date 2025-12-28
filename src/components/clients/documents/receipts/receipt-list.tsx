@@ -8,6 +8,7 @@ import {
   EmptyState,
   ButtonOnlyAction,
   Badge,
+  ReceiptPreviewDrawer,
 } from "@/components";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
@@ -15,7 +16,6 @@ import { paymentMethodMap } from "@/constants";
 import { useInvoiceFilters } from "@/hooks/invoice-receipt";
 import { InvoiceFiltersTSX } from "../common";
 import { useReceiptActions } from "@/hooks";
-import { ReceiptPreviewDrawer } from "@/components/common/dynamic-drawer/receipt-preview-drawer";
 import { ReceiptResponse } from "@/types/receipt";
 
 export function ReceiptList() {
@@ -46,7 +46,7 @@ export function ReceiptList() {
   const columns: Column<ReceiptResponse>[] = [
     {
       key: "originalInvoiceId",
-      header: "Referência",
+      header: "N° do Recibo",
       render: (_, item) => item.number || "N/A",
     },
     {
@@ -86,7 +86,7 @@ export function ReceiptList() {
           actions={[{ label: "Ver Recibo", onClick: handleViewReceipt }]}
         />
       ),
-    }, 
+    },
   ];
 
   if (isLoading) return <ListSkeleton />
@@ -97,36 +97,30 @@ export function ReceiptList() {
     );
   }
 
-  if (receipts?.length == 0)
-    return (
-      <div className="justify-start mt-6 space-y-8">
-        <EmptyState
-          description="Nenhum recibo encontrado"
-          title="Sem Recibos"
-          icon="FileText"
-        />
-      </div>
-    );
-
   return (
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <InvoiceFiltersTSX type="receipt" searchText="search-receipt" />
-        </div>
-      </div>
+      <InvoiceFiltersTSX type="receipt" searchText="search-receipt" />
 
-      <GenericTable<ReceiptResponse>
-        page={page}
-        data={receipts}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhum recibo encontrado"
-      />
+      {receipts.length > 0 ? (
+        <GenericTable<ReceiptResponse>
+          page={page}
+          data={receipts}
+          columns={columns}
+          total={total}
+          totalPages={totalPages}
+          setPage={setPage}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhum recibo encontrado"
+        />) :
+        <div className="justify-start mt-6 space-y-8">
+          <EmptyState
+            description="Nenhum recibo encontrado"
+            title="Sem Recibos"
+            icon="FileText"
+          />
+        </div>
+      }
       <ReceiptPreviewDrawer />
     </div>
   );

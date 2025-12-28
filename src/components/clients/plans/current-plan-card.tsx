@@ -17,7 +17,7 @@ export function CurrentPlanCard({ currentPlan }: CurrentPlanCardProps) {
   const { user } = useAuth();
 
   return (
-    <Card className="border-border bg-primary-300/10">
+    <Card className="border-border bg-primary-500/10">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold text-primary-700">

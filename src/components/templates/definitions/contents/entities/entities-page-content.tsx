@@ -11,8 +11,8 @@ import {
 } from "@/components/ui";
 import { useModal } from "@/stores";
 import { ClientsList, ClientModal } from "./clients";
-import { StoresList, StoreModal } from "./stores";
-import { SuppliersList, SupplierModal } from "./suppliers";
+import { StoresList, AddStoreModal } from "./stores";
+import { SuppliersList, AddSupplierModal } from "./suppliers";
 import { toast } from "sonner";
 
 type EntityTab = "client" | "supplier" | "store";
@@ -54,20 +54,22 @@ export function EntitiesPageContent() {
             >
               Cliente
             </TabsTrigger>
-            <TabsTrigger
-              value="supplier-tab"
-              onClick={() => setCurrentTab("supplier")}
-              className="text-sm sm:text-base"
-            >
-              Fornecedor
-            </TabsTrigger>
-            <TabsTrigger
-              value="store-tab"
-              onClick={() => setCurrentTab("store")}
-              className="text-sm sm:text-base"
-            >
-              Loja
-            </TabsTrigger>
+            <TsunamiOnly>
+              <TabsTrigger
+                value="supplier-tab"
+                onClick={() => setCurrentTab("supplier")}
+                className="text-sm sm:text-base"
+              >
+                Fornecedor
+              </TabsTrigger>
+              <TabsTrigger
+                value="store-tab"
+                onClick={() => setCurrentTab("store")}
+                className="text-sm sm:text-base"
+              >
+                Loja
+              </TabsTrigger>
+            </TsunamiOnly>
           </TabsList>
 
           <Button onClick={() => openModal(currentModal)} variant="default" className="w-full sm:w-auto text-sm sm:text-base">
@@ -80,17 +82,17 @@ export function EntitiesPageContent() {
             <ClientsList />
           </TabsContent>
           <TabsContent value="supplier-tab">
-            <SuppliersList />
-          </TabsContent>
-          <TabsContent value="store-tab">
-            <StoresList />
-          </TabsContent>
+          <SuppliersList />
+        </TabsContent>
+        <TabsContent value="store-tab">
+          <StoresList />
+        </TabsContent>
         </div>
       </Tabs>
 
-      <ClientModal action="add" />
-      <SupplierModal action="add" />
-      <StoreModal action="add" />
+      <ClientModal action="add"  />
+      {open["add-supplier"] && <AddSupplierModal />}
+      {open["add-store"] && <AddStoreModal />}
     </div>
   );
 }

@@ -7,40 +7,36 @@ export interface InvoiceItem {
   name: string;
   quantity: number;
   unitPrice: number;
-  total: number; // unitPrice * quantity
+  total: number; 
 }
 
 export interface InvoiceDetails {
   id: string;
   invoiceNumber: string;
-  invoiceType: 'NORMAL_INVOICE' | string; // Permitindo outros tipos se houver
+  invoiceType: 'NORMAL_INVOICE' | string; 
   status: 'CANCELLED' | 'PAID' | 'PENDING' | string; 
   isPaid: boolean;
   clientId: string;
   clientName: string;
   clientEmail: string;
-  issueDate: string; // Geralmente ISO date string (YYYY-MM-DD)
-  dueDate: string; // Geralmente ISO date string (YYYY-MM-DD)
+  issueDate: string; 
+  dueDate: string; 
   items: InvoiceItem[];
   subtotal: number;
   taxAmount: number;
   discountAmount: number;
-  totalAmount: number; // subtotal + taxAmount - discountAmount
+  totalAmount: number; 
   notes: string | null;
-  createdAt: string; // Data e hora ISO (e.g., "2025-12-13T11:06:03.685Z")
-  updatedAt: string; // Data e hora ISO
+  createdAt: string; 
+  updatedAt: string; 
 }
 
-// Alternativamente, você pode usar um type
 export type InvoiceType = InvoiceDetails;
-
-
-// NOVOS TYPES
 
 export interface CreditNotesResponse {
   id: string
   number: string
-  reason: string
+  reason: "CORRECTION" | "CANCELLATION";
   status: string
   notes: string
   userId: string
@@ -109,7 +105,6 @@ export interface ItemBody {
   unitPrice: number
   total: number
 }
-
 
 export type FullItem = ItemSimple & {
   name: string

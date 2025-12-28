@@ -21,7 +21,7 @@ export function CreditNotesList() {
   const { search } = useURLSearchParams("search-credit-notes");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useCreditNotesFilters();
-  const { handlerDetailsCreditNote } = useCreditNotesActions()
+  const { handlerDetailsCreditNote } = useCreditNotesActions();
   const {
     data: creditNotes,
     total,
@@ -40,7 +40,7 @@ export function CreditNotesList() {
   const columns: Column<CreditNotesResponse>[] = [
     {
       key: "number",
-      header: "Nota de Crédito",
+      header: "N° da Nota",
       render: (_, item) => item.number,
     },
     {
@@ -124,7 +124,6 @@ export function CreditNotesList() {
           emptyMessage="Nenhuma nota de crédito encontrada"
         />
       )}
-      F
       <CreditNotePreviewDrawer />
     </div>
   );

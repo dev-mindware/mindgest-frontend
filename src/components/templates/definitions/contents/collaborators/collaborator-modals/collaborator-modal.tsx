@@ -3,11 +3,25 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
-import { useModal, currentCollaboratorStore } from "@/stores";
-import { CollaboratorFormData, collaboratorSchema } from "@/schemas";
-import { useAddCollaborator, useUpdateCollaborator } from "@/hooks/collaborators";
-import { Button, Input, GlobalModal, ButtonSubmit, RHFSelect, RequestError } from "@/components";
+import { useModal } from "@/stores";
+import {
+  Button,
+  Input,
+  GlobalModal,
+  ButtonSubmit,
+  RHFSelect,
+  RequestError,
+} from "@/components";
 import { useGetStores } from "@/hooks/entities";
+import {
+  CollaboratorFormData,
+  collaboratorSchema,
+} from "@/schemas/add-collaborator";
+import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
+import {
+  useAddCollaborator,
+  useUpdateCollaborator,
+} from "@/hooks/collaborators/use-collaborator";
 const roleOptions = [
   { label: "Gerente", value: "MANAGER" },
   { label: "Caixa", value: "CASHIER" },
@@ -21,9 +35,10 @@ export function CollaboratorModal({ action }: CollaboratorModalProps) {
   const { closeModal, open } = useModal();
   const isOpen = open["add-collaborator"] || open["edit-collaborator"];
   const { currentCollaborator } = currentCollaboratorStore();
-
-  const { mutateAsync: addCollaborator, isPending: isAdding } = useAddCollaborator();
-  const { mutateAsync: editCollaborator, isPending: isEditing } = useUpdateCollaborator();
+  const { mutateAsync: addCollaborator, isPending: isAdding } =
+    useAddCollaborator();
+  const { mutateAsync: editCollaborator, isPending: isEditing } =
+    useUpdateCollaborator();
 
   const { stores, isLoading: isLoadingStores, error, refetch } = useGetStores();
 
@@ -90,9 +105,9 @@ export function CollaboratorModal({ action }: CollaboratorModalProps) {
     return (
       <RequestError
         refetch={refetch}
-          message="Ocorreu um erro ao carregar as lojas"
-        />
-      );
+        message="Ocorreu um erro ao carregar as lojas"
+      />
+    );
 
   return (
     <GlobalModal

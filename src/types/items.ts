@@ -13,6 +13,8 @@ export type ItemsFilters = {
   status?: ItemStatus;
   sortOrder?: string;
   search?: string;
+  minPrice?: string;
+  maxPrice?: string;
 };
 
 export type ItemData = {

@@ -15,6 +15,7 @@ export * from "./select-field";
 export * from "./avatar";
 export * from "./breadcrumb-context";
 export * from "./breadcrumb";
+export * from "./progress";
 export * from "./datefield-rac"
 export * from "./alert-dialog"
 export * from "./badge"
@@ -35,4 +36,3 @@ export * from "./switch"
 export * from "./textarea"
 export * from "./custom-select"
 export * from "./date-picker"
-export * from "./progress"

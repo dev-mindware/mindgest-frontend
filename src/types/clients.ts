@@ -17,3 +17,17 @@ export interface Client {
   updatedAt: string
   companyId: string
 }
+
+export interface ClientSelectOption {
+  value: string | number;
+  label: string;
+  data?: {
+    id: string;
+    name: string;
+    taxNumber?: string;
+    phone?: string;
+    address?: string;
+    email?: string;
+  };
+  __isNew__?: boolean;
+}
