@@ -7,7 +7,7 @@ type Props = {
 
 export function ItemViewToggle({ viewMode, setViewMode }: Props) {
   return (
-    <div className="sm:flex self-center gap-2 p-1 rounded-md shrink-0 bg-sidebar border">
+    <div className="sm:flex self- gap-2 p-1 rounded-md shrink-0 bg-sidebar border">
       <Button
         variant={viewMode === "card" ? "default" : "ghost"}
         className={`h-8 w-8 ${

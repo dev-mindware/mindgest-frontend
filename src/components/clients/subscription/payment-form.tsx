@@ -41,7 +41,7 @@ export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
 
     await mutateAsync(data);
 
-    window.location.replace("/client/dashboard");
+    window.location.replace("/owner/dashboard");
     localStorage.removeItem("plan-storage");
   }
 

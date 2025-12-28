@@ -8,7 +8,7 @@ import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { ButtonSubmit, GoogleButton, Input, OrLine } from "@/components";
-import { loginAction } from "@/app/actions/login";
+import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
 
 export function LoginForm() {

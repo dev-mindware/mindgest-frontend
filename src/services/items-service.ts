@@ -5,7 +5,7 @@ export const itemsService = {
   addItem: async (data: CreateItemData) => {
     return api.post<CreateItemData>("/items", data);
   },
-  updateItem: async (id: string, data: CreateItemData) => {
+  updateItem: async (id: string, data: Partial<CreateItemData>) => {
     return api.put<CreateItemData>(`/items/${id}`, data);
   },
   

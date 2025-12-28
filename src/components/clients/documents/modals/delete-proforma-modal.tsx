@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { ErrorMessage } from "@/utils/messages";
 import { currentProformaStore } from "@/stores";
 import { useModal } from "@/stores/use-modal-store";
 import { Button, GlobalModal } from "@/components";
@@ -12,7 +12,7 @@ export function DeleteProformaModal() {
 
   async function handlerDeleteProforma() {
     if (!currentProforma?.id) {
-      toast.error("Proforma não selecionada");
+      ErrorMessage("Proforma não selecionada");
       return;
     }
 
@@ -21,11 +21,11 @@ export function DeleteProformaModal() {
       handleClose();
     } catch (error: any) {
       if (error?.response) {
-        toast.error(
+        ErrorMessage(
           error?.response?.data?.message || "Erro ao deletar proforma"
         );
       } else {
-        toast.error("Ocorreu um erro desconhecido");
+        ErrorMessage("Ocorreu um erro desconhecido");
       }
     }
   }

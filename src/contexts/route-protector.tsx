@@ -20,9 +20,6 @@ export function RouteProtector({
   const { user } = useAuth(); // Assumindo que o store tem um estado de loading
   const [isChecking, setIsChecking] = useState(true);
 
-  console.log("dentro do route protector");
-  console.log("user", user);
-
   useEffect(() => {
     // Se ainda está carregando dados de autenticação, aguarda
     if (!user) {

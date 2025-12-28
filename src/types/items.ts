@@ -49,7 +49,7 @@ export type CreateItemData = {
   name: string;
   type: "PRODUCT" | "SERVICE";
   categoryId: string;
-  companyId: string;
+  companyId?: string;
   price: number;
   cost: number;
   description?: string;
@@ -67,7 +67,6 @@ export type CreateItemData = {
   daysToExpiry?: number;
 };
 
-// Resposta do backend: reaproveita ItemData e adiciona campos de controle
 export type ItemResponse = ItemData & {
   id: string;
   category: string;

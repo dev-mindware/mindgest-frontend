@@ -1,9 +1,16 @@
 "use client";
-import { toast } from "sonner";
+import { ErrorMessage } from "@/utils/messages";
 import { useMemo, useCallback, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, InvoiceFormSkeleton, RequestError, RHFSelect, Textarea } from "@/components";
+import {
+  Button,
+  Input,
+  InvoiceFormSkeleton,
+  RequestError,
+  RHFSelect,
+  Textarea,
+} from "@/components";
 import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { useCreateProforma, useEditProforma, useInvoiceTotals } from "@/hooks";
 import { useClientSelection } from "@/hooks/invoice/use-invoice-client";
@@ -189,7 +196,7 @@ export function ProformaForm({
     async (data: ProformaFormData) => {
       try {
         if (!data.items || data.items.length === 0) {
-          toast.error("Adicione pelo menos um item à proforma");
+          ErrorMessage("Adicione pelo menos um item à proforma");
           return;
         }
 
@@ -229,7 +236,8 @@ export function ProformaForm({
           notes: data.notes || undefined,
           proformaExpiresAt: data.proformaExpiresAt,
           paymentMethod: data.paymentMethod,
-          ...(user?.role === "OWNER" && !isEdit &&
+          ...(user?.role === "OWNER" &&
+            !isEdit &&
             data.storeId && { storeId: data.storeId }),
         };
 
@@ -248,13 +256,12 @@ export function ProformaForm({
           setSelectedClient(null);
         }
       } catch (error: any) {
-
         const errorMessage =
           error?.response?.data?.message ||
           error?.message ||
           "Ocorreu um erro ao criar a proforma. Tente novamente.";
 
-        toast.error(errorMessage);
+        ErrorMessage(errorMessage);
       }
     },
     [
@@ -299,10 +306,12 @@ export function ProformaForm({
         />
       </div>
 
-      <div className={cn("grid gap-6 md:grid-cols-2", {
-        "w-full": isEdit,
-        "grid gap-6 md:grid-cols-2": !isEdit,
-      })}>
+      <div
+        className={cn("grid gap-6 md:grid-cols-2", {
+          "w-full": isEdit,
+          "grid gap-6 md:grid-cols-2": !isEdit,
+        })}
+      >
         <AsyncCreatableSelectField
           endpoint="/clients"
           label="Cliente"

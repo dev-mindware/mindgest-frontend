@@ -1,5 +1,5 @@
 "use client";
-import { logoutAction } from "@/app/actions/login";
+import { logoutAction } from "@/actions/login";
 import {
   Icon,
   Avatar,

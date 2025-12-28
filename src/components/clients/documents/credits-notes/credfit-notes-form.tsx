@@ -1,14 +1,14 @@
 "use client";
-import { toast } from "sonner";
+import { ErrorMessage } from "@/utils/messages";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ButtonSubmit, Input, RHFSelect, Textarea } from "@/components";
 import { CreditNoteSchema, CreditNoteFormData } from "@/schemas";
 import { useCreateCreditNote, useAnnulationNote } from "@/hooks";
 import { InvoiceDetails } from "@/types/credit-note";
-import { formatCurrency } from "@/utils";
+import { formatCurrency, parseCurrency } from "@/utils";
 
 type Props = {
   invoice: InvoiceDetails;
@@ -103,12 +103,12 @@ export function CreditNoteForm({ invoice }: Props) {
         router.replace("/client/documents?tab=credit-notes");
       }, 1500);
     } catch (error: any) {
-      toast.error(
+      ErrorMessage(
         error?.response?.data?.message || "Erro ao emitir nota de crédito"
       );
     }
   }
-  
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -168,7 +168,7 @@ export function CreditNoteForm({ invoice }: Props) {
                   </div>
 
                   <Input
-                    type="number"
+                    type="quantity"
                     label={`Qtd (Máx: ${originalItem.quantity})`}
                     {...register(`invoiceBody.items.${index}.quantity`, {
                       valueAsNumber: true,
@@ -177,8 +177,30 @@ export function CreditNoteForm({ invoice }: Props) {
                       errors.invoiceBody?.items?.[index]?.quantity?.message
                     }
                   />
+                  <Controller
+                    control={control}
+                    name={`invoiceBody.items.${index}.price`}
+                    render={({ field: { onChange, value } }) => (
+                      <Input
+                        id="price"
+                        type="text"
+                        startIcon="Coins"
+                        label={`Preço Unit. (Máx: ${formatCurrency(
+                          originalItem.unitPrice
+                        )})`}
+                        error={
+                          errors.invoiceBody?.items?.[index]?.price?.message
+                        }
+                        value={formatCurrency(value)}
+                        onChange={(e) => {
+                          const rawNumber = parseCurrency(e.target.value);
+                          onChange(rawNumber);
+                        }}
+                      />
+                    )}
+                  />
 
-                  <Input
+                  {/*   <Input
                     type="number"
                     label={`Preço Unit. (Máx: ${formatCurrency(
                       originalItem.unitPrice
@@ -187,7 +209,7 @@ export function CreditNoteForm({ invoice }: Props) {
                       valueAsNumber: true,
                     })}
                     error={errors.invoiceBody?.items?.[index]?.price?.message}
-                  />
+                  /> */}
                 </div>
               );
             })}

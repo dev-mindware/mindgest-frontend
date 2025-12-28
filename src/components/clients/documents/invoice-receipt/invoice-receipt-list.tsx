@@ -14,12 +14,14 @@ import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
+import { useRouter } from "next/navigation";
 
 export function InvoiceReceiptList() {
-  const { search } = useURLSearchParams("search-invoice-receipt");
+  const router = useRouter();
+  const { search } = useURLSearchParams("search_invoice_receipt");
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, page, setPage } = useInvoiceFilters();
-  const { handlerCancelInvoice, handlerDetailsInvoice } = useInvoiceActions();
+  const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
+  const { handlerDetailsInvoice } = useInvoiceActions();
   const {
     data: invoicesReceipts,
     total,
@@ -40,7 +42,7 @@ export function InvoiceReceiptList() {
     {
       key: "client",
       header: "Cliente",
-      render: (_, item) => item.client.name,
+      render: (_, item) => item?.client?.name ?? "N/A",
     },
     {
       key: "total",
@@ -71,7 +73,11 @@ export function InvoiceReceiptList() {
             },
             {
               label: "Emitir Nota",
-              onClick: handlerCancelInvoice,
+              onClick: () => {
+                alert(JSON.stringify(item.originalInvoiceId))
+                return
+                router.push(`/client/documents/notes/${item.originalInvoiceId}`);
+              },
             },
           ]}
         />
@@ -92,8 +98,7 @@ export function InvoiceReceiptList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX searchText="search-invoice-receipt" />
-
+      <InvoiceFiltersTSX type="invoice-receipt" />
       {invoicesReceipts.length > 0 ? (
         <GenericTable<InvoiceResponse>
           page={page}

@@ -1,9 +1,16 @@
 "use client";
-import { toast } from "sonner";
+import { ErrorMessage } from "@/utils/messages";
 import { useCallback, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, InvoiceFormSkeleton, RequestError, RHFSelect, Textarea } from "@/components";
+import {
+  Button,
+  Input,
+  InvoiceFormSkeleton,
+  RequestError,
+  RHFSelect,
+  Textarea,
+} from "@/components";
 import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useCreateInvoiceReceipt, useInvoiceTotals } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
@@ -123,7 +130,7 @@ export function InvoiceReceiptForm() {
     async (data: InvoiceReceiptFormData) => {
       try {
         if (!data.items || data.items.length === 0) {
-          toast.error("Adicione pelo menos um item à fatura recibo");
+          ErrorMessage("Adicione pelo menos um item à fatura recibo");
           return;
         }
 
@@ -177,7 +184,7 @@ export function InvoiceReceiptForm() {
           error?.message ||
           "Ocorreu um erro ao criar a fatura recibo. Tente novamente.";
 
-        toast.error(errorMessage);
+        ErrorMessage(errorMessage);
       }
     },
     [createInvoiceReceipt, reset, setSelectedClient, totals, user?.role]

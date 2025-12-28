@@ -1,9 +1,16 @@
 "use client";
-import { toast } from "sonner";
+import { ErrorMessage } from "@/utils/messages";
 import { useCallback, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, InvoiceFormSkeleton, RequestError, RHFSelect, Textarea } from "@/components";
+import {
+  Button,
+  Input,
+  InvoiceFormSkeleton,
+  RequestError,
+  RHFSelect,
+  Textarea,
+} from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import {
   useClientSelection,
@@ -114,7 +121,7 @@ export function InvoiceForm() {
     async (data: InvoiceFormData) => {
       try {
         if (!data.items || data.items.length === 0) {
-          toast.error("Adicione pelo menos um item à fatura");
+          ErrorMessage("Adicione pelo menos um item à fatura");
           return;
         }
 
@@ -164,7 +171,7 @@ export function InvoiceForm() {
           error?.message ||
           "Ocorreu um erro ao criar a fatura. Tente novamente.";
 
-        toast.error(errorMessage);
+        ErrorMessage(errorMessage);
       }
     },
     [createInvoiceNormal, reset, setSelectedClient, totals, user?.role]

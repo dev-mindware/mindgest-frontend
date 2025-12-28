@@ -157,7 +157,7 @@ body {
 
   /* Core */
   --background: var(--gray-900);
-  --foreground: #e8eaed;
+  --foreground: #f5f5f7;
 
   --card: var(--gray-800);
   --card-foreground: #e8eaed;
@@ -165,20 +165,19 @@ body {
   --popover: var(--gray-800);
   --popover-foreground: #e8eaed;
 
-  /* Primary (Gmail Blue) */
-  --primary: #1a73e8;
+  --primary: #a855f7;
   --primary-foreground: #ffffff;
 
-  --primary-50: #e8f0fe;
-  --primary-100: #d2e3fc;
-  --primary-200: #aecbfa;
-  --primary-300: #8ab4f8;
-  --primary-400: #669df6;
-  --primary-500: #1a73e8;
-  --primary-600: #1967d2;
-  --primary-700: #185abc;
-  --primary-800: #174ea6;
-  --primary-900: #0b3c91;
+  --primary-50: #faf5ff;
+  --primary-100: #f3e8ff;
+  --primary-200: #e9d5ff;
+  --primary-300: #d8b4fe;
+  --primary-400: #c084fc;
+  --primary-500: #a855f7;
+  --primary-600: #9333ea;
+  --primary-700: #7e22ce;
+  --primary-800: #6b21a8;
+  --primary-900: #581c87;
 
   /* UI helpers */
   --secondary: var(--gray-700);

@@ -16,17 +16,19 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
   const { categories, isLoading, error, refetch } = useGetCategories();
 
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      status: undefined,
-      categoryId: undefined,
-      sortOrder: undefined,
-      minPrice: undefined,
-      maxPrice: undefined,
-    });
-    setSearch("");
-  }
+function clearFilters() {
+  setFilters({
+    sortBy: undefined,
+    status: undefined,
+    categoryId: undefined,
+    sortOrder: undefined,
+    minPrice: undefined,
+    maxPrice: undefined,
+  });
+
+  setSearch("");
+}
+
 
   const hasFilter =
     filters.status ||
@@ -47,7 +49,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     );
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4 ">
       <SearchHandlerWrapper
         search={search}
         setSearch={setSearch}
@@ -93,7 +95,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
           />
           <Input
             placeholder="Preço máximo"
-            value={filters.minPrice}
+            value={filters.maxPrice}
             onChange={(e) => setFilters({ maxPrice: e.target.value })}
           />
         </div>

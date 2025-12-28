@@ -30,7 +30,7 @@ export function SubscriptionSucessModal() {
       }
     >
       <div className="w-full mt-2 flex flex-col items-center justify-center">
-        <Link href="/client/dashboard" className="w-full block">
+        <Link href="/owner/dashboard" className="w-full block">
           <Button
             onClick={handleClose}
             className="w-full bg-primary-500 hover:bg-primary-600"

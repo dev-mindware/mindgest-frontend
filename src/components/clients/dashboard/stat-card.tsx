@@ -35,17 +35,17 @@ export function StatCard({
           {value}
         </CardTitle>
         <CardAction>
-          <Badge variant={trendPositive ? "outline" : "destructive"}>
-            <Icon />
+            <Icon className="size-4" />
+          {/* <Badge variant={trendPositive ? "outline" : "destructive"}>
             {trend}
-          </Badge>
+          </Badge> */}
         </CardAction>
       </CardHeader>
       <CardFooter className="flex-col items-start gap-1.5 text-sm">
-        <div className="flex gap-2 font-medium line-clamp-1">
+      {/*   <div className="flex gap-2 font-medium line-clamp-1">
           {footerMain} <Icon className="size-4" />
-        </div>
-        <div className="text-muted-foreground">{footerSub}</div>
+        </div> */}
+       <div className="text-muted-foreground">{footerSub}</div> 
       </CardFooter>
     </Card>
   )

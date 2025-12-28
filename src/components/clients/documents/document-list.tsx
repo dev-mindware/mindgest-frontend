@@ -15,12 +15,13 @@ import { ProformaList } from "./invoice-proforma";
 import { InvoiceReceiptList } from "./invoice-receipt";
 import { ReceiptList } from "./receipts";
 import { CreditNotesList } from "./credits-notes";
+import { cn } from "@/lib";
 
 type DocumentTab =
   | "invoice"
   | "invoice-receipt"
   | "proforma"
-  | "only-receipt"
+  | "receipt"
   | "credit-notes";
 
 export function DocumentList() {
@@ -50,12 +51,22 @@ export function DocumentList() {
             <TabsTrigger value="invoice">Fatura Normal</TabsTrigger>
             <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
             <TabsTrigger value="proforma">Fatura Proforma</TabsTrigger>
-            <TabsTrigger value="only-receipt">Recibos</TabsTrigger>
+            <TabsTrigger value="receipt">Recibos</TabsTrigger>
             <TabsTrigger value="credit-notes">Notas de Crédito</TabsTrigger>
           </TabsList>
 
-          <Link href={`/client/documents/new?tab=${activeTab}`}>
-            <Button>Criar Documento</Button>
+          <Link
+            className={cn("", {
+              "pointer-events-none cursor-not-allowed": activeTab === "credit-notes",
+            })}
+            href={`/client/documents/new-doc?tab=${activeTab}`}
+          >
+            <Button
+              className="disabled:cursor-not-allowed"
+              disabled={activeTab === "credit-notes"}
+            >
+              Criar Documento
+            </Button>
           </Link>
         </div>
 
@@ -71,10 +82,10 @@ export function DocumentList() {
           <InvoiceReceiptList />
         </TabsContent>
 
-        <TabsContent value="only-receipt">
+        <TabsContent value="receipt">
           <ReceiptList />
         </TabsContent>
-        
+
         <TabsContent value="credit-notes">
           <CreditNotesList />
         </TabsContent>

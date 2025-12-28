@@ -19,9 +19,9 @@ import { useRouter } from "next/navigation";
 
 export function ProformaList() {
   const router = useRouter();
-  const { search } = useURLSearchParams("search-proforma");
+  const { search } = useURLSearchParams("search_proforma");
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, page, setPage } = useInvoiceFilters();
+  const { filters, page, setPage } = useInvoiceFilters("proforma");
   const {
     handlerDeleteProforma,
     handlerDetailsProforma 
@@ -46,7 +46,7 @@ export function ProformaList() {
     {
       key: "client",
       header: "Cliente",
-      render: (_, item) => item.client?.name || "N/A",
+      render: (_, item) => item?.client?.name ?? "N/A",
     },
     {
       key: "total",
@@ -105,7 +105,7 @@ export function ProformaList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX searchText="search-proforma" />
+      <InvoiceFiltersTSX type="proforma" />
       {proformas.length > 0 ? (
         <GenericTable<InvoiceResponse>
           page={page}

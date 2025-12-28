@@ -5,13 +5,14 @@ import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useCreditNotesFilters } from "@/hooks/credit-notes";
-import { invoiceStatusOptions, usersByOption } from "@/constants";
+import { invoiceStatusOptions } from "@/constants";
 
 export function CreditNotesFiltersTSX() {
   const { filters, setFilters } = useCreditNotesFilters();
-  const { search, setSearch } = useURLSearchParams("search-credit-notes");
+  const { search, setSearch } = useURLSearchParams("search-credit-note");
 
   function clearFilters() {
+    alert("ola limpando");
     setFilters({
       reason: undefined,
       status: undefined,
@@ -22,6 +23,9 @@ export function CreditNotesFiltersTSX() {
       startDate: undefined,
     });
     setSearch("");
+
+    alert(JSON.stringify(filters, null, 2))
+    setFilters({})
   }
 
   const hasFilter =
@@ -49,14 +53,14 @@ export function CreditNotesFiltersTSX() {
       </SearchHandlerWrapper>
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
         <DatePicker
-          value={filters.endDate ? new Date(filters.endDate) : undefined}
-          onChange={(date) => setFilters({ endDate: date?.toISOString() })}
-          placeholder="Data de inicio"
-        />
-        <DatePicker
           value={filters.startDate ? new Date(filters.startDate) : undefined}
           onChange={(date) => setFilters({ startDate: date?.toISOString() })}
           placeholder="Data de fim"
+        />
+        <DatePicker
+          value={filters.endDate ? new Date(filters.endDate) : undefined}
+          onChange={(date) => setFilters({ endDate: date?.toISOString() })}
+          placeholder="Data de inicio"
         />
 
         <FilterPopover
@@ -65,7 +69,8 @@ export function CreditNotesFiltersTSX() {
           value={filters.reason}
           options={[
             { label: "Anulação", value: "ANNULATION" },
-            { label: "Correção", value: "CORRETION" },
+            { label: "Correção", value: "CORRECTION" },
+            { label: "Desconto", value: "DISCOUNT" },
           ]}
           onChange={(reason) => setFilters({ reason })}
         />

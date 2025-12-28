@@ -21,8 +21,8 @@ import { useURLSearchParams } from "@/hooks/common";
 
 export function InvoiceList() {
   const router = useRouter();
-  const { search } = useURLSearchParams("search-invoice");
-  const { filters, page, setPage } = useInvoiceFilters();
+  const { search } = useURLSearchParams("search_invoice");
+  const { filters, page, setPage } = useInvoiceFilters("invoice");
   const [debounceSearch] = useDebounce(search, 400);
   const {
     handlerGenerateReceipt,
@@ -53,7 +53,7 @@ export function InvoiceList() {
     {
       key: "client",
       header: "Cliente",
-      render: (_, item) => item.client.name,
+      render: (_, item) => item?.client?.name ?? "N/A",
     },
     {
       key: "total",
@@ -131,7 +131,7 @@ export function InvoiceList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="invoice" searchText="search-invoice" />
+      <InvoiceFiltersTSX type="invoice" />
       {invoices.length > 0 ? (
         <GenericTable<InvoiceResponse>
           page={page}

@@ -1,6 +1,6 @@
 import { creditNoteService } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { SucessMessage } from "@/utils/messages";
 
 export function useUpdateCreditNote() {
   const queryClient = useQueryClient();
@@ -9,7 +9,7 @@ export function useUpdateCreditNote() {
     mutationFn: ({ id, data }: { id: string; data: any }) =>
       creditNoteService.updateCreditNote(id, data),
     onSuccess: () => {
-      toast.success("Nota de crédito atualizada com sucesso!");
+      SucessMessage("Nota de crédito atualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["credit-notes"] });
     },
   });

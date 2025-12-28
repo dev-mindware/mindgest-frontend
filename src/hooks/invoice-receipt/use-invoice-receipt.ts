@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { SucessMessage } from "@/utils/messages";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { receiptService } from "@/services/receipt-service";
 import { ReceiptFormData } from "@/schemas";
@@ -13,7 +13,7 @@ export function useGenerateReceipt() {
   return useMutation({
     mutationFn: ({ data }: Data) => receiptService.generateReceipt(data),
     onSuccess: () => {
-      toast.success("Recibo gerado com sucesso!");
+      SucessMessage("Recibo gerado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
       queryClient.invalidateQueries({ queryKey: ["receipts"] });
     },

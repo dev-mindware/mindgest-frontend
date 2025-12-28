@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { SucessMessage } from "@/utils/messages";
 import { invoiceService } from "@/services/invoice-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreditNoteFormData } from "@/schemas";
@@ -11,7 +11,7 @@ export function useGenerateReceipt() {
   return useMutation({
     mutationFn: (data: ReceiptData) => invoiceService.generateReceipt(data),
     onSuccess: () => {
-      toast.success("Recibo gerado com sucesso!");
+      SucessMessage("Recibo gerado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
@@ -24,7 +24,7 @@ export function useCancelInvoice() {
   return useMutation({
     mutationFn: (id: string) => invoiceService.cancelInvoice(id),
     onSuccess: () => {
-      toast.success("Fatura cancelada com sucesso!");
+      SucessMessage("Fatura cancelada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });
@@ -36,7 +36,7 @@ export function useCreateInvoice() {
   return useMutation({
     mutationFn: (data: InvoicePayload) => invoiceService.createInvoice(data),
     onSuccess: () => {
-      toast.success("Fatura criada com sucesso!");
+      SucessMessage("Fatura criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });
@@ -49,7 +49,7 @@ export function useCreateCreditNote() {
     mutationFn: ({ id, data }: { id: string; data: CreditNoteFormData }) =>
       invoiceService.createCreditNote(id, data),
     onSuccess: () => {
-      toast.success("Nota de crédito criada com sucesso!");
+      SucessMessage("Nota de crédito criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });
@@ -69,7 +69,7 @@ export function useAnnulationNote() {
       notes: string;
     }) => invoiceService.annulationNote(id, reason, notes),
     onSuccess: () => {
-      toast.success("Nota de crédito anulada com sucesso!");
+      SucessMessage("Nota de crédito anulada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });
@@ -80,7 +80,7 @@ export function useDownloadInvoice() {
     mutationFn: ({ id, type }: { id: string; type: DownloadType }) =>
       invoiceService.downloadInvoice(id, type),
     onSuccess: () => {
-      toast.success("Documento baixado com sucesso!");
+      SucessMessage("Documento baixado com sucesso!");
     },
   });
 }

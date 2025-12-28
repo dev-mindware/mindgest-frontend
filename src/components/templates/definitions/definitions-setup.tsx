@@ -5,7 +5,6 @@ import { Icon, TsunamiOnly } from "@/components";
 import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
-import { Subscriptions } from "./contents/subscription";
 import { CollaboratorsPageContent, EntitiesPageContent } from "./contents";
 import { useRouter, usePathname } from "next/navigation";
 

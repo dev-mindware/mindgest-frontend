@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui";
+import { Button, DatePicker } from "@/components/ui";
 import { useItemsFilters } from "@/hooks";
 import { ItemStatus } from "@/types/items";
 import {
@@ -14,18 +14,25 @@ import { useClientsFilters } from "@/hooks/entities";
 
 export function ClientsFiltersTSX() {
   const { filters, setFilters } = useClientsFilters();
-  const { search, setSearch } = useURLSearchParams("search");
+  const { search, setSearch } = useURLSearchParams("search-client");
 
   function clearFilters() {
     setFilters({
       sortBy: undefined,
       status: undefined,
       sortOrder: undefined,
+      createdAfter: undefined,
+      createdBefore: undefined,
     });
   }
 
   const hasFilter =
-    filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
+    filters.status ||
+    filters.sortBy ||
+    filters.sortOrder ||
+    filters.createdAfter ||
+    filters.createdBefore ||
+    search.length > 0;
 
   return (
     <SearchHandlerWrapper
@@ -64,6 +71,27 @@ export function ClientsFiltersTSX() {
           value={filters.sortOrder}
           onChange={(sortOrder) => setFilters({ sortOrder })}
         />
+
+        {/* <div className="flex items-center gap-2">
+          <DatePicker
+            value={
+              filters.createdBefore
+                ? new Date(filters.createdBefore)
+                : undefined
+            }
+            onChange={(_, formatted) =>
+              setFilters({ createdBefore: formatted })
+            }
+            placeholder="Cadastrado antes de.."
+          />
+          <DatePicker
+            value={
+              filters.createdAfter ? new Date(filters.createdAfter) : undefined
+            }
+            onChange={(_, formatted) => setFilters({ createdAfter: formatted })}
+            placeholder="Cadastrado depois de.."
+          />
+        </div> */}
 
         {hasFilter && (
           <Button

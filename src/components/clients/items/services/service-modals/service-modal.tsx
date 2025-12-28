@@ -1,6 +1,6 @@
 "use client";
-
-import { useForm, Controller } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -11,11 +11,11 @@ import {
   RequestError,
   ButtonSubmit,
   CategoryModal,
+  ServiceModalSkeleton,
 } from "@/components";
 import { useModal } from "@/stores/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { formatCurrency, parseCurrency } from "@/utils";
-import { useAddItem, useGetCategories } from "@/hooks";
+import { useAddItem, useGetCategories, useUpdateItem } from "@/hooks";
 import { currentServiceStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
@@ -26,88 +26,122 @@ type ServiceModalProps = {
 
 export function ServiceModal({ action }: ServiceModalProps) {
   const { user } = useAuth();
-  const { closeModal, open } = useModal();
+  const modalId = `${action}-service`;
+  const { closeModal, open, openModal } = useModal();
   const { currentService } = currentServiceStore();
-  const { mutateAsync: addItemMutate, isPending } = useAddItem();
+  const { mutateAsync: addItemMutate, isPending: isAdding } = useAddItem();
+  const { mutateAsync: updateService, isPending: isUpdating,reset: resetMutate } = useUpdateItem();
   const { categories, isLoading, error, refetch } = useGetCategories();
+  const isOpen = open[modalId];
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
+    watch
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
-    defaultValues: {
-      type: "SERVICE",
-      sku: action === "edit" ? currentService?.sku : "",
-      name: action === "edit" ? currentService?.name : "",
-      price: action === "edit" ? currentService?.price : 0,
-      cost: action === "edit" ? currentService?.price : 1,
-      description: action === "edit" ? currentService?.description : "",
-      categoryId: action === "edit" ? currentService?.categoryId : "",
-      companyId: String(user?.company?.id),
-    },
   });
 
-  const onSubmit = async (data: ItemFormData) => {
-    if (action === "add") {
-      try {
-        await addItemMutate(data);
-        reset();
-      } catch (error: any) {
-        if (error?.response?.data?.message) {
-          ErrorMessage(error?.response?.data?.message);
-        }
+  useEffect(() => {
+    if (isOpen) {
+      if (action === "edit" && currentService) {
+        reset({
+          type: "SERVICE",
+          sku: currentService.sku,
+          name: currentService.name,
+          price: currentService.price,
+          cost: currentService.price,
+          description: currentService.description || "",
+          categoryId: currentService.categoryId,
+          ...(user?.role === "OWNER" && {
+            companyId: String(user?.company?.id),
+          }),
+        });
+      } else {
+        reset({
+          type: "SERVICE",
+          sku: "",
+          name: "",
+          price: 0,
+          cost: watch("price"),
+          description: "",
+          categoryId: "",
+          ...(user?.role === "OWNER" && {
+            companyId: String(user?.company?.id),
+          }),
+        });
       }
-    } else {
-      console.log("Editando serviço:", data);
+    }
+  }, [isOpen, action, currentService, reset, user]);
+
+  const onSubmit = async (data: ItemFormData) => {
+    try {
+      if (action === "add") {
+        await addItemMutate(data);
+      } else if (currentService) {
+        const { type, ...rest } = data;
+        await updateService({
+          id: currentService.id,
+          data: rest,
+        });
+      }
+      handleCancel();
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || "Erro ao processar serviço";
+      ErrorMessage(msg);
     }
   };
 
   const handleCancel = () => {
     reset();
-    closeModal(`${action}-service`);
+    closeModal(modalId);
+    resetMutate();
   };
 
-  if (isLoading) return <p>Carregando categorias...</p>;
-  if (error)
-    return (
-      <RequestError
-        refetch={refetch}
-        message="Ocorreu um erro ao carregar as categorias"
-      />
-    );
+  console.log("Erro do form...");
+  console.log(errors);
 
-  if (!open[`${action}-service`]) return null;
+  if (!isOpen) return null;
 
   return (
     <GlobalModal
       canClose
-      id={`${action}-service`}
+      id={modalId}
       title={
-        <div className="flex items-center w-full mb-4">
-          <span>
+        <div className="w-full flex items-center justify-between gap-2 mb-4">
+          <span className="text-lg font-bold">
             {action === "add" ? "Adicionar Serviço" : "Editar Serviço"}
           </span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => openModal("add-category")}
+          >
+            Adicionar Categoria
+          </Button>
         </div>
       }
       className="!max-h-[85vh] !w-max"
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Informação Geral</h3>
-          </div>
-          <div className="space-y-4 sm:w-[35rem]">
+      {isLoading ? (
+        <ServiceModalSkeleton />
+      ) : error ? (
+        <RequestError refetch={refetch} message="Erro ao carregar categorias" />
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="sm:w-[35rem]">
+            <h3 className="font-semibold mb-4 border-b pb-2">
+              Informação Geral
+            </h3>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
-                className="mt-1"
-                startIcon="User"
-                id="service-name"
-                {...register("name")}
                 label="Nome do Serviço"
-                placeholder="Escreva aqui..."
+                startIcon="User"
+                {...register("name")}
+                placeholder="Ex: Consultoria Técnica"
                 error={errors.name?.message}
               />
               <Input
@@ -115,29 +149,26 @@ export function ServiceModal({ action }: ServiceModalProps) {
                 startIcon="Barcode"
                 {...register("sku")}
                 error={errors.sku?.message}
-                placeholder="Ex: SKU-12345"
+                placeholder="Opcional"
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Controller
-                control={control}
-                name="price"
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    id="price"
-                    type="text"
-                    startIcon="Coins"
-                    label="Preço de Venda"
-                    error={errors.price?.message}
-                    value={formatCurrency(value)}
-                    onChange={(e) => {
-                      const rawNumber = parseCurrency(e.target.value);
-                      onChange(rawNumber);
-                    }}
-                  />
-                )}
+            <div className="grid gap-4 sm:grid-cols-2 mt-4">
+              <Input
+                startIcon="Coins"
+                label="Preço de Venda"
+                {...register("price", {
+                  valueAsNumber: true,
+                })}
+                error={errors.price?.message}
               />
+              <input
+                type="hidden"
+                {...register("cost", {
+                  valueAsNumber: true,
+                })}
+              />
+
               <RHFSelect
                 control={control}
                 label="Categoria"
@@ -146,25 +177,28 @@ export function ServiceModal({ action }: ServiceModalProps) {
               />
             </div>
 
-            <Textarea
-              label="Descrição"
-              id="description"
-              {...register("description")}
-              placeholder="Escreva aqui..."
-              error={errors.description?.message}
-            />
+            <div className="mt-4">
+              <Textarea
+                label="Descrição"
+                {...register("description")}
+                placeholder="Breve descrição do serviço..."
+                error={errors.description?.message}
+                rows={4}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex justify-end gap-4 mt-5">
-          <Button type="button" variant="outline" onClick={handleCancel}>
-            Cancelar
-          </Button>
-          <ButtonSubmit className="w-max" isLoading={isPending || isSubmitting}>
-            Salvar
-          </ButtonSubmit>
-        </div>
-      </form>
-      <CategoryModal action="add" />
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              Cancelar
+            </Button>
+            <ButtonSubmit className="w-max" isLoading={isAdding || isUpdating}>
+              {action === "add" ? "Criar Serviço" : "Salvar"}
+            </ButtonSubmit>
+          </div>
+        </form>
+      )}
+      {open["add-category"] && <CategoryModal action="add" />}
     </GlobalModal>
   );
 }

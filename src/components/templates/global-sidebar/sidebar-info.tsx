@@ -29,7 +29,7 @@ export function SidebarCompanyInfo() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground aspect-square size-8">
+              <div className="flex items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground aspect-square size-8">
                 <Icon name="Building2" className="size-4" />
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">

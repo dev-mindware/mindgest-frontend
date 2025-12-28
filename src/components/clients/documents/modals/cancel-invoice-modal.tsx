@@ -1,5 +1,5 @@
 "use client";
-import { toast } from "sonner";
+import { ErrorMessage } from "@/utils/messages";
 import { useModal, currentInvoiceStore } from "@/stores";
 import { Button, ButtonSubmit, GlobalModal } from "@/components";
 import { useCancelInvoice } from "@/hooks";
@@ -13,7 +13,7 @@ export function CancelInvoiceModal() {
 
   async function handleCancelInvoice() {
     if (!currentInvoice?.id) {
-      toast.error("Fatura não selecionada");
+      ErrorMessage("Fatura não selecionada");
       return;
     }
 
@@ -22,11 +22,11 @@ export function CancelInvoiceModal() {
       handleClose();
     } catch (error: any) {
       if (error?.response) {
-        toast.error(
+        ErrorMessage(
           error?.response?.data?.message || "Erro ao cancelar fatura"
         );
       } else {
-        toast.error("Ocorreu um erro desconhecido");
+        ErrorMessage("Ocorreu um erro desconhecido");
       }
     }
   }

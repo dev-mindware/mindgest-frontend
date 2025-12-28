@@ -16,10 +16,8 @@ export function ClientModal({ action }: ClientModalProps) {
   const { closeModal, open } = useModal();
   const isOpen = open["add-client"] || open["edit-client"];
   const { currentClient } = currentClientStore();
-
   const { mutateAsync: addClient, isPending: isAdding } = useAddClient();
   const { mutateAsync: editClient, isPending: isEditing } = useUpdateClient();
-
   const {
     reset,
     register,

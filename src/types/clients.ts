@@ -3,19 +3,21 @@ export type clientsFilters = {
   status?: string;
   sortOrder?: string;
   search?: string;
+  createdAfter?: string;
+  createdBefore?: string;
 };
 
 export interface Client {
-  id: string
-  name: string
-  email?: string
-  phone: string
-  address: string
-  taxNumber?: string
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
-  companyId: string
+  id: string;
+  name: string;
+  email?: string;
+  phone: string;
+  address: string;
+  taxNumber?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  companyId: string;
 }
 
 export interface ClientSelectOption {

@@ -1,9 +1,28 @@
 import axios from "axios";
-import { getAccessToken } from "@/app/actions/token";
-import { reauthenticate } from "@/app/actions/auth";
+import { getAccessToken } from "@/actions/token";
+import { reauthenticate } from "@/actions/auth";
+
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (err: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+
+  failedQueue = [];
+};
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://mindgest-api.onrender.com/api",
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL || "https://mindgest-api.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -27,20 +46,38 @@ api.interceptors.response.use(
     }
 
     if (err.response?.status === 401) {
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            original.headers.Authorization = "Bearer " + token;
+            return api(original);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       original._retry = true;
+      isRefreshing = true;
+
       try {
         await reauthenticate();
-        
         const newToken = await getAccessToken();
+
         if (newToken) {
+          processQueue(null, newToken);
           original.headers.Authorization = `Bearer ${newToken}`;
           return api(original);
         }
-
       } catch (refreshError) {
+        processQueue(refreshError, null);
         console.error("Erro ao renovar token:", refreshError);
         window.location.replace("/auth/login");
-        return Promise.reject(err);
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
     return Promise.reject(err);

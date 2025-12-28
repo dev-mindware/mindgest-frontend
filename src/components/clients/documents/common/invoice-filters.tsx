@@ -1,4 +1,5 @@
 "use client";
+
 import { Button, DatePicker, Input } from "@/components/ui";
 import { invoiceByOption, invoiceStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
@@ -6,16 +7,20 @@ import { FilterPopover } from "@/components/shared";
 import { useInvoiceFilters, useURLSearchParams } from "@/hooks";
 import { InvoiceStatus } from "@/types";
 
-type InvoiceType = "proforma" | "receipt" | "invoice-receipt" | "invoice";
+type InvoiceType =
+  | "invoice"
+  | "proforma"
+  | "invoice-receipt"
+  | "receipt";
 
 type Props = {
-  type?: InvoiceType;
-  searchText: string;
+  type: InvoiceType;
 };
 
-export function InvoiceFiltersTSX({ searchText, type }: Props) {
-  const { filters, setFilters } = useInvoiceFilters();
-  const { search, setSearch } = useURLSearchParams(searchText);
+export function InvoiceFiltersTSX({ type }: Props) {
+  const prefix = type;
+  const { filters, setFilters } = useInvoiceFilters(prefix);
+  const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
 
   function clearFilters() {
     setFilters({
@@ -27,26 +32,27 @@ export function InvoiceFiltersTSX({ searchText, type }: Props) {
       startDate: undefined,
       endDate: undefined,
     });
+
     setSearch("");
   }
 
   const hasFilter =
-    filters.status ||
-    filters.sortBy ||
-    filters.sortOrder ||
-    search.length > 0 ||
-    filters.invoiceNumber ||
-    filters.clientName ||
-    filters.startDate ||
-    filters.endDate;
+    !!filters.status ||
+    !!filters.sortBy ||
+    !!filters.sortOrder ||
+    !!filters.invoiceNumber ||
+    !!filters.clientName ||
+    !!filters.startDate ||
+    !!filters.endDate ||
+    search.length > 0;
 
   const showStatusFilter = type === "invoice";
 
   return (
     <div className="w-full flex flex-col gap-4">
       <SearchHandlerWrapper
-        search={search || ""}
-        setSearch={(val) => setSearch(val)}
+        search={search}
+        setSearch={setSearch}
         className="w-full flex gap-4"
       >
         <div className="flex items-center gap-2">
@@ -82,31 +88,50 @@ export function InvoiceFiltersTSX({ searchText, type }: Props) {
           />
         </div>
       </SearchHandlerWrapper>
-      <div className="w-full flex items-center gap-3">
+
+      <div className="w-full flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <Input
             type="search"
             placeholder="Nº Fatura"
-            value={filters.invoiceNumber || ""}
-            onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
+            value={filters.invoiceNumber ?? ""}
+            onChange={(e) =>
+              setFilters({ invoiceNumber: e.target.value })
+            }
           />
+
           <Input
             type="search"
             placeholder="Cliente"
-            value={filters.clientName || ""}
-            onChange={(e) => setFilters({ clientName: e.target.value })}
+            value={filters.clientName ?? ""}
+            onChange={(e) =>
+              setFilters({ clientName: e.target.value })
+            }
           />
         </div>
 
         <div className="flex items-center gap-2">
           <DatePicker
-            value={filters.startDate ? new Date(filters.startDate) : undefined}
-            onChange={(_, formatted) => setFilters({ startDate: formatted })}
+            value={
+              filters.startDate
+                ? new Date(filters.startDate)
+                : undefined
+            }
+            onChange={(_, formatted) =>
+              setFilters({ startDate: formatted })
+            }
             placeholder="Data Início"
           />
+
           <DatePicker
-            value={filters.endDate ? new Date(filters.endDate) : undefined}
-            onChange={(_, formatted) => setFilters({ endDate: formatted })}
+            value={
+              filters.endDate
+                ? new Date(filters.endDate)
+                : undefined
+            }
+            onChange={(_, formatted) =>
+              setFilters({ endDate: formatted })
+            }
             placeholder="Data Fim"
           />
         </div>

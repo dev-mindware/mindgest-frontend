@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown } from "lucide-react"
+import { TrendingUp, TrendingDown, ShoppingBasket, DollarSign, ShoppingCart } from "lucide-react"
 import { StatCard } from "./stat-card"
 
 const stats = [
@@ -6,7 +6,7 @@ const stats = [
     label: "Produtos Vendidos",
     value: "450",
     trend: "-20 este mês",
-    trendIcon: TrendingDown,
+    trendIcon: ShoppingCart,
     trendPositive: false,
     footerMain: "Queda pontual no volume",
     footerSub: "Sugere ajustes nas campanhas",
@@ -24,7 +24,7 @@ const stats = [
     label: "Total de Vendas",
     value: "80,912 Kz",
     trend: "-1.2%",
-    trendIcon: TrendingDown,
+    trendIcon: ShoppingBasket,
     trendPositive: false,
     footerMain: "Pequena retração no período",
     footerSub: "Reforçar ações comerciais",
@@ -33,7 +33,7 @@ const stats = [
     label: "Total Geral",
     value: "250,040 Kz",
     trend: "+7.8%",
-    trendIcon: TrendingUp,
+    trendIcon: DollarSign,
     trendPositive: true,
     footerMain: "Base financeira em expansão",
     footerSub: "Superando metas estabelecidas",

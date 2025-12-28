@@ -18,7 +18,7 @@ import { CreditNotesResponse } from "@/types/credit-note";
 import { useCreditNotesActions, useCreditNotesFilters } from "@/hooks";
 
 export function CreditNotesList() {
-  const { search } = useURLSearchParams("search-credit-notes");
+  const { search } = useURLSearchParams("search-credit-note");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useCreditNotesFilters();
   const { handlerDetailsCreditNote } = useCreditNotesActions();

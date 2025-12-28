@@ -3,7 +3,7 @@
 import { Button, GlobalModal } from "@/components";
 import { useModal } from "@/stores";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
-import { toast } from "sonner";
+import { ErrorMessage, SucessMessage } from "@/utils/messages";
 
 export function PosDeleteModal() {
   const { closeModal, open } = useModal();
@@ -21,11 +21,11 @@ export function PosDeleteModal() {
       // Simular API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success(`Caixa ${currentCashier.name} removido com sucesso.`);
+      SucessMessage(`Caixa ${currentCashier.name} removido com sucesso.`);
       setCurrentCashier(null);
       closeModal("delete-cashier");
     } catch (error) {
-      toast.error("Erro ao remover o caixa. Tente novamente.");
+      ErrorMessage("Erro ao remover o caixa. Tente novamente.");
     }
   };
 

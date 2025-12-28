@@ -11,7 +11,7 @@ import {
   RHFSelect,
   Textarea,
 } from "@/components";
-import { toast } from "sonner";
+import { ErrorMessage, SucessMessage } from "@/utils/messages";
 import { useGenerateReceipt } from "@/hooks/invoice";
 import { formatCurrency } from "@/utils";
 import { useEffect } from "react";
@@ -37,7 +37,6 @@ export function GenerateReceiptModal() {
     },
   });
 
-
   useEffect(() => {
     if (!currentInvoice) return;
 
@@ -48,14 +47,13 @@ export function GenerateReceiptModal() {
     setValue("total", currentInvoice.total ?? "0");
   }, [currentInvoice, setValue]);
 
-
-  console.log("ERROS NO FORMULARIO: ")
-  console.log(errors)
+  console.log("ERROS NO FORMULARIO: ");
+  console.log(errors);
 
   async function onSubmit(data: ReceiptFormData) {
     try {
       if (!currentInvoice) {
-        toast.error("Fatura não selecionada");
+        ErrorMessage("Fatura não selecionada");
         return;
       }
 
@@ -73,9 +71,9 @@ export function GenerateReceiptModal() {
       handleCancel();
     } catch (error: any) {
       if (error?.response) {
-        toast.error(error?.response?.data?.message || "Erro ao gerar recibo");
+        ErrorMessage(error?.response?.data?.message || "Erro ao gerar recibo");
       } else {
-        toast.error("Erro ao gerar recibo");
+        ErrorMessage("Erro ao gerar recibo");
       }
     }
   }

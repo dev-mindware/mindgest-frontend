@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User } from "@/types";
-import { logoutAction } from "@/app/actions/login";
+import { logoutAction } from "@/actions/login";
 
 interface AuthState {
   user: User | null;

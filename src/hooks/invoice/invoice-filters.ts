@@ -1,53 +1,79 @@
 "use client";
+
 import { InvoiceFilters } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export function useInvoiceFilters() {
+export function useInvoiceFilters(prefix: string) {
   const router = useRouter();
   const query = useSearchParams();
 
+  const getKey = (key: string) => `${prefix}_${key}`;
+
   const filters: InvoiceFilters = {
-    status: (query.get("status") as InvoiceFilters["status"]) || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
-    invoiceNumber: query.get("invoiceNumber") || undefined,
-    clientName: query.get("clientName") || undefined,
-    startDate: query.get("startDate") || undefined,
-    endDate: query.get("endDate") || undefined,
+    status:
+      (query.get(getKey("status")) as InvoiceFilters["status"]) || undefined,
+    sortBy: query.get(getKey("sortBy")) || undefined,
+    sortOrder: query.get(getKey("sortOrder")) || undefined,
+    invoiceNumber: query.get(getKey("invoiceNumber")) || undefined,
+    clientName: query.get(getKey("clientName")) || undefined,
+    startDate: query.get(getKey("startDate")) || undefined,
+    endDate: query.get(getKey("endDate")) || undefined,
   };
 
+  const page = Number(query.get(getKey("page"))) || 1;
+
+  function updateParam(
+    searchParams: URLSearchParams,
+    key: string,
+    value: string | number | null | undefined
+  ) {
+    if (value === undefined) return;
+
+    if (value === null || value === "") {
+      searchParams.delete(key);
+      return;
+    }
+
+    searchParams.set(key, String(value));
+  }
+
   function setFilters(newFilters: Partial<InvoiceFilters>) {
-    const updated = { ...filters, ...newFilters };
-    const searchParams = new URLSearchParams(query.toString()); // Start with existing params
-
-    const setOrDelete = (key: string, value: string | number | undefined) => {
-      if (value !== undefined && value !== null && value !== "") {
-        searchParams.set(key, String(value));
-      } else {
-        searchParams.delete(key);
-      }
-    };
-
-    setOrDelete("status", updated.status);
-    setOrDelete("sortBy", updated.sortBy);
-    setOrDelete("sortOrder", updated.sortOrder);
-    setOrDelete("invoiceNumber", updated.invoiceNumber);
-    setOrDelete("clientName", updated.clientName);
-    setOrDelete("startDate", updated.startDate);
-    setOrDelete("endDate", updated.endDate);
-
-    searchParams.set("page", "1"); // reset page ao trocar filtro
-
-    router.push(`?${searchParams.toString()}`);
-  }
-
-  function setPage(page: number) {
     const searchParams = new URLSearchParams(query.toString());
-    searchParams.set("page", String(page));
-    router.push(`?${searchParams.toString()}`);
+
+    updateParam(searchParams, getKey("status"), newFilters.status);
+    updateParam(searchParams, getKey("sortBy"), newFilters.sortBy);
+    updateParam(searchParams, getKey("sortOrder"), newFilters.sortOrder);
+    updateParam(
+      searchParams,
+      getKey("invoiceNumber"),
+      newFilters.invoiceNumber
+    );
+    updateParam(
+      searchParams,
+      getKey("clientName"),
+      newFilters.clientName
+    );
+    updateParam(searchParams, getKey("startDate"), newFilters.startDate);
+    updateParam(searchParams, getKey("endDate"), newFilters.endDate);
+
+    // reset page apenas se houve mudança de filtro
+    if (Object.keys(newFilters).length > 0) {
+      searchParams.set(getKey("page"), "1");
+    }
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
   }
 
-  const page = Number(query.get("page")) || 1;
+  function setPage(newPage: number) {
+    const searchParams = new URLSearchParams(query.toString());
+    searchParams.set(getKey("page"), String(newPage));
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
 
-  return { filters, setFilters, page, setPage };
+  return {
+    filters,
+    setFilters,
+    page,
+    setPage,
+  };
 }

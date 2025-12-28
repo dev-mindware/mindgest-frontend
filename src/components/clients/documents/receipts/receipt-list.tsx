@@ -1,27 +1,27 @@
 "use client";
 import { usePagination, useURLSearchParams } from "@/hooks/common";
 import {
+  Badge,
   Column,
   RequestError,
   GenericTable,
   ListSkeleton,
   EmptyState,
   ButtonOnlyAction,
-  Badge,
   ReceiptPreviewDrawer,
 } from "@/components";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { paymentMethodMap } from "@/constants";
-import { useInvoiceFilters } from "@/hooks/invoice-receipt";
+import { useInvoiceFilters } from "@/hooks/invoice";
 import { InvoiceFiltersTSX } from "../common";
 import { useReceiptActions } from "@/hooks";
 import { ReceiptResponse } from "@/types/receipt";
 
 export function ReceiptList() {
-  const { search } = useURLSearchParams("search-receipt");
+  const { search } = useURLSearchParams("receipt");
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, page, setPage } = useInvoiceFilters();
+  const { filters, page, setPage } = useInvoiceFilters("receipt");
   const {
     data: receipts,
     total,
@@ -57,7 +57,7 @@ export function ReceiptList() {
     {
       key: "client",
       header: "Cliente",
-      render: (_, item) => item.client.name || "N/A",
+      render: (_, item) => item?.client?.name || "N/A",
     },
     {
       key: "paymentMethodStr",
@@ -89,7 +89,7 @@ export function ReceiptList() {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />
+  if (isLoading) return <ListSkeleton />;
 
   if (isError) {
     return (
@@ -99,7 +99,7 @@ export function ReceiptList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="receipt" searchText="search-receipt" />
+      <InvoiceFiltersTSX type="receipt" />
 
       {receipts.length > 0 ? (
         <GenericTable<ReceiptResponse>
@@ -112,7 +112,8 @@ export function ReceiptList() {
           goToNextPage={goToNextPage}
           goToPreviousPage={goToPreviousPage}
           emptyMessage="Nenhum recibo encontrado"
-        />) :
+        />
+      ) : (
         <div className="justify-start mt-6 space-y-8">
           <EmptyState
             description="Nenhum recibo encontrado"
@@ -120,7 +121,7 @@ export function ReceiptList() {
             icon="FileText"
           />
         </div>
-      }
+      )}
       <ReceiptPreviewDrawer />
     </div>
   );

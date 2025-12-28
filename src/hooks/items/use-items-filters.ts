@@ -1,7 +1,8 @@
 "use client";
+
 import { useState } from "react";
-import { ItemsFilters, ItemStatus } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ItemsFilters, ItemStatus } from "@/types";
 
 export function useItemsFilters(prefix: string) {
   const router = useRouter();
@@ -21,25 +22,52 @@ export function useItemsFilters(prefix: string) {
 
   const page = Number(query.get(getKey("page"))) || 1;
 
+  function updateParam(
+    searchParams: URLSearchParams,
+    key: string,
+    value?: string | null
+  ) {
+    if (value) searchParams.set(key, value);
+    else searchParams.delete(key);
+  }
+
   function setFilters(newFilters: Partial<ItemsFilters>) {
     const searchParams = new URLSearchParams(query.toString());
+    let shouldResetPage = false;
 
-    // Você passa { status: 'ACTIVE' }, o código converte para "product_status=ACTIVE" na URL
-    if (newFilters.status !== undefined) {
-      if (newFilters.status) searchParams.set(getKey("status"), newFilters.status);
-      else searchParams.delete(getKey("status"));
-    }
-    
-    if (newFilters.categoryId !== undefined) {
-      if (newFilters.categoryId) searchParams.set(getKey("categoryId"), newFilters.categoryId);
-      else searchParams.delete(getKey("categoryId"));
+    if ("status" in newFilters) {
+      updateParam(searchParams, getKey("status"), newFilters.status);
+      shouldResetPage = true;
     }
 
-    if (newFilters.sortBy) searchParams.set(getKey("sortBy"), newFilters.sortBy);
-    if (newFilters.sortOrder) searchParams.set(getKey("sortOrder"), newFilters.sortOrder);
-    
-    // Reseta a página específica deste prefixo
-    searchParams.set(getKey("page"), "1"); 
+    if ("categoryId" in newFilters) {
+      updateParam(searchParams, getKey("categoryId"), newFilters.categoryId);
+      shouldResetPage = true;
+    }
+
+    if ("sortBy" in newFilters) {
+      updateParam(searchParams, getKey("sortBy"), newFilters.sortBy);
+      shouldResetPage = true;
+    }
+
+    if ("sortOrder" in newFilters) {
+      updateParam(searchParams, getKey("sortOrder"), newFilters.sortOrder);
+      shouldResetPage = true;
+    }
+
+    if ("minPrice" in newFilters) {
+      updateParam(searchParams, getKey("minPrice"), newFilters.minPrice);
+      shouldResetPage = true;
+    }
+
+    if ("maxPrice" in newFilters) {
+      updateParam(searchParams, getKey("maxPrice"), newFilters.maxPrice);
+      shouldResetPage = true;
+    }
+
+    if (shouldResetPage) {
+      searchParams.set(getKey("page"), "1");
+    }
 
     router.push(`?${searchParams.toString()}`, { scroll: false });
   }
@@ -50,5 +78,12 @@ export function useItemsFilters(prefix: string) {
     router.push(`?${searchParams.toString()}`, { scroll: false });
   }
 
-  return { filters, setFilters, viewMode, setViewMode, page, setPage };
+  return {
+    filters,
+    setFilters,
+    page,
+    setPage,
+    viewMode,
+    setViewMode,
+  };
 }
