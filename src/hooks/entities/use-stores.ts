@@ -17,8 +17,8 @@ export function useGetStores() {
       value: store.id,
     })) || [];
 
-  return { stores, error, isLoading, refetch };
-} 
+  return { stores, storesData: data?.data || [], error, isLoading, refetch };
+}
 
 export function useDeleteStore() {
   const queryClient = useQueryClient();

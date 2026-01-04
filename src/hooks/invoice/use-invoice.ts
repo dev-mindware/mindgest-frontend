@@ -4,6 +4,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreditNoteFormData } from "@/schemas";
 import { ReceiptData } from "@/types/receipt";
 import { DownloadType, InvoicePayload } from "@/types";
+import { triggerBrowserDownload } from "@/utils/donwload.file";
+
+type DownloadInvoiceProps = {
+  id: string;
+  type: DownloadType;
+  filename: string;
+};
 
 export function useGenerateReceipt() {
   const queryClient = useQueryClient();
@@ -77,8 +84,10 @@ export function useAnnulationNote() {
 
 export function useDownloadInvoice() {
   return useMutation({
-    mutationFn: ({ id, type }: { id: string; type: DownloadType }) =>
-      invoiceService.downloadInvoice(id, type),
+    mutationFn: async ({ id, type, filename }: DownloadInvoiceProps) => {
+      const response = await invoiceService.downloadInvoice(id, type);
+      triggerBrowserDownload(response, `${filename}.${type}`);
+    },
     onSuccess: () => {
       SucessMessage("Documento baixado com sucesso!");
     },

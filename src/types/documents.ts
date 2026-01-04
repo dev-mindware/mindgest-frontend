@@ -8,6 +8,7 @@ export type InvoiceStatus =
   | "CANCELLED"
   | "OVERDUE"
   | string;
+  
 export type DownloadType = "docx" | "pdf" | "xml";
 
 export type ContactInfo = {
@@ -190,3 +191,10 @@ export type CreditNoteData = {
   taxAmount: number; // idealmente number, não string
   createdAt: string; // ISO Date
 };
+
+export type DocumentType =
+  | "invoice"
+  | "proforma"
+  | "receipt"
+  | "invoice-receipt";
+

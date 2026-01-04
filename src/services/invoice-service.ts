@@ -1,33 +1,35 @@
 import { api } from "./api";
-import { CreditNoteFormData } from "@/schemas";
 import type { DownloadType, InvoicePayload } from "@/types";
+import { CreditNoteFormData } from "@/schemas";
 import { ReceiptData } from "@/types/receipt";
 
 export const invoiceService = {
-  createInvoice: async (data: InvoicePayload) => {
-    return api.post("/invoice/normal", data);
+  createInvoice: (data: InvoicePayload) =>
+    api.post("/invoice/normal", data),
+
+  downloadInvoice: (id: string, type: DownloadType) => {
+    const endpointMap: Record<DownloadType, string> = {
+      pdf: `/invoice/normal/${id}/download-pdf`,
+      docx: `/invoice/normal/${id}/download-docx`,
+      xml: `/invoice/normal/${id}/download-xml`,
+    };
+
+    return api.get(endpointMap[type], {
+      responseType: "blob",
+    });
   },
-  downloadInvoice: async (id: string, type: DownloadType) => {
-    if (type === "docx") {
-      return api.get(`/invoice/normal/${id}/download-docx`);
-    }
-    if (type === "pdf") {
-      return api.get(`/invoice/normal/${id}/download-pdf`);
-    }
-    if (type === "xml") {
-      return api.get(`/invoice/normal/${id}/download-xml`);
-    }
-  },
-  generateReceipt: async (data: ReceiptData) => {
-    return api.post(`/invoice/receipt`, data);
-  },
-  cancelInvoice: async (id: string) => {
-    return api.patch(`/invoice/normal/${id}/cancel`);
-  },
-  createCreditNote: async (id: string, data: CreditNoteFormData) => {
-    return api.post(`/credit-note/${id}/correction`, data);
-  },
-  annulationNote: async (id: string, reason: string, notes: string) => {
-    return api.delete(`/credit-note/${id}/annulment`, { data: { reason, notes } });
-  },
+
+  generateReceipt: (data: ReceiptData) =>
+    api.post(`/invoice/receipt`, data),
+
+  cancelInvoice: (id: string) =>
+    api.patch(`/invoice/normal/${id}/cancel`),
+
+  createCreditNote: (id: string, data: CreditNoteFormData) =>
+    api.post(`/credit-note/${id}/correction`, data),
+
+  annulationNote: (id: string, reason: string, notes: string) =>
+    api.delete(`/credit-note/${id}/annulment`, {
+      data: { reason, notes },
+    }),
 };

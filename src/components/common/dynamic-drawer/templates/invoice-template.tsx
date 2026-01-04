@@ -3,7 +3,7 @@ import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
 import {
   DocumentStatusBadge,
-  DownloadInvoiceButton,
+  DownloadDocumentButton,
 } from "@/components/clients/documents/common";
 
 interface InvoiceTemplateProps {
@@ -98,7 +98,11 @@ export function InvoiceTemplate({ data }: InvoiceTemplateProps) {
           <p className="text-muted-foreground">{data.notes}</p>
         </div>
       )}
-      <DownloadInvoiceButton id={data.id} />
+      <DownloadDocumentButton
+        documentType="invoice"
+        filenameBase={data.number}
+        id={data.id}
+      />
     </div>
   );
 }
