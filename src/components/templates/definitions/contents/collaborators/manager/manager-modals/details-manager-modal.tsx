@@ -1,5 +1,5 @@
 "use client";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { Icon, Button, DetailRow, GlobalModal, Badge } from "@/components";
 import { formatDateTime } from "@/utils";
 import { currentManagerStore } from "@/stores";
@@ -26,9 +26,11 @@ export function DetailsManagerModal() {
             <div className="flex items-center justify-center gap-2">
               <span className="text-xs text-muted-foreground">
                 Cargo: {currentManager.role}
-            </span>
+              </span>
               <Badge
-                variant={currentManager.status === "ACTIVE" ? "success" : "destructive"}
+                variant={
+                  currentManager.status === "ACTIVE" ? "success" : "destructive"
+                }
               >
                 {currentManager.status === "ACTIVE" ? "Activo" : "Inactivo"}
               </Badge>
@@ -37,7 +39,6 @@ export function DetailsManagerModal() {
         </>
       }
       className="!max-w-md !w-[90vw] md:!w-full"
-
       footer={
         <div className="flex justify-end">
           <Button variant="outline" onClick={() => closeModal("view-manager")}>
@@ -53,11 +54,11 @@ export function DetailsManagerModal() {
           </h3>
           <DetailRow label="Nome" value={currentManager.name} />
           <DetailRow label="Email" value={currentManager.email} />
-          <DetailRow label="Telefone" value={currentManager.phone} /> 
+          <DetailRow label="Telefone" value={currentManager.phone} />
         </section>
 
         {/* Empresa e Identificação */}
-        {(currentManager.companyId) && (
+        {currentManager.companyId && (
           <section className="space-y-2">
             <h3 className="font-semibold text-foreground">
               Identificação e Empresa

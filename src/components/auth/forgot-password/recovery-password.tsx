@@ -1,7 +1,7 @@
 "use client";
 import Logo from "@/assets/brand.png";
 import { ButtonSubmit, Input } from "@/components";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ForgotPasswordFormData } from "@/schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

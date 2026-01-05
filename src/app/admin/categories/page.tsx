@@ -1,5 +1,5 @@
 import { PageWrapper } from "@/components";
-import { CategoriesPageContent } from "@/components/clients/categories";
+import { CategoriesPageContent } from "@/components/client/categories";
 import { Suspense } from "react";
 
 export default function Page() {

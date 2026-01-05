@@ -1,6 +1,6 @@
 import { StoreResponse } from "@/types";
 import { currentStoreStore } from "@/stores/entities/current-store-store";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { useToggleStatusStore } from "./use-stores";
 
 export function useStoreActions() {

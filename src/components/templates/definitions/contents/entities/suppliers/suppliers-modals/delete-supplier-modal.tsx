@@ -1,7 +1,7 @@
 import { Button, GlobalModal } from "@/components";
 import { useDeleteSupplier } from "@/hooks/entities/use-suppliers";
 import { currentSupplierStore } from "@/stores/entities/current-supplier-store";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
 
 export function DeleteSupplierModal() {

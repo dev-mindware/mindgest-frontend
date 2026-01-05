@@ -1,5 +1,5 @@
 "use client";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { Icon, Button, DetailRow, GlobalModal, Badge } from "@/components";
 import { formatDateTime } from "@/utils";
 import { currentSupplierStore } from "@/stores/entities/current-supplier-store";

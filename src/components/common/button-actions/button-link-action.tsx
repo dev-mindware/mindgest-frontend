@@ -36,7 +36,7 @@ export function ButtonActionLink({
     if (!invoice) return `${route}/${id}`;
 
     return {
-      pathname: `/clients/documents/new`,
+      pathname: `/documents/new`,
       query: { invoice },
     };
   };

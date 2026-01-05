@@ -3,7 +3,7 @@ import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { paymentMethodMap } from "@/constants";
-import { DownloadDocumentButton } from "@/components/clients";
+import { DownloadDocumentButton } from "@/components/client";
 
 interface ReceiptTemplateProps {
   data: ReceiptResponse;

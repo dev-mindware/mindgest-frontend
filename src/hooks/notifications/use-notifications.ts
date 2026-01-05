@@ -1,185 +1,154 @@
 "use client";
-
 import { useEffect } from "react";
-import { api } from "@/services/api";
-// import { io, Socket } from "socket.io-client";
-import {
-  useQuery,
-  useQueryClient,
-  useMutation,
-} from "@tanstack/react-query";
-import { NotificationType, NotificationResponse } from "@/types";
-import { useModal } from "@/stores/use-modal-store";
+import { io, Socket } from "socket.io-client";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { useCurrentNotificationStore } from "@/stores";
-import { Socket } from "dgram";
+import { NotificationParams, NotificationType } from "@/types/notification";
+import { notificationsService } from "@/services/notifications-service";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-//let socket: Socket | null = null;
+let socket: Socket;
 
-export function useNotifications() {
+export function useNotifications(
+  initialFilters: Omit<NotificationParams, "skip" | "take"> = {}
+) {
   const queryClient = useQueryClient();
   const { openModal } = useModal();
   const { setCurrentNotification } = useCurrentNotificationStore();
 
-  const { data: notificationsResponse } = useQuery<NotificationResponse>({
-    queryKey: ["notifications"],
-    queryFn: async () => {
-      const res = await api.get<NotificationResponse>("/notification/my");
-      return res.data;
+  const TAKE = 5;
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ["notifications", initialFilters],
+    queryFn: ({ pageParam = 0 }) =>
+      notificationsService.getNotifications({
+        ...initialFilters,
+        skip: pageParam as number,
+        take: TAKE,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.data.length < TAKE) return undefined;
+      return allPages.length * TAKE;
     },
     staleTime: 1000 * 60,
   });
 
-  const notifications = notificationsResponse?.data ?? [];
-  const total = notificationsResponse?.total ?? 0;
-  const page = notificationsResponse?.page ?? 1;
-  const pageCount = notificationsResponse?.pageCount ?? 0;
+  const notifications = data?.pages.flatMap((page) => page.data) ?? [];
 
- /*  useEffect(() => {
-    if (!socket) {
-      socket = io(process.env.NEXT_PUBLIC_API_URL!, {
-        transports: ["websocket"],
-      });
-    }
+  // Socket.IO Connection
+  useEffect(() => {
+    // Only connect if URL is defined
+    if (!process.env.NEXT_PUBLIC_API_URL) return;
 
-    socket.on("new_notification", (n: NotificationType) => {
-      queryClient.setQueryData<NotificationResponse>(
-        ["notifications"],
-        (old) => {
-          if (!old) {
-            return { data: [n], total: 1, page: 1, pageCount: 1 };
-          }
-          return {
-            ...old,
-            data: [n, ...old.data],
-            total: old.total + 1,
+    socket = io(process.env.NEXT_PUBLIC_API_URL, {
+      transports: ["websocket"],
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to notification socket");
+    });
+
+    socket.on("new_notification", (newNotification: NotificationType) => {
+      // Optimistically update the cache
+      queryClient.setQueryData<any>(["notifications", initialFilters], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        // Insert into the first page
+        const newPages = [...oldData.pages];
+        if (newPages.length > 0) {
+          newPages[0] = {
+            ...newPages[0],
+            data: [newNotification, ...newPages[0].data]
           };
         }
-      );
+
+        return {
+          ...oldData,
+          pages: newPages,
+        };
+      });
     });
 
     return () => {
-      socket?.off("new_notification");
+      if (socket) socket.disconnect();
     };
-  }, [queryClient]);
- */
+  }, [queryClient, initialFilters]);
+
+  // Mutations
   const { mutateAsync: markAsRead } = useMutation({
-    mutationFn: async (id: string) => {
-      await api.patch(`/notification/${id}/read`);
-      return id;
-    },
+    mutationFn: notificationsService.markAsRead,
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ["notifications"] });
-      const previous = queryClient.getQueryData<NotificationResponse>([
-        "notifications",
-      ]);
+      // Optimistic update would be complex with infinite pages, disabling for simplicity or implementing basic toggle
+      // For now, simpler to just invalidate or manually update if critical.
+      // Let's manually update cache for responsiveness
 
-      queryClient.setQueryData<NotificationResponse>(
-        ["notifications"],
-        (old) =>
-          old
-            ? {
-                ...old,
-                data: old.data.map((n) =>
-                  n.id === id ? { ...n, status: "read" } : n
-                ),
-              }
-            : old
-      );
-
-      return { previous };
-    },
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["notifications"], context.previous);
-      }
+      queryClient.setQueryData<any>(["notifications", initialFilters], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((n: NotificationType) =>
+              n.id === id ? { ...n, isRead: true } : n
+            )
+          }))
+        };
+      });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    },
-  });
-
-  const { mutateAsync: markAllAsRead } = useMutation({
-    mutationFn: async () => {
-      await api.patch(`/notification/read-all`);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["notifications"] });
-      const previous = queryClient.getQueryData<NotificationResponse>([
-        "notifications",
-      ]);
-
-      queryClient.setQueryData<NotificationResponse>(
-        ["notifications"],
-        (old) =>
-          old
-            ? {
-                ...old,
-                data: old.data.map((n) => ({ ...n, status: "read" })),
-              }
-            : old
-      );
-
-      return { previous };
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["notifications"], context.previous);
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // queryClient.invalidateQueries({ queryKey: ["notifications"] }); // Optional: Re-fetch to confirm
     },
   });
 
   const { mutateAsync: deleteNotification } = useMutation({
-    mutationFn: async (id: string) => {
-      await api.delete(`/notification/${id}/delete`);
-      return id;
-    },
+    mutationFn: notificationsService.deleteNotification,
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ["notifications"] });
-      const previous = queryClient.getQueryData<NotificationResponse>([
-        "notifications",
-      ]);
-
-      queryClient.setQueryData<NotificationResponse>(
-        ["notifications"],
-        (old) =>
-          old
-            ? {
-                ...old,
-                data: old.data.filter((n) => n.id !== id),
-                total: old.total - 1,
-              }
-            : old
-      );
-
-      return { previous };
-    },
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["notifications"], context.previous);
-      }
+      queryClient.setQueryData<any>(["notifications", initialFilters], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            data: page.data.filter((n: NotificationType) => n.id !== id)
+          }))
+        };
+      });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
+
 
   const handleNotificationClick = (notification: NotificationType) => {
     openModal("notify-detail");
     setCurrentNotification(notification);
-    markAsRead(notification.id);
+    if (!notification.isRead) {
+      markAsRead(notification.id);
+    }
   };
 
   return {
-    page,
-    total,
-    pageCount,
-    markAsRead,
-    markAllAsRead,
     notifications,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    markAsRead,
     deleteNotification,
     handleNotificationClick,
+    refetch
   };
 }

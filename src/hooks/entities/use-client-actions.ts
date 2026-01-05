@@ -1,4 +1,4 @@
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ClientResponse } from "@/types";
 import { currentClientStore } from "@/stores/entities";
 

@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 import Ai from "@/assets/AI.png";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { Button } from "@/components/ui";
 import { TitleList } from "@/components/common";
-import { AddProductModal } from "@/components/clients";
+import { AddProductModal } from "@/components/client";
 
 export function Management() {
   const { openModal } = useModal();

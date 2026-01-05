@@ -1,7 +1,7 @@
 "use client";
 
 import { DynamicDrawer } from "./index";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { currentCreditNoteStore } from "@/stores/documents";
 import { InvoiceTemplate } from "./templates/invoice-template";
 import { CreditNoteTemplate } from "./templates";

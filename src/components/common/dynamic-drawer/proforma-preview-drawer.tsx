@@ -1,6 +1,6 @@
 "use client";
 
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { currentProformaStore } from "@/stores/documents";
 import { DynamicDrawer } from "./index";
 import { InvoiceTemplate } from "./templates/invoice-template";

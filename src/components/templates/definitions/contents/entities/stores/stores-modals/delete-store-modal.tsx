@@ -1,7 +1,7 @@
 import { Button, GlobalModal } from "@/components";
 import { useDeleteStore } from "@/hooks/entities";
 import { currentStoreStore } from "@/stores/entities/current-store-store";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
 
 export function DeleteStoreModal() {

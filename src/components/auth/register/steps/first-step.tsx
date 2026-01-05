@@ -12,8 +12,6 @@ export function FirstStep() {
     formState: { errors },
   } = useFormContext<RegisterFormData>();
 
-  console.log("ERROS: ")
-  console.log(errors)
 
   return (
     <div className={cn("flex flex-col gap-6")}>

@@ -1,5 +1,5 @@
 "use client";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { Icon, Button, DetailRow, GlobalModal, Badge } from "@/components";
 import { formatDateTime } from "@/utils";
 import { currentClientStore } from "@/stores";
@@ -26,7 +26,7 @@ export function DetailsClientModal() {
             <div className="flex items-center justify-center gap-2">
               <span className="text-xs text-muted-foreground">
                 NIF: {currentClient.taxNumber}
-            </span>
+              </span>
               <Badge
                 variant={currentClient.isActive ? "success" : "destructive"}
               >
@@ -37,7 +37,6 @@ export function DetailsClientModal() {
         </>
       }
       className="!max-w-md !w-[90vw] md:!w-full"
-
       footer={
         <div className="flex justify-end">
           <Button variant="outline" onClick={() => closeModal("view-client")}>

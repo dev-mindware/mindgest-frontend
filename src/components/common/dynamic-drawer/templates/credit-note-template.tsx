@@ -1,7 +1,7 @@
 import { CreditNotesResponse } from "@/types/credit-note";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
-import { DocumentStatusBadge } from "@/components/clients/documents/common";
+import { DocumentStatusBadge } from "@/components/client/documents/common";
 
 interface Props {
   data: CreditNotesResponse;
@@ -33,18 +33,12 @@ export function CreditNoteTemplate({ data }: Props) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <h3 className="font-semibold mb-1 text-muted-foreground">
-            Cliente
-          </h3>
-          <p className="font-medium text-lg">
-            {data.client.name}
-          </p>
+          <h3 className="font-semibold mb-1 text-muted-foreground">Cliente</h3>
+          <p className="font-medium text-lg">{data.client.name}</p>
         </div>
 
         <div className="text-right">
-          <h3 className="font-semibold mb-1 text-muted-foreground">
-            Estado
-          </h3>
+          <h3 className="font-semibold mb-1 text-muted-foreground">Estado</h3>
           <DocumentStatusBadge status={data.status} />
         </div>
       </div>
@@ -60,30 +54,18 @@ export function CreditNoteTemplate({ data }: Props) {
         <table className="w-full">
           <thead className="bg-muted">
             <tr>
-              <th className="px-4 py-2 text-left font-medium">
-                Item
-              </th>
-              <th className="px-4 py-2 text-right font-medium">
-                Qtd
-              </th>
-              <th className="px-4 py-2 text-right font-medium">
-                Preço
-              </th>
-              <th className="px-4 py-2 text-right font-medium">
-                Total
-              </th>
+              <th className="px-4 py-2 text-left font-medium">Item</th>
+              <th className="px-4 py-2 text-right font-medium">Qtd</th>
+              <th className="px-4 py-2 text-right font-medium">Preço</th>
+              <th className="px-4 py-2 text-right font-medium">Total</th>
             </tr>
           </thead>
 
           <tbody className="divide-y">
             {data.items.map((item) => (
               <tr key={item.id}>
-                <td className="px-4 py-2">
-                  {item.itemsId}
-                </td>
-                <td className="px-4 py-2 text-right">
-                  {item.quantity}
-                </td>
+                <td className="px-4 py-2">{item.itemsId}</td>
+                <td className="px-4 py-2 text-right">{item.quantity}</td>
                 <td className="px-4 py-2 text-right">
                   {formatCurrency(Number(item.price))}
                 </td>
@@ -99,53 +81,33 @@ export function CreditNoteTemplate({ data }: Props) {
       <div className="flex flex-col items-end gap-2">
         <div className="w-full sm:w-1/2 space-y-2">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">
-              Subtotal:
-            </span>
-            <span>
-              {formatCurrency(Number(invoice.subtotal))}
-            </span>
+            <span className="text-muted-foreground">Subtotal:</span>
+            <span>{formatCurrency(Number(invoice.subtotal))}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-muted-foreground">
-              Desconto:
-            </span>
-            <span>
-              {formatCurrency(
-                Number(invoice.discountAmount ?? 0)
-              )}
-            </span>
-        </div>
+            <span className="text-muted-foreground">Desconto:</span>
+            <span>{formatCurrency(Number(invoice.discountAmount ?? 0))}</span>
+          </div>
 
           <div className="flex justify-between">
-            <span className="text-muted-foreground">
-              Imposto:
-            </span>
-            <span>
-              {formatCurrency(Number(invoice.taxAmount))}
-            </span>
+            <span className="text-muted-foreground">Imposto:</span>
+            <span>{formatCurrency(Number(invoice.taxAmount))}</span>
           </div>
 
           <Separator />
 
           <div className="flex justify-between font-bold text-lg">
             <span>Total da Fatura:</span>
-            <span>
-              {formatCurrency(Number(invoice.total))}
-            </span>
+            <span>{formatCurrency(Number(invoice.total))}</span>
           </div>
         </div>
       </div>
 
       {data.notes && (
         <div className="mt-6">
-          <h3 className="font-semibold mb-1 text-muted-foreground">
-            Notas
-          </h3>
-          <p className="text-muted-foreground">
-            {data.notes}
-          </p>
+          <h3 className="font-semibold mb-1 text-muted-foreground">Notas</h3>
+          <p className="text-muted-foreground">{data.notes}</p>
         </div>
       )}
     </div>

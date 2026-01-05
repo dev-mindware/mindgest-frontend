@@ -1,4 +1,4 @@
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { currentServiceStore } from "@/stores";
 import { ItemResponse as Service } from "@/types";
 

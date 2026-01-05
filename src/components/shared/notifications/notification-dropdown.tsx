@@ -15,12 +15,14 @@ export function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const {
     notifications,
-    markAllAsRead,
     handleNotificationClick,
     deleteNotification,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
   } = useNotifications();
 
-  const unreadCount = notifications.filter((n) => n.status === "unread").length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -46,9 +48,11 @@ export function NotificationDropdown() {
       >
         <NotificationList
           notifications={notifications}
-          onMarkAllAsRead={markAllAsRead}
           onNotificationClick={handleNotificationClick}
           deleteNotification={deleteNotification}
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
         />
       </DropdownMenuContent>
     </DropdownMenu>

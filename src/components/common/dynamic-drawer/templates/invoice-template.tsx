@@ -1,10 +1,7 @@
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
-import {
-  DocumentStatusBadge,
-  DownloadDocumentButton,
-} from "@/components/clients/documents/common";
+import { DocumentStatusBadge, DownloadDocumentButton } from "@/components/client";
 
 interface InvoiceTemplateProps {
   data: InvoiceResponse;
@@ -99,9 +96,9 @@ export function InvoiceTemplate({ data }: InvoiceTemplateProps) {
         </div>
       )}
       <DownloadDocumentButton
+        id={data.id}
         documentType="invoice"
         filenameBase={data.number}
-        id={data.id}
       />
     </div>
   );

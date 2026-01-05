@@ -14,7 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { IconCheckSucessfull } from "./icon-success";
 import { IconWarning } from "./icon-warning";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 
 interface ModalProps {
   id: string;

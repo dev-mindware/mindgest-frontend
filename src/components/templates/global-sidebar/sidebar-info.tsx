@@ -11,11 +11,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-  Skeleton,
+  LoaderStoresSkeleton,
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
 import { useGetStores } from "@/hooks/entities";
-import { currentStoreStore } from "@/stores/current-store-store";
+import { currentStoreStore } from "@/stores/store/current-store-store";
 import { useEffect } from "react";
 
 export function SidebarCompanyInfo() {
@@ -35,21 +35,7 @@ export function SidebarCompanyInfo() {
     }
   }, [storesData, currentStore, setCurrentStore]);
 
-  if (loadingStores) {
-    return (
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <div className="flex items-center gap-2 px-2 py-1.5 text-left text-sm">
-            <Skeleton className="h-8 w-8 rounded-lg" />
-            <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-3 w-16" />
-            </div>
-          </div>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    );
-  }
+  if (loadingStores) return <LoaderStoresSkeleton />;
 
   if (!user) return null;
 

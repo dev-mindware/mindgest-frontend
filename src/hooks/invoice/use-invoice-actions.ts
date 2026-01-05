@@ -1,4 +1,4 @@
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { InvoiceResponse } from "@/types";
 import { currentInvoiceStore } from "@/stores/documents";
 import { currentProformaStore } from "@/stores/documents";

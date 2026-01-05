@@ -18,7 +18,7 @@ import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { ClientsFiltersTSX } from "./common";
 import { useClientActions, useClientsFilters } from "@/hooks/entities";
-import { ButtonAddClient } from "@/components/clients/entities";
+import { ButtonAddClient } from "@/components/client/entities";
 
 export function ClientsList() {
   const { search } = useURLSearchParams("search-client");

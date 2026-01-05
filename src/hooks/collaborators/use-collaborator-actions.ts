@@ -1,5 +1,5 @@
 import { CollaboratorResponse } from "@/types";
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { useToggleStatusCollaborator } from "./use-collaborator";
 import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
 

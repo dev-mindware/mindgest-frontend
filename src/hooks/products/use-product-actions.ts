@@ -1,4 +1,4 @@
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemResponse as Product } from "@/types";
 import { currentProductStore } from "@/stores/products";
 import { useToggleStatusItem } from "../items";

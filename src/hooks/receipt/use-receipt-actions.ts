@@ -1,4 +1,4 @@
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ReceiptResponse } from "@/types/receipt";
 import { currentReceiptStore } from "@/stores/documents";
 

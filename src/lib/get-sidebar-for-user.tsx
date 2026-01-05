@@ -1,28 +1,28 @@
+import { Icon } from "@/components";
 import { MenuItem } from "@/constants/menu-items";
 import { Role, PlanType } from "@/types";
-import { Icon } from "@/components";
 
 export function getSidebarForUser(
   items: MenuItem[],
   role: Role,
   plan?: PlanType
 ): MenuItem[] {
- /*  if (!plan) {
+  if (!plan) {
     return [
       {
         name: "Planos",
-        url: "/client/plans",
+        url: "/plans",
         icon: <Icon name="Wallet" />,
         roles: [role],
       },
       {
         name: "Configurações",
-        url: "/client/settings",
+        url: "/settings",
         icon: <Icon name="Settings2" />,
         roles: [role],
       },
     ];
-  } */
+  }
 
   return items
     .filter((item) => {

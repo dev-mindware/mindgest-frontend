@@ -10,3 +10,4 @@ export * from "./product-modal-skeleton";
 export * from "./pos-category-skeleton";
 export * from "./pos-product-skeleton";
 export * from "./pos-cart-skeleton";
+export * from "./loader-stores-skeleton";

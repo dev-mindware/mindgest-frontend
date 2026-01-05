@@ -1,6 +1,6 @@
 "use client";
 
-import { useModal } from "@/stores/use-modal-store";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { currentReceiptStore } from "@/stores/documents";
 import { DynamicDrawer } from "./index";
 import { ReceiptTemplate } from "./templates/receipt-template";
