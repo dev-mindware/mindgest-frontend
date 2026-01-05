@@ -15,22 +15,23 @@
 ## Tsunami -- 11.998,22 kz
 
 * #### Tudo do **Base**
+* #### Cadastro de fornecedores
 * #### Gestão de Estoque
-* #### Relatórios de venda por filtro (filtrar por datas)
+* #### Gestão de POS
+* #### Relatórios de venda avançado
+* #### Relatórios de clientes
 * #### POS Web
+* #### POS Desktop Offline (brevemente)
 * #### Definições de aparência
 * #### Usuários 6
+* #### 3 Lojas
+* #### Notificações e Alertas Inteligentes
 * #### Impressão em talão e A4
 
 #### 
 
 
-## Smart Pro -- 14.899,22 kz
+## Personalizável -- """" kz
 
 * #### Tudo do **Tsunami**
-* #### Fornecedores e lojas
-* #### Gest.AI
-* #### Análise inteligente de estoque
-* #### Relatórios (Controlo de acesso, estoque, vendas e fiscalidade)
-* #### Gestão de POS
-* #### Usuários ilimitado
+* #### Adicionais
