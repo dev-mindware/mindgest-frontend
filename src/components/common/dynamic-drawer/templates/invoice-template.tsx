@@ -1,7 +1,10 @@
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
-import { DocumentStatusBadge, DownloadDocumentButton } from "@/components/client";
+import {
+  DocumentStatusBadge,
+  DownloadDocumentButton,
+} from "@/components/client";
 
 interface InvoiceTemplateProps {
   data: InvoiceResponse;
@@ -95,11 +98,13 @@ export function InvoiceTemplate({ data }: InvoiceTemplateProps) {
           <p className="text-muted-foreground">{data.notes}</p>
         </div>
       )}
-      <DownloadDocumentButton
-        id={data.id}
-        documentType="invoice"
-        filenameBase={data.number}
-      />
+      <div className="flex justify-end">
+        <DownloadDocumentButton
+          id={data.id}
+          documentType="invoice"
+          filenameBase={data.number}
+        />
+      </div>
     </div>
   );
 }

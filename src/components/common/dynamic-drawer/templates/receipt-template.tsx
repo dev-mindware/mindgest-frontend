@@ -59,11 +59,14 @@ export function ReceiptTemplate({ data }: ReceiptTemplateProps) {
           <p className="text-muted-foreground">{data.notes}</p>
         </div>
       )}
-      <DownloadDocumentButton
-        id={data.id}
-        documentType="receipt"
-        filenameBase={data.number}
-      />
+
+      <div className="flex justify-end">
+        <DownloadDocumentButton
+          id={data.id}
+          documentType="receipt"
+          filenameBase={data.number}
+        />
+      </div>
     </div>
   );
 }
