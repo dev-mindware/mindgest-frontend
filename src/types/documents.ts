@@ -127,6 +127,8 @@ export type InvoiceReceiptPayload = {
   taxAmount: number;
   discountAmount: number;
   storeId?: string;
+  amountReceived?: number;
+  change?: number;
 };
 
 // ========================

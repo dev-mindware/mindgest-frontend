@@ -15,13 +15,21 @@ import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/auth/use-auth";
+import { useState } from "react";
+import { ManagerAuthModal, MODAL_MANAGER_AUTH_ID } from "@/components/pos";
+import { useModal } from "@/stores/use-modal-store";
 
-export function InvoiceReceiptList() {
+export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   const router = useRouter();
+  const { user } = useAuth();
   const { search } = useURLSearchParams("search_invoice_receipt");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
   const { handlerDetailsInvoice } = useInvoiceActions();
+  const { openModal } = useModal();
+
+  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
   const {
     data: invoicesReceipts,
     total,
@@ -33,8 +41,8 @@ export function InvoiceReceiptList() {
     refetch,
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/invoice-receipt",
-    queryKey: ["invoice-receipt"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryKey: ["invoice-receipt", storeId || ""],
+    queryParams: { ...filters, search: debounceSearch, page, storeId },
   });
 
   const columns: Column<InvoiceResponse>[] = [
@@ -74,9 +82,17 @@ export function InvoiceReceiptList() {
             {
               label: "Emitir Nota",
               onClick: () => {
-                alert(JSON.stringify(item.originalInvoiceId))
-                return
-                router.push(`/client/documents/notes/${item.originalInvoiceId}`);
+                const isCashier = user?.role === "CASHIER";
+                const route = isCashier
+                  ? `/pos/movements/notes/${item.id}`
+                  : `/client/documents/notes/${item.id}`;
+
+                if (isCashier) {
+                  setPendingRoute(route);
+                  openModal(MODAL_MANAGER_AUTH_ID);
+                } else {
+                  router.push(route);
+                }
               },
             },
           ]}
@@ -121,6 +137,11 @@ export function InvoiceReceiptList() {
         </div>
       )}
       <InvoicePreviewDrawer />
+      <ManagerAuthModal
+        onAuthenticated={() => {
+          if (pendingRoute) router.push(pendingRoute);
+        }}
+      />
     </div>
   );
 }

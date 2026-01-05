@@ -146,14 +146,13 @@ body {
 
 .dark {
   /* Gmail Dark grays */
-  --gray-950: #0e0f10;
-  --gray-900: #121416;
-  --gray-800: #16181a;
-  --gray-700: #1f2224;
-  --gray-600: #2a2e32;
-  --gray-500: #3a3f45;
-  --gray-400: #9aa0a6;
-  --gray-300: #e8eaed;
+  --gray-900: #0f0f0f;
+  --gray-800: #161616;
+  --gray-700: #202020;
+  --gray-600: #2b2b2b;
+  --gray-500: #3f3f3f;
+  --gray-400: #9b9b9b;
+  --gray-300: #e6e6e6;
 
   /* Core */
   --background: var(--gray-900);
@@ -194,7 +193,7 @@ body {
 
   --border: var(--gray-600);
   --input: var(--gray-700);
-  --ring: #1a73e8;
+  --ring: #a855f7;
 
   /* Charts */
   --chart-1: #1a73e8;
@@ -221,8 +220,17 @@ body {
     @apply bg-background text-foreground;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-}
 
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
 
 /* src/components/Loader.css */
 
@@ -269,7 +277,6 @@ body {
   animation-name: ringD;
   stroke: #5e14e4;
 }
-
 
 /* Animations */
 @keyframes ringA {
@@ -435,15 +442,70 @@ body {
   }
 }
 
-
 /* scroll para tabs mobile */
 @layer utilities {
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
-    
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Simple Keyboard Theming */
+.simple-keyboard-theme {
+  background-color: transparent !important;
+  font-family: inherit !important;
+}
+
+.simple-keyboard-theme .hg-button {
+  background: var(--secondary) !important;
+  color: var(--secondary-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  height: 64px !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  transition: all 0.1s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.simple-keyboard-theme .hg-button:active {
+  transform: scale(0.96) !important;
+  background-color: var(--muted) !important;
+}
+
+.simple-keyboard-theme .hg-button.hg-button-special {
+  background: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+.simple-keyboard-theme .hg-button.hg-button-active {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+}
+
+.simple-keyboard-theme .hg-button.hg-button-primary {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+}
+
+.simple-keyboard-theme .hg-button.hg-button-primary:active {
+  background-color: color-mix(in srgb, var(--primary), black 10%) !important;
+}
+
+.simple-keyboard-theme .hg-row {
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.simple-keyboard-theme .hg-row:last-child {
+  margin-bottom: 0 !important;
+}

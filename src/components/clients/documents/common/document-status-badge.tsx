@@ -9,12 +9,16 @@ export function DocumentStatusBadge({ status }: DocumentoStatusBadgeProps) {
     DRAFT: "Pendente",
     CANCELLED: "Cancelada",
     PAID: "Paga",
+    CORRECTION: "Correção",
+    CANCELLATION: "Anulação",
   };
 
   const variantMap: Record<string, "default" | "success" | "destructive" | "outline" | "pending"> = {
     DRAFT: "pending",
     CANCELLED: "destructive",
     PAID: "success",
+    CORRECTION: "outline",
+    CANCELLATION: "destructive",
   };
 
   const currentStatus = status ?? "DRAFT";

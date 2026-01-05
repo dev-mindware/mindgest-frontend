@@ -6,7 +6,7 @@ export interface LoginResponse {
   tokens: Tokens;
 }
 
-export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | 'SELLER' | "CASHIER"
+export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | "CASHIER"
 
 export type User = {
   id: string;

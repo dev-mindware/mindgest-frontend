@@ -74,14 +74,14 @@ export const menuItems: MenuStructure = {
       name: "Dashboard",
       url: "/client/dashboard",
       icon: <Icon name="LayoutDashboard" />,
-      roles: ["MANAGER", "OWNER", "SELLER"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
     {
       name: "GestIA",
       url: "/client/gestia",
       icon: <Icon name="Sparkles" className="w-5 h-5" />,
-      roles: ["MANAGER", "OWNER", "SELLER"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
       showUpgrade: true,
     },
@@ -89,7 +89,7 @@ export const menuItems: MenuStructure = {
       name: "Planos",
       url: "/client/plans",
       icon: <Icon name="Wallet" className="w-5 h-5" />,
-      roles: ["MANAGER", "OWNER", "SELLER"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
     {
@@ -114,9 +114,26 @@ export const menuItems: MenuStructure = {
       minPlan: "Base",
     },
     {
+      name: "Gestão",
+      url: "#",
+      icon: <Icon name="Boxes" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
+      items: [
+        {
+          name: "Estoque",
+          url: "/client/management/stock",
+        },
+        {
+          name: "POS",
+          url: "/client/management/pos",
+        },
+      ],
+    },
+    {
       name: "Relatórios",
       url: "#",
-      icon: <Icon name="ChartBar" />,
+      icon: <Icon name="ChartNetwork" />,
       roles: ["OWNER", "MANAGER"],
       minPlan: "Base",
       items: [
@@ -214,6 +231,27 @@ export const menuItems: MenuStructure = {
       icon: <Icon name="SquareTerminal" />,
       roles: ["OWNER"],
       minPlan: "Smart Pro",
+    },
+    {
+      name: "Ponto de Venda",
+      url: "/pos/counter",
+      icon: <Icon name="MonitorSmartphone" />,
+      roles: ["CASHIER"],
+      minPlan: "Base",
+    },
+    {
+      name: "Movimentos de Caixa",
+      url: "/pos/movements",
+      icon: <Icon name="LayoutDashboard" />,
+      roles: ["CASHIER"],
+      minPlan: "Base",
+    },
+    {
+      name: "Configurações",
+      url: "/pos/settings",
+      icon: <Icon name="Settings2" />,
+      roles: ["CASHIER"],
+      minPlan: "Base",
     },
   ],
 };

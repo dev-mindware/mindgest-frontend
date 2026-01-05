@@ -17,7 +17,7 @@ import { DocumentStatusBadge } from "../common";
 import { CreditNotesResponse } from "@/types/credit-note";
 import { useCreditNotesActions, useCreditNotesFilters } from "@/hooks";
 
-export function CreditNotesList() {
+export function CreditNotesList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search-credit-note");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useCreditNotesFilters();
@@ -33,8 +33,8 @@ export function CreditNotesList() {
     refetch,
   } = usePagination<CreditNotesResponse>({
     endpoint: "/credit-note",
-    queryKey: ["credit-notes"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryKey: ["credit-notes", storeId || ""],
+    queryParams: { ...filters, search: debounceSearch, page, storeId },
   });
 
   const columns: Column<CreditNotesResponse>[] = [
@@ -52,15 +52,8 @@ export function CreditNotesList() {
       key: "reason",
       header: "Motivo",
       render: (_, item) => (
-        <Badge variant="outline">
-          {item.reason === "CORRECTION" ? "Correção" : "Anulação"}
-        </Badge>
+        <DocumentStatusBadge status={item.reason} />
       ),
-    },
-    {
-      key: "status",
-      header: "Estado",
-      render: (_, item) => <DocumentStatusBadge status={item.status} />,
     },
     {
       key: "total",

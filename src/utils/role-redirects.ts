@@ -6,8 +6,7 @@ export const roleRedirects: Record<Role, string> = {
   "ADMIN": "/admin/dashboard",
   "OWNER": "/client/dashboard",
   "MANAGER": "/client/dashboard",
-  "SELLER": "/client/dashboard",
-  "CASHIER": "/client/cashier",
+  "CASHIER": "/pos/counter",
 };
 
 export const getRouteByRole = (role: Role): string => {

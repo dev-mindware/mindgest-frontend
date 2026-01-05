@@ -1,25 +1,9 @@
-import React from 'react'
-import {
-  DinamicBreadcrumb,
-  Separator,
-  SidebarTrigger,
-} from "@/components"
-const Page = () => {
+import { PageWrapper, CounterContent } from "@/components"
+
+export default function Page() {
   return (
-    <div>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <DinamicBreadcrumb subRoute="Caixa" />
-          </div>
-        </header>
-        
-    </div>
+    <PageWrapper subRoute="Caixa" routeLabel="Caixa" variant="counter">
+      <CounterContent />
+    </PageWrapper>
   )
 }
-
-export default Page

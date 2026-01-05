@@ -7,3 +7,6 @@ export * from "./credit-notes-form-skeleton";
 export * from "./invoice-form-skeleton";
 export * from "./service-modal-skeleton";
 export * from "./product-modal-skeleton";
+export * from "./pos-category-skeleton";
+export * from "./pos-product-skeleton";
+export * from "./pos-cart-skeleton";

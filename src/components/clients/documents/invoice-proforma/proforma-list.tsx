@@ -17,14 +17,14 @@ import { useInvoiceFilters, useProformaActions } from "@/hooks";
 import { DeleteProformaModal } from "../modals";
 import { useRouter } from "next/navigation";
 
-export function ProformaList() {
+export function ProformaList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { search } = useURLSearchParams("search_proforma");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters("proforma");
   const {
     handlerDeleteProforma,
-    handlerDetailsProforma 
+    handlerDetailsProforma
   } = useProformaActions();
   const {
     data: proformas,
@@ -37,8 +37,8 @@ export function ProformaList() {
     refetch,
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/proforma",
-    queryKey: ["invoice-proforma"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryKey: ["invoice-proforma", storeId || ""],
+    queryParams: { ...filters, search: debounceSearch, page, storeId },
   });
 
   const columns: Column<InvoiceResponse>[] = [
@@ -54,6 +54,11 @@ export function ProformaList() {
       render: (_, item) => `${formatCurrency(item.total)}`,
     },
     {
+      key: "items",
+      header: "Itens",
+      render: (_, item) => item.items.length,
+    },
+    {
       key: "createdAt",
       header: "Criado em",
       render: (_, item) => (
@@ -61,11 +66,6 @@ export function ProformaList() {
           {formatDateTime(item.createdAt)}
         </div>
       ),
-    },
-    {
-      key: "status",
-      header: "Estado",
-      render: (_, item) => <DocumentStatusBadge status={item.status} />,
     },
     {
       key: "action",
@@ -83,11 +83,11 @@ export function ProformaList() {
             },
             ...(item.status !== "CANCELLED"
               ? [
-                  {
-                    label: "Deletar",
-                    onClick: handlerDeleteProforma,
-                  },
-                ]
+                {
+                  label: "Deletar",
+                  onClick: handlerDeleteProforma,
+                },
+              ]
               : []),
           ]}
         />
