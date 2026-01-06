@@ -198,5 +198,6 @@ export type DocumentType =
   | "invoice"
   | "proforma"
   | "receipt"
-  | "invoice-receipt";
+  | "invoice-receipt"
+  | "credit-note";
 

@@ -4,8 +4,9 @@ import { useModal } from "@/stores/modal/use-modal-store";
 import { currentInvoiceStore } from "@/stores/documents";
 import { DynamicDrawer } from "./index";
 import { InvoiceTemplate } from "./templates/invoice-template";
+import { DocumentType } from "@/types/documents";
 
-export function InvoicePreviewDrawer() {
+export function InvoicePreviewDrawer({ type }: { type: DocumentType }) {
   const { open, closeModal } = useModal();
   const { currentInvoice } = currentInvoiceStore();
   const isOpen = open["details-invoice"];
@@ -19,7 +20,7 @@ export function InvoicePreviewDrawer() {
       title="Pré-visualização da Fatura"
       description={`Detalhes da fatura ${currentInvoice.number}`}
     >
-      <InvoiceTemplate data={currentInvoice} />
+      <InvoiceTemplate type={type} data={currentInvoice} />
     </DynamicDrawer>
   );
 }

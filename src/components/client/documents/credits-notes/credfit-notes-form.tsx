@@ -1,23 +1,29 @@
 "use client";
-import { ErrorMessage } from "@/utils/messages";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ButtonSubmit, Input, RHFSelect, Textarea } from "@/components";
 import { CreditNoteSchema, CreditNoteFormData } from "@/schemas";
 import { useCreateCreditNote, useAnnulationNote } from "@/hooks";
-import { InvoiceDetails } from "@/types/credit-note";
+import { InvoiceDetails, ReceiptDetails } from "@/types/credit-note";
+import { isInvoice, isReceipt } from "@/types/credit-notes-guards";
+import { mapDocumentToCreditNoteDefaults } from "@/utils/credit-notes";
 import { formatCurrency, parseCurrency } from "@/utils";
+import { ButtonSubmit, Input, RHFSelect, Textarea } from "@/components";
+import { ErrorMessage } from "@/utils/messages";
 
 type Props = {
-  invoice: InvoiceDetails;
+  invoice: InvoiceDetails | ReceiptDetails;
 };
 
 export function CreditNoteForm({ invoice }: Props) {
   const router = useRouter();
   const { mutateAsync: annulationNote } = useAnnulationNote();
   const { mutateAsync: createCreditNote } = useCreateCreditNote();
+
+  const isInvoiceDoc = isInvoice(invoice);
+  const isReceiptDoc = isReceipt(invoice);
+
   const {
     register,
     control,
@@ -27,58 +33,37 @@ export function CreditNoteForm({ invoice }: Props) {
   } = useForm<CreditNoteFormData>({
     resolver: zodResolver(CreditNoteSchema),
     mode: "onChange",
-    defaultValues: {
-      reason: "CORRECTION",
-      notes: "",
-      invoiceBody: {
-        client: {
-          id: invoice.clientId,
-          name: invoice.clientName,
-          email:
-            invoice.clientEmail ||
-            `${invoice.clientName.toLowerCase()}@gmail.com`,
-        },
-        items: invoice.items.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
-          price: item.unitPrice,
-        })),
-        issueDate: new Date().toISOString().split("T")[0],
-        dueDate: invoice.dueDate,
-        subtotal: invoice.subtotal,
-        taxAmount: invoice.taxAmount,
-        discountAmount: invoice.discountAmount,
-        total: invoice.totalAmount,
-      },
-    },
+    defaultValues: mapDocumentToCreditNoteDefaults(invoice),
   });
 
   const reason = useWatch({ control, name: "reason" });
   const watchedItems = useWatch({ control, name: "invoiceBody.items" });
 
+  // Recalculo apenas para INVOICE
   useEffect(() => {
+    if (!isInvoiceDoc) return;
     if (reason === "ANNULATION") return;
 
-    const subtotal = watchedItems?.reduce((acc, item) => {
-      return acc + (Number(item.quantity) || 0) * (Number(item.price) || 0);
-    }, 0);
+    const subtotal =
+      watchedItems?.reduce(
+        (acc, item) =>
+          acc + (Number(item.quantity) || 0) * (Number(item.price) || 0),
+        0
+      ) ?? 0;
 
-    const originalSubtotal = subtotal || 1;
-    const taxRate = invoice.taxAmount / originalSubtotal;
-    const discountRate = invoice.discountAmount / originalSubtotal;
+    const base = invoice.subtotal || 1;
+    const taxRate = invoice.taxAmount / base;
+    const discountRate = invoice.discountAmount / base;
 
-    const newTaxAmount = subtotal! * taxRate;
-    const newDiscountAmount = subtotal! * discountRate;
-    const newTotal = subtotal! + newTaxAmount - newDiscountAmount;
+    const tax = subtotal * taxRate;
+    const discount = subtotal * discountRate;
+    const total = subtotal + tax - discount;
 
-    setValue("invoiceBody.subtotal", Number(subtotal!.toFixed(2)));
-    setValue("invoiceBody.taxAmount", Number(newTaxAmount.toFixed(2)));
-    setValue(
-      "invoiceBody.discountAmount",
-      Number(newDiscountAmount.toFixed(2))
-    );
-    setValue("invoiceBody.total", Number(newTotal.toFixed(2)));
-  }, [watchedItems, reason, setValue, invoice]);
+    setValue("invoiceBody.subtotal", +subtotal.toFixed(2));
+    setValue("invoiceBody.taxAmount", +tax.toFixed(2));
+    setValue("invoiceBody.discountAmount", +discount.toFixed(2));
+    setValue("invoiceBody.total", +total.toFixed(2));
+  }, [watchedItems, reason]);
 
   const { fields } = useFieldArray({
     control,
@@ -91,7 +76,7 @@ export function CreditNoteForm({ invoice }: Props) {
         await annulationNote({
           id: invoice.id,
           reason: data.reason,
-          notes: data.notes!,
+          notes: data.notes ?? "",
         });
       } else {
         await createCreditNote({
@@ -99,9 +84,8 @@ export function CreditNoteForm({ invoice }: Props) {
           data,
         });
       }
-      setTimeout(() => {
-        router.replace("/documents?tab=credit-notes");
-      }, 1500);
+
+      router.replace("/documents?tab=credit-notes");
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message || "Erro ao emitir nota de crédito"
@@ -114,162 +98,62 @@ export function CreditNoteForm({ invoice }: Props) {
       onSubmit={handleSubmit(onSubmit)}
       className="p-8 space-y-8 border rounded-lg"
     >
-      <div className="grid gap-4 md:grid-cols-2">
-        <RHFSelect
-          label="Motivo (Obrigatório)"
-          name="reason"
-          control={control}
-          options={[
-            { value: "CORRECTION", label: "Correção de Itens/Preços" },
-            { value: "ANNULATION", label: "Anulação Total" },
-          ]}
-        />
-
-        <Input
-          type="date"
-          label="Data de Emissão da Nota"
-          {...register("invoiceBody.issueDate")}
-          error={errors?.invoiceBody?.issueDate?.message}
-          min={invoice.issueDate.split("T")[0]}
-        />
-      </div>
-
-      <Textarea
-        label="Notas / Motivo Detalhado"
-        {...register("notes")}
-        error={errors?.notes?.message}
-        placeholder="Explique o motivo desta retificação..."
+      <RHFSelect
+        label="Motivo"
+        name="reason"
+        control={control}
+        options={[
+          ...(isInvoiceDoc
+            ? [{ value: "CORRECTION", label: "Correção" }]
+            : []),
+          { value: "ANNULATION", label: "Anulação Total" },
+        ]}
       />
 
-      {reason === "CORRECTION" && (
-        <div className="animate-in fade-in duration-500 space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">
-              Itens para Retificação
-            </h3>
-            <p className="text-sm text-gray-500">
-              Ajuste as quantidades ou preços para gerar o crédito parcial.
-            </p>
+      <Textarea
+        label="Notas"
+        {...register("notes")}
+        error={errors?.notes?.message}
+      />
 
-            {fields.map((field, index) => {
-              const originalItem = invoice.items[index];
-              return (
-                <div
-                  key={field.id}
-                  className="grid gap-4 md:grid-cols-3 p-4 border rounded-lg"
-                >
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-gray-400">
-                      ID DO ITEM
-                    </span>
-                    <span className="text-sm py-2 font-mono">
-                      {originalItem.id}
-                    </span>
-                  </div>
+      {isInvoiceDoc && reason === "CORRECTION" && (
+        <div className="space-y-6">
+          {fields.map((field, index) => {
+            const originalItem = invoice.items[index];
+            return (
+              <div key={field.id} className="grid md:grid-cols-3 gap-4">
+                <Input
+                  type="number"
+                  label="Quantidade"
+                  {...register(`invoiceBody.items.${index}.quantity`, {
+                    valueAsNumber: true,
+                  })}
+                />
 
-                  <Input
-                    type="quantity"
-                    label={`Qtd (Máx: ${originalItem.quantity})`}
-                    {...register(`invoiceBody.items.${index}.quantity`, {
-                      valueAsNumber: true,
-                    })}
-                    error={
-                      errors.invoiceBody?.items?.[index]?.quantity?.message
-                    }
-                  />
-                  <Controller
-                    control={control}
-                    name={`invoiceBody.items.${index}.price`}
-                    render={({ field: { onChange, value } }) => (
-                      <Input
-                        id="price"
-                        type="text"
-                        startIcon="Coins"
-                        label={`Preço Unit. (Máx: ${formatCurrency(
-                          originalItem.unitPrice
-                        )})`}
-                        error={
-                          errors.invoiceBody?.items?.[index]?.price?.message
-                        }
-                        value={formatCurrency(value)}
-                        onChange={(e) => {
-                          const rawNumber = parseCurrency(e.target.value);
-                          onChange(rawNumber);
-                        }}
-                      />
-                    )}
-                  />
-
-                  {/*   <Input
-                    type="number"
-                    label={`Preço Unit. (Máx: ${formatCurrency(
-                      originalItem.unitPrice
-                    )})`}
-                    {...register(`invoiceBody.items.${index}.price`, {
-                      valueAsNumber: true,
-                    })}
-                    error={errors.invoiceBody?.items?.[index]?.price?.message}
-                  /> */}
-                </div>
-              );
-            })}
-          </div>
-          <div className="grid gap-6 md:grid-cols-4 p-4 rounded-lg border border-border">
-            <Input
-              type="number"
-              label="Subtotal Calculado"
-              {...register("invoiceBody.subtotal", {
-                valueAsNumber: true,
-              })}
-              readOnly
-            />
-
-            <Input
-              type="number"
-              label="Imposto"
-              {...register("invoiceBody.taxAmount")}
-              readOnly
-            />
-
-            <Input
-              min={0}
-              max={100}
-              type="number"
-              label="Desconto"
-              {...register("invoiceBody.discountAmount")}
-              readOnly
-            />
-
-            <Input
-              type="number"
-              label="Total de Crédito"
-              {...register("invoiceBody.total")}
-              className="font-bold text-blue-700"
-              readOnly
-            />
-          </div>
+                <Controller
+                  control={control}
+                  name={`invoiceBody.items.${index}.price`}
+                  render={({ field }) => (
+                    <Input
+                      label="Preço Unit."
+                      value={formatCurrency(field.value)}
+                      onChange={(e) =>
+                        field.onChange(parseCurrency(e.target.value))
+                      }
+                    />
+                  )}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {reason === "ANNULATION" && (
-        <div className="p-4 bg-card border border-border rounded-lg text-primary">
-          <strong>Atenção:</strong> A anulação total cancela todos os valores da
-          fatura original e não permite edição de itens.
-        </div>
-      )}
-
-      <div className="flex justify-end pt-4">
-        <ButtonSubmit
-          className={`w-full sm:w-max ${
-            reason === "ANNULATION" ? "bg-red-600 hover:bg-red-700" : ""
-          }`}
-          isLoading={isSubmitting}
-        >
-          {reason === "ANNULATION"
-            ? "Confirmar Anulação Total"
-            : "Emitir Nota de Crédito"}
-        </ButtonSubmit>
-      </div>
+      <ButtonSubmit isLoading={isSubmitting}>
+        {reason === "ANNULATION"
+          ? "Confirmar Anulação"
+          : "Emitir Nota de Crédito"}
+      </ButtonSubmit>
     </form>
   );
 }

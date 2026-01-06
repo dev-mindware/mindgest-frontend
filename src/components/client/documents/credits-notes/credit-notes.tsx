@@ -9,11 +9,16 @@ import { useFetchById } from "@/hooks/common";
 import { CreditNoteForm } from "./credfit-notes-form";
 import { InvoiceDetails } from "@/types/credit-note";
 
-export function CreditNotes({ noteId }: { noteId: string }) {
+type CreditNotesProps = {
+  invoiceType?: "invoice-receipt" | "invoice-normal";
+  invoiceId: string;
+};
+
+export function CreditNotes({ invoiceId, invoiceType }: CreditNotesProps) {
   const { data, isLoading, isError, refetch } = useFetchById<InvoiceDetails>(
     "invoice",
-    "/invoice/normal",
-    noteId
+    invoiceType === "invoice-receipt" ? "/invoice/receipt" : "/invoice/normal",
+    invoiceId
   );
 
   if (isLoading) {

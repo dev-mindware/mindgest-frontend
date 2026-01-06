@@ -15,7 +15,6 @@ export function CreditNotesFiltersTSX() {
     alert("ola limpando");
     setFilters({
       reason: undefined,
-      status: undefined,
       sortBy: undefined,
       sortOrder: undefined,
       creditNoteNumber: undefined,
@@ -73,14 +72,6 @@ export function CreditNotesFiltersTSX() {
             { label: "Desconto", value: "DISCOUNT" },
           ]}
           onChange={(reason) => setFilters({ reason })}
-        />
-
-        <FilterPopover
-          icon="Tag"
-          label="Status"
-          value={filters.status}
-          options={invoiceStatusOptions}
-          onChange={(status) => setFilters({ status: status as any })}
         />
 
         <FilterPopover

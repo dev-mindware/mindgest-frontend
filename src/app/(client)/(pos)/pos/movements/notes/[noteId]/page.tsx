@@ -14,7 +14,7 @@ export default async function POSCreditsNotes({ params }: PageProps) {
       subRoute="Notas de Crédito"
       showSeparator={true}
     >
-      <CreditNotes noteId={noteId} />
+      <CreditNotes invoiceId={noteId} />
     </PageWrapper>
   );
 }

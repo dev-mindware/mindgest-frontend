@@ -19,7 +19,7 @@ export function ProformaPreviewDrawer() {
       title="Pré-visualização da Proforma"
       description={`Detalhes da proforma ${currentProforma.number}`}
     >
-      <InvoiceTemplate data={currentProforma} />
+      <InvoiceTemplate type="proforma" data={currentProforma} />
     </DynamicDrawer>
   );
 }

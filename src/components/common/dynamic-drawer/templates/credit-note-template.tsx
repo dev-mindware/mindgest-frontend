@@ -1,7 +1,7 @@
 import { CreditNotesResponse } from "@/types/credit-note";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
-import { DocumentStatusBadge } from "@/components/client/documents/common";
+import { DocumentStatusBadge, DownloadDocumentButton } from "@/components/client/documents/common";
 
 interface Props {
   data: CreditNotesResponse;
@@ -110,6 +110,13 @@ export function CreditNoteTemplate({ data }: Props) {
           <p className="text-muted-foreground">{data.notes}</p>
         </div>
       )}
+      <div className="flex justify-end">
+        <DownloadDocumentButton
+          id={data.id}
+          documentType="credit-note"
+          filenameBase={data.number}
+        />
+      </div>
     </div>
   );
 }

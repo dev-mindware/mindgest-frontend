@@ -1,4 +1,4 @@
-import { InvoiceResponse } from "@/types";
+import { InvoiceResponse, DocumentType } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -7,10 +7,11 @@ import {
 } from "@/components/client";
 
 interface InvoiceTemplateProps {
+  type: DocumentType
   data: InvoiceResponse;
 }
 
-export function InvoiceTemplate({ data }: InvoiceTemplateProps) {
+export function InvoiceTemplate({ type, data }: InvoiceTemplateProps) {
   return (
     <div className="space-y-6 text-sm">
       <div className="flex justify-between items-start">
@@ -101,7 +102,7 @@ export function InvoiceTemplate({ data }: InvoiceTemplateProps) {
       <div className="flex justify-end">
         <DownloadDocumentButton
           id={data.id}
-          documentType="invoice"
+          documentType={type}
           filenameBase={data.number}
         />
       </div>

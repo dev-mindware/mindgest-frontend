@@ -88,7 +88,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
                 const isCashier = user?.role === "CASHIER";
                 const route = isCashier
                   ? `/pos/movements/notes/${item.id}`
-                  : `/documents/notes/${item.id}`;
+                  : `/documents/notes/${item.id}?invoiceType=invoice-receipt`;
 
                 if (isCashier) {
                   setPendingRoute(route);
@@ -139,7 +139,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
           />
         </div>
       )}
-      <InvoicePreviewDrawer />
+      <InvoicePreviewDrawer type="invoice-receipt" />
       <ManagerAuthModal
         onAuthenticated={() => {
           if (pendingRoute) router.push(pendingRoute);

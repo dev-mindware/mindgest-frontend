@@ -7,6 +7,7 @@ const DOCUMENT_BASE_PATH: Record<DocumentType, string> = {
   proforma: "/invoice/proforma",
   receipt: "/invoice/receipt",
   "invoice-receipt": "/invoice/receipt",
+  "credit-note": "/credit-note",
 };
 
 export async function downloadDocument(

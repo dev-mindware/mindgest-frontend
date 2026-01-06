@@ -4,11 +4,12 @@ import { User } from "@/types";
 import { SESSION_COOKIE_KEY } from "@/constants";
 
 const secretKey = process.env.SESSION_SECRET;
+
 if (!secretKey) {
   throw new Error("SESSION_SECRET is not defined in environment variables");
 }
 
-const HOURS = 8;
+const HOURS = 24;
 export const encodedKey = new TextEncoder().encode(secretKey);
 
 export interface SessionPayload extends JWTPayload {

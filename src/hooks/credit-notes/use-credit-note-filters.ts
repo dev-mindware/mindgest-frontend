@@ -10,7 +10,6 @@ export function useCreditNotesFilters() {
   const filters: CreditNoteFilters = {
     creditNoteNumber: query.get("creditNoteNumber") || undefined,
     reason: query.get("reason") || undefined,
-    status: query.get("status") || undefined,
     sortBy: query.get("sortBy") || undefined,
     sortOrder: query.get("sortOrder") || undefined,
     startDate: query.get("startDate") || undefined,
@@ -37,7 +36,6 @@ export function useCreditNotesFilters() {
     alert("setando filtros...")
     updateParam(searchParams, "creditNoteNumber", newFilters.creditNoteNumber);
     updateParam(searchParams, "reason", newFilters.reason);
-    updateParam(searchParams, "status", newFilters.status);
     updateParam(searchParams, "sortBy", newFilters.sortBy);
     updateParam(searchParams, "sortOrder", newFilters.sortOrder);
     updateParam(searchParams, "startDate", newFilters.startDate);

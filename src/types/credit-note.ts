@@ -31,6 +31,40 @@ export interface InvoiceDetails {
   updatedAt: string; 
 }
 
+export type ReceiptDetails = {
+  id: string;
+  receiptNumber: string;
+  receiptType: "RECEIPT"; 
+  clientId: string;
+  clientName: string;
+  clientEmail: string;
+  issueDate: string; 
+  subtotal: number;
+  taxAmount: number;
+  discountAmount: number;
+  retentionAmount: number;
+  totalAmount: number;
+  receivedValue: number;
+  changeAmount: number;
+  paymentMethod: "CASH" | "CARD" | "TRANSFER"; 
+  originalInvoiceId: string | null;
+  notes?: string | null;
+  operatorId?: string;
+  operatorName?: string;
+  createdAt: string; 
+  updatedAt: string; 
+};
+
+
+
+
+
+
+
+
+
+
+
 export type InvoiceType = InvoiceDetails;
 
 export interface CreditNotesResponse {

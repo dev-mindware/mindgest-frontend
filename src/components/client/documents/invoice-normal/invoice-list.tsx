@@ -158,7 +158,7 @@ export function InvoiceList() {
         <>
           <GenerateReceiptModal />
           <CancelInvoiceModal />
-          <InvoicePreviewDrawer />
+          <InvoicePreviewDrawer type="invoice" />
         </>
       )}
     </div>
