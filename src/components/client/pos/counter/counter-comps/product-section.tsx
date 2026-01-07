@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ProductMock } from "./data";
+import { Product } from "@/types";
 import { Card, CardContent, Button, Icon, Popover, PopoverContent, PopoverTrigger, Input, Avatar, AvatarFallback, AvatarImage, Tooltip, TooltipContent, TooltipTrigger, Badge } from "@/components";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
 
 interface ProductSectionProps {
-    products: ProductMock[];
+    products: Product[];
     cartItems: Record<string, number>;
-    onAddToCart: (product: ProductMock) => void;
+    onAddToCart: (product: Product) => void;
     onRemoveFromCart: (productId: string) => void;
     onUpdateQuantity: (productId: string, quantity: number) => void;
 }
@@ -38,7 +38,7 @@ export function ProductSection({
 }
 
 interface ProductCardProps {
-    product: ProductMock;
+    product: Product;
     quantity: number;
     onAdd: () => void;
     onRemove: () => void;
@@ -87,10 +87,10 @@ function ProductCard({ product, quantity, onAdd, onRemove, onUpdateQuantity }: P
                                     {product.description || "Sem descrição"}
                                 </p>
                                 <div className="pt-1">
-                                    {product.stock > 0 ? (
+                                    {product.reserved > 0 ? (
                                         <Badge variant="success" className="text-[10px] sm:text-[9px] px-2 sm:px-1.5 py-0.5 sm:py-0">
                                             <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                                            {product.stock} em estoque
+                                            {product.reserved} em estoque
                                         </Badge>
                                     ) : (
                                         <Badge variant="destructive" className="text-[10px] sm:text-[9px] px-2 sm:px-1.5 py-0.5 sm:py-0">
@@ -119,10 +119,10 @@ function ProductCard({ product, quantity, onAdd, onRemove, onUpdateQuantity }: P
                     {quantity === 0 ? (
                         <Button
                             size="icon"
-                            disabled={product.stock <= 0}
+                            disabled={product.reserved <= 0}
                             className={cn(
                                 "rounded-full h-10 w-10 transition-all duration-300 shadow-sm",
-                                product.stock <= 0
+                                product.reserved <= 0
                                     ? "bg-muted text-muted-foreground cursor-not-allowed border-muted"
                                     : "bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 hover:shadow-primary/20"
                             )}
@@ -187,10 +187,10 @@ function ProductCard({ product, quantity, onAdd, onRemove, onUpdateQuantity }: P
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                disabled={product.stock <= quantity}
+                                disabled={product.reserved <= quantity}
                                 className={cn(
                                     "h-8 w-8 rounded-full transition-colors",
-                                    product.stock <= quantity
+                                    product.reserved <= quantity
                                         ? "text-muted-foreground/30 cursor-not-allowed"
                                         : "text-primary hover:bg-primary/10"
                                 )}

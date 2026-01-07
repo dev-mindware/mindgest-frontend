@@ -99,7 +99,7 @@ export const InvoiceReceiptSchema = InvoiceBaseSchema.extend({
     .nonempty("O método de pagamento é obrigatório")
     .optional(),
   storeId: z.string(),
-  dueDate: z.string().min(1, "A data de vencimento é obrigatória"),
+  dueDate: z.string().min(1, "A data de vencimento é obrigatória").optional(),
 }).refine(
   (data) => {
     if (!data.issueDate || !data.dueDate) return true;

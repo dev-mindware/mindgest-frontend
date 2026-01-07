@@ -31,7 +31,7 @@ export const mockProducts: ProductMock[] = [
     description: "Delicious beef lasagna with double chilli Delicious beef",
     sku: "SKU001",
     category: "Lunch",
-    stock: 50,
+    reserved: 50,
     price: 50.5,
     retailPrice: { min: 50.5, max: 50.5 },
     image:
@@ -46,7 +46,7 @@ export const mockProducts: ProductMock[] = [
     description: "Delicious beef lasagna with double chilli Delicious beef",
     sku: "SKU002",
     category: "Lunch",
-    stock: 30,
+    reserved: 30,
     price: 45.7,
     retailPrice: { min: 45.7, max: 45.7 },
     image:
@@ -61,7 +61,7 @@ export const mockProducts: ProductMock[] = [
     description: "Delicious beef lasagna with double chilli Delicious beef",
     sku: "SKU003",
     category: "Lunch",
-    stock: 20,
+    reserved: 20,
     price: 80.0,
     retailPrice: { min: 80.0, max: 80.0 },
     image:
@@ -76,7 +76,7 @@ export const mockProducts: ProductMock[] = [
     description: "Delicious beef lasagna with double chilli Delicious beef",
     sku: "SKU004",
     category: "Lunch",
-    stock: 15,
+    reserved: 15,
     price: 90.4,
     retailPrice: { min: 90.4, max: 90.4 },
     image:
@@ -91,7 +91,7 @@ export const mockProducts: ProductMock[] = [
     description: "Delicious beef lasagna with double chilli Delicious beef",
     sku: "SKU005",
     category: "Lunch",
-    stock: 12,
+    reserved: 12,
     price: 75.5,
     retailPrice: { min: 75.5, max: 75.5 },
     image:
@@ -106,7 +106,7 @@ export const mockProducts: ProductMock[] = [
     description: "Delicious beef lasagna with double chilli Delicious beef",
     sku: "SKU006",
     category: "Lunch",
-    stock: 40,
+    reserved: 40,
     price: 35.3,
     retailPrice: { min: 35.3, max: 35.3 },
     image:

@@ -4,6 +4,8 @@ export interface Product {
   sku: string;
   category: string;
   subcategory?: string;
+  quantity?: number;
+  image?: string;
 
   // Preços
   price?: number;
@@ -17,7 +19,7 @@ export interface Product {
   };
 
   // Estoque
-  stock: number;
+  reserved: number;
   minstock?: number;
   location?: string;
   variants?: number;
