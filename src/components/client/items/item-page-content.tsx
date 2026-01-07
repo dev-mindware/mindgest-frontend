@@ -8,6 +8,10 @@ import {
   TabsContent,
   Button,
   TitleList,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from "@/components";
 import {
   AddProductModal,
@@ -16,6 +20,8 @@ import {
   ServiceModal,
 } from "@/components/client";
 import { useModal } from "@/stores";
+import { ChevronDown, Plus, Barcode, Keyboard } from "lucide-react";
+import { BarcodeScannerModal, BARCODE_SCANNER_MODAL_ID } from "./products/product-modals/barcode-scanner-modal";
 
 type ItemTab = "product" | "service";
 
@@ -58,9 +64,37 @@ export function ItemsPageContent() {
             <TabsTrigger value="service">Serviços</TabsTrigger>
           </TabsList>
 
-          <Button onClick={() => openModal(TAB_MODALS[activeTab])}>
-            {`Novo ${TAB_LABELS[activeTab]}`}
-          </Button>
+          {activeTab === "product" ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Novo Produto
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem
+                  onClick={() => openModal("add-product")}
+                  className="flex items-center gap-2"
+                >
+                  <Keyboard className="h-4 w-4" />
+                  Manual
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
+                  className="flex items-center gap-2"
+                >
+                  <Barcode className="h-4 w-4" />
+                  Código de Barra
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button onClick={() => openModal(TAB_MODALS[activeTab])}>
+              {`Novo ${TAB_LABELS[activeTab]}`}
+            </Button>
+          )}
         </div>
 
         <TabsContent value="product">
@@ -74,6 +108,7 @@ export function ItemsPageContent() {
 
       {open["add-product"] && <AddProductModal />}
       {open["add-service"] && <ServiceModal action="add" />}
+      <BarcodeScannerModal />
     </div>
   );
 }

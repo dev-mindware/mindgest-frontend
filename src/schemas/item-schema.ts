@@ -27,7 +27,7 @@ export const itemSchema = z
     categoryId: z.string().min(1, "Campo obrigatório"),
 
     hasExpiry: z.boolean().optional(),
-    expiryDate: z.string().datetime().optional(),
+    expiryDate: z.string().date().optional(),
     daysToExpiry: z.number().int().positive().optional(),
   })
   .refine(

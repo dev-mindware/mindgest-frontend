@@ -99,10 +99,10 @@ export function BarcodeProductModal({
             </Button>
           </div>
 
-          {product.stock > 0 && (
+          {product.reserved > 0 && (
             <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-success/5 border border-success/10 text-success text-xs font-medium">
               <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-              Estoque disponível: {product.stock}
+              Estoque disponível: {product.reserved}
             </div>
           )}
         </div>

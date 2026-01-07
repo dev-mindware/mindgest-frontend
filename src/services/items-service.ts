@@ -8,12 +8,22 @@ export const itemsService = {
   updateItem: async (id: string, data: Partial<CreateItemData>) => {
     return api.put<CreateItemData>(`/items/${id}`, data);
   },
-  
+
   toggleStatusItem: async (id: string) => {
     return api.patch<CreateItemData>(`/items/${id}/toggle-status`);
   },
 
   deleteItem: async (id: string) => {
     return api.delete<CreateItemData>(`/items/${id}`);
+  },
+
+  checkBarcode: async (barcode: string) => {
+    const response = await api.get<{ exists: boolean }>(
+      "/items/check-barcode",
+      {
+        params: { barcode },
+      }
+    );
+    return response.data;
   },
 };
