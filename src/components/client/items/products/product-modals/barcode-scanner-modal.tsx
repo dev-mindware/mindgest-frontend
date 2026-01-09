@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { GlobalModal, Icon } from "@/components";
+import { Button, GlobalModal, Icon } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { itemsService } from "@/services/items-service";
 import { ErrorMessage } from "@/utils/messages";
@@ -38,6 +38,11 @@ export function BarcodeScannerModal() {
             setIsLoading(false);
         }
     }, [closeModal, openModal]);
+
+    const handleCloseModal = () => {
+        closeModal(BARCODE_SCANNER_MODAL_ID);
+        setBuffer("");
+    };
 
     useEffect(() => {
         if (!isOpen) {
@@ -120,6 +125,9 @@ export function BarcodeScannerModal() {
                         )}
                     </div>
                 </div>
+            </div>
+            <div className="flex justify-end">
+            <Button variant="outline" onClick={handleCloseModal}>Fechar</Button>
             </div>
         </GlobalModal>
     );

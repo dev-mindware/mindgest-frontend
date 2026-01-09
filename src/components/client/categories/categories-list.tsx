@@ -83,11 +83,10 @@ export function CategoriesList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Cancelar", onClick: handlerDeleteCategory },
             { label: "Editar", onClick: handlerEditCategory },
             { label: "Ver detalhes", onClick: handlerDetailsCategory },
             {
-              label: `${item.isActive} ? "Desativar" : "Ativar"`,
+              label: item.isActive ? "Desativar" : "Ativar",
               onClick: toggleStatusCategory,
             },
           ]}

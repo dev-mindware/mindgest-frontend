@@ -52,9 +52,7 @@ export function ReportFilters({ filters, className }: ReportFiltersProps) {
     if (filters.length === 0) return null;
 
     return (
-        <div className={cn("p-4", className)}>
-            
-            <Separator className="py-4"/>
+        <div className={cn(className)}>
 
             {/* Filters Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

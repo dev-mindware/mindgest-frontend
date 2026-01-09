@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Icon, TsunamiOnly } from "@/components";
+import { CategoriesPageContent, Icon, TsunamiOnly } from "@/components";
 import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
@@ -45,6 +45,13 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       component: <CollaboratorsPageContent />,
       category: "workplace",
     },
+    {
+      id: "tab-5",
+      label: "Categorias",
+      icon: "Tag",
+      component: <CategoriesPageContent />,
+      category: "workplace",
+    }
   ];
 
   const enabledTabs = tabs.filter((tab) => !disabledTabs.includes(tab.id));
@@ -102,7 +109,6 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
           <div className="h-screen bg-sidebar rounded-md">
             <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-75 text-foreground">
               <div className="p-4 space-y-5">
-                <TsunamiOnly>
                 {generalTabs.length > 0 && (
                   <>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -116,8 +122,6 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
                 {generalTabs.length > 0 && workplaceTabs.length > 0 && (
                   <div className="h-px bg-border" />
                 )}
-                </TsunamiOnly>
-
                 {workplaceTabs.length > 0 && (
                   <>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -134,7 +138,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
 
           <div className="border rounded-md grow text-start">
             {enabledTabs.map((tab) => (
-              <TabsContent key={tab.id} value={tab.id}>
+              <TabsContent key={tab.id} value={tab.id} className="!py-4 sm:p-6">
                 {tab.component}
               </TabsContent>
             ))}

@@ -53,8 +53,10 @@ export function ItemsPageContent() {
   return (
     <div className="space-y-6">
       <TitleList
-        title="Produtos e Serviços"
-        suTitle="Faça a gestão dos seus produtos e serviços listados."
+        title={activeTab === "product" ? "Produtos" : "Serviços"}
+        suTitle={`Faça a gestão dos seus ${
+          activeTab === "product" ? "produtos" : "serviços"
+        } listados.`}
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>

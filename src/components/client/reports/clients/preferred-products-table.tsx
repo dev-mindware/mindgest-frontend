@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { ShoppingBag } from "lucide-react";
 import { formatCurrency } from "@/utils";
+import { EmptyState } from "@/components/common";
 
 interface PreferredItem {
     itemName: string;
@@ -41,30 +42,38 @@ export function PreferredProductsTable({ preferredItems }: PreferredProductsTabl
                 <CardDescription>Mais comprados pelo cliente</CardDescription>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Produto</TableHead>
-                            <TableHead className="text-right">Quantidade</TableHead>
-                            <TableHead className="text-right">Receita</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {sortedItems.map((item, index) => (
-                            <TableRow key={index}>
-                                <TableCell className="font-medium">
-                                    {item.itemName}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {item.quantity}
-                                </TableCell>
-                                <TableCell className="text-right font-semibold text-primary">
-                                    {formatCurrency(item.revenue)}
-                                </TableCell>
+                {preferredItems.length === 0 ? (
+                    <EmptyState
+                        icon="ShoppingBag"
+                        title="Sem produtos preferidos"
+                        description="Este cliente ainda não realizou compras de produtos."
+                    />
+                ) : (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Produto</TableHead>
+                                <TableHead className="text-right">Quantidade</TableHead>
+                                <TableHead className="text-right">Receita</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {sortedItems.map((item, index) => (
+                                <TableRow key={index}>
+                                    <TableCell className="font-medium">
+                                        {item.itemName}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {item.quantity}
+                                    </TableCell>
+                                    <TableCell className="text-right font-semibold text-primary">
+                                        {formatCurrency(item.revenue)}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                )}
             </CardContent>
         </Card>
     );

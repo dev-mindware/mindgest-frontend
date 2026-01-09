@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { formatCurrency } from "@/utils";
 import { SalesDataPoint, SalesPeriod } from "@/types/reports";
+import { EmptyState } from "@/components/common";
 
 interface SalesAreaChartProps {
     data: SalesDataPoint[];
@@ -103,64 +104,72 @@ export function SalesAreaChart({ data, period }: SalesAreaChartProps) {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="h-[400px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart
-                            data={data}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                        >
-                            <defs>
-                                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0.1} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                            <XAxis
-                                dataKey="date"
-                                tickFormatter={formatXAxis}
-                                className="text-xs"
-                                tickLine={false}
-                            />
-                            <YAxis
-                                yAxisId="left"
-                                tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
-                                className="text-xs"
-                                tickLine={false}
-                            />
-                            <YAxis
-                                yAxisId="right"
-                                orientation="right"
-                                className="text-xs"
-                                tickLine={false}
-                            />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend
-                                wrapperStyle={{ paddingTop: "20px" }}
-                                formatter={(value) => {
-                                    if (value === "totalRevenue") return "Receita Total";
-                                    if (value === "transactionCount") return "Nº de Transações";
-                                    return value;
-                                }}
-                            />
-                            <Area
-                                yAxisId="left"
-                                type="monotone"
-                                dataKey="totalRevenue"
-                                stroke="var(--chart-1)"
-                                fill="url(#colorRevenue)"
-                                strokeWidth={2}
-                            />
-                            <Line
-                                yAxisId="right"
-                                type="monotone"
-                                dataKey="transactionCount"
-                                stroke="var(--chart-2)"
-                                strokeWidth={2}
-                                dot={{ r: 4 }}
-                            />
-                        </ComposedChart>
-                    </ResponsiveContainer>
+                <div className="h-[400px] w-full flex items-center justify-center">
+                    {data.length === 0 ? (
+                        <EmptyState
+                            icon="ChartArea"
+                            title="Sem dados de evolução"
+                            description="Não há histórico de vendas suficiente para gerar o gráfico neste período."
+                        />
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <ComposedChart
+                                data={data}
+                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                            >
+                                <defs>
+                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0.1} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                                <XAxis
+                                    dataKey="date"
+                                    tickFormatter={formatXAxis}
+                                    className="text-xs"
+                                    tickLine={false}
+                                />
+                                <YAxis
+                                    yAxisId="left"
+                                    tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
+                                    className="text-xs"
+                                    tickLine={false}
+                                />
+                                <YAxis
+                                    yAxisId="right"
+                                    orientation="right"
+                                    className="text-xs"
+                                    tickLine={false}
+                                />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend
+                                    wrapperStyle={{ paddingTop: "20px" }}
+                                    formatter={(value) => {
+                                        if (value === "totalRevenue") return "Receita Total";
+                                        if (value === "transactionCount") return "Nº de Transações";
+                                        return value;
+                                    }}
+                                />
+                                <Area
+                                    yAxisId="left"
+                                    type="monotone"
+                                    dataKey="totalRevenue"
+                                    stroke="var(--chart-1)"
+                                    fill="url(#colorRevenue)"
+                                    strokeWidth={2}
+                                />
+                                <Line
+                                    yAxisId="right"
+                                    type="monotone"
+                                    dataKey="transactionCount"
+                                    stroke="var(--chart-2)"
+                                    strokeWidth={2}
+                                    dot={{ r: 4 }}
+                                />
+                            </ComposedChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
             </CardContent>
         </Card>

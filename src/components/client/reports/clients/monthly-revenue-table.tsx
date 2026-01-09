@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { BarChart3 } from "lucide-react";
 import { formatCurrency } from "@/utils";
+import { EmptyState } from "@/components/common";
 
 interface MonthlyTrend {
     month: string;
@@ -47,31 +48,39 @@ export function MonthlyRevenueTable({ monthlyTrend }: MonthlyRevenueTableProps) 
                 <CardDescription>Últimos 6 meses</CardDescription>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Mês</TableHead>
-                            <TableHead className="text-right">Receita</TableHead>
-                            <TableHead className="text-right">Facturas</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {monthlyTrend.map((trend, index) => (
-                            <TableRow
-                                key={index}
-                                className={trend.revenue > 0 ? "bg-primary/5 font-medium" : ""}
-                            >
-                                <TableCell>{formatMonth(trend.month)}</TableCell>
-                                <TableCell className="text-right">
-                                    {trend.revenue > 0 ? formatCurrency(trend.revenue) : "-"}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {trend.invoices > 0 ? trend.invoices : "-"}
-                                </TableCell>
+                {monthlyTrend.length === 0 || monthlyTrend.every(t => t.revenue === 0) ? (
+                    <EmptyState
+                        icon="CalendarDays"
+                        title="Sem histórico mensal"
+                        description="Nenhuma transação registada nos últimos meses."
+                    />
+                ) : (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Mês</TableHead>
+                                <TableHead className="text-right">Receita</TableHead>
+                                <TableHead className="text-right">Facturas</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {monthlyTrend.map((trend, index) => (
+                                <TableRow
+                                    key={index}
+                                    className={trend.revenue > 0 ? "bg-primary/5 font-medium" : ""}
+                                >
+                                    <TableCell>{formatMonth(trend.month)}</TableCell>
+                                    <TableCell className="text-right">
+                                        {trend.revenue > 0 ? formatCurrency(trend.revenue) : "-"}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {trend.invoices > 0 ? trend.invoices : "-"}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                )}
             </CardContent>
         </Card>
     );

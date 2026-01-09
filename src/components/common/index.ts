@@ -15,3 +15,4 @@ export * from "./search-handler-wrapper";
 export * from "./detail-row";
 export * from "./empty-state";
 export * from "./dynamic-drawer";
+export * from "./unauthorized-link";

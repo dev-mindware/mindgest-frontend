@@ -29,21 +29,31 @@ export function DynamicMetricCard({
         <Card
             onClick={onClick}
             className={cn(
-                "border shadow-none cursor-default text-foreground overflow-hidden transition-all",
+                "border shadow-none cursor-default text-foreground overflow-hidden transition-all py-2",
                 variant === "action" && "bg-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/40",
                 isInteractive && "cursor-pointer active:scale-[0.98]",
                 className
             )}
         >
-            <CardContent className="p-4 flex justify-between items-start h-full">
+            <CardContent className="p-4 flex justify-between items-start">
                 <div className="flex flex-col h-full flex-1">
                     <div className="space-y-1">
-                        <h2 className={cn(
-                            "text-2xl font-bold tracking-tight",
-                            variant === "action" && "text-primary"
-                        )}>
-                            {title}
-                        </h2>
+                        <div className="flex justify-between">
+                            <h2 className={cn(
+                                "text-2xl font-bold tracking-tight",
+                                variant === "action" && "text-primary"
+                            )}>
+                                {title}
+                            </h2>
+                            {icon && (
+                                <div className={cn(
+                                    "p-2 rounded-md shrink-0",
+                                    variant === "action" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                                )}>
+                                    <Icon name={icon as any} className="w-4 h-4" />
+                                </div>
+                            )}
+                        </div>
                         <p className={cn(
                             "text-lg text-foreground",
                             variant === "action" && "text-primary font-medium"
@@ -57,15 +67,6 @@ export function DynamicMetricCard({
                         </p>
                     )}
                 </div>
-
-                {icon && (
-                    <div className={cn(
-                        "p-2 rounded-md shrink-0",
-                        variant === "action" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                    )}>
-                        <Icon name={icon as any} className="w-4 h-4" />
-                    </div>
-                )}
             </CardContent>
         </Card>
     );
@@ -73,16 +74,18 @@ export function DynamicMetricCard({
 
 export function DynamicMetricCardSkeleton({ className }: { className?: string }) {
     return (
-        <Card className={cn("border shadow-none overflow-hidden rounded-none", className)}>
-            <CardContent className="p-4 flex justify-between items-start h-full">
-                <div className="flex flex-col h-full flex-1 space-y-4">
-                    <div className="space-y-2">
-                        <Skeleton className="h-8 w-24" />
-                        <Skeleton className="h-6 w-32" />
+        <Card className={cn("border shadow-none overflow-hidden py-2", className)}>
+            <CardContent className="p-4">
+                <div className="flex flex-col space-y-1">
+                    <div className="flex justify-between items-start">
+                        <Skeleton className="h-8 w-1/2" />
+                        <Skeleton className="h-8 w-8 rounded-md" />
                     </div>
+                    <Skeleton className="h-6 w-1/3" />
+                </div>
+                <div className="mt-2">
                     <Skeleton className="h-4 w-full" />
                 </div>
-                <Skeleton className="h-8 w-8 rounded-md shrink-0 ml-4" />
             </CardContent>
         </Card>
     );

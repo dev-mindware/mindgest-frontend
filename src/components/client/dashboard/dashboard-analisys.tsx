@@ -31,7 +31,7 @@ const stats = [
   },
   {
     label: "Total Geral",
-    value: "250,040 Kz",
+    value: "253 Kz",
     trend: "+7.8%",
     trendIcon: DollarSign,
     trendPositive: true,
