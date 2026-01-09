@@ -17,7 +17,7 @@ import { AlertError } from "../common";
 
 type Option = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 interface RHFSelectProps<T extends FieldValues> {
@@ -56,7 +56,7 @@ export function RHFSelect<T extends FieldValues>({
               </SelectTrigger>
               <SelectContent>
                 {options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
+                  <SelectItem key={opt.value} value={opt.value.toString()}>
                     {opt.label}
                   </SelectItem>
                 ))}

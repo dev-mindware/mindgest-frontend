@@ -4,6 +4,7 @@ import { useModal, currentInvoiceStore } from "@/stores";
 import { Button, ButtonSubmit, GlobalModal } from "@/components";
 import { useCancelInvoice } from "@/hooks";
 import { formatCurrency } from "@/utils";
+import { FormEvent } from "react";
 
 export function CancelInvoiceModal() {
   const { closeModal, open } = useModal();
@@ -11,7 +12,9 @@ export function CancelInvoiceModal() {
   const { currentInvoice } = currentInvoiceStore();
   const { mutateAsync: cancelInvoice, isPending } = useCancelInvoice();
 
-  async function handleCancelInvoice() {
+  async function handleCancelInvoice(e: FormEvent) {
+    e.preventDefault();
+    
     if (!currentInvoice?.id) {
       ErrorMessage("Fatura não selecionada");
       return;

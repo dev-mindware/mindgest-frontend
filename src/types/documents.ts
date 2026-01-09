@@ -189,9 +189,9 @@ export type CreditNoteData = {
   invoiceNumber: string;
   reason: "CORRECTION" | "ANNULATION";
   status: "DRAFT" | "ISSUED" | "CANCELLED";
-  total: number; // valor negativo
-  taxAmount: number; // idealmente number, não string
-  createdAt: string; // ISO Date
+  total: number;
+  taxAmount: number; 
+  createdAt: string;
 };
 
 export type DocumentType =

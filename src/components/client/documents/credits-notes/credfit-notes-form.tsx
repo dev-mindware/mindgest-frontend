@@ -149,11 +149,13 @@ export function CreditNoteForm({ invoice }: Props) {
         </div>
       )}
 
-      <ButtonSubmit isLoading={isSubmitting}>
+      <div className="flex justify-end">
+        <ButtonSubmit className="w-max" isLoading={isSubmitting}>
         {reason === "ANNULATION"
           ? "Confirmar Anulação"
           : "Emitir Nota de Crédito"}
       </ButtonSubmit>
+      </div>
     </form>
   );
 }

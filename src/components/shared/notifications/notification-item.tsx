@@ -26,23 +26,23 @@ export function NotificationItem({
     switch (type) {
       case "WARNING": return "bg-yellow-100 text-yellow-700";
       case "ERROR": return "bg-red-100 text-red-700";
-      default: return "bg-primary-50 text-primary-700"; // INFO
+      default: return "bg-background text-primary-700"; 
     }
   };
 
   const getIcon = (type: string) => {
     switch (type) {
-      case "WARNING": return "AlertTriangle";
-      case "ERROR": return "AlertOctagon";
-      default: return "Info"; // INFO
+      case "WARNING": return "CircleAlert";
+      case "ERROR": return "OctagonAlert";
+      default: return "Info"; 
     }
   }
 
   return (
     <div
       className={cn(
-        "group flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors duration-150 relative cursor-pointer",
-        !notification.isRead ? "bg-blue-50/40" : "bg-white"
+        "group flex items-start gap-3 p-4 hover:bg-card transition-colors duration-150 relative cursor-pointer",
+        !notification.isRead ? "bg-blue-50/40" : "bg-muted"
       )}
       onClick={onClick}
     >
@@ -52,7 +52,7 @@ export function NotificationItem({
           getStatusColor(notification.type)
         )}
       >
-        <Icon name={getIcon(notification.type) as any} className="w-5 h-5" />
+        <Icon name={getIcon(notification.type)} className="w-5 h-5" />
       </div>
 
       <div className="flex-1 min-w-0 text-left">
@@ -60,7 +60,7 @@ export function NotificationItem({
           <h4
             className={cn(
               "text-sm font-medium text-foreground line-clamp-1",
-              !notification.isRead && "font-bold text-gray-900"
+              !notification.isRead && "font-bold text-foreground"
             )}
           >
             {notification.title}
@@ -74,7 +74,7 @@ export function NotificationItem({
           {notification.message}
         </p>
 
-        <p className="text-xs text-gray-400 mt-2">{timeAgo}</p>
+        <p className="text-xs text-foreground mt-2">{timeAgo}</p>
       </div>
 
       <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">

@@ -2,14 +2,12 @@ import { z } from "zod";
 
 export const CreditNoteSchema = z.object({
   reason: z.enum(["CORRECTION", "ANNULATION"]),
-
   invoiceBody: z.object({
     client: z.object({
       id: z.string().nonempty("Campo obrigatório"),
       name: z.string().nonempty("Campo obrigatório"),
       email: z.string().nonempty("Campo obrigatório"),
     }),
-
     items: z
       .array(
         z.object({
@@ -19,10 +17,8 @@ export const CreditNoteSchema = z.object({
         })
       )
       .optional(),
-
     issueDate: z.string().date(),
     dueDate: z.string().date(),
-
     total: z.number(),
     taxAmount: z.number(),
     subtotal: z.number(),

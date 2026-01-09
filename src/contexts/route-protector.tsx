@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/auth";
 interface RouteProtectorProps {
   allowed: Role[];
   children: React.ReactNode;
-  // Componente opcional para exibir enquanto verifica autenticação
   fallback?: React.ReactNode;
 }
 
@@ -17,11 +16,10 @@ export function RouteProtector({
   fallback,
 }: RouteProtectorProps) {
   const router = useRouter();
-  const { user } = useAuth(); // Assumindo que o store tem um estado de loading
+  const { user } = useAuth(); 
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // Se ainda está carregando dados de autenticação, aguarda
     if (!user) {
       console.log("user nao encontrado");
       return;
@@ -53,7 +51,7 @@ export function RouteProtector({
   if (isChecking) {
     return (
       fallback || (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center bg-red-600 min-h-screen">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
         </div>
       )

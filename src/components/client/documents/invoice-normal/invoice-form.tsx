@@ -3,7 +3,7 @@ import { ErrorMessage } from "@/utils/messages";
 import { useCallback, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, InvoiceFormSkeleton, Textarea } from "@/components";
+import { Button, Input, Textarea } from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import {
   useClientSelection,
@@ -146,7 +146,6 @@ export function InvoiceForm() {
           ...(user?.role === "OWNER" &&
             currentStore?.id && { storeId: currentStore?.id }),
         };
-
 
         await createInvoiceNormal(finalPayload);
         reset();

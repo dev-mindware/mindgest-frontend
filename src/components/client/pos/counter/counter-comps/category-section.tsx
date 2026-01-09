@@ -19,7 +19,7 @@ interface CategorySectionProps {
 }
 
 export function CategorySection({
-  categories,
+  categories, 
   selectedCategory,
   onSelectCategory,
 }: CategorySectionProps) {

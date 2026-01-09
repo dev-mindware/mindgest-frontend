@@ -87,7 +87,7 @@ export function InvoiceList() {
               onClick: handlerDetailsInvoice,
             },
 
-            ...(item.status !== "CANCELLED"
+            ...(item.status === "DRAFT"
               ? [
                   {
                     label: "Cancelar Fatura",
@@ -96,7 +96,7 @@ export function InvoiceList() {
                 ]
               : []),
 
-            ...(item.status === "DRAFT"
+            ...(item.status !== "PAID"
               ? [
                   {
                     label: "Gerar Recibo",
@@ -131,9 +131,9 @@ export function InvoiceList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
+      <InvoiceFiltersTSX type="invoice" />
       {invoices.length > 0 ? (
         <>
-          <InvoiceFiltersTSX type="invoice" />
           <GenericTable<InvoiceResponse>
             page={page}
             data={invoices}
