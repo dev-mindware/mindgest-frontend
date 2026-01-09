@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Role } from "@/types";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/auth";
@@ -16,39 +16,24 @@ export function RouteProtector({
   fallback,
 }: RouteProtectorProps) {
   const router = useRouter();
-  const { user } = useAuth(); 
-  const [isChecking, setIsChecking] = useState(true);
+  const { user, isAuthenticating } = useAuth();
 
   useEffect(() => {
+    // Só redireciona após autenticação completa
+    if (isAuthenticating) return;
+
     if (!user) {
-      console.log("user nao encontrado");
+      router.replace("/auth/login");
       return;
     }
 
-    // Pequeno delay para evitar flashes desnecessários na UI
-    const timeoutId = setTimeout(() => {
-      setIsChecking(false);
-
-      // Se não há usuário autenticado, redireciona para login
-      if (!user) {
-        router.replace("/auth/login");
-        return;
-      }
-
-      // Se o usuário não tem permissão, redireciona para página não autorizada
-      if (!allowed.includes(user.role)) {
-        router.replace("/unauthorized");
-        console.log("Usuário não tem permissão");
-        return;
-      }
-    }, 100);
-
-    // Cleanup do timeout se o componente for desmontado
-    return () => clearTimeout(timeoutId);
-  }, [user, allowed, router]);
+    if (!allowed.includes(user.role)) {
+      router.replace("/unauthorized");
+    }
+  }, [user, allowed, router, isAuthenticating]);
 
   // Enquanto está verificando autenticação/autorização
-  if (isChecking) {
+  if (isAuthenticating) {
     return (
       fallback || (
         <div className="flex items-center justify-center bg-red-600 min-h-screen">
@@ -65,7 +50,6 @@ export function RouteProtector({
 
   // Se usuário não tem permissão, retorna null (redirecionamento já foi feito)
   if (!allowed.includes(user.role)) {
-    console.log("USUARIO NÇAO AUTORIZADO PRA TAIL")
     return null;
   }
 

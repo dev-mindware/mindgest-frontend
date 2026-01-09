@@ -9,28 +9,28 @@ interface UseFetchUserOptions {
 }
 
 export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
-  const { setUser, user } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
+  const { setUser, user, setIsAuthenticating } = useAuthStore();
   const hasFetched = useRef(false);
 
   useEffect(() => {
     if (!enabled) {
-      setIsLoading(false);
+      setIsAuthenticating(false);
       return;
     }
 
     if (user !== null) {
-      setIsLoading(false);
+      setIsAuthenticating(false);
       return;
     }
 
     if (hasFetched.current) {
-      setIsLoading(false);
       return;
     }
 
     let isMounted = true;
     hasFetched.current = true;
+    // Ensure we start in a loading state if we are going to fetch
+    setIsAuthenticating(true);
 
     const fetchUser = async () => {
       try {
@@ -48,7 +48,7 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
         setUser(null);
       } finally {
         if (isMounted) {
-          setIsLoading(false);
+          setIsAuthenticating(false);
         }
       }
     };
@@ -60,5 +60,5 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
     };
   }, []);
 
-  return { user, isLoading };
+  return { user };
 }

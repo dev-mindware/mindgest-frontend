@@ -4,14 +4,18 @@ import { logoutAction } from "@/actions/login";
 
 interface AuthState {
   user: User | null;
+  isAuthenticating: boolean;
   setUser: (user: User | null) => void;
+  setIsAuthenticating: (isAuthenticating: boolean) => void;
   logout: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
+  isAuthenticating: true,
 
   setUser: (user) => set({ user }),
+  setIsAuthenticating: (isAuthenticating) => set({ isAuthenticating }),
 
   logout: async () => {
     await logoutAction();
