@@ -84,7 +84,7 @@ export function CounterContent() {
             setScannedProduct({
               id: product.id,
               name: product.name,
-              price: product.price,
+              price: Number(product.price || 0),
               image: product.image,
               category: product.category?.name || "",
               reserved: product.reserved,
@@ -92,6 +92,7 @@ export function CounterContent() {
               barcode: product.barcode,
               sku: product.sku,
             });
+
             playScannerBeep();
             openModal(MODAL_BARCODE_PRODUCT_ID);
           } else {

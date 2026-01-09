@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { Icon, GlobalModal } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
+import { formatCurrency } from "@/utils";
 
 interface BarcodeProductModalProps {
   product: ProductMock | null;
@@ -47,14 +48,14 @@ export function BarcodeProductModal({
   return (
     <GlobalModal
       id={MODAL_BARCODE_PRODUCT_ID}
-      className="sm:max-w-[425px] p-0 overflow-hidden"
+      className="w-max p-0 overflow-hidden"
       title="Produto Identificado"
     >
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/50">
-          <Avatar className="h-20 w-20 rounded-lg border shadow-sm">
+          <Avatar className="h-20 w-20 rounded-md border shadow-sm">
             <AvatarImage src={product.image} className="object-cover" />
-            <AvatarFallback className="rounded-lg bg-primary/10 text-primary text-2xl font-bold">
+            <AvatarFallback className="rounded-md bg-primary/10 text-primary text-2xl font-bold">
               {product.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
@@ -67,7 +68,7 @@ export function BarcodeProductModal({
             </div>
             <h3 className="font-bold text-xl leading-tight">{product.name}</h3>
             <p className="font-black text-primary text-lg">
-              ${product.price?.toFixed(2)}
+              {formatCurrency(product.price || 0)}
             </p>
           </div>
         </div>
@@ -80,20 +81,19 @@ export function BarcodeProductModal({
             <Icon name="Hash" size={16} className="text-primary" />
             Quantidade a Adicionar
           </label>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <Input
               id="quantity"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               type="number"
-              className="text-center font-bold text-xl h-14 bg-muted/20 border-2 border-primary/10 focus:border-primary transition-all rounded-xl"
               autoFocus
               onKeyDown={handleKeyDown}
               min="1"
             />
             <Button
-              className="h-14 w-14 shrink-0 rounded-xl shadow-lg shadow-primary/20"
               onClick={handleConfirm}
+              size="icon"
             >
               <Icon name="Check" size={28} />
             </Button>

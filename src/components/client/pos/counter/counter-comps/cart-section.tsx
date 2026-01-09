@@ -36,7 +36,7 @@ export function CartSection({ cartItems, onUpdateQty, onRemove, onDelete, type =
                                 <div className="flex-1 flex flex-col justify-center overflow-hidden">
                                     <h4 className="font-semibold text-sm line-clamp-1 leading-tight" title={item.name}>{item.name}</h4>
                                     <p className="text-xs text-muted-foreground truncate">
-                                        {item.qty}x <span className="ml-1 text-[10px] text-gray-400">Sem vegetais</span>
+                                        {item.qty}x 
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-end justify-center gap-1 shrink-0">

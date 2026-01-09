@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
 import { useKeyboard } from "@/contexts/keyboard-context";
@@ -22,20 +23,23 @@ export function VirtualKeyboard() {
 
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
     const keyboardRef = useRef<Keyboard | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const mainContainerRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     // Initialize simple-keyboard
     useEffect(() => {
         if (!isVisible || !containerRef.current) return;
 
         keyboardRef.current = new Keyboard(containerRef.current, {
-            onChange: (input: string) => {
-                // controlled via Context
-            },
+            onChange: (input: string) => { },
             layoutName: layout,
             onKeyPress: (button: string) => {
                 let key = button;
@@ -118,8 +122,6 @@ export function VirtualKeyboard() {
         if (!keyboardRef.current) return;
 
         let targetLayout: string = layout;
-
-        // Use XOR logic for visual layout
         const wantUpper = isCaps !== (isShift && layout !== "numeric");
 
         if (layout === "default" && wantUpper) {
@@ -129,14 +131,8 @@ export function VirtualKeyboard() {
         }
 
         const themes = [
-            {
-                class: "hg-button-primary",
-                buttons: "{enter}"
-            },
-            {
-                class: "hg-button-special",
-                buttons: "{bksp} {lock} 00 {accent} {abc}"
-            }
+            { class: "hg-button-primary", buttons: "{enter}" },
+            { class: "hg-button-special", buttons: "{bksp} {lock} 00 {accent} {abc}" }
         ];
 
         if (isCaps) {
@@ -149,7 +145,7 @@ export function VirtualKeyboard() {
         });
     }, [isVisible, layout, isShift, isCaps]);
 
-    if (!isVisible) return null;
+    if (!mounted || !isVisible) return null;
 
     // Draggable Logic
     const onPointerDown = (e: React.PointerEvent) => {
@@ -172,7 +168,6 @@ export function VirtualKeyboard() {
         const nextX = dragRef.current.startPosX + dx;
         const nextY = dragRef.current.startPosY + dy;
 
-        // Direct DOM update for "instant" dragging without React render lag
         mainContainerRef.current.style.transform = `translate(calc(-50% + ${nextX}px), ${nextY}px)`;
     };
 
@@ -182,7 +177,6 @@ export function VirtualKeyboard() {
         const dx = e.clientX - dragRef.current.startX;
         const dy = e.clientY - dragRef.current.startY;
 
-        // Finalize state position once drag ends
         setPosition({
             x: dragRef.current.startPosX + dx,
             y: dragRef.current.startPosY + dy,
@@ -193,20 +187,26 @@ export function VirtualKeyboard() {
         (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     };
 
-    return (
+    const keyboardContent = (
         <div
             ref={mainContainerRef}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] animate-in slide-in-from-bottom duration-200"
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[999999] animate-in slide-in-from-bottom duration-200"
             style={{
                 transform: `translate(calc(-50% + ${position.x}px), ${position.y}px)`,
                 touchAction: "none",
                 willChange: "transform"
             }}
+            onPointerDown={(e) => {
+                e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+                e.preventDefault();
+            }}
         >
             <div
                 id="virtual-keyboard"
                 className={cn(
-                    "bg-card border border-primary/20 rounded-md p-4 overflow-hidden",
+                    "bg-card border border-primary/20 rounded-md p-4 overflow-hidden shadow-2xl pointer-events-auto",
                     layout === "numeric" ? "w-[440px]" : "w-[960px] max-w-[95vw]"
                 )}
             >
@@ -230,9 +230,10 @@ export function VirtualKeyboard() {
                 <div
                     ref={containerRef}
                     className="simple-keyboard-theme"
-                    onMouseDown={(e) => e.preventDefault()}
                 />
             </div>
         </div>
     );
+
+    return createPortal(keyboardContent, document.body);
 }

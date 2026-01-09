@@ -19,15 +19,15 @@ export default function POSLayout({ children }: Props) {
     <RouteProtector allowed={["CASHIER"]}>
       <MobilePosGuard />
       <SidebarProvider defaultOpen={false}>
-        <TooltipProvider delayDuration={200}>
-          <KeyboardProvider>
+        <KeyboardProvider>
+          <TooltipProvider delayDuration={200}>
             <AppSidebar />
             <SidebarInset>
               <BreadcrumbProvider>{children}</BreadcrumbProvider>
             </SidebarInset>
-            <VirtualKeyboard />
-          </KeyboardProvider>
-        </TooltipProvider>
+          </TooltipProvider>
+          <VirtualKeyboard />
+        </KeyboardProvider>
       </SidebarProvider>
     </RouteProtector>
   );
