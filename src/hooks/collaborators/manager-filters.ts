@@ -5,10 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 export function useManagerFilters() {
   const router = useRouter();
   const query = useSearchParams();
+
   const filters: ManagerFilters = {
-    status: query.get("status") || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
+    status: query.get("status") || null,
+    sortBy: query.get("sortBy") || null,
+    sortOrder: query.get("sortOrder") || null,
+    search: query.get("search_manager") || null,
   };
 
   function setFilters(newFilters: Partial<ManagerFilters>) {
@@ -29,7 +31,19 @@ export function useManagerFilters() {
     router.push(`?${searchParams.toString()}`);
   }
 
+  function clearAllFilters() {
+    const searchParams = new URLSearchParams(query.toString());
+
+    searchParams.delete("status");
+    searchParams.delete("sortBy");
+    searchParams.delete("sortOrder");
+    searchParams.delete("page");
+    searchParams.delete("search_manager");
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
+
   const page = Number(query.get("page")) || 1;
 
-  return { filters, setFilters, page, setPage };
+  return { filters, setFilters, clearAllFilters, page, setPage };
 }

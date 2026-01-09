@@ -163,16 +163,16 @@ export type InvoiceData = {
 };
 
 export type InvoiceFilters = {
-  sortBy?: string;
-  sortOrder?: string;
-  status?: InvoiceStatus;
-  invoiceNumber?: string;
-  clientName?: string;
-  startDate?: string;
-  endDate?: string;
-  storeId?: string;
-  minAmount?: number;
-  maxAmount?: number;
+  sortBy: string | null;
+  sortOrder: string | null;
+  status: InvoiceStatus | null;
+  invoiceNumber: string | null;
+  clientName: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  storeId?: string | null;
+  minAmount?: number | null;
+  maxAmount?: number | null;
 };
 
 export type InvoiceResponse = InvoiceData & {

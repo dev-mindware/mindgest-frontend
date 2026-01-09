@@ -11,20 +11,12 @@ import {
   useInvoiceTotals,
 } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
-import { useGetStores } from "@/hooks/entities";
 import { currentStoreStore, useAuthStore } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
 
 export function InvoiceForm() {
   const { user } = useAuthStore();
   const { mutateAsync: createInvoiceNormal, isPending } = useCreateInvoice();
-  const {
-    stores,
-    isLoading: loadingStores,
-    error: storesError,
-    refetch,
-  } = useGetStores();
-
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(InvoiceSchema),
     mode: "onSubmit",
@@ -155,8 +147,8 @@ export function InvoiceForm() {
             currentStore?.id && { storeId: currentStore?.id }),
         };
 
-        await createInvoiceNormal(finalPayload);
 
+        await createInvoiceNormal(finalPayload);
         reset();
         setSelectedClient(null);
       } catch (error: any) {
@@ -170,8 +162,6 @@ export function InvoiceForm() {
     },
     [createInvoiceNormal, reset, setSelectedClient, totals, user?.role]
   );
-
-  if (loadingStores && user?.role === "OWNER") return <InvoiceFormSkeleton />;
 
   return (
     <form
@@ -193,16 +183,15 @@ export function InvoiceForm() {
           error={errors.dueDate?.message}
           required
         />
-        
 
         <AsyncCreatableSelectField
+          minChars={2}
           endpoint="/clients"
           label="Cliente"
           placeholder="Digite o nome do cliente..."
           value={selectedClient}
           onChange={handleClientChange}
           displayFields={["name", "email"]}
-          minChars={2}
           formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
           error={errors.client?.name?.message}
         />
@@ -267,11 +256,7 @@ export function InvoiceForm() {
         </Button>
         <Button
           type="submit"
-          disabled={
-            isSubmitting ||
-            isPending ||
-            (user?.role === "OWNER" && loadingStores)
-          }
+          disabled={isSubmitting || isPending}
           className="min-w-[150px]"
         >
           {isPending || isSubmitting ? "Processando..." : "Criar Fatura"}

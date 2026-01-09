@@ -1,30 +1,15 @@
 "use client";
-import { Button, DatePicker } from "@/components/ui";
-import { useItemsFilters } from "@/hooks";
+import { Button } from "@/components/ui";
 import { ItemStatus } from "@/types/items";
-import {
-  itemsByOption,
-  itemsOrderOption,
-  itemsStatusOptions,
-} from "@/constants";
+import { itemsStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useClientsFilters } from "@/hooks/entities";
 
 export function ClientsFiltersTSX() {
-  const { filters, setFilters } = useClientsFilters();
+  const { filters, setFilters, clearAllFilters } = useClientsFilters();
   const { search, setSearch } = useURLSearchParams("search-client");
-
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      status: undefined,
-      sortOrder: undefined,
-      createdAfter: undefined,
-      createdBefore: undefined,
-    });
-  }
 
   const hasFilter =
     filters.status ||
@@ -97,7 +82,7 @@ export function ClientsFiltersTSX() {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />

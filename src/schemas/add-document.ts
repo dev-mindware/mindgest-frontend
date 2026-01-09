@@ -78,7 +78,7 @@ export const InvoiceSchema = InvoiceBaseSchema.extend({
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
 
 export const ProformaSchema = InvoiceBaseSchema.extend({
-  proformaExpiresAt: z.string().nonempty("Campo obrigatório"),
+  proformaExpiresAt: z.string().min(1, "Campo obrigatório"),
   paymentMethod: z.string().nonempty("O método de pagamento é obrigatório"),
   storeId: z.string().optional(),
 }).refine(
@@ -99,7 +99,7 @@ export const InvoiceReceiptSchema = InvoiceBaseSchema.extend({
     .nonempty("O método de pagamento é obrigatório")
     .optional(),
   storeId: z.string(),
-  dueDate: z.string().min(1, "A data de vencimento é obrigatória").optional(),
+  dueDate: z.string().optional(),
 }).refine(
   (data) => {
     if (!data.issueDate || !data.dueDate) return true;

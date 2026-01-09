@@ -48,7 +48,7 @@ export function NotificationList({
         <h3 className="font-semibold text-foreground">Notificações</h3>
       </div>
 
-      <ScrollArea className="h-96">
+      <ScrollArea className="h-72">
         {notifications.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             <div className="mb-2">📭</div>

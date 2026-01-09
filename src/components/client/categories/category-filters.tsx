@@ -11,16 +11,8 @@ import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 
 export function CategoriesFilters() {
+  const { filters, setFilters, clearAllFilters } = useCategoryFilters();
   const { search, setSearch } = useURLSearchParams("search-category");
-  const { filters, setFilters } = useCategoryFilters();
-
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      isActive: undefined,
-      sortOrder: undefined,
-    });
-  }
 
   const hasFilter =
     filters.isActive ||
@@ -63,7 +55,7 @@ export function CategoriesFilters() {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />

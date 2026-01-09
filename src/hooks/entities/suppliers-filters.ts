@@ -1,15 +1,15 @@
 "use client";
-import { useState } from "react";
 import { suppliersFilters } from "@/types/suppliers";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function useSuppliersFilters() {
   const router = useRouter();
   const query = useSearchParams();
+
   const filters: suppliersFilters = {
-    status: query.get("status") || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
+    status: query.get("status") || null,
+    sortBy: query.get("sortBy") || null,
+    sortOrder: query.get("sortOrder") || null,
   };
 
   function setFilters(newFilters: Partial<suppliersFilters>) {

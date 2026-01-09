@@ -8,13 +8,13 @@ export enum Status {
 }
 
 export type ItemsFilters = {
-  sortBy?: string;
-  categoryId?: string;
-  status?: ItemStatus;
-  sortOrder?: string;
-  search?: string;
-  minPrice?: string;
-  maxPrice?: string;
+  sortBy: string | null;
+  categoryId: string | null;
+  status: ItemStatus | null;
+  sortOrder: string | null;
+  search?: string | null;
+  minPrice: string | null;
+  maxPrice: string | null;
 };
 
 export type ItemData = {

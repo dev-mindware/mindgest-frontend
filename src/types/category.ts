@@ -21,7 +21,7 @@ export type CategoryResponse = {
 }
 
 export type CategoryFilters = {
-  sortBy?: string;
-  isActive?: string;
-  sortOrder?: string;
+  sortBy: string | null;
+  isActive: string | null;
+  sortOrder: string | null;
 };

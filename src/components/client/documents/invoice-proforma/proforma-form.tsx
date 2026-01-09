@@ -3,30 +3,23 @@ import { ErrorMessage } from "@/utils/messages";
 import { useMemo, useCallback, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Button,
-  Input,
-  InvoiceFormSkeleton,
-  RequestError,
-  RHFSelect,
-  Textarea,
-} from "@/components";
+import { Button, Input, RHFSelect, Textarea } from "@/components";
 import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { useCreateProforma, useEditProforma, useInvoiceTotals } from "@/hooks";
 import { useClientSelection } from "@/hooks/invoice/use-invoice-client";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { currentStoreStore, useAuthStore } from "@/stores";
-import { useGetStores } from "@/hooks/entities";
-import { paymentMethods } from "@/constants";
-import { cn } from "@/lib";
 import { InvoiceItems } from "../document-forms/items";
 
+import { paymentMethods } from "@/constants";
 type Props = {
   action?: "create" | "edit";
   initialData?: any;
   id?: string;
   onSuccess?: () => void;
 };
+
+const WEEK = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
 export function ProformaForm({
   id,
@@ -41,13 +34,6 @@ export function ProformaForm({
     useCreateProforma();
   const { mutateAsync: editProforma, isPending: isPendingEdit } =
     useEditProforma();
-  const {
-    stores,
-    isLoading: loadingStores,
-    error: storesError,
-    refetch,
-  } = useGetStores();
-
   const isLoading = isPendingCreate || isPendingEdit;
 
   const defaultValues = useMemo(() => {
@@ -55,7 +41,7 @@ export function ProformaForm({
       return {
         issueDate:
           initialData.issueDate || new Date().toISOString().split("T")[0],
-        proformaExpiresAt: initialData.proformaExpiresAt || "",
+        proformaExpiresAt: WEEK,
         notes: initialData.notes || "",
         paymentMethod: initialData.paymentMethod || "CASH",
         clientId: initialData.client?.id || "",
@@ -83,7 +69,7 @@ export function ProformaForm({
 
     return {
       issueDate: new Date().toISOString().split("T")[0],
-      proformaExpiresAt: "",
+      proformaExpiresAt: WEEK,
       items: [],
       client: {
         name: "",
@@ -242,7 +228,9 @@ export function ProformaForm({
             currentStore?.id && { storeId: currentStore?.id }),
         };
 
-        if (isEdit && id) {
+
+
+     if (isEdit && id) {
           await editProforma({ id, data: finalPayload as any });
         } else {
           await createProforma(finalPayload as any);
@@ -255,7 +243,7 @@ export function ProformaForm({
         if (!isEdit) {
           reset();
           setSelectedClient(null);
-        }
+        } 
       } catch (error: any) {
         const errorMessage =
           error?.response?.data?.message ||
@@ -283,8 +271,6 @@ export function ProformaForm({
     setSelectedClient(null);
   }, [reset, setSelectedClient]);
 
-  if (loadingStores && user?.role === "OWNER") return <InvoiceFormSkeleton />;
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -298,16 +284,16 @@ export function ProformaForm({
           error={errors.issueDate?.message}
           disabled
         />
-        
+
         <Input
           type="date"
           label="Validade da Proforma"
           {...register("proformaExpiresAt")}
           error={errors.proformaExpiresAt?.message}
-          required
+          disabled
         />
-  
-     {/*  <div
+
+        {/*  <div
         className={cn("grid gap-6 md:grid-cols-2", {
           "w-full": isEdit,
           "grid gap-6 md:grid-cols-2": !isEdit,
@@ -324,8 +310,6 @@ export function ProformaForm({
           formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
           error={errors.client?.name?.message}
         />
-
-       
       </div>
 
       {clientState.hasClient && (
@@ -409,11 +393,7 @@ export function ProformaForm({
 
         <Button
           type="submit"
-          disabled={
-            isSubmitting ||
-            isLoading ||
-            (user?.role === "OWNER" && loadingStores)
-          }
+          disabled={isSubmitting || isLoading}
           className="min-w-[150px]"
         >
           {isLoading || isSubmitting

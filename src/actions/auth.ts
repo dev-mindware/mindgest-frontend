@@ -2,7 +2,7 @@
 import { getSession } from "@/lib/auth";
 import { createSession } from "@/lib/session";
 
-export async function reauthenticate() {
+export async function   reauthenticate() {
   const session = await getSession();
   const refreshToken = session?.refreshToken;
   

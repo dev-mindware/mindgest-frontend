@@ -62,7 +62,6 @@ export function useStockFilters() {
     const updated = { ...filters, ...newFilters };
     const searchParams = new URLSearchParams();
 
-    // Handle each filter type appropriately
     if (updated.sortBy) searchParams.set("sortBy", updated.sortBy);
     if (updated.sortOrder) searchParams.set("sortOrder", updated.sortOrder);
     if (updated.itemsId) searchParams.set("itemsId", updated.itemsId);
@@ -119,6 +118,29 @@ export function useStockFilters() {
     router.push(`?${searchParams.toString()}`);
   }
 
+  function clearAllFilters() {
+    const searchParams = new URLSearchParams(query.toString());
+
+    searchParams.delete("sortBy");
+    searchParams.delete("sortOrder");
+    searchParams.delete("itemsId");
+    searchParams.delete("storeId");
+    searchParams.delete("minQuantity");
+    searchParams.delete("maxQuantity");
+    searchParams.delete("minAvailable");
+    searchParams.delete("maxAvailable");
+    searchParams.delete("hasReserved");
+    searchParams.delete("lowStock");
+    searchParams.delete("outOfStock");
+    searchParams.delete("includeItem");
+    searchParams.delete("includeStore");
+    searchParams.delete("createdAfter");
+    searchParams.delete("createdBefore");
+    searchParams.delete("page");
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
+
   function setPage(page: number) {
     const searchParams = new URLSearchParams(query.toString());
     searchParams.set("page", String(page));
@@ -127,5 +149,5 @@ export function useStockFilters() {
 
   const page = Number(query.get("page")) || 1;
 
-  return { filters, setFilters, page, setPage };
+  return { filters, setFilters, clearAllFilters, page, setPage };
 }

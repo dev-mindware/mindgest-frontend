@@ -99,26 +99,27 @@ export function ReceiptList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="receipt" />
-
       {receipts.length > 0 ? (
-        <GenericTable<ReceiptResponse>
-          page={page}
-          data={receipts}
-          columns={columns}
-          total={total}
-          totalPages={totalPages}
-          setPage={setPage}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhum recibo encontrado"
-        />
+        <>
+          <InvoiceFiltersTSX type="receipt" />
+          <GenericTable<ReceiptResponse>
+            page={page}
+            total={total}
+            data={receipts}
+            columns={columns}
+            totalPages={totalPages}
+            setPage={setPage}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            emptyMessage="Nenhum recibo encontrado"
+          />
+        </>
       ) : (
         <div className="justify-start mt-6 space-y-8">
           <EmptyState
-            description="Nenhum recibo encontrado"
-            title="Sem Recibos"
             icon="FileText"
+            title="Sem Recibos"
+            description="Nenhum recibo encontrado"
           />
         </div>
       )}

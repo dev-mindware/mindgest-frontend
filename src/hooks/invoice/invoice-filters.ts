@@ -10,14 +10,13 @@ export function useInvoiceFilters(prefix: string) {
   const getKey = (key: string) => `${prefix}_${key}`;
 
   const filters: InvoiceFilters = {
-    status:
-      (query.get(getKey("status")) as InvoiceFilters["status"]) || undefined,
-    sortBy: query.get(getKey("sortBy")) || undefined,
-    sortOrder: query.get(getKey("sortOrder")) || undefined,
-    invoiceNumber: query.get(getKey("invoiceNumber")) || undefined,
-    clientName: query.get(getKey("clientName")) || undefined,
-    startDate: query.get(getKey("startDate")) || undefined,
-    endDate: query.get(getKey("endDate")) || undefined,
+    status: (query.get(getKey("status")) as InvoiceFilters["status"]) || null,
+    sortBy: query.get(getKey("sortBy")) || null,
+    sortOrder: query.get(getKey("sortOrder")) || null,
+    invoiceNumber: query.get(getKey("invoiceNumber")) || null,
+    clientName: query.get(getKey("clientName")) || null,
+    startDate: query.get(getKey("startDate")) || null,
+    endDate: query.get(getKey("endDate")) || null,
   };
 
   const page = Number(query.get(getKey("page"))) || 1;
@@ -48,15 +47,10 @@ export function useInvoiceFilters(prefix: string) {
       getKey("invoiceNumber"),
       newFilters.invoiceNumber
     );
-    updateParam(
-      searchParams,
-      getKey("clientName"),
-      newFilters.clientName
-    );
+    updateParam(searchParams, getKey("clientName"), newFilters.clientName);
     updateParam(searchParams, getKey("startDate"), newFilters.startDate);
     updateParam(searchParams, getKey("endDate"), newFilters.endDate);
 
-    // reset page apenas se houve mudança de filtro
     if (Object.keys(newFilters).length > 0) {
       searchParams.set(getKey("page"), "1");
     }
@@ -70,10 +64,27 @@ export function useInvoiceFilters(prefix: string) {
     router.push(`?${searchParams.toString()}`, { scroll: false });
   }
 
+  function clearAllFilters() {
+    const searchParams = new URLSearchParams(query.toString());
+
+    searchParams.delete(getKey("status"));
+    searchParams.delete(getKey("sortBy"));
+    searchParams.delete(getKey("sortOrder"));
+    searchParams.delete(getKey("invoiceNumber"));
+    searchParams.delete(getKey("clientName"));
+    searchParams.delete(getKey("startDate"));
+    searchParams.delete(getKey("endDate"));
+    searchParams.delete(getKey("page"));
+    searchParams.delete(`search_${prefix}`); // limpa o search também
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
+
   return {
     filters,
     setFilters,
     page,
     setPage,
+    clearAllFilters,
   };
 }

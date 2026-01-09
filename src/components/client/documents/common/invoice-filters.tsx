@@ -7,11 +7,7 @@ import { FilterPopover } from "@/components/shared";
 import { useInvoiceFilters, useURLSearchParams } from "@/hooks";
 import { InvoiceStatus } from "@/types";
 
-type InvoiceType =
-  | "invoice"
-  | "proforma"
-  | "invoice-receipt"
-  | "receipt";
+type InvoiceType = "invoice" | "proforma" | "invoice-receipt" | "receipt";
 
 type Props = {
   type: InvoiceType;
@@ -19,22 +15,8 @@ type Props = {
 
 export function InvoiceFiltersTSX({ type }: Props) {
   const prefix = type;
-  const { filters, setFilters } = useInvoiceFilters(prefix);
+  const { filters, setFilters, clearAllFilters } = useInvoiceFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
-
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      status: undefined,
-      sortOrder: undefined,
-      invoiceNumber: undefined,
-      clientName: undefined,
-      startDate: undefined,
-      endDate: undefined,
-    });
-
-    setSearch("");
-  }
 
   const hasFilter =
     !!filters.status ||
@@ -95,43 +77,27 @@ export function InvoiceFiltersTSX({ type }: Props) {
             type="search"
             placeholder="Nº Fatura"
             value={filters.invoiceNumber ?? ""}
-            onChange={(e) =>
-              setFilters({ invoiceNumber: e.target.value })
-            }
+            onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
           />
 
           <Input
             type="search"
             placeholder="Cliente"
             value={filters.clientName ?? ""}
-            onChange={(e) =>
-              setFilters({ clientName: e.target.value })
-            }
+            onChange={(e) => setFilters({ clientName: e.target.value })}
           />
         </div>
 
         <div className="flex items-center gap-2">
           <DatePicker
-            value={
-              filters.startDate
-                ? new Date(filters.startDate)
-                : undefined
-            }
-            onChange={(_, formatted) =>
-              setFilters({ startDate: formatted })
-            }
+            value={filters.startDate ? new Date(filters.startDate) : undefined}
+            onChange={(_, formatted) => setFilters({ startDate: formatted })}
             placeholder="Data Início"
           />
 
           <DatePicker
-            value={
-              filters.endDate
-                ? new Date(filters.endDate)
-                : undefined
-            }
-            onChange={(_, formatted) =>
-              setFilters({ endDate: formatted })
-            }
+            value={filters.endDate ? new Date(filters.endDate) : undefined}
+            onChange={(_, formatted) => setFilters({ endDate: formatted })}
             placeholder="Data Fim"
           />
         </div>
@@ -140,7 +106,7 @@ export function InvoiceFiltersTSX({ type }: Props) {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />
