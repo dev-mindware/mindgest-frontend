@@ -1,6 +1,6 @@
 export type suppliersFilters = {
-  sortBy?: string;
-  status?: string;
-  sortOrder?: string;
-  search?: string;
+  sortBy?: string | null;
+  status?: string | null;
+  sortOrder?: string | null;
+  search?: string | null;
 };

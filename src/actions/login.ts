@@ -8,6 +8,7 @@ import { loginSchema } from "@/schemas";
 import api from "@/services/api";
 import { createSession } from "@/lib/session";
 import { SESSION_COOKIE_KEY } from "@/constants";
+import { getSession } from "@/lib/auth";
 
 export async function loginAction({
   email,
@@ -28,8 +29,6 @@ export async function loginAction({
     if (!user) {
       throw new Error("Usuário não autorizado");
     }
-    // console.log("Usuário logado:", user);
-    console.log("RESULTADO DA RESPOSTA");
     console.log(res.data);
 
     await createSession({
@@ -44,8 +43,11 @@ export async function loginAction({
     return { message, user, redirectPath };
   } catch (error: any) {
     let messageError = "Ocorreu um erro desconhecido!";
-    if (error?.response) {
-      messageError = error?.response?.data?.message;
+
+    if (error?.response?.data?.message) {
+      messageError = error.response.data.message;
+    } else if (error instanceof Error) {
+      messageError = error.message;
     }
 
     return {
@@ -62,7 +64,9 @@ function getRedirectPath(role: Role): string {
 
 export async function logoutAction() {
   try {
+    const session = await getSession();
     const authCookies = await cookies();
+    await api.post("/auth/logout", { refresh_token: session?.refreshToken });
     authCookies.delete(SESSION_COOKIE_KEY);
   } catch (error) {
     console.error("🚨 Erro ao fazer logout:", error);

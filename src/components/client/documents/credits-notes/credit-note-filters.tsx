@@ -5,37 +5,19 @@ import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useCreditNotesFilters } from "@/hooks/credit-notes";
-import { invoiceStatusOptions } from "@/constants";
 
 export function CreditNotesFiltersTSX() {
-  const { filters, setFilters } = useCreditNotesFilters();
+  const { filters, setFilters, clearAllFilters } = useCreditNotesFilters();
   const { search, setSearch } = useURLSearchParams("search-credit-note");
-
-  function clearFilters() {
-    alert("ola limpando");
-    setFilters({
-      reason: undefined,
-      sortBy: undefined,
-      sortOrder: undefined,
-      creditNoteNumber: undefined,
-      endDate: undefined,
-      startDate: undefined,
-    });
-    setSearch("");
-
-    alert(JSON.stringify(filters, null, 2))
-    setFilters({})
-  }
 
   const hasFilter =
     !!filters.reason ||
-    !!filters.status ||
-    search.length > 0 ||
     !!filters.sortBy ||
     !!filters.sortOrder ||
     !!filters.creditNoteNumber ||
     !!filters.endDate ||
     !!filters.startDate;
+    search.length > 0
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -100,7 +82,7 @@ export function CreditNotesFiltersTSX() {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />

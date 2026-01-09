@@ -78,7 +78,7 @@ export function useAnnulationNote() {
     onSuccess: () => {
       SucessMessage("Nota de crédito anulada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
-    },
+    },  
   });
 }
 

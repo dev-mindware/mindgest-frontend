@@ -11,16 +11,8 @@ import { useURLSearchParams } from "@/hooks/common";
 import { useManagerFilters } from "@/hooks/collaborators";
 
 export function ManagerFiltersTSX() {
-  const { filters, setFilters } = useManagerFilters();
-  const { search, setSearch } = useURLSearchParams("search");
-
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      status: undefined,
-      sortOrder: undefined,
-    });
-  }
+  const { filters, setFilters, clearAllFilters } = useManagerFilters();
+  const { search, setSearch } = useURLSearchParams("search_manager");
 
   const hasFilter =
     filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
@@ -63,7 +55,7 @@ export function ManagerFiltersTSX() {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />

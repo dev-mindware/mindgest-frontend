@@ -1,10 +1,10 @@
 export type clientsFilters = {
-  sortBy?: string;
-  status?: string;
-  sortOrder?: string;
-  search?: string;
-  createdAfter?: string;
-  createdBefore?: string;
+  sortBy: string | null;
+  status: string | null;
+  sortOrder: string | null;
+  search: string | null;
+  createdAfter: string | null;
+  createdBefore: string | null;
 };
 
 export interface Client {

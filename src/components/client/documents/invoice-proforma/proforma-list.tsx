@@ -22,10 +22,8 @@ export function ProformaList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search_proforma");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters("proforma");
-  const {
-    handlerDeleteProforma,
-    handlerDetailsProforma
-  } = useProformaActions();
+  const { handlerDeleteProforma, handlerDetailsProforma } =
+    useProformaActions();
   const {
     data: proformas,
     total,
@@ -83,11 +81,11 @@ export function ProformaList({ storeId }: { storeId?: string }) {
             },
             ...(item.status !== "CANCELLED"
               ? [
-                {
-                  label: "Deletar",
-                  onClick: handlerDeleteProforma,
-                },
-              ]
+                  {
+                    label: "Deletar",
+                    onClick: handlerDeleteProforma,
+                  },
+                ]
               : []),
           ]}
         />
@@ -105,19 +103,21 @@ export function ProformaList({ storeId }: { storeId?: string }) {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="proforma" />
       {proformas.length > 0 ? (
-        <GenericTable<InvoiceResponse>
-          page={page}
-          data={proformas}
-          columns={columns}
-          total={total}
-          totalPages={totalPages}
-          setPage={setPage}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhuma proforma encontrada"
-        />
+        <>
+          <InvoiceFiltersTSX type="proforma" />
+          <GenericTable<InvoiceResponse>
+            page={page}
+            data={proformas}
+            columns={columns}
+            total={total}
+            totalPages={totalPages}
+            setPage={setPage}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            emptyMessage="Nenhuma proforma encontrada"
+          />
+        </>
       ) : (
         <div className="justify-start mt-6 space-y-8">
           <EmptyState

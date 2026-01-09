@@ -25,19 +25,17 @@ export function LoginForm() {
   async function handleLogin({ email, password }: LoginFormData) {
     try {
       const res = await loginAction({ email, password });
-      if (!res.user) return;
-      router.replace(res.redirectPath || "/");
-      setUser(res.user);
-    } catch (error: any) {
-      alert(JSON.stringify(error, null, 2));
-      if (error?.response) {
-        ErrorMessage(
-          String(error?.response?.data?.message) ||
-            "Ocorreu um erro desconhecido. Tente novamente."
-        );
-      } else {
-        ErrorMessage("Ocorreu um erro desconhecido. Tente novamente.!");
+
+      if (!res.user) {
+        ErrorMessage(res.message || "Erro ao tentar fazer login.");
+        return;
       }
+
+      setUser(res.user);
+      router.replace(res.redirectPath || "/");
+    } catch (error) {
+      console.error(error);
+      ErrorMessage("Ocorreu um erro inesperado. Tente novamente.");
     }
   }
 
@@ -56,6 +54,7 @@ export function LoginForm() {
           placeholder="Endereço de email"
           {...register("email")}
           error={errors?.email && errors?.email?.message}
+          autoComplete="email"
         />
         <div className="flex flex-col space-y-2 items-center">
           <Input
@@ -64,6 +63,7 @@ export function LoginForm() {
             type="password"
             placeholder="Insira a senha"
             {...register("password")}
+            autoComplete="current-password"
           />
           <Link
             href="/auth/forgot-password"

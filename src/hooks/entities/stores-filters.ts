@@ -1,15 +1,16 @@
 "use client";
-import { useState } from "react";
 import { storesFilters } from "@/types/stores";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function useStoresFilters() {
   const router = useRouter();
   const query = useSearchParams();
+
   const filters: storesFilters = {
-    status: query.get("status") || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
+    status: query.get("status") || null,
+    sortBy: query.get("sortBy") || null,
+    sortOrder: query.get("sortOrder") || null,
+    search: query.get("search") || null,
   };
 
   function setFilters(newFilters: Partial<storesFilters>) {
@@ -30,7 +31,19 @@ export function useStoresFilters() {
     router.push(`?${searchParams.toString()}`);
   }
 
+  function clearAllFilters() {
+    const searchParams = new URLSearchParams(query.toString());
+
+    searchParams.delete("status");
+    searchParams.delete("sortBy");
+    searchParams.delete("sortOrder");
+    searchParams.delete("search_store");
+    searchParams.delete("page");
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
+
   const page = Number(query.get("page")) || 1;
 
-  return { filters, setFilters, page, setPage };
+  return { filters, setFilters, page, setPage, clearAllFilters };
 }

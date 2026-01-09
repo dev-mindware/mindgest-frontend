@@ -7,7 +7,6 @@ import {
   ListSkeleton,
   EmptyState,
   ButtonOnlyAction,
-  Badge,
   CreditNotesFiltersTSX,
   CreditNotePreviewDrawer,
 } from "@/components";
@@ -51,9 +50,7 @@ export function CreditNotesList({ storeId }: { storeId?: string }) {
     {
       key: "reason",
       header: "Motivo",
-      render: (_, item) => (
-        <DocumentStatusBadge status={item.reason} />
-      ),
+      render: (_, item) => <DocumentStatusBadge status={item.reason} />,
     },
     {
       key: "total",
@@ -94,9 +91,22 @@ export function CreditNotesList({ storeId }: { storeId?: string }) {
 
   return (
     <div className="mt-6 space-y-8">
-      <CreditNotesFiltersTSX />
-
-      {creditNotes.length === 0 ? (
+      {creditNotes.length > 0 ? (
+        <>
+          <CreditNotesFiltersTSX />
+          <GenericTable<CreditNotesResponse>
+            page={page}
+            total={total}
+            columns={columns}
+            setPage={setPage}
+            data={creditNotes}
+            totalPages={totalPages}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            emptyMessage="Nenhuma nota de crédito encontrada"
+          />
+        </>
+      ) : (
         <div className="mt-6">
           <EmptyState
             title="Sem Notas de Crédito"
@@ -104,18 +114,6 @@ export function CreditNotesList({ storeId }: { storeId?: string }) {
             icon="FileMinus"
           />
         </div>
-      ) : (
-        <GenericTable<CreditNotesResponse>
-          page={page}
-          total={total}
-          columns={columns}
-          setPage={setPage}
-          data={creditNotes}
-          totalPages={totalPages}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhuma nota de crédito encontrada"
-        />
       )}
       <CreditNotePreviewDrawer />
     </div>

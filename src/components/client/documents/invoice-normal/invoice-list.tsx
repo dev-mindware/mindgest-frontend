@@ -131,19 +131,21 @@ export function InvoiceList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="invoice" />
       {invoices.length > 0 ? (
-        <GenericTable<InvoiceResponse>
-          page={page}
-          data={invoices}
-          columns={columns}
-          total={total}
-          totalPages={totalPages}
-          setPage={setPage}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhum gerente encontrado"
-        />
+        <>
+          <InvoiceFiltersTSX type="invoice" />
+          <GenericTable<InvoiceResponse>
+            page={page}
+            data={invoices}
+            columns={columns}
+            total={total}
+            totalPages={totalPages}
+            setPage={setPage}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            emptyMessage="Nenhum gerente encontrado"
+          />
+        </>
       ) : (
         <div className="justify-start mt-6 space-y-8">
           <EmptyState

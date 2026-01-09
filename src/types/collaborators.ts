@@ -33,10 +33,10 @@ export type CollaboratorResponse = CollaboratorData & {
 };
 
 export type CollaboratorFilters = {
-  sortBy?: string;
-  status?: string;
-  sortOrder?: string;
-  search?: string;
+  sortBy?: string | null;
+  status?: string | null;
+  sortOrder?: string | null;
+  search?: string | null;
 };
 
 export type SupplierData = {

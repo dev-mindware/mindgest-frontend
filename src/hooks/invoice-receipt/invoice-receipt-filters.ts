@@ -5,10 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 export function useInvoiceFilters() {
   const router = useRouter();
   const query = useSearchParams();
+
   const filters: InvoiceFilters = {
-    status: query.get("status") || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
+    status: query.get("status") || null,
+    sortBy: query.get("sortBy") || null,
+    sortOrder: query.get("sortOrder") || null,
+    invoiceNumber: query.get("invoiceNumber") || null,
+    clientName: query.get("clientName") || null,
+    startDate: query.get("startDate") || null,
+    endDate: query.get("endDate") || null,
   };
 
   function setFilters(newFilters: Partial<InvoiceFilters>) {

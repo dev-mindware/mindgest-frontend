@@ -12,12 +12,12 @@ export function useItemsFilters(prefix: string) {
   const getKey = (key: string) => `${prefix}_${key}`;
 
   const filters: ItemsFilters = {
-    status: (query.get(getKey("status")) as ItemStatus) || undefined,
-    categoryId: query.get(getKey("categoryId")) || undefined,
-    sortBy: query.get(getKey("sortBy")) || undefined,
-    sortOrder: query.get(getKey("sortOrder")) || undefined,
-    maxPrice: query.get(getKey("maxPrice")) || undefined,
-    minPrice: query.get(getKey("minPrice")) || undefined,
+    status: (query.get(getKey("status")) as ItemStatus) || null,
+    categoryId: query.get(getKey("categoryId")) || null,
+    sortBy: query.get(getKey("sortBy")) || null,
+    sortOrder: query.get(getKey("sortOrder")) || null,
+    maxPrice: query.get(getKey("maxPrice")) || null,
+    minPrice: query.get(getKey("minPrice")) || null ,
   };
 
   const page = Number(query.get(getKey("page"))) || 1;
@@ -78,6 +78,20 @@ export function useItemsFilters(prefix: string) {
     router.push(`?${searchParams.toString()}`, { scroll: false });
   }
 
+  function clearAllFilters() {
+    const searchParams = new URLSearchParams(query.toString());
+
+    searchParams.delete(getKey("status"));
+    searchParams.delete(getKey("categoryId"));
+    searchParams.delete(getKey("sortOrder"));
+    searchParams.delete(getKey("minPrice"));
+    searchParams.delete(getKey("maxPrice"));
+    searchParams.delete(getKey("page"));
+    searchParams.delete(`search_${prefix}`);
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
+
   return {
     filters,
     setFilters,
@@ -85,5 +99,6 @@ export function useItemsFilters(prefix: string) {
     setPage,
     viewMode,
     setViewMode,
+    clearAllFilters,
   };
 }

@@ -109,13 +109,13 @@ export interface Invoice {
 }
 
 export interface CreditNoteFilters {
-  reason?: "CORRECTION" | "RETURN" | "DISCOUNT" | "CANCELLATION" | string;
-  status?: InvoiceStatus;
-  creditNoteNumber?: string;
-  sortBy?: string;
-  sortOrder?: string;
-  startDate?: string;
-  endDate?: string;
+  reason: "CORRECTION" | "RETURN" | "DISCOUNT" | "CANCELLATION" | string | null;
+  status?: InvoiceStatus | null;
+  creditNoteNumber: string | null;
+  sortBy: string | null;
+  sortOrder: string | null;
+  startDate: string | null;
+  endDate: string | null;
 }
 
 // criação de nota de credito

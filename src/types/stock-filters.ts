@@ -1,17 +1,17 @@
 export type stockFilters = {
-  sortBy?: string;
-  sortOrder?: string;
-  itemsId?: string;
-  storeId?: string;
-  minQuantity?: number;
-  maxQuantity?: number;
-  minAvailable?: number;
-  maxAvailable?: number;
+  sortBy?: string | null;
+  sortOrder?: string | null;
+  itemsId?: string | null;
+  storeId?: string | null;
+  minQuantity?: number | null;
+  maxQuantity?: number | null; 
+  minAvailable?: number | null;
+  maxAvailable?: number | null;
   hasReserved?: boolean | null;
   lowStock?: boolean | null;
   outOfStock?: boolean | null;
   includeItem?: boolean | null;
   includeStore?: boolean | null;
-  createdAfter?: string;
-  createdBefore?: string;
+  createdAfter?: string | null;
+  createdBefore?: string | null;
 };

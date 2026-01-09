@@ -12,23 +12,9 @@ import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 
 export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
-  const { filters, setFilters } = useItemsFilters(prefix);
+  const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
   const { categories, isLoading, error, refetch } = useGetCategories();
-
-function clearFilters() {
-  setFilters({
-    sortBy: undefined,
-    status: undefined,
-    categoryId: undefined,
-    sortOrder: undefined,
-    minPrice: undefined,
-    maxPrice: undefined,
-  });
-
-  setSearch("");
-}
-
 
   const hasFilter =
     filters.status ||
@@ -90,12 +76,12 @@ function clearFilters() {
           />
           <Input
             placeholder="Preço mínimo"
-            value={filters.minPrice}
+            value={filters.minPrice as string}
             onChange={(e) => setFilters({ minPrice: e.target.value })}
           />
           <Input
             placeholder="Preço máximo"
-            value={filters.maxPrice}
+            value={filters.maxPrice as string}
             onChange={(e) => setFilters({ maxPrice: e.target.value })}
           />
         </div>
@@ -104,7 +90,7 @@ function clearFilters() {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />

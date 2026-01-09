@@ -8,12 +8,12 @@ export function useCreditNotesFilters() {
   const query = useSearchParams();
 
   const filters: CreditNoteFilters = {
-    creditNoteNumber: query.get("creditNoteNumber") || undefined,
-    reason: query.get("reason") || undefined,
-    sortBy: query.get("sortBy") || undefined,
-    sortOrder: query.get("sortOrder") || undefined,
-    startDate: query.get("startDate") || undefined,
-    endDate: query.get("endDate") || undefined,
+    creditNoteNumber: query.get("creditNoteNumber") || null,
+    reason: query.get("reason") || null,
+    sortBy: query.get("sortBy") || null,
+    sortOrder: query.get("sortOrder") || null,
+    startDate: query.get("startDate") || null,
+    endDate: query.get("endDate") || null,
   };
 
   const page = Number(query.get("page")) || 1;
@@ -21,19 +21,21 @@ export function useCreditNotesFilters() {
   function updateParam(
     searchParams: URLSearchParams,
     key: string,
-    value: string | undefined
+    value: string | number | null | undefined
   ) {
-    if (value === undefined) {
+    if (value === undefined) return;
+
+    if (value === null || value === "") {
       searchParams.delete(key);
-    } else {
-      searchParams.set(key, value);
+      return;
     }
+
+    searchParams.set(key, String(value));
   }
 
   function setFilters(newFilters: Partial<CreditNoteFilters>) {
     const searchParams = new URLSearchParams(query.toString());
 
-    alert("setando filtros...")
     updateParam(searchParams, "creditNoteNumber", newFilters.creditNoteNumber);
     updateParam(searchParams, "reason", newFilters.reason);
     updateParam(searchParams, "sortBy", newFilters.sortBy);
@@ -54,10 +56,24 @@ export function useCreditNotesFilters() {
     router.push(`?${searchParams.toString()}`, { scroll: false });
   }
 
+  function clearAllFilters() {
+    const searchParams = new URLSearchParams(query.toString());
+
+    searchParams.delete("creditNoteNumber");
+    searchParams.delete("reason");
+    searchParams.delete("sortBy");
+    searchParams.delete("sortOrder");
+    searchParams.delete("startDate");
+    searchParams.delete("endDate");
+
+    router.push(`?${searchParams.toString()}`, { scroll: false });
+  }
+
   return {
     filters,
     setFilters,
     page,
     setPage,
+    clearAllFilters,
   };
 }

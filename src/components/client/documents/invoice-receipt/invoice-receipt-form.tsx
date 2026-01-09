@@ -7,7 +7,6 @@ import {
   Button,
   Input,
   InvoiceFormSkeleton,
-  RequestError,
   RHFSelect,
   Textarea,
 } from "@/components";
@@ -15,7 +14,6 @@ import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useCreateInvoiceReceipt, useInvoiceTotals } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { useClientSelection } from "@/hooks/invoice";
-import { useGetStores } from "@/hooks/entities";
 import { currentStoreStore, useAuthStore } from "@/stores";
 import { paymentMethods } from "@/constants";
 import { InvoiceItems } from "../document-forms/items";
@@ -24,12 +22,6 @@ export function InvoiceReceiptForm() {
   const { user } = useAuthStore();
   const { mutateAsync: createInvoiceReceipt, isPending } =
     useCreateInvoiceReceipt();
-  const {
-    stores,
-    isLoading: loadingStores,
-    error: storesError,
-    refetch,
-  } = useGetStores();
 
   const form = useForm<InvoiceReceiptFormData>({
     resolver: zodResolver(InvoiceReceiptSchema),
@@ -161,7 +153,6 @@ export function InvoiceReceiptForm() {
 
         const finalPayload = {
           issueDate: data.issueDate,
-          dueDate: data.dueDate,
           client: clientPayload,
           items: itemsPayload,
           total: totals.total,
@@ -196,14 +187,12 @@ export function InvoiceReceiptForm() {
     setSelectedClient(null);
   }, [reset, setSelectedClient]);
 
-  if (loadingStores && user?.role === "OWNER") return <InvoiceFormSkeleton />;
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="p-8 mt-4 space-y-8 border rounded-lg"
     >
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         <Input
           type="date"
           label="Data de Emissão"
@@ -211,14 +200,7 @@ export function InvoiceReceiptForm() {
           error={errors.issueDate?.message}
           disabled
         />
-        <Input
-          type="date"
-          label="Data de Vencimento"
-          {...register("dueDate")}
-          error={errors.dueDate?.message}
-          required
-        />
-    
+
         <AsyncCreatableSelectField
           endpoint="/clients"
           label="Cliente"
@@ -295,11 +277,7 @@ export function InvoiceReceiptForm() {
         </Button>
         <Button
           type="submit"
-          disabled={
-            isSubmitting ||
-            isPending ||
-            (user?.role === "OWNER" && loadingStores)
-          }
+          disabled={isSubmitting || isPending}
           className="min-w-[150px]"
         >
           {isPending || isSubmitting ? "Processando..." : "Criar Fatura Recibo"}

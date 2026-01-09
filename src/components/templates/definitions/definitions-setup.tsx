@@ -40,25 +40,11 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     },
     {
       id: "tab-4",
-      label: "Entidades",
-      icon: "Users",
-      component: <EntitiesPageContent />,
-      category: "workplace",
-    },
-    {
-      id: "tab-5",
       label: "Colaboradores",
       icon: "BriefcaseBusiness",
       component: <CollaboratorsPageContent />,
       category: "workplace",
     },
-    // {
-    //   id: "tab-6",
-    //   label: "Subscrição",
-    //   icon: "Sparkles",
-    //   component: <Subscriptions />,
-    //   category: "workplace",
-    // },
   ];
 
   const enabledTabs = tabs.filter((tab) => !disabledTabs.includes(tab.id));
@@ -67,9 +53,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     (tab) => tab.category === "workplace"
   );
 
-  if (enabledTabs.length === 0) {
-    return null;
-  }
+  if (enabledTabs.length === 0) return null;
 
   const defaultTab = enabledTabs[0]?.id || "tab-1";
 
@@ -109,7 +93,6 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   return (
     <div>
       <h1 className="text-2xl font-semibold">Definições da Conta</h1>
-
       <div className="hidden md:block">
         <Tabs 
           defaultValue={defaultTab} 

@@ -117,25 +117,27 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="invoice-receipt" />
       {invoicesReceipts.length > 0 ? (
-        <GenericTable<InvoiceResponse>
-          page={page}
-          data={invoicesReceipts}
-          columns={columns}
-          total={total}
-          totalPages={totalPages}
-          setPage={setPage}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhum documento encontrado"
-        />
+        <>
+          <InvoiceFiltersTSX type="invoice-receipt" />
+          <GenericTable<InvoiceResponse>
+            page={page}
+            data={invoicesReceipts}
+            columns={columns}
+            total={total}
+            totalPages={totalPages}
+            setPage={setPage}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+            emptyMessage="Nenhum documento encontrado"
+          />
+        </>
       ) : (
         <div className="justify-start mt-6 space-y-8">
           <EmptyState
-            description="Adicione novos documentos"
+            icon="FileText"
             title="Sem Documentos"
-            icon="Users"
+            description="Adicione novos documentos"
           />
         </div>
       )}

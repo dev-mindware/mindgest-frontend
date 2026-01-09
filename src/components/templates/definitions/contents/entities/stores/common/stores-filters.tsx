@@ -1,27 +1,15 @@
 "use client";
 import { Button } from "@/components/ui";
 import { ItemStatus } from "@/types/items";
-import {
-  itemsByOption,
-  itemsOrderOption,
-  itemsStatusOptions,
-} from "@/constants";
+import { itemsStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useStoresFilters } from "@/hooks/entities/stores-filters";
 
 export function StoresFiltersTSX() {
-  const { filters, setFilters } = useStoresFilters();
-  const { search, setSearch } = useURLSearchParams("search");
-
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      status: undefined,
-      sortOrder: undefined,
-    });
-  }
+  const { filters, setFilters, clearAllFilters } = useStoresFilters();
+  const { search, setSearch } = useURLSearchParams("search_stores");
 
   const hasFilter =
     filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
@@ -68,7 +56,7 @@ export function StoresFiltersTSX() {
           <Button
             size="sm"
             variant="outline"
-            onClick={clearFilters}
+            onClick={clearAllFilters}
             className="h-10 text-destructive hover:text-destructive"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />
