@@ -13,6 +13,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   UpgradeModal,
+  useSidebar,
 } from "@/components";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
   const [upgradeItem, setUpgradeItem] = useState<MenuItem | null>(null);
   const pathname = usePathname();
   const { openModal } = useModal();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const toggleSubmenu = (id: string) =>
     setOpenSubmenu((prev) => (prev === id ? null : id));
@@ -35,6 +37,12 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
       e.preventDefault();
       setUpgradeItem(item);
       openModal("upgrade-modal");
+    }
+  };
+
+  const handleMobileClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
     }
   };
 
@@ -77,9 +85,8 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                       {!item.showUpgrade && (
                         <Icon
                           name="ChevronRight"
-                          className={`ml-auto transition-transform duration-200 ${
-                            isOpen ? "rotate-90" : ""
-                          }`}
+                          className={`ml-auto transition-transform duration-200 ${isOpen ? "rotate-90" : ""
+                            }`}
                         />
                       )}
                     </SidebarMenuButton>
@@ -98,7 +105,7 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                                     : "hover:bg-sidebar-accent "
                                 )}
                               >
-                                <Link href={sub.url}>
+                                <Link href={sub.url} onClick={handleMobileClick}>
                                   <span>{sub.name}</span>
                                 </Link>
                               </SidebarMenuSubButton>
@@ -113,9 +120,13 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                     <SidebarMenuButton
                       asChild={!item.showUpgrade}
                       tooltip={item.name}
-                      onClick={(e) =>
-                        item.showUpgrade && handleClickUpgrade(e, item)
-                      }
+                      onClick={(e) => {
+                        if (item.showUpgrade) {
+                          handleClickUpgrade(e, item);
+                        } else {
+                          handleMobileClick();
+                        }
+                      }}
                       className={cn(
                         activeMain
                           ? "bg-primary/10 text-primary"

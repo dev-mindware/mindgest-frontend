@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { pt } from "date-fns/locale";
 
 /**
@@ -6,9 +6,15 @@ import { pt } from "date-fns/locale";
  * @param date Date ou string no formato ISO
  */
 export function formatDateTime(date: Date | string): string {
-  return format(new Date(date), "dd/MM/yyyy, HH:mm", { locale: pt });
+  if (!date) return "N/A";
+  const dateObj = new Date(date);
+  if (!isValid(dateObj)) return "Data inválida";
+  return format(dateObj, "dd/MM/yyyy, HH:mm", { locale: pt });
 }
 
 export function formatDate(date: Date | string): string {
-  return format(new Date(date), "dd/MM/yyyy", { locale: pt });
+  if (!date) return "N/A";
+  const dateObj = new Date(date);
+  if (!isValid(dateObj)) return "Data inválida";
+  return format(dateObj, "dd/MM/yyyy", { locale: pt });
 }

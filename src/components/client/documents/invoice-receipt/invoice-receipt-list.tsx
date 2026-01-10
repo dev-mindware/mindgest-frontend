@@ -49,16 +49,16 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   });
 
   const columns: Column<InvoiceResponse>[] = [
-    { key: "number", header: "N° da Fatura" },
+    { key: "invoiceNumber", header: "N° da Fatura" },
     {
       key: "client",
       header: "Cliente",
       render: (_, item) => item?.client?.name ?? "N/A",
     },
     {
-      key: "total",
+      key: "totalAmount",
       header: "Valor",
-      render: (_, item) => formatCurrency(item.total),
+      render: (_, item) => formatCurrency(item.totalAmount),
     },
     {
       key: "status",
