@@ -143,7 +143,6 @@ export type InvoiceData = {
   discountAmount: string;
   receivedValue: string;
   total: string;
-  totalAmount: string;
   notes?: string;
   dueDate: string;
   paidAt?: string;
