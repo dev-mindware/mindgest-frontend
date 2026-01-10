@@ -55,11 +55,18 @@ export function RHFSelect<T extends FieldValues>({
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
               <SelectContent>
-                {options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value.toString()}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
+                {options
+                  .filter(
+                    (opt) =>
+                      opt.value !== null &&
+                      opt.value !== undefined &&
+                      opt.value !== ""
+                  )
+                  .map((opt) => (
+                    <SelectItem key={opt.value.toString()} value={opt.value.toString()}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 
