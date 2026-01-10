@@ -6,7 +6,7 @@ const DOCUMENT_BASE_PATH: Record<DocumentType, string> = {
   invoice: "/invoice/normal",
   proforma: "/invoice/proforma",
   receipt: "/invoice/receipt",
-  "invoice-receipt": "/invoice/receipt",
+  "invoice-receipt": "/invoice/invoice-receipt",
   "credit-note": "/credit-note",
 };
 
