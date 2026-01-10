@@ -41,6 +41,7 @@ export function useNotifications(
       return allPages.length * TAKE;
     },
     staleTime: 1000 * 60,
+    refetchInterval: 1000 * 5,
   });
 
   const notifications = data?.pages.flatMap((page) => page.data) ?? [];
@@ -106,7 +107,8 @@ export function useNotifications(
       });
     },
     onSettled: () => {
-      // queryClient.invalidateQueries({ queryKey: ["notifications"] }); // Optional: Re-fetch to confirm
+      queryClient.invalidateQueries({ queryKey: ["notifications"] }); 
+      // Optional: Re-fetch to confirm
     },
   });
 
@@ -125,7 +127,7 @@ export function useNotifications(
       });
     },
     onSettled: () => {
-      // queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 

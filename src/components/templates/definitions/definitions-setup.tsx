@@ -6,7 +6,7 @@ import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
 import { CollaboratorsPageContent, EntitiesPageContent } from "./contents";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -14,39 +14,40 @@ interface DefSetupProps {
 
 export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   const router = useRouter();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get("tab");
 
   const tabs = [
     {
-      id: "tab-1",
+      id: "appearance",
       label: "Aparência",
       icon: "Pencil",
       component: <Appearance />,
       category: "general",
     },
     {
-      id: "tab-2",
+      id: "profile",
       label: "Perfil",
       icon: "User",
       component: <Profile />,
       category: "general",
     },
     {
-      id: "tab-3",
+      id: "notifications",
       label: "Notificações",
       icon: "Bell",
       component: <Notification />,
       category: "general",
     },
     {
-      id: "tab-4",
+      id: "collaborators",
       label: "Colaboradores",
       icon: "BriefcaseBusiness",
       component: <CollaboratorsPageContent />,
       category: "workplace",
     },
     {
-      id: "tab-5",
+      id: "categories",
       label: "Categorias",
       icon: "Tag",
       component: <CategoriesPageContent />,
@@ -62,11 +63,12 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
 
   if (enabledTabs.length === 0) return null;
 
-  const defaultTab = enabledTabs[0]?.id || "tab-1";
+  const defaultTab = enabledTabs[0]?.id || "appearance";
+  const activeTab = currentTab && enabledTabs.some(t => t.id === currentTab) ? currentTab : defaultTab;
 
   // Função para limpar query params ao trocar de tab
   const handleTabChange = (value: string) => {
-    router.push(pathname);
+    router.push(`?tab=${value}`);
   };
 
   const renderTabTrigger = (
@@ -82,11 +84,11 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
         <Icon
           name={
             tab.icon as
-              | "User"
-              | "Bell"
-              | "Users"
-              | "BriefcaseBusiness"
-              | "Sparkles"
+            | "User"
+            | "Bell"
+            | "Users"
+            | "BriefcaseBusiness"
+            | "Sparkles"
           }
           className={isDesktop ? "-ms-0.5 me-1.5 opacity-60" : ""}
           size={16}
@@ -101,8 +103,8 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     <div>
       <h1 className="text-2xl font-semibold">Definições da Conta</h1>
       <div className="hidden md:block">
-        <Tabs 
-          defaultValue={defaultTab} 
+        <Tabs
+          value={activeTab}
           className="flex-row w-full mt-5"
           onValueChange={handleTabChange}
         >
@@ -147,8 +149,8 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       </div>
 
       <div className="block mt-6 sm:mt-8 md:mt-10 md:hidden">
-        <Tabs 
-          defaultValue={defaultTab} 
+        <Tabs
+          value={activeTab}
           className="w-full"
           onValueChange={handleTabChange}
         >

@@ -47,12 +47,13 @@ export function NotificationDropdown() {
         sideOffset={8}
       >
         <NotificationList
-          notifications={notifications}
-          onNotificationClick={handleNotificationClick}
-          deleteNotification={deleteNotification}
-          fetchNextPage={fetchNextPage}
+          isDropdown
           hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+          notifications={notifications}
           isFetchingNextPage={isFetchingNextPage}
+          deleteNotification={deleteNotification}
+          onNotificationClick={handleNotificationClick}
         />
       </DropdownMenuContent>
     </DropdownMenu>

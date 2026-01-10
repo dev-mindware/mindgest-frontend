@@ -4,6 +4,9 @@ import { NotificationItem } from "./notification-item";
 import { NotificationType } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useInView } from "react-intersection-observer";
+import { EmptyState } from "@/components/common";
+import { cn } from "@/lib";
+import Link from "next/link";
 
 interface NotificationListProps {
   notifications: NotificationType[];
@@ -12,6 +15,8 @@ interface NotificationListProps {
   fetchNextPage?: () => void;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
+  className?: string;
+  isDropdown?: boolean;
 }
 
 export function NotificationList({
@@ -20,7 +25,9 @@ export function NotificationList({
   deleteNotification,
   fetchNextPage,
   hasNextPage,
-  isFetchingNextPage
+  isFetchingNextPage,
+  className,
+  isDropdown = false
 }: NotificationListProps) {
   const { ref, inView } = useInView();
 
@@ -30,32 +37,32 @@ export function NotificationList({
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
-  // Initial view limit logic? 
-  // If we want "show 3 initially", we can just rely on the hook fetching 5. 
-  // It's close enough. If strictly 3, we would slice. 
-  // But "loader infinito" implies we want to see more as we scroll.
-  // The user prompt is a bit contradictory ("show 3" vs "infinite loader"). 
-  // "loader infinito PRA QUANDO NÃO CABEREM AS 3" -> Infinite loader when > 3.
-  // This implies if there are few, show them. If many, scroll.
-
   const unreadNotifications = notifications.filter(
     (n) => !n.isRead
   );
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h3 className="font-semibold text-foreground">Notificações</h3>
-      </div>
+      {isDropdown && (
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h3 className="font-semibold text-foreground">Notificações</h3>
+          <Link href="/notifications" className="text-primary text-sm">
+            Ver todas
+          </Link>
+        </div>
+      )}
 
-      <ScrollArea className="h-72">
+      <ScrollArea className={cn("h-72", className)}>
         {notifications.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            <div className="mb-2">📭</div>
-            <p className="text-sm">Nenhuma notificação</p>
+          <div className="p-4">
+            <EmptyState
+              icon="BellOff"
+              title="Sem notificações"
+              description="Você não possui novas mensagens no momento."
+            />
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y">
             {notifications.map((notification) => (
               <NotificationItem
                 key={notification.id}
@@ -66,11 +73,11 @@ export function NotificationList({
             ))}
 
             {(hasNextPage || isFetchingNextPage) && (
-              <div ref={ref} className="p-4 flex justify-center">
+              <div ref={ref} className="flex items-center justify-center p-4">
                 {isFetchingNextPage ? (
-                  <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                 ) : (
-                  <span className="text-xs text-gray-400">Carregando mais...</span>
+                  <span className="text-xs text-muted-foreground">Carregando mais...</span>
                 )}
               </div>
             )}
