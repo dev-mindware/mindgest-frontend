@@ -46,7 +46,7 @@ export function NotificationFilters({
       <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="border-dashed gap-2 shrink-0">
+            <Button variant="outline" className="border gap-2 shrink-0">
               <Icon name="ListFilter" className="h-4 w-4" />
               Filtrar
             </Button>
@@ -75,7 +75,7 @@ export function NotificationFilters({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="border-dashed gap-2 shrink-0">
+            <Button variant="outline" className="border gap-2 shrink-0">
               <Icon name="Tag" className="h-4 w-4" />
               Tipo
             </Button>

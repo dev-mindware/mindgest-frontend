@@ -73,7 +73,7 @@ export function SaftExportCard() {
       SucessMessage("Ficheiro SAFT exportado com sucesso!");
     } catch (error: any) {
       console.error("Error exporting SAFT:", error);
-      ErrorMessage (
+      ErrorMessage(
         error?.response?.data?.message || "Erro ao exportar ficheiro SAFT"
       );
     } finally {
@@ -82,7 +82,7 @@ export function SaftExportCard() {
   };
 
   return (
-    <Card>
+    <Card className="h-max">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle className="text-sm font-medium">Exportar SAFT</CardTitle>

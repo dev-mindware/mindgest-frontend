@@ -52,13 +52,16 @@ export function NotificationList({
         </div>
       )}
 
-      <ScrollArea className={cn("h-72", className)}>
+      <ScrollArea className={cn("h-72", className, {
+        "h-max": notifications.length === 0
+      })}>
         {notifications.length === 0 ? (
           <div className="p-4">
             <EmptyState
               icon="BellOff"
               title="Sem notificações"
-              description="Você não possui novas mensagens no momento."
+              className="border-none"
+              description="Você não possui novas notificações no momento."
             />
           </div>
         ) : (

@@ -131,7 +131,6 @@ export function useNotifications(
     },
   });
 
-
   const handleNotificationClick = (notification: NotificationType) => {
     openModal("notify-detail");
     setCurrentNotification(notification);

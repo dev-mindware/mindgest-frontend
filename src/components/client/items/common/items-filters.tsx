@@ -9,13 +9,16 @@ import {
 } from "@/constants";
 import { Icon, RequestError, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
+import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { useURLSearchParams } from "@/hooks/common";
+import { useState } from "react";
 
 export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
-  const { categories, isLoading, error, refetch } = useGetCategories();
-
+  const { categories, isLoading, error, refetch, pagination, page, setPage } =
+    useGetCategories();
+  
   const hasFilter =
     filters.status ||
     filters.categoryId ||
@@ -25,7 +28,6 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     filters.maxPrice ||
     search.length > 0;
 
-  if (isLoading) return <div>Loading...</div>;
   if (error)
     return (
       <RequestError
@@ -44,12 +46,14 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
 
       <div className="w-full flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <FilterPopover
-            label="Categoria"
-            icon="ChartBarStacked"
+          <PaginatedSelect
             options={categories}
             value={filters.categoryId}
             onChange={(categoryId) => setFilters({ categoryId })}
+            isLoading={isLoading}
+            pagination={pagination}
+            onPageChange={setPage}
+            placeholder="Categoria"
           />
 
           <FilterPopover

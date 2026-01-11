@@ -21,10 +21,12 @@ import {
 } from "../common";
 import { ServiceCardView } from "./service-card-view";
 import { DetailsServiceModal, ServiceModal } from "./service-modals";
+import { currentStoreStore } from "@/stores";
 
 export function ServiceList() {
   const { search } = useURLSearchParams(`service_search`);
   const [debounceSearch] = useDebounce(search, 400);
+  const { currentStore } = currentStoreStore();
   const { filters, setViewMode, viewMode, page, setPage } =
     useItemsFilters("service");
   const { handlerDeleteService, handlerDetailsService, handlerEditService } =
@@ -46,6 +48,7 @@ export function ServiceList() {
       ...filters,
       search: debounceSearch,
       page,
+      ...(currentStore?.id && { storeId: currentStore.id }),
     },
   });
 

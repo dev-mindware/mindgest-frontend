@@ -14,6 +14,7 @@ import {
   CategoryModal,
   ProductModalSkeleton,
 } from "@/components";
+import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
 import { formatCurrency, parseCurrency } from "@/utils";
@@ -54,7 +55,8 @@ function AddProductFormContent() {
   const { user } = useAuth();
   const { closeModal, modalData } = useModal();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
-  const { categories, isLoading, error, refetch } = useGetCategories();
+  const { categories, isLoading, error, refetch, pagination, page, setPage } =
+    useGetCategories();
 
   const initialBarcode = modalData["add-product"]?.barcode || "";
 
@@ -83,7 +85,7 @@ function AddProductFormContent() {
       if (error?.response) {
         ErrorMessage(
           error?.response?.data?.message ||
-          "Ocorreu um erro ao adicionar o item"
+            "Ocorreu um erro ao adicionar o item"
         );
       } else {
         ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
@@ -185,12 +187,24 @@ function AddProductFormContent() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <RHFSelect
-              name="categoryId"
-              label="Categoria"
-              options={categories}
+            <Controller
               control={control}
+              name="categoryId"
+              render={({ field: { onChange, value } }) => (
+                <PaginatedSelect
+                  label="Categoria"
+                  options={categories}
+                  value={value}
+                  onChange={onChange}
+                  isLoading={isLoading}
+                  pagination={pagination}
+                  onPageChange={setPage}
+                  placeholder="Selecione uma opção"
+                  className="w-full"
+                />
+              )}
             />
+
             <RHFSelect
               name="type"
               label="Tipo"
@@ -200,67 +214,68 @@ function AddProductFormContent() {
           </div>
 
           {/* <TsunamiOnly className="space-y-4"> */}
-            <div className="grid grid-cols-3 gap-4">
-              <Input
-                startIcon="Scale"
-                type="quantity"
-                label="Stock Mínimo"
-                {...register("minStock", { valueAsNumber: true })}
-                error={errors.minStock?.message}
-              />
-              <Input
-                type="quantity"
-                startIcon="Scale"
-                label="Stock Máximo"
-                {...register("maxStock", { valueAsNumber: true })}
-                error={errors.maxStock?.message}
-              />
-              <Input
-                startIcon="Scale"
-                label="Unidade de Medida"
-                {...register("unit")}
-                error={errors.unit?.message}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="number"
-                startIcon="Weight"
-                label="Peso (Kg)"
-                {...register("weight", { valueAsNumber: true })}
-                error={errors.weight?.message}
-              />
-              <Input
-                label="Dimensões"
-                placeholder="Ex: 10x20x30 cm"
-                {...register("dimensions")}
-                error={errors.dimensions?.message}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="date"
-                label="Data de Validade"
-                {...register("expiryDate")}
-                error={errors.expiryDate?.message}
-              />
-              <Input
-                type="number"
-                label="Dias até Expirar"
-                {...register("daysToExpiry", { valueAsNumber: true })}
-                error={errors.daysToExpiry?.message}
-              />
-            </div>
-
-            <Textarea
-              label="Descrição"
-              {...register("description")}
-              className="mt-1 min-h-[100px]"
-              placeholder="Escreva detalhes do item..."
-              error={errors.description?.message}
+          <div className="grid grid-cols-3 gap-4">
+            <Input
+              type="quantity"
+              startIcon="Scale"
+              label="Stock Mínimo"
+              {...register("minStock", { valueAsNumber: true })}
+              error={errors.minStock?.message}
             />
+            <Input
+              type="quantity"
+              startIcon="Scale"
+              label="Stock Máximo"
+              {...register("maxStock", { valueAsNumber: true })}
+              error={errors.maxStock?.message}
+            />
+            <Input
+              startIcon="Scale"
+              label="Unidade de Medida (opc)"
+              {...register("unit")}
+              error={errors.unit?.message}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              type="number"
+              startIcon="Weight"
+              label="Peso (Kg) (opcional)"
+              {...register("weight", { valueAsNumber: true })}
+              error={errors.weight?.message}
+            />
+            <Input
+              label="Dimensões (opcional)"
+              placeholder="Ex: 10x20x30 cm"
+              {...register("dimensions")}
+              error={errors.dimensions?.message}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              type="date"
+              label="Data de Validade (opcional)"
+              {...register("expiryDate")}
+              error={errors.expiryDate?.message}
+            />
+            <Input
+              placeholder="14"
+              type="number"
+              label="Dias até Expirar (opcional)"
+              {...register("daysToExpiry", { valueAsNumber: true })}
+              error={errors.daysToExpiry?.message}
+            />
+          </div>
+
+          <Textarea
+            label="Descrição (opcional)"
+            {...register("description")}
+            className="mt-1 min-h-[100px]"
+            placeholder="Escreva detalhes do item..."
+            error={errors.description?.message}
+          />
           {/* </TsunamiOnly> */}
         </div>
 
@@ -268,10 +283,7 @@ function AddProductFormContent() {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit
-            className="w-max"
-            isLoading={isPending || isSubmitting}
-          >
+          <ButtonSubmit className="w-max" isLoading={isPending || isSubmitting}>
             Salvar
           </ButtonSubmit>
         </div>

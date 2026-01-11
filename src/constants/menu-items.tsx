@@ -158,9 +158,16 @@ export const menuItems: MenuStructure = {
       ],
     },
     {
+      name: "Notificações",
+      url: "/notifications",
+      icon: <Icon name="Bell" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
+    },
+    {
       name: "Configurações",
       url: "/settings",
-      icon: <Icon name="Settings" />,
+      icon: <Icon name="Settings2" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
