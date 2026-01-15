@@ -11,3 +11,4 @@ export * from "./items";
 export * from "./invoice";
 export * from "./invoice-proforma";
 export * from "./credit-notes";
+export * from "./stores";

@@ -7,9 +7,10 @@ export type storesFilters = {
 
 export type StoreData = {
   name: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   address: string;
+  companyId: string;
 };
 
 export type StoreResponse = StoreData & {
