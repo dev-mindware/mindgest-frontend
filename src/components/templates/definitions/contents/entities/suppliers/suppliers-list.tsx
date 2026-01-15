@@ -1,189 +1,130 @@
 "use client";
-import { useEffect, useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { Icon } from "@/components/common/icon";
-import { DataTable, DataTableRowActions } from "@/components/custom";
-
-interface Supplier {
-  id: string;
-  nome: string;
-  tipoFornecedor: "Empresa" | "Particular";
-  nif: string;
-  telefone: string;
-}
+import { usePagination, useURLSearchParams } from "@/hooks/common";
+import {
+  Column,
+  RequestError,
+  GenericTable,
+  ListSkeleton,
+  EmptyState,
+  ButtonOnlyAction,
+} from "@/components";
+import { useDebounce } from "use-debounce";
+import { SupplierFiltersTSX } from "./common";
+import {
+  SupplierModal,
+  DeleteSupplierModal,
+  DetailsSupplierModal,
+} from "./suppliers-modals";
+import { useSupplierActions } from "@/hooks/entities/use-supplier-actions";
+import { useSuppliersFilters } from "@/hooks/entities/suppliers-filters";
+import { SupplierResponse } from "@/types";
 
 export function SuppliersList() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { search } = useURLSearchParams("search");
+  const [debounceSearch] = useDebounce(search, 400);
+  const { filters, page, setPage } = useSuppliersFilters();
+  const {
+    handlerDeleteSupplier,
+    handlerDetailsSupplier,
+    handlerEditSupplier,
+  } = useSupplierActions();
 
-  useEffect(() => {
-    // Simulando dados de fornecedores
-    const mockSuppliers: Supplier[] = [
-      {
-        id: "1",
-        nome: "TechnoLda",
-        tipoFornecedor: "Empresa",
-        nif: "500123456",
-        telefone: " 923 456 789",
-      },
-      {
-        id: "2",
-        nome: "Carlos Mendes",
-        tipoFornecedor: "Particular",
-        nif: "123456789",
-        telefone: " 912 345 678",
-      },
-      {
-        id: "3",
-        nome: "Distribuidora Angola",
-        tipoFornecedor: "Empresa",
-        nif: "500987654",
-        telefone: " 924 567 890",
-      },
-      {
-        id: "4",
-        nome: "Isabel Rodrigues",
-        tipoFornecedor: "Particular",
-        nif: "987654321",
-        telefone: " 913 456 789",
-      },
-      {
-        id: "5",
-        nome: "Comércio & Cia",
-        tipoFornecedor: "Empresa",
-        nif: "500456789",
-        telefone: " 925 678 901",
-      },
-    ];
+  const {
+    data: allSuppliers,
+    total,
+    totalPages,
+    goToNextPage,
+    goToPreviousPage,
+    isLoading,
+    isError,
+    refetch,
+  } = usePagination<SupplierResponse>({
+    endpoint: "/suppliers",
+    queryKey: ["suppliers"],
+    queryParams: {
+      ...filters,
+      search: debounceSearch,
+      page,
+    },
+  });
 
-    setIsLoading(true);
-    setTimeout(() => {
-      setSuppliers(mockSuppliers);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  const supplierColumns: ColumnDef<Supplier>[] = [
+  const columns: Column<SupplierResponse>[] = [
+    { key: "name", header: "Nome" },
+    { key: "taxNumber", header: "NIF" },
+    { key: "email", header: "Email" },
+    { key: "phone", header: "Telefone" },
     {
-      accessorKey: "nome",
-      header: "Nome",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("nome")}</div>
-      ),
-      size: 200,
-    },
-    {
-      accessorKey: "tipoFornecedor",
-      header: "Tipo",
-      cell: ({ row }) => {
-        const tipo = row.getValue("tipoFornecedor") as string;
-        return (
-          <Badge
-            className={cn(
-              tipo === "Empresa" &&
-                "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-              tipo === "Particular" &&
-                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-            )}
-          >
-            {tipo}
-          </Badge>
-        );
-      },
-      size: 120,
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id));
-      },
-    },
-    {
-      accessorKey: "nif",
-      header: "NIF",
-      cell: ({ row }) => <div className="font-mono">{row.getValue("nif")}</div>,
-      size: 120,
-    },
-    {
-      accessorKey: "telefone",
-      header: "Telefone",
-      cell: ({ row }) => (
-        <div className="font-mono">{row.getValue("telefone")}</div>
-      ),
-      size: 150,
-    },
-    {
-      id: "actions",
-      header: () => <span className="sr-only">Actions</span>,
-      cell: ({ row }) => (
-        <DataTableRowActions
-          row={row}
+      key: "action",
+      header: "Ação",
+      render: (_, item) => (
+        <ButtonOnlyAction
+          data={item}
           actions={[
             {
-              label: "Visualizar",
-              icon: <Icon name="Eye" size={16} />,
-              onClick: (row) => console.log("Ver fornecedor:", row.original),
-              shortcut: "⌘V",
+              label: "Ver detalhes",
+              onClick: () => handlerDetailsSupplier(item),
             },
+            { label: "Editar", onClick: () => handlerEditSupplier(item) },
             {
-              label: "Editar",
-              icon: <Icon name="Eraser" size={16} />,
-              onClick: (row) => console.log("Editar fornecedor:", row.original),
-              shortcut: "⌘E",
-            },
-            {
-              label: "Contactar",
-              icon: <Icon name="Phone" size={16} />,
-              onClick: (row) =>
-                console.log("Contactar fornecedor:", row.original),
-              shortcut: "⌘C",
-            },
-            {
-              label: "Excluir",
-              icon: <Icon name="Trash2" size={16} />,
-              onClick: (row) =>
-                console.log("Excluir fornecedor:", row.original),
-              variant: "destructive",
-              shortcut: "⌘⌫",
+              label: "Deletar",
+              onClick: () => handlerDeleteSupplier(item),
             },
           ]}
         />
       ),
-      size: 60,
-      enableHiding: false,
     },
   ];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDeleteSuppliers = (selectedRows: any[]) => {
-    const updatedSuppliers = suppliers.filter(
-      (supplier) => !selectedRows.some((row) => row.original.id === supplier.id)
+  if (isLoading) return <ListSkeleton />;
+
+  if (isError) {
+    return (
+      <RequestError
+        refetch={refetch}
+        message="Erro ao carregar os fornecedores"
+      />
     );
-    setSuppliers(updatedSuppliers);
-    console.log(
-      "Fornecedores excluídos:",
-      selectedRows.map((row) => row.original)
+  }
+
+  if (allSuppliers.length === 0)
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+            <SupplierFiltersTSX />
+          </div>
+        </div>
+        <EmptyState
+          description="Adicione novos fornecedores"
+          title="Sem Fornecedores"
+          icon="Truck"
+        />
+      </div>
     );
-  };
 
   return (
-    <div className="bg-background">
-      <DataTable
-        data={suppliers}
-        columns={supplierColumns}
-        searchableColumns={["nome"]}
-        filterableColumns={[
-          {
-            id: "tipoFornecedor",
-            title: "Tipo de Fornecedor",
-          },
-        ]}
-        onDelete={handleDeleteSuppliers}
-        isLoading={isLoading}
-        emptyState={{
-          title: "Nenhum fornecedor encontrado",
-          description: "Comece criando um novo registro de fornecedor.",
-        }}
+    <div className="justify-start mt-6 space-y-8">
+      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
+          <SupplierFiltersTSX />
+        </div>
+      </div>
+
+      <GenericTable<SupplierResponse>
+        page={page}
+        data={allSuppliers}
+        columns={columns}
+        total={total}
+        totalPages={totalPages}
+        setPage={setPage}
+        goToNextPage={goToNextPage}
+        goToPreviousPage={goToPreviousPage}
+        emptyMessage="Nenhum fornecedor encontrado"
       />
+
+      <DetailsSupplierModal />
+      <DeleteSupplierModal />
+      <SupplierModal action="edit" />
     </div>
   );
 }

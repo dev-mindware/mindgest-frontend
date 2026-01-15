@@ -1,7 +1,29 @@
-import { ItemData, SupplierData } from "@/types";
-import { suppliersService } from "@/services/suppliers-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { suppliersService } from "@/services/suppliers-service";
 import { SucessMessage } from "@/utils/messages";
+import { SupplierData } from "@/types";
+import { useFetch } from "../common/use-fetch";
+
+export function useGetSuppliers() {
+  const { data, error, isLoading, refetch } = useFetch<any>(
+    "suppliers",
+    "/suppliers?page=1&limit=100"
+  );
+
+  const suppliers =
+    data?.data.map((supplier: any) => ({
+      label: `${supplier.name}`,
+      value: supplier.id,
+    })) || [];
+
+  return {
+    suppliers,
+    suppliersData: data?.data || [],
+    error,
+    isLoading,
+    refetch,
+  };
+}
 
 export function useAddSupplier() {
   const queryClient = useQueryClient();
@@ -19,8 +41,8 @@ export function useUpdateSupplier() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<ItemData> }) =>
-      suppliersService.updateSupplier(id, data as any),
+    mutationFn: ({ id, data }: { id: string; data: Partial<SupplierData> }) =>
+      suppliersService.updateSupplier(id, data),
     onSuccess: () => {
       SucessMessage("Fornecedor atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });

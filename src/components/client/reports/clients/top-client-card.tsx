@@ -1,35 +1,31 @@
-"use client";
-
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/utils";
-import { Award, Mail, Calendar as CalendarIconLucide } from "lucide-react";
+  Separator,
+  Badge,
+  Progress,
+} from "@/components/ui";
+import { Award, Mail, Calendar as CalendarIcon } from "lucide-react";
 import { ClientAnalyticsResponse } from "@/types";
-
-import { DynamicMetricCard } from "@/components/shared/dynamic-metric-card";
+import { formatCurrency } from "@/utils";
 
 interface TopClientCardProps {
   client: ClientAnalyticsResponse["clients"][0] | undefined;
 }
 
+const formatDate = (dateString: string) => {
+  return new Intl.DateTimeFormat("pt-PT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(dateString));
+};
+
 export function TopClientCard({ client }: TopClientCardProps) {
   if (!client) return null;
-
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat("pt-PT", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(dateString));
-  };
 
   return (
     <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-primary/5">
@@ -37,7 +33,9 @@ export function TopClientCard({ client }: TopClientCardProps) {
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <CardTitle className="text-2xl">{client.clientName}</CardTitle>
+              <CardTitle className="text-2xl">
+                {client.clientName}
+              </CardTitle>
               <Badge variant="default" className="text-xs">
                 Top Cliente
               </Badge>
@@ -50,32 +48,39 @@ export function TopClientCard({ client }: TopClientCardProps) {
           <Award className="h-8 w-8 text-primary" />
         </div>
       </CardHeader>
+
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <DynamicMetricCard
-            title={formatCurrency(client.totalRevenue)}
-            subtitle="Receita Total"
-            icon="DollarSign"
-            className="border-none shadow-none bg-primary/5"
-          />
-          <DynamicMetricCard
-            title={client.totalInvoices}
-            subtitle="Nº de Facturas"
-            icon="Receipt"
-            className="border-none shadow-none bg-primary/5"
-          />
-          <DynamicMetricCard
-            title={formatCurrency(client.averageOrderValue)}
-            subtitle="Valor Médio"
-            icon="ChartBar"
-            className="border-none shadow-none bg-primary/5"
-          />
-          <DynamicMetricCard
-            title={formatDate(client.lastPurchaseDate)}
-            subtitle="Última Compra"
-            icon="CalendarDays"
-            className="border-none shadow-none bg-primary/5"
-          />
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Receita Total</p>
+              <p className="text-xl font-bold text-primary">
+                {formatCurrency(client.totalRevenue)}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Nº de Facturas</p>
+              <p className="text-xl font-bold">{client.totalInvoices}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Valor Médio</p>
+              <p className="text-xl font-bold">
+                {formatCurrency(client.averageOrderValue)}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <CalendarIcon className="h-3 w-3" />
+                Última Compra
+              </p>
+              <p className="text-xl font-bold">
+                {formatDate(client.lastPurchaseDate)}
+              </p>
+            </div>
+          </div>
         </div>
 
         <Separator />

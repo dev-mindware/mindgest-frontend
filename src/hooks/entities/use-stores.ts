@@ -1,14 +1,14 @@
-import { storesResponse } from "@/types/entities";
-import { useFetch } from "../common/use-fetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { storesService } from "@/services/stores-service";
 import { SucessMessage } from "@/utils/messages";
-import { ItemData, StoreData } from "@/types";
+import { StoreData } from "@/types";
+import { useFetch } from "../common/use-fetch";
+import { storesResponse } from "@/types/entities";
 
 export function useGetStores() {
   const { data, error, isLoading, refetch } = useFetch<storesResponse>(
     "stores",
-    "/stores?page=1&limit=10"
+    "/stores?page=1&limit=100"
   );
 
   const stores =
@@ -48,8 +48,8 @@ export function useUpdateStore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<ItemData> }) =>
-      storesService.updateStore(id, data as any),
+    mutationFn: ({ id, data }: { id: string; data: Partial<StoreData> }) =>
+      storesService.updateStore(id, data),
     onSuccess: () => {
       SucessMessage("Loja atualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["stores"] });

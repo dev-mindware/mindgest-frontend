@@ -49,7 +49,7 @@ export function ClientsReportsContent() {
   return (
     <div className="space-y-6">
       <TitleList
-        title="Dashboard de Clientes"
+        title="Relatórios de Clientes"
         suTitle="Acompanhe compras, frequência e valor médio para identificar quem gera mais receita."
       />
 

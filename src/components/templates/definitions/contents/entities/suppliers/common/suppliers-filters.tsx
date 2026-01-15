@@ -1,51 +1,38 @@
 "use client";
 import { Button } from "@/components/ui";
-import { ItemStatus } from "@/types/items";
-import { itemsStatusOptions } from "@/constants";
-import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
+import { usersByOption, categoryStatusOptions } from "@/constants";
+import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { useSuppliersFilters } from "@/hooks/entities/suppliers-filters";
 
-export function SuppliersFiltersTSX() {
-  const { filters, setFilters } = useSuppliersFilters();
+export function SupplierFiltersTSX() {
   const { search, setSearch } = useURLSearchParams("search");
-
-  function clearFilters() {
-    setFilters({
-      sortBy: undefined,
-      status: undefined,
-      sortOrder: undefined,
-    });
-  }
+  const { filters, setFilters } = useSuppliersFilters();
 
   const hasFilter =
-    filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
+    filters.status || filters.sortBy || filters.sortOrder || (search && search.length > 0);
 
   return (
     <SearchHandlerWrapper
-      search={search}
+      search={search || ""}
       setSearch={setSearch}
       className="flex flex-col sm:flex-row"
     >
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-2">
         <FilterPopover
           icon="Tag"
-          label="Status"
-          options={itemsStatusOptions}
+          label="NIF"
+          options={[]}
           value={filters.status}
-          onChange={(status) => setFilters({ status: status as ItemStatus })}
+          onChange={(status) => setFilters({ status })}
         />
 
         <FilterPopover
           icon="List"
           label="Ordenar por"
+          options={usersByOption}
           value={filters.sortBy}
-          options={[
-            { value: "name", label: "Nome" },
-            { value: "createdAt", label: "Mais Recente" },
-            { value: "updatedAt", label: "Mais Antigo" },
-          ]}
           onChange={(sortBy) => setFilters({ sortBy })}
         />
 
@@ -59,18 +46,6 @@ export function SuppliersFiltersTSX() {
           value={filters.sortOrder}
           onChange={(sortOrder) => setFilters({ sortOrder })}
         />
-
-        {hasFilter && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={clearFilters}
-            className="h-10 text-destructive hover:text-destructive"
-          >
-            <Icon name="X" className="w-4 h-4 mr-2" />
-            Limpar
-          </Button>
-        )}
       </div>
     </SearchHandlerWrapper>
   );

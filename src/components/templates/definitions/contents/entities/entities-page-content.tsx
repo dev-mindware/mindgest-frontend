@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { TitleList, TsunamiOnly } from "@/components/common";
+import { TitleList } from "@/components/common";
 import {
   Tabs,
   TabsContent,
@@ -9,6 +9,7 @@ import {
   Button,
   Separator,
 } from "@/components/ui";
+
 import { useModal } from "@/stores";
 import { StoresList, AddStoreModal } from "./stores";
 import { SuppliersList, AddSupplierModal } from "./suppliers";
@@ -40,25 +41,23 @@ export function EntitiesPageContent() {
       />
       <Separator />
 
-      <Tabs defaultValue="client-tab" className="w-full">
+      <Tabs defaultValue="supplier-tab" className="w-full">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full">
           <TabsList className="flex flex-wrap justify-center sm:justify-start gap-2">
-            <TsunamiOnly>
-              <TabsTrigger
-                value="supplier-tab"
-                onClick={() => setCurrentTab("supplier")}
-                className="text-sm sm:text-base"
-              >
-                Fornecedor
-              </TabsTrigger>
-              <TabsTrigger
-                value="store-tab"
-                onClick={() => setCurrentTab("store")}
-                className="text-sm sm:text-base"
-              >
-                Loja
-              </TabsTrigger>
-            </TsunamiOnly>
+            <TabsTrigger
+              value="supplier-tab"
+              onClick={() => setCurrentTab("supplier")}
+              className="text-sm sm:text-base"
+            >
+              Fornecedores
+            </TabsTrigger>
+            <TabsTrigger
+              value="store-tab"
+              onClick={() => setCurrentTab("store")}
+              className="text-sm sm:text-base"
+            >
+              Lojas
+            </TabsTrigger>
           </TabsList>
 
           <Button

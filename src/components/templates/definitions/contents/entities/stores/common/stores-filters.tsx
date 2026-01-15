@@ -1,22 +1,21 @@
 "use client";
 import { Button } from "@/components/ui";
-import { ItemStatus } from "@/types/items";
-import { itemsStatusOptions } from "@/constants";
-import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
+import { usersByOption, categoryStatusOptions } from "@/constants";
+import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { useStoresFilters } from "@/hooks/entities/stores-filters";
 
 export function StoresFiltersTSX() {
+  const { search, setSearch } = useURLSearchParams("search");
   const { filters, setFilters, clearAllFilters } = useStoresFilters();
-  const { search, setSearch } = useURLSearchParams("search_stores");
 
   const hasFilter =
-    filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
+    filters.status || filters.sortBy || filters.sortOrder || (search && search.length > 0);
 
   return (
     <SearchHandlerWrapper
-      search={search}
+      search={search || ""}
       setSearch={setSearch}
       className="flex flex-col sm:flex-row"
     >
@@ -24,20 +23,16 @@ export function StoresFiltersTSX() {
         <FilterPopover
           icon="Tag"
           label="Status"
-          options={itemsStatusOptions}
+          options={categoryStatusOptions}
           value={filters.status}
-          onChange={(status) => setFilters({ status: status as ItemStatus })}
+          onChange={(status) => setFilters({ status })}
         />
 
         <FilterPopover
           icon="List"
           label="Ordenar por"
+          options={usersByOption}
           value={filters.sortBy}
-          options={[
-            { value: "name", label: "Nome" },
-            { value: "createdAt", label: "Mais Recente" },
-            { value: "updatedAt", label: "Mais Antigo" },
-          ]}
           onChange={(sortBy) => setFilters({ sortBy })}
         />
 

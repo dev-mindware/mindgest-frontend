@@ -52,7 +52,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Tag",
       component: <CategoriesPageContent />,
       category: "workplace",
-    }
+    },
+    {
+      id: "entities",
+      label: "Entidades",
+      icon: "Warehouse",
+      component: <EntitiesPageContent />,
+      category: "workplace",
+    },
   ];
 
   const enabledTabs = tabs.filter((tab) => !disabledTabs.includes(tab.id));

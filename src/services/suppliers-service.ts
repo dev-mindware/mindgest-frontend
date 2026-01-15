@@ -1,15 +1,15 @@
-import type { SupplierData } from "@/types";
-import { api } from "./api";
+import type { SupplierData, SupplierResponse } from "@/types";
+import api from "./api";
 
 export const suppliersService = {
   addSupplier: async (data: SupplierData) => {
-    return api.post<SupplierData>("/suppliers", data);
+    return api.post<SupplierResponse>("/suppliers", data);
   },
-  updateSupplier: async (id: string, data: SupplierData) => {
-    return api.put<SupplierData>(`/suppliers/${id}`, data);
+  updateSupplier: async (id: string, data: Partial<SupplierData>) => {
+    return api.put<SupplierResponse>(`/suppliers/${id}`, data);
   },
   deleteSupplier: async (id: string) => {
-    return api.delete<SupplierData>(`/suppliers/${id}`);
+    return api.delete<void>(`/suppliers/${id}`);
   },
   getSuppliers: async () => {
     return api.get("/suppliers");

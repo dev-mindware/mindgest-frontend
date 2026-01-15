@@ -15,13 +15,11 @@ import {
   RequestError,
 } from "@/components";
 import { useStockSummary } from "@/hooks/stock";
-import { formatCurrency, formatDateTime } from "@/utils";
 import {
   Area,
   AreaChart,
   CartesianGrid,
   XAxis,
-  ResponsiveContainer,
 } from "recharts";
 import { icons } from "lucide-react";
 import { DynamicMetricCard, DynamicMetricCardSkeleton } from "@/components/shared/dynamic-metric-card";

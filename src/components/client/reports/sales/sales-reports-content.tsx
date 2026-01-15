@@ -30,7 +30,7 @@ export function SalesReportsContent() {
   return (
     <div className="space-y-6">
       <TitleList
-        title="Dashboard de Vendas"
+        title="Relatórios de Vendas"
         suTitle="Analise receitas, volume e evolução por período de forma clara."
       />
 
