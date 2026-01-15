@@ -1,9 +1,9 @@
 import type { ManagerData } from "@/types";
 import { api } from "./api";
 
-export const ManagerDataService = {
+export const managerService = {
   addManager: async (data: ManagerData) => {
-    return api.post<ManagerData>("/auth/register/user", data);
+    return api.post<ManagerData>("/auth/manager", data);
   },
   updateManager: async (id: string, data: ManagerData) => {
     return api.put<ManagerData>(`/users/${id}`, data);

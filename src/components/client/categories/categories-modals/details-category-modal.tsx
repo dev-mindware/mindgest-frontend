@@ -11,10 +11,12 @@ import { currentCategoryStore } from "@/stores";
 import { formatDateTime } from "@/utils";
 
 export function DetailsCategoryModal() {
-  const { closeModal } = useModal();
+  const { closeModal, open } = useModal();
   const { currentCategory } = currentCategoryStore();
 
   if (!currentCategory) return null;
+
+  if(!open["view-category"]) return null;
 
   return (
     <GlobalModal

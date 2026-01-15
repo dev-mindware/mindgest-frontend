@@ -32,6 +32,7 @@ export const managerSchema = z.object({
       "Senha deve conter pelo menos um caractere especial"
     )
     .refine((password) => !/\s/.test(password), "Senha não pode conter espaços").optional(),
+    storeIds: z.array(z.string()).min(1, "Deve selecionar pelo menos uma loja"),
 });
 
 export type ManagerFormData = z.infer<typeof managerSchema>;

@@ -114,7 +114,7 @@ export function ServiceList() {
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full items-center gap-3 sm:flex-row sm:justify-between sm:gap-4 sm:items-start">
-          <ItemsFiltersTSX prefix="service" />
+          <ItemsFiltersTSX prefix="service" hasData={items.length > 0} />
           <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
         </div>
       </div>

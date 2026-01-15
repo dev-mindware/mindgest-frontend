@@ -7,18 +7,24 @@ import {
   itemsOrderOption,
   itemsStatusOptions,
 } from "@/constants";
-import { Icon, RequestError, SearchHandlerWrapper } from "@/components/common";
+import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { useURLSearchParams } from "@/hooks/common";
-import { useState } from "react";
+import { cn } from "@/lib";
 
-export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
+export function ItemsFiltersTSX({
+  prefix,
+  hasData,
+}: {
+  prefix: string;
+  hasData: boolean;
+}) {
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
-  const { categories, isLoading, error, refetch, pagination, page, setPage } =
+  const { categories, isLoading, error, refetch, pagination, setPage } =
     useGetCategories();
-  
+
   const hasFilter =
     filters.status ||
     filters.categoryId ||
@@ -30,14 +36,19 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
 
   if (error)
     return (
-      <RequestError
-        refetch={refetch}
-        message="Erro ao carregar as categorias"
-      />
+      <div className="flex items-center gap-2">
+        <span className="text-destructive text-sm">Erro ao carregar as categorias</span>
+        <Button variant="outline" onClick={() => refetch()}>Tentar novamente</Button>
+      </div>
     );
 
   return (
-    <div className="w-full flex flex-col gap-4 ">
+    <div
+      className={cn(
+        "w-full flex flex-col gap-4",
+        !hasData && "pointer-events-none"
+      )}
+    >
       <SearchHandlerWrapper
         search={search}
         setSearch={setSearch}

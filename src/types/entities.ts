@@ -1,3 +1,5 @@
+import { Category } from "./category";
+
 export type ClientData = {
   name: string;
   email: string;
@@ -15,21 +17,22 @@ export type ClientResponse = ClientData & {
 };
 
 export interface storesResponse {
-  data: Stores[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
+  data: Stores[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface Stores {
-  id: string
-  name: string
-  email: string
-  phone: string
-  address: string
-  isActive: boolean
-  companyId: string
-  createdAt: string
-  updatedAt: string
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  isActive: boolean;
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+  categories: Category[];
 }

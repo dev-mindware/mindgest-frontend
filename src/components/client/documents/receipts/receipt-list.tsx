@@ -99,7 +99,7 @@ export function ReceiptList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="receipt" />
+      <InvoiceFiltersTSX type="receipt" hasData={receipts.length > 0} />
       {receipts.length > 0 ? (
         <>
           <GenericTable<ReceiptResponse>

@@ -103,10 +103,10 @@ export function ProformaList({ storeId }: { storeId?: string }) {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="proforma" />
+      <InvoiceFiltersTSX type="proforma" hasData={proformas.length > 0} />
       {proformas.length > 0 ? (
         <>
-      <GenericTable<InvoiceResponse>
+          <GenericTable<InvoiceResponse>
             page={page}
             data={proformas}
             columns={columns}

@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui";
+import { Button, DatePicker } from "@/components/ui";
 import { ItemStatus } from "@/types/items";
 import { itemsStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
@@ -57,7 +57,7 @@ export function ClientsFiltersTSX() {
           onChange={(sortOrder) => setFilters({ sortOrder })}
         />
 
-        {/* <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <DatePicker
             value={
               filters.createdBefore
@@ -76,7 +76,7 @@ export function ClientsFiltersTSX() {
             onChange={(_, formatted) => setFilters({ createdAfter: formatted })}
             placeholder="Cadastrado depois de.."
           />
-        </div> */}
+        </div>
 
         {hasFilter && (
           <Button

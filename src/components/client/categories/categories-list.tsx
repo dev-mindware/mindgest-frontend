@@ -22,14 +22,15 @@ import {
   DeleteCategoryModal,
   DetailsCategoryModal,
 } from "./categories-modals";
+import { currentStoreStore } from "@/stores";
 
 export function CategoriesList() {
   const { search } = useURLSearchParams("search-category");
   const [debounceSearch] = useDebounce(search, 400);
+  const { currentStore } = currentStoreStore();
   const { filters, setViewMode, viewMode, page, setPage } =
     useCategoryFilters();
   const {
-    handlerDeleteCategory,
     toggleStatusCategory,
     handlerEditCategory,
     handlerDetailsCategory,
@@ -46,7 +47,7 @@ export function CategoriesList() {
   } = usePagination<Category>({
     endpoint: "/categories",
     queryKey: ["categories"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryParams: { ...filters, storeId: currentStore?.id, search: debounceSearch, page },
   });
 
   const columns: Column<Category>[] = [

@@ -3,9 +3,10 @@ export type ManagerData = {
   email?: string;
   password?: string;
   phone: string;
-  role: string;
+  role?: string;
   companyId?: string;
   storeId?: string;
+  storeIds?: string[];
 };
 
 export type ManagerResponse = ManagerData & {
@@ -13,6 +14,7 @@ export type ManagerResponse = ManagerData & {
   status: string;
   createdAt: string;
   updatedAt: string;
+  stores?: { id: string; name: string }[];
 };
 
 export type CollaboratorData = {

@@ -5,7 +5,7 @@ import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
 
 export function DeleteCategoryModal() {
-  const { closeModal } = useModal();
+  const { closeModal, open } = useModal();
   const { currentCategory } = currentCategoryStore();
   const { mutateAsync: deleteCategoryMutate, isPending } = useDeleteCategory();
 
@@ -24,6 +24,9 @@ export function DeleteCategoryModal() {
       }
     }
   }
+
+
+  if(!open["delete-category"]) return null;
 
   return (
     <GlobalModal

@@ -7,10 +7,9 @@ export const storeSchema = z.object({
     .string()
     .regex(/^\d{9}$/, "Telefone deve ter 9 dígitos"),
   address: z.string().min(5, "Endereço muito curto"),
-  status: z.enum(["act", "des", "sus"], {
-    required_error: "Selecione o status",
-  }),
-  manager: z.string().nonempty("Selecione um gerente"),
+  status: z.string().optional(),
+  manager: z.string().optional(),
+  companyId: z.string().nonempty("Selecione uma empresa"),
 });
 
 export type StoreFormData = z.infer<typeof storeSchema>;

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
-import { currentCategoryStore, useModal } from "@/stores";
+import { currentCategoryStore, currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { CategoryFormData, categorySchema } from "@/schemas";
 import { useAddCategory, useUpdateCategory } from "@/hooks/category";
 import {
@@ -19,9 +19,12 @@ type CategoryModalProps = {
 };
 
 export function CategoryModal({ action }: CategoryModalProps) {
+  const { user } = useAuthStore();
   const { closeModal, open } = useModal();
   const isOpen = open["add-category"] || open["edit-category"];
+  const { currentStore } = currentStoreStore();
   const { currentCategory } = currentCategoryStore();
+
   const { mutateAsync: addCategory, isPending: isAdding } = useAddCategory();
   const { mutateAsync: editCategory, isPending: isEditing } =
     useUpdateCategory();
@@ -34,6 +37,10 @@ export function CategoryModal({ action }: CategoryModalProps) {
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     mode: "onChange",
+    defaultValues: {
+      storeId: currentStore?.id || "",
+      companyId: user?.company?.id || "",
+    },
   });
 
   useEffect(() => {
@@ -78,7 +85,7 @@ export function CategoryModal({ action }: CategoryModalProps) {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 overflow-auto max-h-[80vh]"
+        className="space-y-6 max-h-[80vh]"
       >
         <Input
           label="Nome"

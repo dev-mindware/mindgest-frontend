@@ -117,7 +117,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <InvoiceFiltersTSX type="invoice-receipt" />
+      <InvoiceFiltersTSX type="invoice-receipt" hasData={invoicesReceipts.length > 0} />
       {invoicesReceipts.length > 0 ? (
         <>
           <GenericTable<InvoiceResponse>

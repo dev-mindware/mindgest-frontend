@@ -1,12 +1,13 @@
 "use client";
 
-import { Button, GlobalModal, Input, RHFSelect } from "@/components";
-import { useForm, Controller } from "react-hook-form";
+import { Button, GlobalModal, Input } from "@/components";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StoreFormData, storeSchema } from "@/schemas/add-store";
-import { managerOptions, statusOptions } from "../../common/constant-data";
+import { useAuthStore } from "@/stores";
 
 export function AddStoreModal() {
+  const { user } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -14,6 +15,9 @@ export function AddStoreModal() {
     formState: { errors },
   } = useForm<StoreFormData>({
     resolver: zodResolver(storeSchema),
+    defaultValues: {
+      companyId: user?.company?.id!,
+    },
   });
 
   function onSubmit(data: StoreFormData) {
@@ -61,24 +65,14 @@ export function AddStoreModal() {
             {...register("address")}
             error={errors.address?.message}
           />
-
-          <RHFSelect
-            name="status"
-            control={control}
-            label="Status de Atividade"
-            options={statusOptions}
-          />
-
-          <RHFSelect
-            name="manager"
-            control={control}
-            label="Gerente da loja"
-            options={managerOptions}
-          />
+          
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex  justify-end">
           <Button type="submit">Salvar Loja</Button>
+          <Button variant="outline" type="button">
+            Cancelar
+          </Button>
         </div>
       </form>
     </GlobalModal>

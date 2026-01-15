@@ -1,10 +1,11 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { useFetch } from "../common/use-fetch";
 import { SucessMessage } from "@/utils/messages";
 import { CategoryData, CategoryResponse } from "@/types/category";
 import { categoryService } from "@/services/category-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { currentStoreStore } from "@/stores";
 
 export function useAddCategory() {
   const queryClient = useQueryClient();
@@ -55,15 +56,12 @@ export function useToggleStatusCategory() {
   });
 }
 
-export function useGetCategories({
-  limit = 10,
-}: {
-  limit?: number;
-} = {}) {
+export function useGetCategories() {
   const [page, setPage] = useState(1);
+  const { currentStore } = currentStoreStore();
   const { data, error, isLoading, refetch } = useFetch<CategoryResponse>(
     "categories",
-    `/categories?page=${page}&limit=${limit}`
+    `/categories?page=${page}&limit=10&storeId=${currentStore?.id}`
   );
 
   const categories =
