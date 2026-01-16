@@ -17,4 +17,5 @@ export * from "./subscription";
 export * from "./upload";
 export * from "./stores";
 export * from "./invoice-proforma";
+export * from "./dashboard";
 export * from "./errors";

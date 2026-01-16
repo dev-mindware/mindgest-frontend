@@ -29,7 +29,7 @@ export function DynamicMetricCard({
         <Card
             onClick={onClick}
             className={cn(
-                "border shadow-none cursor-default text-foreground overflow-hidden transition-all py-2",
+                "border shadow-none cursor-default text-foreground overflow-hidden transition-all py-2 bg-gradient-to-t from-primary/2 to-card",
                 variant === "action" && "bg-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/40",
                 isInteractive && "cursor-pointer active:scale-[0.98]",
                 className
@@ -66,25 +66,6 @@ export function DynamicMetricCard({
                             {description}
                         </p>
                     )}
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
-
-export function DynamicMetricCardSkeleton({ className }: { className?: string }) {
-    return (
-        <Card className={cn("border shadow-none overflow-hidden py-2", className)}>
-            <CardContent className="p-4">
-                <div className="flex flex-col space-y-1">
-                    <div className="flex justify-between items-start">
-                        <Skeleton className="h-8 w-1/2" />
-                        <Skeleton className="h-8 w-8 rounded-md" />
-                    </div>
-                    <Skeleton className="h-6 w-1/3" />
-                </div>
-                <div className="mt-2">
-                    <Skeleton className="h-4 w-full" />
                 </div>
             </CardContent>
         </Card>

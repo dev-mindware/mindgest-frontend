@@ -7,6 +7,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
     Table,
     TableBody,
@@ -32,20 +33,23 @@ interface MonthlyRevenueTableProps {
 export function MonthlyRevenueTable({ monthlyTrend }: MonthlyRevenueTableProps) {
     const formatMonth = (monthString: string) => {
         const [year, month] = monthString.split("-");
-        return new Intl.DateTimeFormat("pt-PT", {
-            month: "short",
+        // Using AO locale for consistency
+        return new Intl.DateTimeFormat("pt-AO", {
+            month: "long",
             year: "numeric",
         }).format(new Date(parseInt(year), parseInt(month) - 1));
     };
 
     return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-primary" />
-                    <CardTitle>Receita Mensal</CardTitle>
+        <Card className="border-none shadow-sm bg-card/50">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <BarChart3 className="h-5 w-5" />
                 </div>
-                <CardDescription>Últimos 6 meses</CardDescription>
+                <div>
+                    <CardTitle className="text-lg font-semibold">Receita Mensal</CardTitle>
+                    <CardDescription>Histórico de desempenho recente</CardDescription>
+                </div>
             </CardHeader>
             <CardContent>
                 {monthlyTrend.length === 0 || monthlyTrend.every(t => t.revenue === 0) ? (
@@ -53,33 +57,39 @@ export function MonthlyRevenueTable({ monthlyTrend }: MonthlyRevenueTableProps) 
                         icon="CalendarDays"
                         title="Sem histórico mensal"
                         description="Nenhuma transação registada nos últimos meses."
+                        className="py-12"
                     />
                 ) : (
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Mês</TableHead>
-                                <TableHead className="text-right">Receita</TableHead>
-                                <TableHead className="text-right">Facturas</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {monthlyTrend.map((trend, index) => (
-                                <TableRow
-                                    key={index}
-                                    className={trend.revenue > 0 ? "bg-primary/5 font-medium" : ""}
-                                >
-                                    <TableCell>{formatMonth(trend.month)}</TableCell>
-                                    <TableCell className="text-right">
-                                        {trend.revenue > 0 ? formatCurrency(trend.revenue) : "-"}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        {trend.invoices > 0 ? trend.invoices : "-"}
-                                    </TableCell>
+                    <div className="rounded-xl border border-border/50 overflow-hidden">
+                        <Table>
+                            <TableHeader className="bg-muted/30">
+                                <TableRow className="hover:bg-transparent border-none">
+                                    <TableHead className="font-bold text-foreground">Mês Referência</TableHead>
+                                    <TableHead className="text-right font-bold text-foreground">Receita</TableHead>
+                                    <TableHead className="text-right font-bold text-foreground">Facturas</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {monthlyTrend.map((trend, index) => (
+                                    <TableRow
+                                        key={index}
+                                        className={cn(
+                                            "transition-colors",
+                                            trend.revenue > 0 ? "bg-primary/[0.02]" : "opacity-60"
+                                        )}
+                                    >
+                                        <TableCell className="font-medium capitalize">{formatMonth(trend.month)}</TableCell>
+                                        <TableCell className="text-right font-black text-primary">
+                                            {trend.revenue > 0 ? formatCurrency(trend.revenue) : "-"}
+                                        </TableCell>
+                                        <TableCell className="text-right font-medium">
+                                            {trend.invoices > 0 ? trend.invoices : "-"}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 )}
             </CardContent>
         </Card>

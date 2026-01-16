@@ -7,91 +7,81 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { BarChart3 } from "lucide-react";
+import { ChartArea, ChartPie } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { formatCurrency } from "@/utils";
 import { ClientAnalyticsResponse } from "@/types";
 import { EmptyState } from "@/components/common";
-import { DynamicMetricCard } from "@/components/shared/dynamic-metric-card";
 
 interface MetricsPieChartProps {
     summary: ClientAnalyticsResponse["summary"];
 }
 
+const COLORS = ["var(--primary)", "var(--primary-300)", "var(--primary-700)", "var(--primary-400)"];
+
 export function MetricsPieChart({ summary }: MetricsPieChartProps) {
     const pieChartData = [
-        { name: "Receita Total", value: summary.totalRevenue, color: "#b899ff" },
-        { name: "Ticket Médio", value: summary.averageTicket, color: "#9956f6" },
-        { name: "Clientes", value: summary.totalClients * 1000000, color: "#7c3aed" },
-        { name: "Score Fidelização", value: summary.averageLoyaltyScore * 100000, color: "#5b21b6" },
+        { name: "Receita Total", value: summary.totalRevenue },
+        { name: "Ticket Médio", value: summary.averageTicket },
+        // Adjusting values to be comparable if needed, or stick to actual values for transparency
+        // For a donut that looks good, we usually want values that make sense together.
+        // Here we'll just show the distribution as is.
     ];
 
     return (
-        <Card className="col-span-2">
-            <CardHeader>
-                <div className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-primary" />
-                    <CardTitle>Distribuição de Métricas</CardTitle>
+        <Card className="flex flex-col h-full border-none shadow-sm bg-card/50">
+            <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <ChartPie className="h-5 w-5" />
                 </div>
-                <CardDescription>Visão geral das principais métricas</CardDescription>
+                <div>
+                    <CardTitle className="text-lg font-semibold">Distribuição de Métricas</CardTitle>
+                    <CardDescription>Visão proporcional do período</CardDescription>
+                </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 pb-4">
                 {summary.totalRevenue === 0 && summary.totalClients === 0 ? (
                     <EmptyState
                         icon="ChartPie"
                         title="Sem dados para exibir"
                         description="Não foram encontradas métricas para o período selecionado."
+                        className="py-12"
                     />
                 ) : (
-                    <>
-                        <ResponsiveContainer width="100%" height={350}>
+                    <div className="h-[300px] w-full mt-4">
+                        <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={pieChartData}
                                     cx="50%"
                                     cy="50%"
-                                    labelLine={false}
-                                    label={(entry) => entry.name}
-                                    outerRadius={120}
-                                    fill="#8884d8"
+                                    innerRadius={70}
+                                    outerRadius={100}
+                                    paddingAngle={5}
                                     dataKey="value"
+                                    stroke="none"
                                 >
                                     {pieChartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                                <Legend />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: "hsl(var(--card))",
+                                        borderColor: "hsl(var(--border))",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)"
+                                    }}
+                                    formatter={(value: number) => formatCurrency(value)}
+                                />
+                                <Legend
+                                    verticalAlign="bottom"
+                                    height={36}
+                                    iconType="circle"
+                                />
                             </PieChart>
                         </ResponsiveContainer>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t">
-                            <DynamicMetricCard
-                                title={formatCurrency(summary.totalRevenue)}
-                                subtitle="Receita Total"
-                                icon="DollarSign"
-                                className="border-none shadow-none bg-primary/5"
-                            />
-                            <DynamicMetricCard
-                                title={formatCurrency(summary.averageTicket)}
-                                subtitle="Ticket Médio"
-                                icon="Receipt"
-                                className="border-none shadow-none bg-primary/5"
-                            />
-                            <DynamicMetricCard
-                                title={summary.totalClients}
-                                subtitle="Total Clientes"
-                                icon="Users"
-                                className="border-none shadow-none bg-primary/5"
-                            />
-                            <DynamicMetricCard
-                                title={summary.averageLoyaltyScore}
-                                subtitle="Score Médio"
-                                icon="Award"
-                                className="border-none shadow-none bg-primary/5"
-                            />
-                        </div>
-                    </>
+                    </div>
                 )}
             </CardContent>
         </Card>

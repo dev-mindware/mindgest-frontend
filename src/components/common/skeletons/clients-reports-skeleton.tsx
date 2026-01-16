@@ -1,6 +1,6 @@
 "use client";
 
-import { TitleList, RequestError } from "@/components/common";
+import { TitleList } from "@/components/common";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -9,7 +9,7 @@ import {
     CardHeader,
 } from "@/components/ui/card";
 
-export function DashboardSkeleton() {
+export function ClientsReportsSkeleton() {
     return (
         <div className="space-y-6">
             <TitleList

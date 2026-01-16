@@ -19,7 +19,7 @@ import { useModal } from "@/stores";
 import { PosRequestsModal, PosOpeningModal, PosDeleteModal } from "./modal";
 import { PosCashierList } from "./pos-cashier-list";
 import { summaryCards, cashiers } from "./data";
-import { DynamicMetricCard, DynamicMetricCardSkeleton } from "@/components/shared/dynamic-metric-card";
+import { DynamicMetricCard, DynamicMetricCardSkeleton } from "@/components";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 
 export function PosManagementContent() {

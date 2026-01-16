@@ -11,7 +11,7 @@ import {
 } from "@/components/ui";
 
 import { useModal } from "@/stores";
-import { StoresList, AddStoreModal } from "./stores";
+import { StoresList, StoreModal } from "./stores";
 import { SuppliersList, AddSupplierModal } from "./suppliers";
 
 type EntityTab = "supplier" | "store";
@@ -80,7 +80,7 @@ export function EntitiesPageContent() {
       </Tabs>
 
       {open["add-supplier"] && <AddSupplierModal />}
-      {open["add-store"] && <AddStoreModal />}
+      {open["add-store"] && <StoreModal action="add" />}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
 import { ManagerFormData, managerSchema } from "@/schemas";
 import { useModal, currentManagerStore, currentStoreStore } from "@/stores";
-import { Button, Input, GlobalModal, ButtonSubmit, Icon, MultiSelect, AddStoreModal } from "@/components";
+import { Button, Input, GlobalModal, ButtonSubmit, Icon, MultiSelect } from "@/components";
 import { useAddManager, useUpdateManager } from "@/hooks/collaborators";
 import { useGetStores } from "@/hooks/entities";
 
@@ -149,16 +149,6 @@ export function ManagerModal({ action }: ManagerModalProps) {
                 />
               )}
             />
-
-            <Button
-              type="button"
-              variant="outline"
-              title="Adicionar Loja"
-              className="mb-[2px] py-2.5"
-              onClick={() => openModal("add-store")}
-            >
-              <Icon name="Plus" size={18} />
-            </Button>
           </div>
         </div>
 
@@ -174,7 +164,6 @@ export function ManagerModal({ action }: ManagerModalProps) {
           </ButtonSubmit>
         </div>
       </form>
-      <AddStoreModal />
     </GlobalModal>
   );
 }

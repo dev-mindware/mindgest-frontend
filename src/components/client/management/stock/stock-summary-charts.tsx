@@ -22,7 +22,7 @@ import {
   XAxis,
 } from "recharts";
 import { icons } from "lucide-react";
-import { DynamicMetricCard, DynamicMetricCardSkeleton } from "@/components/shared/dynamic-metric-card";
+import { DynamicMetricCardSkeleton, DynamicMetricCard } from "@/components";
 
 export function StockSummaryCharts() {
   const { summary, isLoading, isError, refetch } = useStockSummary();
@@ -46,7 +46,7 @@ export function StockSummaryCharts() {
     );
   }
 
-  if (!summary || summary.totalItems === 0) {
+  if (!summary) {
     return (
       <EmptyState
         title="Resumo Indisponível"
