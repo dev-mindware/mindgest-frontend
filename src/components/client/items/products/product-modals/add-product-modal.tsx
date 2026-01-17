@@ -55,8 +55,15 @@ function AddProductFormContent() {
   const { user } = useAuth();
   const { closeModal, modalData } = useModal();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
-  const { categories, isLoading, error, refetch, pagination, page, setPage } =
-    useGetCategories();
+  const {
+    categoryOptions,
+    isLoading,
+    error,
+    refetch,
+    pagination,
+    page,
+    setPage,
+  } = useGetCategories();
 
   const initialBarcode = modalData["add-product"]?.barcode || "";
 
@@ -85,7 +92,7 @@ function AddProductFormContent() {
       if (error?.response) {
         ErrorMessage(
           error?.response?.data?.message ||
-            "Ocorreu um erro ao adicionar o item"
+            "Ocorreu um erro ao adicionar o item",
         );
       } else {
         ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
@@ -193,8 +200,8 @@ function AddProductFormContent() {
               render={({ field: { onChange, value } }) => (
                 <PaginatedSelect
                   label="Categoria"
-                  options={categories}
                   value={value}
+                  options={categoryOptions}
                   onChange={onChange}
                   isLoading={isLoading}
                   pagination={pagination}
@@ -214,7 +221,7 @@ function AddProductFormContent() {
           </div>
 
           {/* <TsunamiOnly className="space-y-4"> */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Input
               type="quantity"
               startIcon="Scale"
@@ -229,14 +236,23 @@ function AddProductFormContent() {
               {...register("maxStock", { valueAsNumber: true })}
               error={errors.maxStock?.message}
             />
-            <Input
-              startIcon="Scale"
-              label="Unidade de Medida (opc)"
-              {...register("unit")}
-              error={errors.unit?.message}
-            />
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              startIcon="Scale"
+              {...register("unit")}
+              label="Unidade de Medida (Opcional)"
+              error={errors.unit?.message}
+            />
+            <Input
+              type="number"
+              startIcon="Scale"
+              label="Quantidade"
+              {...register("quantity", { valueAsNumber: true })}
+              error={errors.quantity?.message}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <Input
               type="number"
@@ -261,8 +277,8 @@ function AddProductFormContent() {
               error={errors.expiryDate?.message}
             />
             <Input
-              placeholder="14"
               type="number"
+              placeholder="14"
               label="Dias até Expirar (opcional)"
               {...register("daysToExpiry", { valueAsNumber: true })}
               error={errors.daysToExpiry?.message}

@@ -20,6 +20,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { playScannerBeep } from "@/utils/audio";
 import { ProductMock } from "./counter-comps/data";
+import { itemsService } from "@/services/items-service";
+import { toast } from "sonner";
 
 interface CartItem extends ProductMock {
   qty: number;
@@ -29,8 +31,7 @@ type CartType = "invoice" | "proforma";
 
 export function CounterContent() {
   const [search] = useQueryState("search", { defaultValue: "" });
-  const { categories: apiCategories, isLoading: isLoadingCategories } =
-    useGetCategories();
+  const { categories, isLoading: isLoadingCategories } = useGetCategories();
   const [activeCart, setActiveCart] = useState<CartType>("invoice");
   const { openModal } = useModal();
 
@@ -38,10 +39,10 @@ export function CounterContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   useEffect(() => {
-    if (apiCategories.length > 0 && !selectedCategory) {
-      setSelectedCategory(apiCategories[0].value);
+    if (categories.length > 0 && !selectedCategory) {
+      setSelectedCategory(categories[0].id);
     }
-  }, [apiCategories, selectedCategory]);
+  }, [categories, selectedCategory]);
 
   const { items: apiProducts, isLoading: isLoadingProducts } = useGetItems({
     search: search || undefined,
@@ -60,11 +61,11 @@ export function CounterContent() {
   // Barcode Scanner Logic
   const [barcodeBuffer, setBarcodeBuffer] = useState("");
   const [scannedProduct, setScannedProduct] = useState<ProductMock | null>(
-    null
+    null,
   );
 
   useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+    const handleGlobalKeyDown = async (e: KeyboardEvent) => {
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement
@@ -74,29 +75,29 @@ export function CounterContent() {
 
       if (e.key === "Enter") {
         if (barcodeBuffer) {
-          const barcode = barcodeBuffer;
-          // Search in the currently loaded products or fetch if needed
-          const product = (apiProducts as any[]).find(
-            (p) => p.barcode === barcode || p.sku === barcode
-          );
+          try {
+            const barcode = barcodeBuffer;
+            const product = await itemsService.checkBarcode(barcode);
 
-          if (product) {
-            setScannedProduct({
-              id: product.id,
-              name: product.name,
-              price: Number(product.price || 0),
-              image: product.image,
-              category: product.category?.name || "",
-              reserved: product.reserved,
-              description: product.description,
-              barcode: product.barcode,
-              sku: product.sku,
-            });
+            if (product) {
+              setScannedProduct({
+                id: product.id,
+                name: product.name,
+                price: Number(product.price || 0),
+                image: product.image,
+                category: product.category || "", // Assuming BarCode has category name string, adjust if needed
+                reserved: product.reserved,
+                description: product.description,
+                barcode: product.barcode, // Ensure string
+                sku: product.sku,
+              });
 
-            playScannerBeep();
-            openModal(MODAL_BARCODE_PRODUCT_ID);
-          } else {
-            console.log("Product not found for barcode:", barcode);
+              playScannerBeep();
+              openModal(MODAL_BARCODE_PRODUCT_ID);
+            }
+          } catch (error) {
+            console.error("Product not found for barcode:", barcodeBuffer);
+            toast.error("Produto não encontrado");
           }
           setBarcodeBuffer("");
         }
@@ -173,9 +174,9 @@ export function CounterContent() {
     }));
   };
 
-  const currentCategoryName = apiCategories.find(
-    (c) => c.value === selectedCategory
-  )?.label;
+  const currentCategoryName = categories.find(
+    (c) => c.id === selectedCategory,
+  )?.name;
 
   const products: ProductMock[] = (apiProducts as any[]).map((p) => ({
     id: p.id,
@@ -202,16 +203,15 @@ export function CounterContent() {
   return (
     <div className="flex h-full overflow-hidden">
       <BarcodeProductModal product={scannedProduct} onConfirm={onConfirmScan} />
-      {/* Left Content - Categories & Products */}
       <div className="flex-1 flex flex-col min-w-0 gap-4 p-4">
         {isLoadingCategories ? (
           <PosCategorySkeleton />
         ) : (
           <CategorySection
-            categories={apiCategories.map((c) => ({
-              id: c.value,
-              name: c.label,
-              count: 0,
+            categories={categories.map((c) => ({
+              id: c.id,
+              name: c.name,
+              count: c.itemsCount,
             }))}
             selectedCategory={selectedCategory}
             onSelectCategory={handleCategorySelect}

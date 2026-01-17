@@ -15,7 +15,7 @@ interface CategoryCardProps {
 }
 
 export function CategoryCardView({ category }: CategoryCardProps) {
-  const { handlerDeleteCategory, handlerEditCategory, handlerDetailsCategory, toggleStatusCategory } =
+  const { handlerEditCategory, handlerDetailsCategory, toggleStatusCategory } =
     useCategoryActions();
 
   return (
@@ -38,7 +38,6 @@ export function CategoryCardView({ category }: CategoryCardProps) {
             actions={[
               { label: "Ver detalhes", onClick: handlerDetailsCategory },
               { label: "Editar", onClick: handlerEditCategory },
-              { label: "Deletar", onClick: handlerDeleteCategory },
               {
                 label: `${category.isActive ? "Desativar" : "Ativar"}`,
                 onClick: toggleStatusCategory,

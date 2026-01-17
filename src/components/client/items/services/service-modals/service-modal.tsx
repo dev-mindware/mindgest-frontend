@@ -35,7 +35,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
     isPending: isUpdating,
     reset: resetMutate,
   } = useUpdateItem();
-  const { categories, isLoading, error, refetch } = useGetCategories();
+  const { categoryOptions, isLoading, error, refetch } = useGetCategories();
   const isOpen = open[modalId];
   const {
     register,
@@ -176,7 +176,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
               <RHFSelect
                 control={control}
                 label="Categoria"
-                options={categories}
+                options={categoryOptions}
                 name="categoryId"
               />
             </div>

@@ -9,7 +9,7 @@ export interface CategoryMock {
   id: string;
   name: string;
   count: number;
-  icon?: string; // Icon name made optional for API data
+  icon?: string; 
 }
 
 interface CategorySectionProps {
@@ -85,7 +85,7 @@ export function CategorySection({
                       : "text-muted-foreground"
                   )}
                 >
-                  {category.count} items
+                  {category.count} itens
                 </span>
               </div>
             </button>

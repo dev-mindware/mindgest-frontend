@@ -9,6 +9,7 @@ export const itemSchema = z
 
     price: z.number(),
     cost: z.number(),
+    quantity: z.number(),
 
     minStock: z.number().int().nonnegative().optional(),
     maxStock: z.number().int().nonnegative().optional(),
@@ -27,8 +28,8 @@ export const itemSchema = z
     categoryId: z.string().min(1, "Campo obrigatório"),
 
     hasExpiry: z.boolean().optional(),
-    expiryDate: z.string().date().optional(),
-    daysToExpiry: z.number().int().positive().optional(),
+    expiryDate: z.string().optional(),
+    daysToExpiry: z.number().optional(),
   })
   .refine(
     (data) => {

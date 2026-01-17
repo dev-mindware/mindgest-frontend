@@ -1,4 +1,5 @@
 import type { CreateItemData } from "@/types";
+import { BarCode } from "@/types/bar-code";
 import { api } from "./api";
 
 export const itemsService = {
@@ -18,12 +19,9 @@ export const itemsService = {
   },
 
   checkBarcode: async (barcode: string) => {
-    const response = await api.get<{ exists: boolean }>(
-      "/items/check-barcode",
-      {
-        params: { barcode },
-      }
-    );
+    const response = await api.get<BarCode>("/items/check-barcode", {
+      params: { barcode },
+    });
     return response.data;
   },
 };

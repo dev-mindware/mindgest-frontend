@@ -22,7 +22,7 @@ export function ItemsFiltersTSX({
 }) {
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
-  const { categories, isLoading, error, refetch, pagination, setPage } =
+  const { categoryOptions, isLoading, error, refetch, pagination, setPage } =
     useGetCategories();
 
   const hasFilter =
@@ -58,7 +58,7 @@ export function ItemsFiltersTSX({
       <div className="w-full flex items-center gap-3">
         <div className="flex items-center gap-2">
           <PaginatedSelect
-            options={categories}
+            options={categoryOptions}
             value={filters.categoryId}
             onChange={(categoryId) => setFilters({ categoryId })}
             isLoading={isLoading}

@@ -28,7 +28,7 @@ export function EditProductModal() {
   const isOpen = open["edit-product"];
   const { currentProduct } = currentProductStore();
   const { mutateAsync: updatedProdut, isPending } = useUpdateItem();
-  const { categories, isLoading, error, refetch } = useGetCategories();
+  const { categoryOptions, isLoading, error, refetch } = useGetCategories();
   const {
     register,
     handleSubmit,
@@ -167,7 +167,7 @@ export function EditProductModal() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <RHFSelect
                   name="selectedCategory"
-                  options={categories}
+                  options={categoryOptions}
                   control={control}
                   label="Categoria"
                 />

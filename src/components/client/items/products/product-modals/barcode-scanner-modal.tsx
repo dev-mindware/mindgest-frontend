@@ -23,9 +23,9 @@ export function BarcodeScannerModal() {
 
       startTransition(async () => {
         try {
-          const { exists } = await itemsService.checkBarcode(code);
+          const { barcode } = await itemsService.checkBarcode(code);
 
-          if (exists) {
+          if (barcode) {
             ErrorMessage(
               "Já existe um produto cadastrado com esse código de barras na base de dados."
             );

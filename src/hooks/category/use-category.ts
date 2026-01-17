@@ -70,8 +70,11 @@ export function useGetCategories() {
       value: category.id,
     })) || [];
 
+  const itemsCount = data?.data[0].itemsCount || 0;
+
   return {
-    categories,
+    categoryOptions: categories,
+    categories: data?.data || [],
     error,
     isLoading,
     refetch,

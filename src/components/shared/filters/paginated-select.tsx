@@ -64,7 +64,7 @@ export function PaginatedSelect({
 
   return (
     <div className="flex flex-col gap-1.5">
-      {label && <Label className="text-xs font-medium">{label}</Label>}
+      {label && <Label className="text-sm font-medium">{label}</Label>}
       <Select value={value || ""} onValueChange={onChange}>
         <SelectTrigger className={cn("w-[200px]", className)}>
           {isLoading && !value ? (
