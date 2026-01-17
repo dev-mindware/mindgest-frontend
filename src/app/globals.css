@@ -205,12 +205,12 @@ body {
   /* Sidebar */
   --sidebar: var(--gray-800);
   --sidebar-foreground: #e8eaed;
-  --sidebar-primary: #1a73e8;
+  --sidebar-primary: #a855f7;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: var(--gray-700);
   --sidebar-accent-foreground: #e8eaed;
   --sidebar-border: var(--gray-600);
-  --sidebar-ring: #1a73e8;
+  --sidebar-ring: #a855f7;
 }
 @layer base {
   * {

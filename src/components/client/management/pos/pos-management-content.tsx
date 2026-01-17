@@ -34,7 +34,7 @@ export function PosManagementContent() {
   }, []);
 
   return (
-    <div className="p-6 space-y-8">
+    <div>
       <div className="space-y-8">
         <section className="space-y-6">
           {isLoading ? (
