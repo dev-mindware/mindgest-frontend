@@ -16,7 +16,7 @@ export type ClientResponse = ClientData & {
   updatedAt: string;
 };
 
-export interface storesResponse {
+export interface StoresResponse {
   data: Stores[];
   total: number;
   page: number;
@@ -34,5 +34,5 @@ export interface Stores {
   companyId: string;
   createdAt: string;
   updatedAt: string;
-  categories: Category[];
+  categories?: Category[];
 }

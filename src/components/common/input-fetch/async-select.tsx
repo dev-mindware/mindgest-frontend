@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { api } from "@/services/api";
 import { useDebounce } from "use-debounce";
@@ -39,39 +39,43 @@ export function AsyncCreatableSelectField({
   error,
   inputId,
 }: AsyncCreatableSelectProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, startTransition] = useTransition();
 
-  const [loadOptions] = useDebounce(async (inputValue: string) => {
-    if (inputValue.length < minChars) {
-      return [];
-    }
+  const [loadOptions] = useDebounce((inputValue: string) => {
+    return new Promise<any[]>((resolve) => {
+      if (inputValue.length < minChars) {
+        resolve([]);
+        return;
+      }
 
-    setIsLoading(true);
-    try {
-      const response = await api.get(
-        `${endpoint}?search=${encodeURIComponent(inputValue)}`
-      );
+      startTransition(async () => {
+        try {
+          const response = await api.get(
+            `${endpoint}?search=${encodeURIComponent(inputValue)}`
+          );
 
-      const data = Array.isArray(response.data?.data)
-        ? response.data.data
-        : Array.isArray(response.data)
-          ? response.data
-          : [];
+          const data = Array.isArray(response.data?.data)
+            ? response.data.data
+            : Array.isArray(response.data)
+            ? response.data
+            : [];
 
-      return data.map((item: any) => ({
-        value: item.id,
-        label: displayFields
-          .map((field) => getNestedValue(item, field))
-          .filter(Boolean)
-          .join(" - "),
-        data: item,
-      }));
-    } catch (error) {
-      console.error("Erro ao buscar opções:", error);
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
+          resolve(
+            data.map((item: any) => ({
+              value: item.id,
+              label: displayFields
+                .map((field) => getNestedValue(item, field))
+                .filter(Boolean)
+                .join(" - "),
+              data: item,
+            }))
+          );
+        } catch (error) {
+          console.error("Erro ao buscar opções:", error);
+          resolve([]);
+        }
+      });
+    });
   }, 300);
 
   const getNestedValue = (obj: any, path: string): any => {
@@ -120,8 +124,8 @@ export function AsyncCreatableSelectField({
             borderColor: error
               ? "var(--destructive)"
               : state.isFocused
-                ? "var(--ring)"
-                : "var(--border)",
+              ? "var(--ring)"
+              : "var(--border)",
             backgroundColor: "var(--background)",
             boxShadow: state.isFocused
               ? error
@@ -174,8 +178,8 @@ export function AsyncCreatableSelectField({
             backgroundColor: state.isSelected
               ? "var(--primary)"
               : state.isFocused
-                ? "var(--accent)"
-                : "transparent",
+              ? "var(--accent)"
+              : "transparent",
             color: state.isSelected
               ? "var(--primary-foreground)"
               : "var(--foreground)",

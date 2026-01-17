@@ -2,18 +2,17 @@ import { Button, GlobalModal } from "@/components";
 import { currentClientStore } from "@/stores";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
-import { useDeleteClient } from "@/hooks/entities";
 
 export function DeleteClientModal() {
   const { closeModal, open } = useModal();
   const isOpen = open["delete-client"];
   const { currentClient } = currentClientStore();
-  const { mutateAsync: deleteItemMutate, isPending } = useDeleteClient();
+  // const { mutateAsync: deleteItemMutate, isPending } = useDeleteClient();
 
   async function handleDelete(id: string) {
     if (!currentClient) return;
     try {
-      await deleteItemMutate(id);
+      //await deleteItemMutate(id);
       closeModal("delete-client");
     } catch (error: any) {
       if (error?.response) {
@@ -44,11 +43,12 @@ export function DeleteClientModal() {
           Cancelar
         </Button>
         <Button
-          disabled={isPending}
+          /* disabled={isPending} */
           variant="destructive"
           onClick={() => handleDelete(currentClient?.id!)}
         >
-          {isPending ? "Apagando..." : `Apagar ${currentClient?.name}`}
+          apagar
+          {/* {isPending ? "Apagando..." : `Apagar ${currentClient?.name}`} */}
         </Button>
       </div>
     </GlobalModal>

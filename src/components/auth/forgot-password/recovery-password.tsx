@@ -11,9 +11,12 @@ import { OTPModal } from "./otp-modal";
 import { AuthHeader, BackToLogin } from "../_components";
 import { cn } from "@/lib";
 import Image from "next/image";
+import { useState } from "react";
+import { authService } from "@/services/auth-service";
 
 export function RecoveryPassword() {
   const { openModal } = useModal();
+  const [message, setMessage] = useState("");
   const {
     register,
     handleSubmit,
@@ -24,10 +27,13 @@ export function RecoveryPassword() {
   });
   const email = getValues("email");
 
+  
+
   async function onSubmit(data: ForgotPasswordFormData) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      openModal("otp-modal");
+      const res = await authService.forgotPassword(email);
+      setMessage(res.message);
+      //openModal("otp-modal");
     } catch (error) {
       ErrorMessage("Ocorreu um erro ao enviar o email. Tente mais tarde.");
     }
@@ -64,6 +70,10 @@ export function RecoveryPassword() {
           <ButtonSubmit isLoading={isSubmitting} className="w-full">
             {isSubmitting ? "Enviando..." : "Verificar"}
           </ButtonSubmit>
+
+          <code>
+            {JSON.stringify(message)}
+          </code>
 
           <BackToLogin />
         </div>

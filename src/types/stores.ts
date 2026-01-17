@@ -1,3 +1,4 @@
+
 export type storesFilters = {
   sortBy: string | null;
   status: string | null;

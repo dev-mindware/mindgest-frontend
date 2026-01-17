@@ -41,7 +41,7 @@ export function OTPModal({ email }: { email: string }) {
   }
 
   return (
-    <GlobalModal id="otp-modal" className="p-0">
+    <GlobalModal id="otp-modal" className="p-0 w-max!">
       {!canChangePassword ? (
         <form
           onSubmit={handleSubmit(onSubmit)}

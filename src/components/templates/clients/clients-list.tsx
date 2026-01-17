@@ -24,7 +24,7 @@ export function ClientsList() {
   const { search } = useURLSearchParams("search-client");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useClientsFilters();
-  const { handlerDeleteClient, handlerDetailsClient, handlerEditClient } =
+  const { handlerToggleStatusClient, handlerDetailsClient, handlerEditClient } =
     useClientActions();
   const {
     data: clients,
@@ -75,7 +75,10 @@ export function ClientsList() {
           actions={[
             { label: "Ver detalhes", onClick: handlerDetailsClient },
             { label: "Editar", onClick: handlerEditClient },
-            { label: "Deletar", onClick: handlerDeleteClient },
+            {
+              label: `${item.isActive ? "Desativar" : "Ativar"}`,
+              onClick: () => handlerToggleStatusClient(item),
+            },
           ]}
         />
       ),

@@ -16,23 +16,20 @@ import {
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
 import { useGetStores } from "@/hooks/entities";
-import { useModal } from "@/stores";
 import { currentStoreStore } from "@/stores/store/current-store-store";
+import { Role } from "@/types";
 
 export function SidebarCompanyInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
-  const { openModal } = useModal();
+  const isCashier = user?.role === "CASHIER";
+  const { currentStore, setCurrentStore } = currentStoreStore();
   const {
     refetch,
     storesData,
     isLoading: loadingStores,
     error: storesError,
-  } = useGetStores();
-
-  const { currentStore, setCurrentStore } = currentStoreStore();
-
-  const isOwner = user?.role === "OWNER";
+  } = useGetStores(user?.role as Role);
 
   useEffect(() => {
     if (!currentStore && storesData?.length > 0) {
@@ -40,19 +37,13 @@ export function SidebarCompanyInfo() {
     }
   }, [storesData, currentStore, setCurrentStore]);
 
-  function onAddStore() {
-    openModal("add-store");
-  }
-
-  if (!user) return null;
-
   if (loadingStores) return <LoaderStoresSkeleton />;
 
   if (storesError) {
     return <StoresErrorState onRetry={refetch} />;
   }
 
-  if (!isOwner) {
+  if (isCashier) {
     return (
       <SidebarMenu className="group-data-[collapsible=icon]:items-center">
         <SidebarMenuItem>
@@ -88,7 +79,7 @@ export function SidebarCompanyInfo() {
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">
                 <span className="font-medium truncate">
-                  {currentStore?.name || user.company?.name || "Empresa"}
+                  {currentStore?.name || user?.company?.name || "Empresa"}
                 </span>
                 <span className="text-xs truncate">
                   {currentStore ? "Loja Selecionada" : "Selecione uma loja"}
@@ -121,16 +112,6 @@ export function SidebarCompanyInfo() {
               </DropdownMenuItem>
             ))}
 
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem onClick={onAddStore} className="gap-2 p-2">
-              <div className="flex items-center justify-center bg-transparent border rounded-md size-6">
-                <Icon name="Plus" className="size-4" />
-              </div>
-              <span className="font-medium text-muted-foreground">
-                Adicionar loja
-              </span>
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

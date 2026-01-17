@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { FirstStep } from "./first-step";
 import { SecondStep } from "./second-step";
 import {
@@ -23,11 +23,11 @@ export function RegisterForm() {
   const steps = [1, 2, 3];
   const [currentStep, setCurrentStep] = useState(1);
   const { mutateAsync: addCompany, isPending } = useAddCompany();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, startTransition] = useTransition();
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: "onChange", 
+    mode: "onChange",
   });
 
   const validateCurrentStep = async () => {
@@ -68,24 +68,23 @@ export function RegisterForm() {
     }
   };
 
-  async function onSubmit(data: RegisterFormData) {
-    setIsLoading(true);
-    try {
-      const { passwordConfirmation, ...rest } = data.step1;
-      const finalData = { ...rest, ...data.step2 };
+  function onSubmit(data: RegisterFormData) {
+    startTransition(async () => {
+      try {
+        const { passwordConfirmation, ...rest } = data.step1;
+        const finalData = { ...rest, ...data.step2 };
 
-      await addCompany(finalData);
-    } catch (error: any) {
-      if (error?.response?.data) {
-        ErrorMessage(
-          error?.response?.data?.message || "Ocorreu um erro ao criar a conta"
-        );
-      } else {
-        ErrorMessage("Ocorreu um erro desconhecido.Tente novamente");
+        await addCompany(finalData);
+      } catch (error: any) {
+        if (error?.response?.data) {
+          ErrorMessage(
+            error?.response?.data?.message || "Ocorreu um erro ao criar a conta"
+          );
+        } else {
+          ErrorMessage("Ocorreu um erro desconhecido.Tente novamente");
+        }
       }
-    } finally {
-      setIsLoading(false);
-    }
+    });
   }
 
   return (

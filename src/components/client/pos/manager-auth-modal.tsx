@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Icon, Input, Button, GlobalModal } from "@/components";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import { useModal } from "@/stores/modal/use-modal-store";
@@ -16,7 +16,7 @@ export const MODAL_MANAGER_AUTH_ID = "manager-auth-modal";
 export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
   const { open, closeModal } = useModal();
   const isOpen = open[MODAL_MANAGER_AUTH_ID] || false;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, startTransition] = useTransition();
   const [buffer, setBuffer] = useState("");
 
   // Barcode listener for the modal
@@ -46,14 +46,13 @@ export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, buffer, isLoading]);
 
-  const verifyCode = async (codeToVerify: string) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+  const verifyCode = (codeToVerify: string) => {
+    startTransition(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 800));
       SucessMessage("Autorização concedida!");
       onAuthenticated();
       closeModal(MODAL_MANAGER_AUTH_ID);
-    }, 800);
+    });
   };
 
   return (

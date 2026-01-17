@@ -28,13 +28,13 @@ export function useUpdateClient() {
   });
 }
 
-export function useDeleteClient() {
+export function useToggleStatusClient() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => clientsService.deleteClient(id),
+    mutationFn: (id: string) => clientsService.toggleStatusClient(id),
     onSuccess: () => {
-      SucessMessage("Cliente removido com sucesso!");
+      SucessMessage("Cliente desativado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });

@@ -4,7 +4,7 @@ Aqui está o **Markdown formatado de forma profissional**, claro e pronto para e
 
 # 📌 Requisitos e Melhorias — Módulo de Vendas / Produtos
 
-## 1. Scanner de Produtos (Venda)
+## 1. Scanner de Produtos (Venda) [X]
 
 * Ao **escanear um produto**, mesmo que **não exista na API**, deve ser possível **adicioná-lo manualmente à venda**.
 * Deve existir um **endpoint específico para busca por código de barras**:
@@ -14,7 +14,7 @@ Aqui está o **Markdown formatado de forma profissional**, claro e pronto para e
 
 ---
 
-## 2. Categorias por Empresa
+## 2. Categorias por Empresa [X]
 
 * Cada **empresa** deve poder **criar e gerir as suas próprias categorias**, de acordo com:
 
@@ -24,7 +24,7 @@ Aqui está o **Markdown formatado de forma profissional**, claro e pronto para e
 
 ---
 
-## 3. Categorias com Quantidade de Itens
+## 3. Categorias com Quantidade de Itens [X]
 
 * Ao listar categorias, a API deve retornar:
 
@@ -44,7 +44,7 @@ Exemplo de payload esperado:
 
 ---
 
-## 4. Estrutura Empresa → Loja → Categoria
+## 4. Estrutura Empresa → Loja → Categoria [X]
 
 Cada empresa pode possuir múltiplas lojas, e cada loja pode possuir suas próprias categorias.
 
@@ -81,7 +81,7 @@ company: {
   * ❌ **Não podem ser adicionados à venda via scanner**
   * ✔️ Devem ser bloqueados ou retornar erro de validação pela API
 
-## 6. Gestão de Gerentes e Lojas
+## 6. Gestão de Gerentes e Lojas [X]
 
 * Ao adicionar um **gerente**, deve ser possível:
 
