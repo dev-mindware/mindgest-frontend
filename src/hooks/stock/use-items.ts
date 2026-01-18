@@ -21,6 +21,5 @@ export function useGetItems(params?: {
   );
 
   const items = data?.data || [];
-
   return { items, error, isLoading, refetch };
 }

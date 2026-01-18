@@ -9,9 +9,12 @@ import {
 interface InvoiceTemplateProps {
   type: DocumentType
   data: InvoiceResponse;
+  hideDueDate?: boolean;
+  hideActions?: boolean;
+  changeValue?: number;
 }
 
-export function InvoiceTemplate({ type, data }: InvoiceTemplateProps) {
+export function InvoiceTemplate({ type, data, hideDueDate, hideActions, changeValue }: InvoiceTemplateProps) {
   return (
     <div className="space-y-6 text-sm">
       <div className="flex justify-between items-start">
@@ -22,8 +25,12 @@ export function InvoiceTemplate({ type, data }: InvoiceTemplateProps) {
         <div className="text-right">
           <p className="font-semibold">Data de Emissão</p>
           <p>{formatDateTime(data.createdAt)}</p>
-          <p className="font-semibold mt-2">Vencimento</p>
-          <p>{formatDateTime(data.dueDate)}</p>
+          {!hideDueDate && (
+            <>
+              <p className="font-semibold mt-2">Vencimento</p>
+              <p>{formatDateTime(data.dueDate)}</p>
+            </>
+          )}
         </div>
       </div>
 
@@ -85,6 +92,14 @@ export function InvoiceTemplate({ type, data }: InvoiceTemplateProps) {
             <span className="text-muted-foreground">Imposto:</span>
             <span>{formatCurrency(Number(data.taxAmount))}</span>
           </div>
+
+          {changeValue !== undefined && changeValue > 0 && (
+            <div className="flex justify-between text-green-600 font-semibold">
+              <span>Troco:</span>
+              <span>{formatCurrency(changeValue)}</span>
+            </div>
+          )}
+
           <Separator />
           <div className="flex justify-between font-bold text-lg">
             <span>Total:</span>
@@ -99,13 +114,15 @@ export function InvoiceTemplate({ type, data }: InvoiceTemplateProps) {
           <p className="text-muted-foreground">{data.notes}</p>
         </div>
       )}
-      <div className="flex justify-end">
-        <DownloadDocumentButton
-          id={data.id}
-          documentType={type}
-          filenameBase={data.number}
-        />
-      </div>
+      {!hideActions && (
+        <div className="flex justify-end">
+          <DownloadDocumentButton
+            id={data.id}
+            documentType={type}
+            filenameBase={data.number}
+          />
+        </div>
+      )}
     </div>
   );
 }

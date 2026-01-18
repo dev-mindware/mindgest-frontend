@@ -3,7 +3,6 @@ export * from "./category";
 export * from "./clients";
 export * from "./collaborators";
 export * from "./company";
-export * from "./data";
 export * from "./documents";
 export * from "./entities";
 export * from "./items";

@@ -5,13 +5,13 @@ import { ProductCard } from "./product-card";
 
 interface ProductSectionProps {
     products: Product[];
-    cartItems: Record<string, number>;
+    cartItems: Record<string, { qty: number }>; // Relaxed type to match structure
     onAddToCart: (product: Product) => void;
     onRemoveFromCart: (productId: string) => void;
     onUpdateQuantity: (productId: string, quantity: number) => void;
 }
 
-export function ProductSection({
+export function ProductList({
     products,
     cartItems,
     onAddToCart,
@@ -24,7 +24,7 @@ export function ProductSection({
                 <ProductCard
                     key={product.id}
                     product={product}
-                    quantity={cartItems[product.id] || 0}
+                    quantity={cartItems[product.id]?.qty || 0}
                     onAdd={() => onAddToCart(product)}
                     onRemove={() => onRemoveFromCart(product.id)}
                     onUpdateQuantity={(qty) => onUpdateQuantity(product.id, qty)}

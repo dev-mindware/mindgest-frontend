@@ -4,8 +4,9 @@ export interface Product {
   sku: string;
   category: string;
   subcategory?: string;
-  quantity?: number;
+  quantity: number;
   image?: string;
+  barcode?: number;
 
   // Preços
   price?: number;

@@ -41,6 +41,7 @@ export function ProductCard({
   const [isEditing, setIsEditing] = useState(false);
   const [editQty, setEditQty] = useState("");
 
+
   const handleDoubleClick = () => {
     setEditQty(quantity.toString());
     setIsEditing(true);
@@ -51,12 +52,12 @@ export function ProductCard({
   const handleConfirmQty = () => {
     const qty = parseInt(editQty, 10);
     if (!isNaN(qty) && qty > 0) {
-      if (qty <= product.reserved) {
+      if (qty <= product.quantity) {
         onUpdateQuantity(qty);
         setIsEditing(false);
       } else {
-        ErrorMessage(`Apenas ${product.reserved} unidades disponíveis.`);
-        setEditQty(product.reserved.toString());
+        ErrorMessage(`Apenas ${product.quantity} unidades disponíveis.`);
+        setEditQty(product.quantity.toString());
       }
     } else {
       ErrorMessage("Quantidade inválida.");
@@ -90,28 +91,25 @@ export function ProductCard({
                   {product.description || "Sem descrição"}
                 </p>
                 <div className="pt-1.5 flex flex-wrap gap-1">
-                  {product?.quantity ? (
-                    product.quantity > 0 ? (
-                      <Badge
-                        variant="success"
-                        className="text-[9px] px-1.5 py-0 border-none bg-green-500/10 text-green-600"
-                      >
-                        <div className="w-1 h-1 rounded-full bg-green-500 mr-1" />
-                        {product?.quantity} em estoque
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="destructive"
-                        className="text-[9px] px-1.5 py-0 border-none bg-destructive/10 text-destructive"
-                      >
-                        <div className="w-1 h-1 rounded-full bg-destructive mr-1" />
-                        Sem stock
-                      </Badge>
-                    )
+                  {product.quantity > 0 ? (
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] items-center gap-1.5 px-2 py-0.5 border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/15 transition-colors font-medium shadow-sm"
+                    >
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                      </span>
+                      {product?.quantity} unid.
+                    </Badge>
                   ) : (
-                    <span className="text-[9px] px-1.5 py-0 border-none bg-destructive/10 text-destructive">
-                      Sem quantidade ainda.
-                    </span>
+                    <Badge
+                      variant="destructive"
+                      className="text-[10px] items-center gap-1.5 px-2 py-0.5 border border-red-500/20 bg-red-500/10 text-red-600 hover:bg-red-500/15 transition-colors cursor-not-allowed font-medium shadow-sm"
+                    >
+                      <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                      Indisponível
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -149,20 +147,32 @@ export function ProductCard({
                 {quantity === 0 ? (
                   <Button
                     size="icon"
-                    disabled={product.reserved <= 0}
+                    disabled={product.quantity <= 0}
                     className={cn(
                       "rounded-full h-9 w-9 sm:h-10 sm:w-10 transition-all duration-300 shadow-sm",
-                      product.reserved <= 0
-                        ? "bg-muted text-muted-foreground cursor-not-allowed border-muted"
+                      product.quantity <= 0
+                        ? "bg-destructive/10 text-destructive cursor-not-allowed border-destructive/20 hover:bg-destructive/20"
                         : "bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-primary/20",
                     )}
-                    onClick={onAdd}
+                    onClick={() => {
+                      if (product.quantity > 0) {
+                        onAdd();
+                      } else {
+                        ErrorMessage("Produto sem stock disponível.");
+                      }
+                    }}
                     onDoubleClick={(e) => {
                       e.preventDefault();
-                      handleDoubleClick();
+                      if (product.quantity > 0) {
+                        handleDoubleClick();
+                      }
                     }}
                   >
-                    <Icon name="Plus" className="h-5 w-5" />
+                    {product.quantity <= 0 ? (
+                      <Icon name="X" className="h-5 w-5" />
+                    ) : (
+                      <Icon name="Plus" className="h-5 w-5" />
+                    )}
                   </Button>
                 ) : (
                   <div className="flex items-center gap-1 bg-muted/50 rounded-full p-0.5 sm:p-1 border border-border/60 shadow-sm">
@@ -192,10 +202,10 @@ export function ProductCard({
                     <Button
                       size="icon"
                       variant="ghost"
-                      disabled={product.reserved <= quantity}
+                      disabled={product.quantity <= quantity}
                       className={cn(
                         "h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-colors",
-                        product.reserved <= quantity
+                        product.quantity <= quantity
                           ? "text-muted-foreground/30 cursor-not-allowed"
                           : "text-primary hover:bg-primary/10",
                       )}

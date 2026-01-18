@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CategorySection, ProductSection, CartSection } from "./counter-comps";
+import { CategorySelector } from "./products/category-selector";
+import { ProductList } from "./products/product-list";
+import { CartList } from "./cart/cart-list";
 import {
-  BarcodeProductModal,
+  BarcodeProductScanner,
   MODAL_BARCODE_PRODUCT_ID,
-} from "./counter-comps/barcode-product-modal";
+} from "./modals/barcode-product-scanner";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { useGetCategories } from "@/hooks/category";
 import { useGetItems } from "@/hooks/stock";
@@ -19,11 +21,11 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { playScannerBeep } from "@/utils/audio";
-import { ProductMock } from "./counter-comps/data";
+import { Product } from "@/types";
 import { itemsService } from "@/services/items-service";
 import { toast } from "sonner";
 
-interface CartItem extends ProductMock {
+interface CartItem extends Product {
   qty: number;
 }
 
@@ -51,7 +53,7 @@ export function CounterContent() {
     limit: 100,
   });
 
-  const [carts, setCarts] = useState<Record<CartType, Record<string, number>>>({
+  const [carts, setCarts] = useState<Record<CartType, Record<string, CartItem>>>({
     invoice: {},
     proforma: {},
   });
@@ -60,7 +62,7 @@ export function CounterContent() {
 
   // Barcode Scanner Logic
   const [barcodeBuffer, setBarcodeBuffer] = useState("");
-  const [scannedProduct, setScannedProduct] = useState<ProductMock | null>(
+  const [scannedProduct, setScannedProduct] = useState<Product | null>(
     null,
   );
 
@@ -85,10 +87,11 @@ export function CounterContent() {
                 name: product.name,
                 price: Number(product.price || 0),
                 image: product.image,
-                category: product.category || "", // Assuming BarCode has category name string, adjust if needed
+                category: product.category || "",
+                quantity: product.quantity || product.reserved || 0,
                 reserved: product.reserved,
                 description: product.description,
-                barcode: product.barcode, // Ensure string
+                barcode: product.barcode,
                 sku: product.sku,
               });
 
@@ -113,40 +116,54 @@ export function CounterContent() {
   const onConfirmScan = (quantity: number) => {
     if (!scannedProduct) return;
 
-    setCarts((prev) => ({
-      ...prev,
-      [activeCart]: {
-        ...prev[activeCart],
-        [scannedProduct.id]:
-          (prev[activeCart][scannedProduct.id] || 0) + quantity,
-      },
-    }));
+    setCarts((prev) => {
+      const currentCart = prev[activeCart];
+      const existingItem = currentCart[scannedProduct.id];
+      const newQty = (existingItem?.qty || 0) + quantity;
+
+      return {
+        ...prev,
+        [activeCart]: {
+          ...currentCart,
+          [scannedProduct.id]: { ...scannedProduct, qty: newQty },
+        },
+      };
+    });
   };
 
   const handleCategorySelect = (id: string) => {
     setSelectedCategory(id);
   };
 
-  const handleAddToCart = (product: ProductMock) => {
-    setCarts((prev) => ({
-      ...prev,
-      [activeCart]: {
-        ...prev[activeCart],
-        [product.id]: (prev[activeCart][product.id] || 0) + 1,
-      },
-    }));
+  const handleAddToCart = (product: Product) => {
+    setCarts((prev) => {
+      const currentCart = prev[activeCart];
+      const existingItem = currentCart[product.id];
+      const newQty = (existingItem?.qty || 0) + 1;
+
+      return {
+        ...prev,
+        [activeCart]: {
+          ...currentCart,
+          [product.id]: { ...product, qty: newQty },
+        },
+      };
+    });
   };
 
   const handleRemoveFromCart = (productId: string) => {
     setCarts((prev) => {
       const currentCart = prev[activeCart];
-      const newQty = (currentCart[productId] || 0) - 1;
+      const existingItem = currentCart[productId];
+      if (!existingItem) return prev;
+
+      const newQty = existingItem.qty - 1;
 
       const updatedCart = { ...currentCart };
       if (newQty <= 0) {
         delete updatedCart[productId];
       } else {
-        updatedCart[productId] = newQty;
+        updatedCart[productId] = { ...existingItem, qty: newQty };
       }
 
       return { ...prev, [activeCart]: updatedCart };
@@ -165,25 +182,36 @@ export function CounterContent() {
       handleDeleteItem(productId);
       return;
     }
-    setCarts((prev) => ({
-      ...prev,
-      [activeCart]: {
-        ...prev[activeCart],
-        [productId]: quantity,
-      },
-    }));
+
+    setCarts((prev) => {
+      const currentCart = prev[activeCart];
+      const existingItem = currentCart[productId];
+      // If updating quantity for an item not in cart (shouldn't happen via UI logic usually),
+      // we can't update it without product details.
+      // Assuming this is called for items ALREADY in cart.
+      if (!existingItem) return prev;
+
+      return {
+        ...prev,
+        [activeCart]: {
+          ...currentCart,
+          [productId]: { ...existingItem, qty: quantity },
+        },
+      };
+    });
   };
 
   const currentCategoryName = categories.find(
     (c) => c.id === selectedCategory,
   )?.name;
 
-  const products: ProductMock[] = (apiProducts as any[]).map((p) => ({
+  const products: Product[] = (apiProducts as any[]).map((p) => ({
     id: p.id,
     name: p.name,
     price: p.price || 0,
     image: p.image,
     category: p.category?.name || "",
+    quantity: p.quantity || p.reserved || 0, // Map quantity, fallback to reserved if backend mismatch
     reserved: p.reserved || 0,
     description: p.description,
     barcode: p.barcode,
@@ -192,28 +220,22 @@ export function CounterContent() {
 
   const getCartItemsArray = (type: CartType): CartItem[] => {
     const items = carts[type];
-    return Object.keys(items)
-      .map((id) => {
-        const product = products.find((p) => p.id === id);
-        return product ? { ...product, qty: items[id] } : null;
-      })
-      .filter((i): i is CartItem => i !== null);
+    return Object.values(items);
   };
 
   return (
     <div className="flex h-full overflow-hidden">
-      <BarcodeProductModal product={scannedProduct} onConfirm={onConfirmScan} />
+      <BarcodeProductScanner
+        scannedProduct={scannedProduct}
+        onConfirm={onConfirmScan}
+      />
       <div className="flex-1 flex flex-col min-w-0 gap-4 p-4">
         {isLoadingCategories ? (
           <PosCategorySkeleton />
         ) : (
-          <CategorySection
-            categories={categories.map((c) => ({
-              id: c.id,
-              name: c.name,
-              count: c.itemsCount,
-            }))}
-            selectedCategory={selectedCategory}
+          <CategorySelector
+            categories={categories}
+            activeCategory={selectedCategory}
             onSelectCategory={handleCategorySelect}
           />
         )}
@@ -228,7 +250,7 @@ export function CounterContent() {
           {isLoadingProducts ? (
             <PosProductSectionSkeleton />
           ) : (
-            <ProductSection
+            <ProductList
               products={products}
               cartItems={cartItems}
               onAddToCart={handleAddToCart}
@@ -267,7 +289,7 @@ export function CounterContent() {
             {isLoadingCategories ? (
               <PosCartSkeleton />
             ) : (
-              <CartSection
+              <CartList
                 type="invoice"
                 cartItems={getCartItemsArray("invoice")}
                 onUpdateQty={(item, delta) =>
@@ -283,7 +305,7 @@ export function CounterContent() {
             {isLoadingCategories ? (
               <PosCartSkeleton />
             ) : (
-              <CartSection
+              <CartList
                 type="proforma"
                 cartItems={getCartItemsArray("proforma")}
                 onUpdateQty={(item, delta) =>

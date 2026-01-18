@@ -18,7 +18,7 @@ export const PosSalesSchema = z.object({
   total: z.number().min(0),
   receivedValue: z.number().min(0),
   paymentMethod: z.enum(["CASH", "CARD", "TRANSFER"]),
-  change: z.number().optional(),
+  change: z.coerce.number().default(0),
   storeId: z.string().min(1, "Loja é obrigatória"),
 });
 

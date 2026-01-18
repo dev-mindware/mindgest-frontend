@@ -1,10 +1,10 @@
 "use client";
 
 import { Icon, Avatar, AvatarFallback, AvatarImage } from "@/components";
-import { ProductMock } from "./data";
-import { CartCheckoutForm } from "./cart-checkout-form";
+import { Product } from "@/types";
+import { CartCheckoutForm } from "./checkout-form";
 
-interface CartItem extends ProductMock {
+interface CartItem extends Product {
     qty: number;
 }
 
@@ -16,7 +16,7 @@ interface CartSectionProps {
     type?: "invoice" | "proforma";
 }
 
-export function CartSection({ cartItems, onUpdateQty, onRemove, onDelete, type = "invoice" }: CartSectionProps) {
+export function CartList({ cartItems, onUpdateQty, onRemove, onDelete, type = "invoice" }: CartSectionProps) {
     return (
         <div className="flex flex-col bg-sidebar rounded-md shadow-sm p-4 m-4 mt-2 border border-border/50 h-auto">
             <h2 className="text-xl font-bold mb-4">
@@ -36,7 +36,7 @@ export function CartSection({ cartItems, onUpdateQty, onRemove, onDelete, type =
                                 <div className="flex-1 flex flex-col justify-center overflow-hidden">
                                     <h4 className="font-semibold text-sm line-clamp-1 leading-tight" title={item.name}>{item.name}</h4>
                                     <p className="text-xs text-muted-foreground truncate">
-                                        {item.qty}x 
+                                        {item.qty}x
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-end justify-center gap-1 shrink-0">
