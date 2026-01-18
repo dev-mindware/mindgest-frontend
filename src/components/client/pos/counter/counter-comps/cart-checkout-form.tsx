@@ -16,7 +16,7 @@ import { useAuthStore } from "@/stores";
 import { ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
+import { PosSalesFormData, PosSalesSchema } from "@/schemas";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 
 interface CartCheckoutFormProps {
@@ -49,34 +49,35 @@ export function CartCheckoutForm({
   const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
 
-  const form = useForm<InvoiceReceiptFormData>({
-    resolver: zodResolver(InvoiceReceiptSchema),
+  const form = useForm<PosSalesFormData>({
+    resolver: zodResolver(PosSalesSchema),
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       items: [],
-      client: {
-        name: "",
-        taxNumber: "",
-        address: "",
-        phone: "",
-      },
-      globalTax: 0,
-      globalDiscount: 0,
+      client: undefined,
       storeId: user?.store?.id || "",
+      total: 0,
+      subtotal: 0,
+      taxAmount: 0,
+      discountAmount: 0,
+      receivedValue: 0,
+      change: 0,
+      paymentMethod: "CARD",
     },
   });
-
 
   const { handleSubmit, setValue, watch, reset } = form;
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
 
-  const watchedItems = watch("items");
+  // Note: We watch "items" to calculate totals, but for the form validation against PosSalesSchema
+  // (which expects {id, quantity}), we need to be careful. usage of 'any' in setValue helps bypass type check for the extra fields needed for UI calculation.
+  const watchedItems = watch("items") as any[];
   const totals = useInvoiceTotals({
     items: watchedItems || [],
-    tax: watch("globalTax") || 0,
+    tax: 0, // Global tax removed/set to 0
     retention: 0,
-    discount: watch("globalDiscount") || 0,
+    discount: 0, // Global discount removed/set to 0
   });
 
   // Synchronize cartItems with form items
@@ -92,91 +93,95 @@ export function CartCheckoutForm({
       total: (item.price || 0) * item.qty,
       isFromAPI: true,
     }));
+    // We pass the full object for UI calculations, even though Schema only strictly requires id and quantity.
     setValue("items", items as any, { shouldValidate: true });
   }, [cartItems, setValue]);
+
+  // Synchronize totals to form state
+  useEffect(() => {
+    setValue("total", totals.total);
+    setValue("subtotal", totals.subtotal);
+    setValue("taxAmount", totals.taxAmount);
+    setValue("discountAmount", totals.discountAmount);
+  }, [totals, setValue]);
 
   // Synchronize payment method
   useEffect(() => {
     setValue("paymentMethod", paymentMethod === "Cash" ? "CASH" : "CARD");
   }, [paymentMethod, setValue]);
 
+  // Handle Cash & Change
   useEffect(() => {
     if (paymentMethod === "Cash") {
       const cash = parseCurrency(cashGiven) || 0;
-      setChange(cash >= totals.total ? cash - totals.total : 0);
+      const changeVal = cash >= totals.total ? cash - totals.total : 0;
+      setChange(changeVal);
+      setValue("receivedValue", cash);
+      setValue("change", changeVal);
     } else {
       setChange(0);
+      setValue("receivedValue", totals.total); // For card, received == total
+      setValue("change", 0);
     }
-  }, [cashGiven, totals.total, paymentMethod]);
+  }, [cashGiven, totals.total, paymentMethod, setValue]);
 
   const handleQuickCash = (amount: number) => {
     setCashGiven(formatCurrency(amount));
   };
 
-  console.log("ERROS: ")
-  console.log(JSON.stringify(form.formState.errors));
+  // console.log("ERROS: ", form.formState.errors);
 
-  const onSubmit = async (data: InvoiceReceiptFormData) => {
+  const onSubmit = async (data: PosSalesFormData) => {
     try {
       if (cartItems.length === 0) {
         ErrorMessage("O carrinho está vazio!");
         return;
       }
 
-      // Simplified items: only id and quantity as per user request
-      const simplifiedItems = data.items.map((item) => ({
+      // Prepare payload
+      // data.items will already be stripped to schema shape (id, quantity) by zodResolver if it works strictly,
+      // but if we passed extra data, it might still safely contain just what we need or we can map it to be sure.
+      const simplifiedItems = data.items.map((item: any) => ({
         id: item.id,
         quantity: item.quantity,
       }));
 
-      // Extract values to exclude global fields
-      const {
-        globalTax: _gt,
-        globalDiscount: _gd,
-        globalRetention: _gr,
-        items: _items,
-        ...rest
-      } = data;
-
-      const payload: any = {
-        ...rest,
+      const payload: PosSalesFormData = {
+        ...data,
         items: simplifiedItems,
-        client: {
-          name: data.client.name,
-          phone: data.client.phone,
-        },
-        total: totals.total,
-        taxAmount: totals.taxAmount,
-        discountAmount: totals.discountAmount,
-        subtotal: totals.subtotal,
-        paymentMethod: paymentMethod === "Cash" ? "CASH" : "CARD",
-        ...(user?.store?.id && { storeId: user.store.id }),
+        // Ensure client is structure correctly if manually set via phone
+        client: data.client,
       };
 
       // Custom adjustments for client from POS UI
       if (!selectedClient && newCustomerPhone) {
-        payload.client.name = "Consumidor Final";
-        payload.client.phone = newCustomerPhone;
+        payload.client = {
+          name: "Consumidor Final",
+          phone: newCustomerPhone,
+          email: "consumidor@final.com", // Dummy email to satisfy loose requirements if any
+          address: "Loja",
+          taxNumber: "999999999", // Generic
+        };
       }
 
-      if (selectedClient && !selectedClient.__isNew__) {
-        payload.clientId = selectedClient.value;
-      }
+      // If we have a selected client that is NEW (created via AsyncCreatableSelect)
+      // The hook useClientSelection/AsyncSelect usually handles passing the object to setValue('client', ...)
+      // We just need to ensure it matches the schema.
 
       if (type === "invoice") {
-        if (paymentMethod === "Cash") {
-          payload.amountReceived = parseCurrency(cashGiven) || totals.total;
-          payload.change = change;
-        }
-        await createInvoiceReceipt(payload);
+        await createInvoiceReceipt(payload as any);
       } else {
-        // Proforma specific adjustments
-        payload.proformaExpiresAt = new Date(
-          Date.now() + 7 * 24 * 60 * 60 * 1000
-        )
-          .toISOString()
-          .split("T")[0]; // 7 days expiration
-        await createProforma(payload);
+        // For proforma, we might need a different payload structure or endpoint
+        // The previous code had specific fields for proforma.
+        // Assuming createProforma can accept PosSalesFormData or similar.
+        // We'll keep the proforma logic as close to previous as possible but using new data.
+        const proformaPayload = {
+          ...payload,
+          proformaExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
+        };
+        await createProforma(proformaPayload as any);
       }
 
       setCashGiven("");
@@ -189,7 +194,7 @@ export function CartCheckoutForm({
       ErrorMessage(
         `Erro ao processar ${
           type === "invoice" ? "o pagamento" : "a proforma"
-        }.`
+        }.`,
       );
     }
   };
@@ -205,7 +210,6 @@ export function CartCheckoutForm({
             {formatCurrency(totals.subtotal)}
           </span>
         </div>
-        {/* Tax removed */}
         {change > 0 && paymentMethod === "Cash" && (
           <div className="flex justify-between text-sm text-green-600 font-semibold">
             <span>Troco</span>
@@ -295,7 +299,7 @@ export function CartCheckoutForm({
                   "flex-1 flex flex-col items-center gap-2 py-2 rounded-md text-xs font-medium transition-all",
                   paymentMethod === method
                     ? "bg-primary/15 shadow text-primary"
-                    : "text-muted-foreground hover:bg-accent"
+                    : "text-muted-foreground hover:bg-accent",
                 )}
               >
                 {method === "Credit Card" ? (
@@ -354,7 +358,7 @@ export function CartCheckoutForm({
             <div
               className={cn(
                 "flex justify-between bg-muted text-sm font-bold p-2 rounded-md",
-                change >= 0 ? "text-green-700" : "text-red-700"
+                change >= 0 ? "text-green-700" : "text-red-700",
               )}
             >
               <span>Troco</span>

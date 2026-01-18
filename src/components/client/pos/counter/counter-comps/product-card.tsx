@@ -21,6 +21,7 @@ import {
 } from "@/components";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
+import { ErrorMessage } from "@/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -45,12 +46,21 @@ export function ProductCard({
     setIsEditing(true);
   };
 
+  if (!product) return null;
+
   const handleConfirmQty = () => {
     const qty = parseInt(editQty, 10);
-    if (!isNaN(qty)) {
-      onUpdateQuantity(qty);
+    if (!isNaN(qty) && qty > 0) {
+      if (qty <= product.reserved) {
+        onUpdateQuantity(qty);
+        setIsEditing(false);
+      } else {
+        ErrorMessage(`Apenas ${product.reserved} unidades disponíveis.`);
+        setEditQty(product.reserved.toString());
+      }
+    } else {
+      ErrorMessage("Quantidade inválida.");
     }
-    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -58,8 +68,6 @@ export function ProductCard({
       handleConfirmQty();
     }
   };
-
-  if (!product) return null;
 
   return (
     <Card className="overflow-hidden flex flex-col py-0 relative group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 bg-card/50 backdrop-blur-sm">
