@@ -49,14 +49,14 @@ export function EntitiesPageContent() {
               onClick={() => setCurrentTab("supplier")}
               className="text-sm sm:text-base"
             >
-              Fornecedores
+              Fornecedor
             </TabsTrigger>
             <TabsTrigger
               value="store-tab"
               onClick={() => setCurrentTab("store")}
               className="text-sm sm:text-base"
             >
-              Lojas
+              Loja
             </TabsTrigger>
           </TabsList>
 
