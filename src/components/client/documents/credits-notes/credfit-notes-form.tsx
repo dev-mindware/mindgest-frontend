@@ -136,7 +136,7 @@ export function CreditNoteForm({ invoice }: Props) {
                   render={({ field }) => (
                     <Input
                       label="Preço Unit."
-                      value={formatCurrency(field.value)}
+                      value={formatCurrency(field.value ?? 0)}
                       onChange={(e) =>
                         field.onChange(parseCurrency(e.target.value))
                       }
@@ -151,10 +151,10 @@ export function CreditNoteForm({ invoice }: Props) {
 
       <div className="flex justify-end">
         <ButtonSubmit className="w-max" isLoading={isSubmitting}>
-        {reason === "ANNULATION"
-          ? "Confirmar Anulação"
-          : "Emitir Nota de Crédito"}
-      </ButtonSubmit>
+          {reason === "ANNULATION"
+            ? "Confirmar Anulação"
+            : "Emitir Nota de Crédito"}
+        </ButtonSubmit>
       </div>
     </form>
   );
