@@ -1,7 +1,7 @@
 "use client";
 
 import { useOwnerDashboard } from "@/hooks/reports/use-owner-dashboard";
-import { DashboardSkeleton, EmptyState } from "@/components";
+import { DashboardSkeleton, EmptyState, FeatureGate } from "@/components";
 import {
     DashboardSummaryCards,
     DashboardRevenueChart,
@@ -52,10 +52,12 @@ export function OwnerDashboardView() {
                 </div>
             </div>
 
+            <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <StoresBreakdownTable data={dashboardData.storesBreakdown} />
                 <DashboardRecentSalesTable data={dashboardData.recentSales} />
             </div>
+            </FeatureGate>
         </div>
     );
 }

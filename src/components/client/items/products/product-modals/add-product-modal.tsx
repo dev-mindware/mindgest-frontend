@@ -6,13 +6,14 @@ import {
   Input,
   Button,
   Textarea,
-  TsunamiOnly,
+  ProOnly,
   GlobalModal,
   RHFSelect,
   RequestError,
   ButtonSubmit,
   CategoryModal,
   ProductModalSkeleton,
+  FeatureGate,
 } from "@/components";
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores/modal/use-modal-store";
@@ -92,7 +93,7 @@ function AddProductFormContent() {
       if (error?.response) {
         ErrorMessage(
           error?.response?.data?.message ||
-            "Ocorreu um erro ao adicionar o item",
+          "Ocorreu um erro ao adicionar o item",
         );
       } else {
         ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
@@ -120,7 +121,7 @@ function AddProductFormContent() {
       onSubmit={handleSubmit(onSubmit)}
       className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
     >
-      <TsunamiOnly>
+      <ProOnly>
         <div className="space-y-6">
           <div className="rounded-lg bg-sidebar">
             <div className="p-6">
@@ -141,7 +142,7 @@ function AddProductFormContent() {
             </div>
           </div>
         </div>
-      </TsunamiOnly>
+      </ProOnly>
 
       <div className="">
         <div className="space-y-4 sm:w-[35rem]">
@@ -220,31 +221,35 @@ function AddProductFormContent() {
             />
           </div>
 
-          {/* <TsunamiOnly className="space-y-4"> */}
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="quantity"
-              startIcon="Scale"
-              label="Stock Mínimo"
-              {...register("minStock", { valueAsNumber: true })}
-              error={errors.minStock?.message}
-            />
-            <Input
-              type="quantity"
-              startIcon="Scale"
-              label="Stock Máximo"
-              {...register("maxStock", { valueAsNumber: true })}
-              error={errors.maxStock?.message}
-            />
-          </div>
+          {/* <ProOnly className="space-y-4"> */}
+          <FeatureGate minPlan="Pro" fallback="hidden">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="quantity"
+                startIcon="Scale"
+                label="Stock Mínimo"
+                {...register("minStock", { valueAsNumber: true })}
+                error={errors.minStock?.message}
+              />
+              <Input
+                type="quantity"
+                startIcon="Scale"
+                label="Stock Máximo"
+                {...register("maxStock", { valueAsNumber: true })}
+                error={errors.maxStock?.message}
+              />
+            </div>
+          </FeatureGate>
 
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              startIcon="Scale"
-              {...register("unit")}
-              label="Unidade de Medida (Opcional)"
-              error={errors.unit?.message}
-            />
+            <FeatureGate minPlan="Pro" fallback="hidden">
+              <Input
+                startIcon="Scale"
+                {...register("unit")}
+                label="Unidade de Medida (Opcional)"
+                error={errors.unit?.message}
+              />
+            </FeatureGate>
             <Input
               type="number"
               startIcon="Scale"
@@ -253,37 +258,41 @@ function AddProductFormContent() {
               error={errors.quantity?.message}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="number"
-              startIcon="Weight"
-              label="Peso (Kg) (opcional)"
-              {...register("weight", { valueAsNumber: true })}
-              error={errors.weight?.message}
-            />
-            <Input
-              label="Dimensões (opcional)"
-              placeholder="Ex: 10x20x30 cm"
-              {...register("dimensions")}
-              error={errors.dimensions?.message}
-            />
-          </div>
+          <FeatureGate minPlan="Pro" fallback="hidden">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="number"
+                startIcon="Weight"
+                label="Peso (Kg) (opcional)"
+                {...register("weight", { valueAsNumber: true })}
+                error={errors.weight?.message}
+              />
+              <Input
+                label="Dimensões (opcional)"
+                placeholder="Ex: 10x20x30 cm"
+                {...register("dimensions")}
+                error={errors.dimensions?.message}
+              />
+            </div>
+          </FeatureGate>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="date"
-              label="Data de Validade (opcional)"
-              {...register("expiryDate")}
-              error={errors.expiryDate?.message}
-            />
-            <Input
-              type="number"
-              placeholder="14"
-              label="Dias até Expirar (opcional)"
-              {...register("daysToExpiry", { valueAsNumber: true })}
-              error={errors.daysToExpiry?.message}
-            />
-          </div>
+          <FeatureGate minPlan="Pro" fallback="hidden">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="date"
+                label="Data de Validade (opcional)"
+                {...register("expiryDate")}
+                error={errors.expiryDate?.message}
+              />
+              <Input
+                type="number"
+                placeholder="14"
+                label="Dias até Expirar (opcional)"
+                {...register("daysToExpiry", { valueAsNumber: true })}
+                error={errors.daysToExpiry?.message}
+              />
+            </div>
+          </FeatureGate>
 
           <Textarea
             label="Descrição (opcional)"
@@ -292,7 +301,7 @@ function AddProductFormContent() {
             placeholder="Escreva detalhes do item..."
             error={errors.description?.message}
           />
-          {/* </TsunamiOnly> */}
+          {/* </ProOnly> */}
         </div>
 
         <div className="flex justify-end gap-4 mt-5">

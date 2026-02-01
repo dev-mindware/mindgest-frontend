@@ -9,7 +9,7 @@ import {
   Textarea,
   Label,
   Input,
-  TsunamiOnly,
+  ProOnly,
   RHFSelect,
   CategoryModal,
   ButtonSubmit,
@@ -110,7 +110,7 @@ export function EditProductModal() {
           onSubmit={handleSubmit(onSubmit)}
           className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
         >
-          <TsunamiOnly>
+          <ProOnly>
             <div className="space-y-6">
               <div className="rounded-lg bg-sidebar">
                 <div className="p-6">
@@ -134,7 +134,7 @@ export function EditProductModal() {
                 </div>
               </div>
             </div>
-          </TsunamiOnly>
+          </ProOnly>
 
           <div className="">
             <div className="flex items-center justify-between mb-4">
@@ -193,7 +193,7 @@ export function EditProductModal() {
                 />
               </div>
 
-              <TsunamiOnly className="space-y-4">
+              <ProOnly className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <Input
                     id="supplier"
@@ -306,7 +306,7 @@ export function EditProductModal() {
                     {...register("description")}
                   />
                 </div>
-              </TsunamiOnly>
+              </ProOnly>
             </div>
             <div className="flex mt-6 justify-end gap-4">
               <Button variant="outline" onClick={handleCancel}>

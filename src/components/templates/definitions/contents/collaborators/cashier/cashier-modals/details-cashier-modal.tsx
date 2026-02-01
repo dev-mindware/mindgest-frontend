@@ -2,19 +2,19 @@
 import { useModal } from "@/stores/modal/use-modal-store";
 import { Icon, Button, DetailRow, GlobalModal, Badge } from "@/components";
 import { formatDateTime } from "@/utils/format-date";
-import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
+import { currentCashierStore } from "@/stores/collaborators/current-cashier-store";
 
-export function DetailsCollaboratorModal() {
+export function DetailsCashierModal() {
   const { closeModal, open } = useModal();
-  const isOpen = open["view-collaborator"];
-  const { currentCollaborator } = currentCollaboratorStore();
+  const isOpen = open["view-cashier"];
+  const { currentCashier } = currentCashierStore();
 
-  if (!currentCollaborator || !isOpen) return null;
+  if (!currentCashier || !isOpen) return null;
 
   return (
     <GlobalModal
       canClose
-      id="view-collaborator"
+      id="view-cashier"
       title={
         <>
           <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10">
@@ -22,19 +22,19 @@ export function DetailsCollaboratorModal() {
           </div>
 
           <div className="text-center space-y-1 mt-4">
-            <h2 className="text-2xl font-bold">{currentCollaborator.name}</h2>
+            <h2 className="text-2xl font-bold">{currentCashier.name}</h2>
             <div className="flex items-center justify-center gap-2">
               <span className="text-xs text-muted-foreground">
-                Cargo: {currentCollaborator.role}
+                Cargo: {currentCashier.role}
               </span>
               <Badge
                 variant={
-                  currentCollaborator.status === "ACTIVE"
+                  currentCashier.status === "ACTIVE"
                     ? "success"
                     : "destructive"
                 }
               >
-                {currentCollaborator.status === "ACTIVE"
+                {currentCashier.status === "ACTIVE"
                   ? "Activo"
                   : "Inactivo"}
               </Badge>
@@ -47,7 +47,7 @@ export function DetailsCollaboratorModal() {
         <div className="flex justify-end">
           <Button
             variant="outline"
-            onClick={() => closeModal("view-collaborator")}
+            onClick={() => closeModal("view-cashier")}
           >
             Fechar
           </Button>
@@ -59,33 +59,33 @@ export function DetailsCollaboratorModal() {
           <h3 className="font-semibold text-foreground">
             Informações Pessoais
           </h3>
-          <DetailRow label="Nome" value={currentCollaborator.name} />
-          <DetailRow label="Email" value={currentCollaborator.email} />
-          <DetailRow label="Telefone" value={currentCollaborator.phone} />
+          <DetailRow label="Nome" value={currentCashier.name} />
+          <DetailRow label="Email" value={currentCashier.email} />
+          <DetailRow label="Telefone" value={currentCashier.phone} />
         </section>
 
         {/* Empresa e Identificação */}
-        {currentCollaborator.companyId && (
+        {currentCashier.companyId && (
           <section className="space-y-2">
             <h3 className="font-semibold text-foreground">
               Identificação e Empresa
             </h3>
-            <DetailRow label="Empresa" value={currentCollaborator.companyId} />
+            <DetailRow label="Empresa" value={currentCashier.companyId} />
           </section>
         )}
 
-        {(currentCollaborator.createdAt || currentCollaborator.updatedAt) && (
+        {(currentCashier.createdAt || currentCashier.updatedAt) && (
           <section className="space-y-2">
             <h3 className="font-semibold text-foreground">
               Informações Técnicas
             </h3>
             <DetailRow
               label="Criado em"
-              value={formatDateTime(currentCollaborator.createdAt)}
+              value={formatDateTime(currentCashier.createdAt)}
             />
             <DetailRow
               label="Atualizado em"
-              value={formatDateTime(currentCollaborator.updatedAt)}
+              value={formatDateTime(currentCashier.updatedAt)}
             />
           </section>
         )}

@@ -11,15 +11,15 @@ type WrapperProps = React.HTMLAttributes<HTMLDivElement> & {
 
 const order: Record<PlanType, number> = {
   "Base": 1,
-  "Tsunami": 2,
-  "Smart Pro": 3,
+  "Pro": 2,
+  "Smart": 3,
 };
 
 function normalizePlan(raw: unknown): PlanType | null {
   if (typeof raw !== "string") return null;
   const x = raw.toUpperCase().replace(/[-\s]/g, "_");
-  if (x.includes("Smart")) return "Smart Pro";
-  if (x.includes("Tsunami")) return "Tsunami";
+  if (x.includes("Smart")) return "Smart";
+  if (x.includes("Pro")) return "Pro";
   if (x.includes("Base")) return "Base";
   return null;
 }
@@ -50,10 +50,10 @@ export function PlanWrapper({ children, minPlan, planOverride, ...rest }: Wrappe
 export function BaseOnly(props: Omit<WrapperProps, "minPlan">) {
   return <PlanWrapper minPlan="Base" {...props} />;
 }
-export function TsunamiOnly(props: Omit<WrapperProps, "minPlan">) {
-  return <PlanWrapper minPlan="Tsunami" {...props} />;
+export function ProOnly(props: Omit<WrapperProps, "minPlan">) {
+  return <PlanWrapper minPlan="Pro" {...props} />;
 }
 
-export function SmartProOnly(props: Omit<WrapperProps, "minPlan">) {
-  return <PlanWrapper minPlan="Smart Pro" {...props} />;
+export function SmartOnly(props: Omit<WrapperProps, "minPlan">) {
+  return <PlanWrapper minPlan="Smart" {...props} />;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CategoriesPageContent, Icon, TsunamiOnly } from "@/components";
+import { CategoriesPageContent, Icon } from "@/components";
 import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";

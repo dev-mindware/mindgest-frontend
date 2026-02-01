@@ -11,29 +11,29 @@ import {
 } from "@/components";
 import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
-import { CollaboratorFiltersTSX } from "./common";
+import { CashierFiltersTSX } from "./common";
 import {
-  CollaboratorModal,
-  DeleteCollaboratorModal,
-  DetailsCollaboratorModal,
-} from "./collaborator-modals";
-import { useCollaboratorActions } from "@/hooks/collaborators/use-collaborator-actions";
-import { useCollaboratorFilters } from "@/hooks/collaborators/collaborator-filters";
-import { CollaboratorResponse } from "@/types/collaborators";
+  CashierModal,
+  DeleteCashierModal,
+  DetailsCashierModal,
+} from "./cashier-modals";
+import { useCashierActions } from "@/hooks/collaborators/cashier/use-cashier-actions";
+import { useCashierFilters } from "@/hooks/collaborators/cashier/cashier-filters";
+import { CashierResponse } from "@/types/collaborators";
 
-export function CollaboratorList() {
+export function CashierList() {
   const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 400);
-  const { filters, page, setPage } = useCollaboratorFilters();
+  const { filters, page, setPage } = useCashierFilters();
   const {
-    handlerDeleteCollaborator,
-    handlerDetailsCollaborator,
-    handlerEditCollaborator,
-    toggleStatusCollaborator,
-  } = useCollaboratorActions();
+    handlerDeleteCashier,
+    handlerDetailsCashier,
+    handlerEditCashier,
+    toggleStatusCashier,
+  } = useCashierActions();
 
   const {
-    data: allCollaborators,
+    data: allCashiers,
     total,
     totalPages,
     goToNextPage,
@@ -41,20 +41,21 @@ export function CollaboratorList() {
     isLoading,
     isError,
     refetch,
-  } = usePagination<CollaboratorResponse>({
+  } = usePagination<CashierResponse>({
     endpoint: "/users",
-    queryKey: ["collaborators"],
+    queryKey: ["cashiers"],
     queryParams: {
       ...filters,
+      role: "CASHIER",
       search: debounceSearch,
       page,
     },
   });
 
   const filteredList =
-    allCollaborators?.filter((user) => user.role !== "OWNER") || [];
+    allCashiers?.filter((user) => user.role !== "OWNER") || [];
 
-  const columns: Column<CollaboratorResponse>[] = [
+  const columns: Column<CashierResponse>[] = [
     { key: "name", header: "Nome" },
     {
       key: "role",
@@ -93,16 +94,17 @@ export function CollaboratorList() {
           actions={[
             {
               label: "Ver detalhes",
-              onClick: () => handlerDetailsCollaborator(item),
+              onClick: () => handlerDetailsCashier(item),
             },
-            { label: "Editar", onClick: () => handlerEditCollaborator(item) },
+            { label: "Editar", onClick: () => handlerEditCashier(item) },
             {
               label: "Deletar",
-              onClick: () => handlerDeleteCollaborator(item),
+              onClick: () => handlerDeleteCashier(item),
             },
+            { type: "separator" },
             {
               label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
-              onClick: toggleStatusCollaborator,
+              onClick: toggleStatusCashier,
             },
           ]}
         />
@@ -126,12 +128,12 @@ export function CollaboratorList() {
       <div className="justify-start mt-6 space-y-8">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-            <CollaboratorFiltersTSX />
+            <CashierFiltersTSX />
           </div>
         </div>
         <EmptyState
-          description="Adicione novos colaboradores"
-          title="Sem Colaboradores"
+          description="Adicione novos caixas"
+          title="Sem Caixas"
           icon="Users"
         />
       </div>
@@ -141,11 +143,11 @@ export function CollaboratorList() {
     <div className="justify-start mt-6 space-y-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <CollaboratorFiltersTSX />
+          <CashierFiltersTSX />
         </div>
       </div>
 
-      <GenericTable<CollaboratorResponse>
+      <GenericTable<CashierResponse>
         page={page}
         data={filteredList}
         columns={columns}
@@ -154,12 +156,12 @@ export function CollaboratorList() {
         setPage={setPage}
         goToNextPage={goToNextPage}
         goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhum colaborador encontrado"
+        emptyMessage="Nenhum caixa encontrado"
       />
 
-      <DetailsCollaboratorModal />
-      <DeleteCollaboratorModal />
-      <CollaboratorModal action="edit" />
+      <DetailsCashierModal />
+      <DeleteCashierModal />
+      <CashierModal action="edit" />
     </div>
   );
 }

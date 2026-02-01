@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import {  ItemResponse as Product } from "@/types";
-import { TsunamiOnly } from "@/components/common";
+import { ProOnly } from "@/components/common";
 
 export const ProductStockInfo = ({ product }: { product: Product }) => {
   const formattedExpiryDate = useMemo(() => {
@@ -8,13 +8,13 @@ export const ProductStockInfo = ({ product }: { product: Product }) => {
   }, [product.expiryDate]);
 
   return (
-    <TsunamiOnly>
+    <ProOnly>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           {product.maxStock} no Stock - {product.maxStock}
         </span>
         <span>Expira em: ({formattedExpiryDate})</span>
       </div>
-    </TsunamiOnly>
+    </ProOnly>
   );
 };

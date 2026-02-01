@@ -12,7 +12,7 @@ export const FeaturesSchema = z.object({
 
 const PlanSchema = z.object({
   id: z.string().optional(),
-  name: z.enum(["Base", "Tsunami", "Smart Pro"]),
+  name: z.enum(["Base", "Pro", "Smart"]),
   priceMonthly: z.string(),
   isPublic: z.boolean(),
   createdAt: z.string(),

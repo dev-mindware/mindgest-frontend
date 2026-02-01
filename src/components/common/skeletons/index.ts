@@ -14,4 +14,5 @@ export * from "./loader-stores-skeleton";
 export * from "./notification-skeleton";
 export * from "./sales-skeleton";
 export * from "./dashboard-skeleton";
-export * from "./dynamic-metric-card-skeleton"
+export * from "./dynamic-metric-card-skeleton";
+export * from "./pos-requests-skeleton";

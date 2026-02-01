@@ -17,7 +17,7 @@ export type ManagerResponse = ManagerData & {
   stores?: { id: string; name: string }[];
 };
 
-export type CollaboratorData = {
+export type CashierData = {
   name: string;
   email?: string;
   password?: string;
@@ -27,14 +27,14 @@ export type CollaboratorData = {
   storeId?: string;
 };
 
-export type CollaboratorResponse = CollaboratorData & {
+export type CashierResponse = CashierData & {
   id: string;
   status: any;
   createdAt: string;
   updatedAt: string;
 };
 
-export type CollaboratorFilters = {
+export type CashierFilters = {
   sortBy?: string | null;
   status?: string | null;
   sortOrder?: string | null;

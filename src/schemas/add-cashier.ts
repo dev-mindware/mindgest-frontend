@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const collaboratorSchema = z.object({
+export const cashierSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   phone: z
     .string()
@@ -39,4 +39,4 @@ export const collaboratorSchema = z.object({
     .optional(),
 });
 
-export type CollaboratorFormData = z.infer<typeof collaboratorSchema>;
+export type CashierFormData = z.infer<typeof cashierSchema>;

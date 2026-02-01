@@ -10,6 +10,7 @@ import {
 } from "@/components/ui";
 import { useAuthStore, useModal } from "@/stores";
 import { ManagerList, ManagerModal } from "./manager";
+import { CashierList, CashierModal } from "./cashier";
 
 type CollaboratorTab = "manager" | "cashier";
 
@@ -74,14 +75,13 @@ export function CollaboratorsPageContent() {
             <ManagerList />
           </TabsContent>
           <TabsContent value="cashier">
-            <div className="flex items-center justify-center h-40 text-muted-foreground text-sm sm:text-base">
-              Nenhum caixa cadastrado ainda.
-            </div>
+            <CashierList />
           </TabsContent>
         </div>
       </Tabs>
 
       <ManagerModal action="add" />
+      <CashierModal action="add" />
     </div>
   );
 }

@@ -1,14 +1,14 @@
-import { TsunamiOnly } from "@/components/common";
+import { ProOnly } from "@/components/common";
 import { ItemResponse as Product } from "@/types";
 
 export const ProductDetails = ({ product }: { product: Product }) => (
-  <TsunamiOnly>
+  <ProOnly>
     <div className="flex items-center gap-2 text-muted-foreground">
       <ProductInfoChip>{product.name}</ProductInfoChip>
       <ProductInfoChip>{product.cost}</ProductInfoChip>
       <ProductInfoChip>{product.daysToExpiry} dias de garantia</ProductInfoChip>
     </div>
-  </TsunamiOnly>
+  </ProOnly>
 );
 
 interface ProductInfoChipProps {

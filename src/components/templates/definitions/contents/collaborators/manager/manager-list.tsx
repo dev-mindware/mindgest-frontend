@@ -77,9 +77,9 @@ export function ManagerList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Cancelar", onClick: handlerDeleteManager },
-            { label: "Editar", onClick: handlerEditManager },
             { label: "Ver detalhes", onClick: handlerDetailsManager },
+            { label: "Editar", onClick: handlerEditManager },
+            { label: "Deletar", onClick: handlerDeleteManager },
           ]}
         />
       ),

@@ -5,7 +5,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
-import { TitleList, TsunamiOnly } from "@/components/common";
+import { TitleList } from "@/components/common";
 
 export function AddEntities() {
   return (

@@ -1,9 +1,9 @@
 "use client";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
-import { useModal } from "@/stores";
+import { currentStoreStore, useModal } from "@/stores";
 import {
   Button,
   Input,
@@ -11,34 +11,36 @@ import {
   ButtonSubmit,
   RHFSelect,
   RequestError,
+  MultiSelect,
 } from "@/components";
 import { useGetStores } from "@/hooks/entities";
 import {
-  CollaboratorFormData,
-  collaboratorSchema,
-} from "@/schemas/add-collaborator";
-import { currentCollaboratorStore } from "@/stores/collaborators/current-collaborator-store";
+  CashierFormData,
+  cashierSchema,
+} from "@/schemas/add-cashier";
+import { currentCashierStore } from "@/stores/collaborators";
 import {
-  useAddCollaborator,
-  useUpdateCollaborator,
-} from "@/hooks/collaborators/use-collaborator";
-const roleOptions = [
-  { label: "Gerente", value: "MANAGER" },
-  { label: "Caixa", value: "CASHIER" },
-];
+  useAddCashier,
+  useUpdateCashier,
+} from "@/hooks/collaborators/cashier/use-cashier";
 
-type CollaboratorModalProps = {
+
+type CashierModalProps = {
   action: "add" | "edit";
 };
 
-export function CollaboratorModal({ action }: CollaboratorModalProps) {
+export function CashierModal({ action }: CashierModalProps) {
   const { closeModal, open } = useModal();
-  const isOpen = open["add-collaborator"] || open["edit-collaborator"];
-  const { currentCollaborator } = currentCollaboratorStore();
-  const { mutateAsync: addCollaborator, isPending: isAdding } =
-    useAddCollaborator();
-  const { mutateAsync: editCollaborator, isPending: isEditing } =
-    useUpdateCollaborator();
+  const isOpen = open["add-cashier"] || open["edit-cashier"];
+  const { currentCashier } = currentCashierStore();
+  const { mutateAsync: addCashier, isPending: isAdding } =
+    useAddCashier();
+  const { mutateAsync: editCashier, isPending: isEditing } =
+    useUpdateCashier();
+  const { currentStore } = currentStoreStore();
+  const [selectedStores, setSelectedStores] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const { stores, isLoading: isLoadingStores, error, refetch } = useGetStores();
 
@@ -48,35 +50,35 @@ export function CollaboratorModal({ action }: CollaboratorModalProps) {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<CollaboratorFormData>({
-    resolver: zodResolver(collaboratorSchema),
+  } = useForm<CashierFormData>({
+    resolver: zodResolver(cashierSchema),
     mode: "onChange",
   });
 
   useEffect(() => {
-    if (action === "edit" && currentCollaborator) {
+    if (action === "edit" && currentCashier) {
       reset({
-        name: currentCollaborator.name,
-        phone: currentCollaborator.phone,
-        role: currentCollaborator.role as "MANAGER" | "CASHIER",
-        storeId: currentCollaborator.storeId,
+        name: currentCashier.name,
+        phone: currentCashier.phone,
+        role: currentCashier.role as "CASHIER",
+        storeId: currentCashier.storeId,
       });
     }
-  }, [action, currentCollaborator, reset]);
+  }, [action, currentCashier, reset]);
 
-  async function onSubmit(data: CollaboratorFormData) {
+  async function onSubmit(data: CashierFormData) {
     try {
       const { password, ...finalData } = data;
 
       if (action === "add") {
-        await addCollaborator({
+        await addCashier({
           ...finalData,
           password,
           storeId: data.storeId,
         });
-      } else if (action === "edit" && currentCollaborator) {
-        await editCollaborator({
-          id: currentCollaborator.id,
+      } else if (action === "edit" && currentCashier) {
+        await editCashier({
+          id: currentCashier.id,
           data: {
             name: finalData.name,
             phone: finalData.phone,
@@ -96,10 +98,10 @@ export function CollaboratorModal({ action }: CollaboratorModalProps) {
 
   const handleCancel = () => {
     reset();
-    closeModal(action === "add" ? "add-collaborator" : "edit-collaborator");
+    closeModal(action === "add" ? "add-cashier" : "edit-cashier");
   };
 
-  if ((action === "edit" && !currentCollaborator) || !isOpen) return null;
+  if ((action === "edit" && !currentCashier) || !isOpen) return null;
   if (isLoadingStores) return <p>Carregando lojas...</p>;
   if (error)
     return (
@@ -112,8 +114,8 @@ export function CollaboratorModal({ action }: CollaboratorModalProps) {
   return (
     <GlobalModal
       canClose
-      id={action === "add" ? "add-collaborator" : "edit-collaborator"}
-      title={action === "add" ? "Adicionar Colaborador" : "Editar Colaborador"}
+      id={action === "add" ? "add-cashier" : "edit-cashier"}
+      title={action === "add" ? "Adicionar Caixa" : "Editar Caixa"}
       className="!max-h-[85vh] !w-max"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -155,19 +157,27 @@ export function CollaboratorModal({ action }: CollaboratorModalProps) {
               />
             </>
           )}
-
-          <RHFSelect
-            name="role"
-            control={control}
-            label="Função"
-            options={roleOptions}
-          />
-          <RHFSelect
-            control={control}
-            label="Loja"
-            options={stores}
-            name="storeId"
-          />
+          
+           <div className="flex items-end gap-2 sm:col-span-2">
+            <Controller
+              name="storeId"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  label="Lojas"
+                  className="w-full"
+                  options={stores}
+                  value={selectedStores}
+                  isLoading={!stores.length}
+                  onChange={(options) => {
+                    setSelectedStores(options);
+                    field.onChange(options.map((o) => o.value));
+                  }}
+                  error={errors.storeId?.message}
+                />
+              )}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end gap-4 mt-5">

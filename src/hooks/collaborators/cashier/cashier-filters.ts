@@ -1,18 +1,18 @@
 "use client";
-import { CollaboratorFilters } from "@/types";
+import { CashierFilters } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export function useCollaboratorFilters() {
+export function useCashierFilters() {
   const router = useRouter();
   const query = useSearchParams();
 
-  const filters: CollaboratorFilters = {
+  const filters: CashierFilters = {
     status: query.get("status") || undefined,
     sortBy: query.get("sortBy") || undefined,
     sortOrder: query.get("sortOrder") || undefined,
   };
 
-  function setFilters(newFilters: Partial<CollaboratorFilters>) {
+  function setFilters(newFilters: Partial<CashierFilters>) {
     const updated = { ...filters, ...newFilters };
     const searchParams = new URLSearchParams();
 
@@ -37,7 +37,7 @@ export function useCollaboratorFilters() {
     searchParams.delete("sortBy");
     searchParams.delete("sortOrder");
     searchParams.delete("page");
-    searchParams.delete("search_collaborator");
+    searchParams.delete("search_cashier");
 
     router.push(`?${searchParams.toString()}`, { scroll: false });
   }

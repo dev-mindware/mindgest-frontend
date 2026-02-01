@@ -15,7 +15,7 @@ export interface Subscription {
   plan: Plan;
 }
 
-export type PlanType = "Base" | "Tsunami" | "Smart Pro";
+export type PlanType = "Base" | "Pro" | "Smart";
 
 enum SubscriptionStatus {
   TRIALING = "TRIALING",

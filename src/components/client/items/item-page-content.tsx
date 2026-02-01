@@ -22,6 +22,7 @@ import {
 import { useModal } from "@/stores";
 import { ChevronDown, Plus, Barcode, Keyboard } from "lucide-react";
 import { BarcodeScannerModal, BARCODE_SCANNER_MODAL_ID } from "./products/product-modals/barcode-scanner-modal";
+import { FeatureGate } from "@/components";
 
 type ItemTab = "product" | "service";
 
@@ -54,9 +55,8 @@ export function ItemsPageContent() {
     <div className="space-y-6">
       <TitleList
         title={activeTab === "product" ? "Produtos" : "Serviços"}
-        suTitle={`Faça a gestão dos seus ${
-          activeTab === "product" ? "produtos" : "serviços"
-        } listados.`}
+        suTitle={`Faça a gestão dos seus ${activeTab === "product" ? "produtos" : "serviços"
+          } listados.`}
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -83,13 +83,15 @@ export function ItemsPageContent() {
                   <Keyboard className="h-4 w-4" />
                   Manual
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
-                  className="flex items-center gap-2"
-                >
-                  <Barcode className="h-4 w-4" />
-                  Código de Barra
-                </DropdownMenuItem>
+                <FeatureGate minPlan="Pro" fallback="disabled">
+                  <DropdownMenuItem
+                    onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
+                    className="flex items-center gap-2"
+                  >
+                    <Barcode className="h-4 w-4" />
+                    Código de Barra
+                  </DropdownMenuItem>
+                </FeatureGate>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

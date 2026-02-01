@@ -2,8 +2,8 @@ import { PlanType } from "@/types";
 
 const planOrder: Record<PlanType, number> = {
   "Base": 1,
-  "Tsunami": 2,
-  "Smart Pro": 3,
+  "Pro": 2,
+  "Smart": 3,
 };
 
 export function normalizePlan(plan: string | undefined | null): PlanType | null {
@@ -11,8 +11,8 @@ export function normalizePlan(plan: string | undefined | null): PlanType | null 
 
   const normalized = plan.toUpperCase().replace("-", "_");
 
-  if (normalized.includes("Smart")) return "Smart Pro";
-  if (normalized.includes("Tsunami")) return "Tsunami";
+  if (normalized.includes("Smart")) return "Smart";
+  if (normalized.includes("Pro")) return "Pro";
   if (normalized.includes("Base")) return "Base";
 
   return null;

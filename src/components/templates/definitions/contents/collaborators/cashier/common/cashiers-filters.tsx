@@ -5,11 +5,11 @@ import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { usersByOption, itemsStatusOptions } from "@/constants";
 import { Icon, SearchHandlerWrapper } from "@/components/common";
-import { useCollaboratorFilters } from "@/hooks/collaborators/collaborator-filters";
+import { useCashierFilters } from "@/hooks/collaborators";
 
-export function CollaboratorFiltersTSX() {
+export function CashierFiltersTSX() {
   const { search, setSearch } = useURLSearchParams("search");
-  const { filters, setFilters, clearAllFilters } = useCollaboratorFilters();
+  const { filters, setFilters, clearAllFilters } = useCashierFilters();
 
   const hasFilter =
     filters.status || filters.sortBy || filters.sortOrder || search.length > 0;
