@@ -83,7 +83,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
   const onSubmit = async (data: ItemFormData) => {
     try {
       if (action === "add") {
-        await addItemMutate(data);
+        await addItemMutate({ ...data, cost: data.cost ?? 0 });
       } else if (currentService) {
         const { type, ...rest } = data;
         await updateService({

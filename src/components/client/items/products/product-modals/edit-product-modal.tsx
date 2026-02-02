@@ -182,7 +182,7 @@ export function EditProductModal() {
                       label="Preço de Venda"
                       placeholder="Preço"
                       error={errors.price?.message}
-                      value={formatCurrency(value)}
+                      value={formatCurrency(value ?? 0)}
                       defaultValue={currentProduct?.price}
                       onChange={(e) => {
                         const rawNumber = parseCurrency(e.target.value);

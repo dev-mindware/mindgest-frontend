@@ -87,7 +87,7 @@ function AddProductFormContent() {
 
   async function onSubmit(data: ItemFormData) {
     try {
-      await addItemMutate(data);
+      await addItemMutate({ ...data, cost: data.cost || 0 });
       reset();
     } catch (error: any) {
       if (error?.response) {
@@ -172,7 +172,7 @@ function AddProductFormContent() {
                   startIcon="Coins"
                   label="Preço de Venda"
                   placeholder="Ex: 10.00"
-                  value={formatCurrency(value)}
+                  value={formatCurrency(value ?? 0)}
                   onChange={(e) => onChange(parseCurrency(e.target.value))}
                   error={errors.price?.message}
                 />
@@ -186,7 +186,7 @@ function AddProductFormContent() {
                   startIcon="Coins"
                   label="Custo de Compra"
                   placeholder="Ex: 10.000"
-                  value={formatCurrency(value)}
+                  value={formatCurrency(value ?? 0)}
                   onChange={(e) => onChange(parseCurrency(e.target.value))}
                   error={errors.cost?.message}
                 />
