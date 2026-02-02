@@ -8,8 +8,8 @@ export const itemSchema = z
     barcode: z.string().optional(),
 
     price: z.number(),
-    cost: z.number(),
-    quantity: z.number(),
+    cost: z.number().optional(),
+    quantity: z.number().optional(),
 
     minStock: z.number().int().nonnegative().optional(),
     maxStock: z.number().int().nonnegative().optional(),
@@ -41,16 +41,19 @@ export const itemSchema = z
     {
       message: "O stock máximo deve ser maior ou igual ao stock mínimo",
       path: ["maxStock"],
-    }
+    },
   )
   .refine(
     (data) => {
-      return data.price >= data.cost;
+      if (data.cost !== undefined && data.price !== undefined) {
+        return data.price >= data.cost;
+      }
+      return true;
     },
     {
       message: "O preço deve ser maior ou igual ao custo",
       path: ["price"],
-    }
+    },
   );
 
 export type ItemFormData = z.infer<typeof itemSchema>;

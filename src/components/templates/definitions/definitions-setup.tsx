@@ -12,18 +12,30 @@ interface DefSetupProps {
   disabledTabs?: string[];
 }
 
+import { useAuth } from "@/hooks/auth";
+import { hasPlanAccess } from "@/lib/features";
+import { PlanType } from "@/types";
+
+// ... inside component
+
 export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab");
+  const { user } = useAuth();
 
-  const tabs = [
+  // Default to "Base" if undefined
+  const currentPlan = (user?.company?.subscription?.plan?.name as PlanType) || "Base";
+  const isOwner = user?.role === "OWNER";
+
+  const allTabs = [
     {
       id: "appearance",
       label: "Aparência",
       icon: "Pencil",
       component: <Appearance />,
       category: "general",
+      isVisible: true,
     },
     {
       id: "profile",
@@ -31,6 +43,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "User",
       component: <Profile />,
       category: "general",
+      isVisible: isOwner,
     },
     {
       id: "notifications",
@@ -38,6 +51,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Bell",
       component: <Notification />,
       category: "general",
+      isVisible: isOwner,
     },
     {
       id: "collaborators",
@@ -45,6 +59,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "BriefcaseBusiness",
       component: <CollaboratorsPageContent />,
       category: "workplace",
+      isVisible: true,
     },
     {
       id: "categories",
@@ -52,6 +67,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Tag",
       component: <CategoriesPageContent />,
       category: "workplace",
+      isVisible: true,
     },
     {
       id: "entities",
@@ -59,8 +75,11 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Warehouse",
       component: <EntitiesPageContent />,
       category: "workplace",
+      isVisible: hasPlanAccess(currentPlan, "Smart"),
     },
   ];
+
+  const tabs = allTabs.filter(tab => tab.isVisible);
 
   const enabledTabs = tabs.filter((tab) => !disabledTabs.includes(tab.id));
   const generalTabs = enabledTabs.filter((tab) => tab.category === "general");

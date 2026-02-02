@@ -95,12 +95,9 @@ export function ClientsList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <ClientsFiltersTSX />
-          <ButtonAddClient />
-        </div>
-      </div>
+      <ClientsFiltersTSX>
+        <ButtonAddClient />
+      </ClientsFiltersTSX>
 
       {clients.length > 0 ? (
         <GenericTable<ClientResponse>

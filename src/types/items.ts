@@ -30,6 +30,7 @@ export type ItemData = {
   minStock: number;
   maxStock: number;
   unit: string;
+  quantity: number;
   weight: number;
   dimensions: string;
   image: string;

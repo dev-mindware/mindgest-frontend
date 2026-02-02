@@ -75,6 +75,13 @@ export function ProductList() {
       ),
     },
     {
+      key: "quantity",
+      header: "Quantidade",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.quantity}</div>
+      ),
+    },
+    {
       key: "status",
       header: "Estado",
       render: (_, item) => <ItemStatusBadge status={item.status} />,

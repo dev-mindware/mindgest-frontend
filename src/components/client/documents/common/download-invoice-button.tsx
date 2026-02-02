@@ -9,6 +9,7 @@ import {
 import type { DownloadType } from "@/types";
 import { useDownloadDocument } from "@/hooks/common/use-download-document";
 import type { DocumentType } from "@/types/documents";
+import { FeatureGate } from "@/components/common/feature-gate";
 
 type Props = {
   id: string;
@@ -42,14 +43,14 @@ export function DownloadDocumentButton({
 
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleDownload("pdf")}>
-          PDF (.pdf)
+          Formato A4
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleDownload("docx")}>
-          Word (.docx)
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleDownload("xml")}>
-          XML (.xml)
-        </DropdownMenuItem>
+
+        <FeatureGate minPlan="Pro" fallback="disabled">
+          <DropdownMenuItem onClick={() => handleDownload("thermal")}>
+            Talão
+          </DropdownMenuItem>
+        </FeatureGate>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -8,8 +8,8 @@ export type InvoiceStatus =
   | "CANCELLED"
   | "OVERDUE"
   | string;
-  
-export type DownloadType = "docx" | "pdf" | "xml";
+
+export type DownloadType = "pdf" | "thermal";
 
 export type ContactInfo = {
   phone?: string;
@@ -190,7 +190,7 @@ export type CreditNoteData = {
   reason: "CORRECTION" | "ANNULATION";
   status: "DRAFT" | "ISSUED" | "CANCELLED";
   total: number;
-  taxAmount: number; 
+  taxAmount: number;
   createdAt: string;
 };
 
@@ -200,4 +200,3 @@ export type DocumentType =
   | "receipt"
   | "invoice-receipt"
   | "credit-note";
-

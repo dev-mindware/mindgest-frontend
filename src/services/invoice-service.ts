@@ -4,14 +4,12 @@ import { CreditNoteFormData } from "@/schemas";
 import { ReceiptData } from "@/types/receipt";
 
 export const invoiceService = {
-  createInvoice: (data: InvoicePayload) =>
-    api.post("/invoice/normal", data),
+  createInvoice: (data: InvoicePayload) => api.post("/invoice/normal", data),
 
   downloadInvoice: (id: string, type: DownloadType) => {
     const endpointMap: Record<DownloadType, string> = {
       pdf: `/invoice/normal/${id}/download-pdf`,
-      docx: `/invoice/normal/${id}/download-docx`,
-      xml: `/invoice/normal/${id}/download-xml`,
+      thermal: `/invoice/normal/${id}/download-thermal`,
     };
 
     return api.get(endpointMap[type], {
@@ -19,11 +17,9 @@ export const invoiceService = {
     });
   },
 
-  generateReceipt: (data: ReceiptData) =>
-    api.post(`/invoice/receipt`, data),
+  generateReceipt: (data: ReceiptData) => api.post(`/invoice/receipt`, data),
 
-  cancelInvoice: (id: string) =>
-    api.patch(`/invoice/normal/${id}/cancel`),
+  cancelInvoice: (id: string) => api.patch(`/invoice/normal/${id}/cancel`),
 
   createCreditNote: (id: string, data: CreditNoteFormData) =>
     api.post(`/credit-note/${id}/correction`, data),
