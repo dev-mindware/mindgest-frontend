@@ -52,7 +52,7 @@ export type CreateItemData = {
   categoryId: string;
   companyId?: string;
   price: number;
-  cost: number;
+  cost?: number;
   description?: string;
   image?: string;
   storeId?: string;

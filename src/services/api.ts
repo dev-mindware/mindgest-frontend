@@ -28,11 +28,65 @@ export const api = axios.create({
   },
 });
 
+import { currentStoreStore } from "@/stores";
+
 api.interceptors.request.use(async (config) => {
   const token = await getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Inject storeId only for routes that expect it
+  const whitelistedRoutes = [
+    "invoice",
+    "items",
+    "stocks",
+    "cash-sessions",
+    "reports/dashboard",
+    "receipt",
+    "documents",
+    "dashboard",
+    "credit-note",
+  ];
+
+  const isGlobalRoute =
+    config.url?.includes("global") || config.url?.includes("public");
+  const shouldInject =
+    config.url &&
+    whitelistedRoutes.some((route) => config.url?.includes(route)) &&
+    !isGlobalRoute;
+
+  if (shouldInject) {
+    const currentStore = currentStoreStore.getState().currentStore;
+    if (currentStore?.id) {
+      // For GET requests, add to params
+      if (config.method === "get") {
+        config.params = {
+          ...config.params,
+          storeId: config.params?.storeId || currentStore.id,
+        };
+      }
+      // For other requests, add to data if it's an object
+      else if (
+        config.data &&
+        typeof config.data === "object" &&
+        !config.data.storeId
+      ) {
+        config.data = {
+          ...config.data,
+          storeId: currentStore.id,
+        };
+      }
+      // If no data is present but it's a POST/PUT/PATCH, we might want to add storeId
+      else if (
+        !config.data &&
+        ["post", "put", "patch"].includes(config.method || "")
+      ) {
+        config.data = { storeId: currentStore.id };
+      }
+    }
+  }
+
   return config;
 });
 
@@ -81,7 +135,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(err);
-  }
+  },
 );
 
 export default api;

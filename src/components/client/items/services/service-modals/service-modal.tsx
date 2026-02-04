@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -16,9 +16,10 @@ import {
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
 import { useAddItem, useGetCategories, useUpdateItem } from "@/hooks";
-import { currentServiceStore } from "@/stores";
+import { currentServiceStore, currentStoreStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
+import { formatCurrency, parseCurrency } from "@/utils";
 
 type ServiceModalProps = {
   action: "add" | "edit";
@@ -29,6 +30,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
   const modalId = `${action}-service`;
   const { closeModal, open, openModal } = useModal();
   const { currentService } = currentServiceStore();
+  const { currentStore } = currentStoreStore();
   const { mutateAsync: addItemMutate, isPending: isAdding } = useAddItem();
   const {
     mutateAsync: updateService,
@@ -56,7 +58,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
           sku: currentService.sku,
           name: currentService.name,
           price: currentService.price,
-          cost: currentService.price,
           description: currentService.description || "",
           categoryId: currentService.categoryId,
           ...(user?.role === "OWNER" && {
@@ -69,7 +70,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
           sku: "",
           name: "",
           price: 0,
-          cost: watch("price"),
           description: "",
           categoryId: "",
           ...(user?.role === "OWNER" && {
@@ -83,7 +83,10 @@ export function ServiceModal({ action }: ServiceModalProps) {
   const onSubmit = async (data: ItemFormData) => {
     try {
       if (action === "add") {
-        await addItemMutate({ ...data, cost: data.cost ?? 0 });
+        await addItemMutate({
+          ...data,
+          ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
+        });
       } else if (currentService) {
         const { type, ...rest } = data;
         await updateService({
@@ -158,19 +161,19 @@ export function ServiceModal({ action }: ServiceModalProps) {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 mt-4">
-              <Input
-                startIcon="Coins"
-                label="Preço de Venda"
-                {...register("price", {
-                  valueAsNumber: true,
-                })}
-                error={errors.price?.message}
-              />
-              <input
-                type="hidden"
-                {...register("cost", {
-                  valueAsNumber: true,
-                })}
+              <Controller
+                control={control}
+                name="price"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    startIcon="Coins"
+                    label="Preço de Venda"
+                    placeholder="Ex: 10.00"
+                    value={formatCurrency(value ?? 0)}
+                    onChange={(e) => onChange(parseCurrency(e.target.value))}
+                    error={errors.price?.message}
+                  />
+                )}
               />
 
               <RHFSelect

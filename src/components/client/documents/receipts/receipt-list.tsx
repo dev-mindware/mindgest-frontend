@@ -9,6 +9,7 @@ import {
   EmptyState,
   ButtonOnlyAction,
   ReceiptPreviewDrawer,
+  InvoiceFiltersSkeleton,
 } from "@/components";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
@@ -89,7 +90,14 @@ export function ReceiptList() {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <InvoiceFiltersSkeleton />
+        <ListSkeleton />
+      </div>
+    );
+  }
 
   if (isError) {
     return (

@@ -8,7 +8,7 @@ import { playScannerBeep } from "@/utils/audio";
 import { cn } from "@/lib/utils";
 
 interface ManagerAuthModalProps {
-  onAuthenticated: () => void;
+  onAuthenticated: (code: string) => void;
 }
 
 export const MODAL_MANAGER_AUTH_ID = "manager-auth-modal";
@@ -50,7 +50,7 @@ export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
     startTransition(async () => {
       await new Promise((resolve) => setTimeout(resolve, 800));
       SucessMessage("Autorização concedida!");
-      onAuthenticated();
+      onAuthenticated(codeToVerify);
       closeModal(MODAL_MANAGER_AUTH_ID);
     });
   };

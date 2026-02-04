@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
 import { Inter, Outfit } from "next/font/google";
-import { ThemeProvider, FeatureGateProvider } from "@/providers";
+import { ThemeProvider, FeatureGateProvider, StoreProvider } from "@/providers";
 import { CustomToaster } from "@/utils";
 import { SidebarProvider } from "@/components";
 import { AuthProvider } from "@/contexts";
@@ -52,7 +52,9 @@ export default function RootLayout({
             <AuthProvider>
               <FeatureGateProvider>
                 <NuqsAdapter>
-                  <SidebarProvider>{children}</SidebarProvider>
+                  <StoreProvider>
+                    <SidebarProvider>{children}</SidebarProvider>
+                  </StoreProvider>
                   <CustomToaster />
                   <NotificationDetail />
                 </NuqsAdapter>

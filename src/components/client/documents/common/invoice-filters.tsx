@@ -33,13 +33,31 @@ export function InvoiceFiltersTSX({ type, hasData }: Props) {
   const showStatusFilter = type === "invoice";
 
   return (
-    <div className={cn("w-full flex flex-col gap-4", !hasData && "pointer-events-none")}>
-      <SearchHandlerWrapper
-        search={search}
-        setSearch={setSearch}
-        className="w-full flex gap-4"
-      >
-        <div className="flex items-center gap-2">
+    <div
+      className={cn(
+        "w-full flex flex-col gap-4 px-2 sm:px-0",
+        !hasData && "pointer-events-none opacity-50"
+      )}
+    >
+      {/* Search Input and Filter Popovers */}
+      <div className="w-full flex flex-col gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <SearchHandlerWrapper
+            search={search}
+            setSearch={setSearch}
+            className="w-full"
+          />
+          <Input
+            type="search"
+            placeholder="Cliente"
+            value={filters.clientName ?? ""}
+            onChange={(e) => setFilters({ clientName: e.target.value })}
+            className="w-full"
+          />
+        </div>
+
+        {/* Filter Popovers - Full width on mobile, auto width on larger screens */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           {showStatusFilter && (
             <FilterPopover
               icon="Tag"
@@ -70,27 +88,19 @@ export function InvoiceFiltersTSX({ type, hasData }: Props) {
             value={filters.sortOrder}
             onChange={(sortOrder) => setFilters({ sortOrder })}
           />
-        </div>
-      </SearchHandlerWrapper>
-
-      <div className="w-full flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2">
           <Input
             type="search"
             placeholder="Nº Fatura"
             value={filters.invoiceNumber ?? ""}
             onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
-          />
-
-          <Input
-            type="search"
-            placeholder="Cliente"
-            value={filters.clientName ?? ""}
-            onChange={(e) => setFilters({ clientName: e.target.value })}
+            className="w-full"
           />
         </div>
+      </div>
 
-        <div className="flex items-center gap-2">
+      {/* Date Pickers and Clear Button - 3 columns on desktop */}
+      <div className="flex justify-center sm:justify-start">
+        <div className="grid grid-cols-2 gap-3">
           <DatePicker
             value={filters.startDate ? new Date(filters.startDate) : undefined}
             onChange={(_, formatted) => setFilters({ startDate: formatted })}
@@ -104,12 +114,13 @@ export function InvoiceFiltersTSX({ type, hasData }: Props) {
           />
         </div>
 
+        {/* Clear Button */}
         {hasFilter && (
           <Button
             size="sm"
             variant="outline"
             onClick={clearAllFilters}
-            className="h-10 text-destructive hover:text-destructive"
+            className="h-10 text-destructive hover:text-destructive w-full whitespace-nowrap"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />
             Limpar

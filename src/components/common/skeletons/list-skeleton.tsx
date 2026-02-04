@@ -6,10 +6,6 @@ type Props = {
 export function ListSkeleton({ cols = 4, rows = 4 }: Props) {
   return (
     <div className="space-y-4 mt-4">
-      <div className="flex justify-between gap-4 mb-4">
-        <div className="w-full h-10 bg-muted animate-pulse rounded-lg"></div>
-        <div className="w-1/5 h-10 bg-muted animate-pulse rounded-lg"></div>
-      </div>
 
       <div className="rounded-lg border-border bg-card p-4">
         <div className="w-full overflow-x-auto">

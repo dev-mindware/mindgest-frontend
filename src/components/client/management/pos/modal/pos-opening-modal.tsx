@@ -23,6 +23,8 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
+import { cashSessionsService } from "@/services";
+import { SucessMessage } from "@/utils";
 
 export function PosOpeningModal() {
   const { closeModal } = useModal();
@@ -76,12 +78,14 @@ export function PosOpeningModal() {
     closeModal("opening-cashier");
   };
 
-  const onSubmit = (data: PosOpeningFormData) => {
-    console.log("Abertura de Caixa:", data);
-    // Simular salvamento
-    setTimeout(() => {
+  const onSubmit = async (data: PosOpeningFormData) => {
+    try {
+      await cashSessionsService.openSession(data);
+      SucessMessage("Caixa aberto com sucesso!");
       handleClose();
-    }, 1000);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (isLoadingStores) {
@@ -153,6 +157,19 @@ export function PosOpeningModal() {
             />
           </div>
 
+          <div className="space-y-2 col-span-1">
+            <RHFSelect
+              name="fundType"
+              control={control}
+              label="Tipo de Fundo"
+              placeholder="Selecione o tipo"
+              options={[
+                { label: "Moeda", value: "Coin" },
+                { label: "Nota", value: "Note" },
+              ]}
+            />
+          </div>
+
           <RHFSelect
             name="storeId"
             control={control}
@@ -174,7 +191,7 @@ export function PosOpeningModal() {
                   className={cn(
                     "w-full justify-between px-4 font-normal hover:bg-muted transition-all text-muted-foreground border-muted-foreground/10",
                     selectedCashierIds.length > 0 &&
-                      "text-foreground font-medium",
+                    "text-foreground font-medium",
                     isEdit && "opacity-100 cursor-default"
                   )}
                 >
@@ -218,7 +235,7 @@ export function PosOpeningModal() {
                             className={cn(
                               "flex items-center space-x-3 p-2.5 rounded-md transition-colors cursor-pointer hover:bg-muted/20",
                               field.value?.includes(cashier.id) &&
-                                "bg-primary/5 border-primary/10"
+                              "bg-primary/5 border-primary/10"
                             )}
                             onClick={() => {
                               const current = field.value || [];

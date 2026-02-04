@@ -12,13 +12,13 @@ import {
   DetailsClientModal,
   ClientModal,
   Button,
+  ClientsFiltersSkeleton,
 } from "@/components";
 import { ClientResponse } from "@/types";
 import { formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { ClientsFiltersTSX } from "./common";
 import { useClientActions, useClientsFilters } from "@/hooks/entities";
-import { ButtonAddClient } from "@/components/client/entities";
 
 export function ClientsList() {
   const { search } = useURLSearchParams("search-client");
@@ -85,7 +85,14 @@ export function ClientsList() {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <ClientsFiltersSkeleton />
+        <ListSkeleton />
+      </div>
+    );
+  }
 
   if (isError) {
     return (
@@ -94,9 +101,11 @@ export function ClientsList() {
   }
 
   return (
-    <div className="justify-start mt-6 space-y-8">
-      <ClientsFiltersTSX>
-        <ButtonAddClient />
+    <div className="mt-6 space-y-8">
+      <div className="flex justify-end">
+        
+      </div>
+      <ClientsFiltersTSX hasData={clients.length > 0}>
       </ClientsFiltersTSX>
 
       {clients.length > 0 ? (

@@ -16,3 +16,6 @@ export * from "./sales-skeleton";
 export * from "./dashboard-skeleton";
 export * from "./dynamic-metric-card-skeleton";
 export * from "./pos-requests-skeleton";
+export * from "./invoice-filters-skeleton";
+export * from "./items-filters-skeleton";
+export * from "./clients-filters-skeleton";

@@ -29,10 +29,26 @@ export function DownloadDocumentButton({
       id,
       documentType,
       format,
-      filename: `${filenameBase}.${format}`,
+      filename: `${filenameBase}.pdf`, // Always use .pdf extension
     });
   }
 
+  const showThermalOption =
+    documentType === "invoice-receipt" || documentType === "proforma";
+
+  // If no thermal option, show simple button with direct download
+  if (!showThermalOption) {
+    return (
+      <Button
+        onClick={() => handleDownload("pdf")}
+        disabled={isPending}
+      >
+        {isPending ? "Baixando..." : "Baixar documento"}
+      </Button>
+    );
+  }
+
+  // Show dropdown for documents with thermal option
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,11 +62,13 @@ export function DownloadDocumentButton({
           Formato A4
         </DropdownMenuItem>
 
-        <FeatureGate minPlan="Pro" fallback="disabled">
-          <DropdownMenuItem onClick={() => handleDownload("thermal")}>
-            Talão
-          </DropdownMenuItem>
-        </FeatureGate>
+        {showThermalOption && (
+          <FeatureGate minPlan="Pro" fallback="disabled">
+            <DropdownMenuItem onClick={() => handleDownload("thermal")}>
+              Talão
+            </DropdownMenuItem>
+          </FeatureGate>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

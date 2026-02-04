@@ -8,11 +8,12 @@ import {
   ListSkeleton,
   ButtonOnlyAction,
   ProformaPreviewDrawer,
+  InvoiceFiltersSkeleton,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
-import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
+import { InvoiceFiltersTSX } from "../common";
 import { useInvoiceFilters, useProformaActions } from "@/hooks";
 import { DeleteProformaModal } from "../modals";
 import { useRouter } from "next/navigation";
@@ -81,11 +82,11 @@ export function ProformaList({ storeId }: { storeId?: string }) {
             },
             ...(item.status !== "CANCELLED"
               ? [
-                  {
-                    label: "Deletar",
-                    onClick: handlerDeleteProforma,
-                  },
-                ]
+                {
+                  label: "Deletar",
+                  onClick: handlerDeleteProforma,
+                },
+              ]
               : []),
           ]}
         />
@@ -93,7 +94,14 @@ export function ProformaList({ storeId }: { storeId?: string }) {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <InvoiceFiltersSkeleton />
+        <ListSkeleton />
+      </div>
+    );
+  }
 
   if (isError) {
     return (

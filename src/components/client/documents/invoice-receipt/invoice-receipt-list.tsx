@@ -8,6 +8,7 @@ import {
   EmptyState,
   ButtonOnlyAction,
   InvoicePreviewDrawer,
+  InvoiceFiltersSkeleton,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
@@ -104,7 +105,14 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <InvoiceFiltersSkeleton />
+        <ListSkeleton />
+      </div>
+    );
+  }
 
   if (isError) {
     return (

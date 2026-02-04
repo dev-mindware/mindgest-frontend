@@ -1,16 +1,16 @@
+"use client";
 import { TitleList } from "@/components/common";
-import { ClientModal, ClientsList } from "@/components";
+import { ButtonAddClient, ClientModal, ClientsList } from "@/components";
 
 export function ClientsPageContent() {
   return (
-    <div className="!py-4 sm:p-6 space-y-6">
-      <TitleList title="Clientes" suTitle="Adicione e gerencie seus clientes" />
-
-      <div className="mt-4">
-        <ClientsList />
+    <>
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+        <TitleList title="Clientes" suTitle="Adicione e gerencie seus clientes" />
+        <ButtonAddClient />
       </div>
-
+      <ClientsList />
       <ClientModal action="add" />
-    </div>
+    </> 
   );
 }

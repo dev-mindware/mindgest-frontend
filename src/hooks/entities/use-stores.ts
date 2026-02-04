@@ -5,13 +5,13 @@ import { Role, StoreData } from "@/types";
 import { useFetch } from "../common/use-fetch";
 import { StoresResponse } from "@/types/entities";
 
-export function useGetStores(role?: Role) {
-  
-  const route = role ===  "OWNER" ? "stores" : "stores/my-stores";
+export function useGetStores(role?: Role, enabled: boolean = true) {
+  const route = role === "OWNER" ? "stores" : "stores/my-stores";
 
   const { data, error, isLoading, refetch } = useFetch<StoresResponse>(
     "stores",
-    `${route}?page=1&limit=10`
+    `${route}?page=1&limit=10`,
+    { enabled },
   );
 
   const stores =
@@ -68,6 +68,25 @@ export function useToggleStatusStore() {
     onSuccess: () => {
       SucessMessage("Status alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["stores"] });
+    },
+  });
+}
+
+import { currentStoreStore } from "@/stores";
+import { StoreResponse } from "@/types";
+
+export function useSwitchStore() {
+  const queryClient = useQueryClient();
+  const setCurrentStore = currentStoreStore((state) => state.setCurrentStore);
+
+  return useMutation({
+    mutationFn: async (store: StoreResponse) => {
+      setCurrentStore(store);
+      return store;
+    },
+    onSuccess: () => {
+      // Invalidate all queries to refresh data with the new storeId
+      queryClient.invalidateQueries();
     },
   });
 }

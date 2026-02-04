@@ -60,16 +60,20 @@ export function ItemsPageContent() {
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <div className="flex items-center justify-between">
-          <TabsList>
-            <TabsTrigger value="product">Produtos</TabsTrigger>
-            <TabsTrigger value="service">Serviços</TabsTrigger>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <TabsList className="w-full sm:w-auto">
+            <TabsTrigger value="product" className="flex-1 sm:flex-none">
+              Produtos
+            </TabsTrigger>
+            <TabsTrigger value="service" className="flex-1 sm:flex-none">
+              Serviços
+            </TabsTrigger>
           </TabsList>
 
           {activeTab === "product" ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="flex items-center gap-2">
+                <Button className="flex items-center gap-2 w-full sm:w-auto">
                   <Plus className="h-4 w-4" />
                   Novo Produto
                   <ChevronDown className="h-4 w-4" />
@@ -95,7 +99,10 @@ export function ItemsPageContent() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={() => openModal(TAB_MODALS[activeTab])}>
+            <Button
+              onClick={() => openModal(TAB_MODALS[activeTab])}
+              className="w-full sm:w-auto"
+            >
               {`Novo ${TAB_LABELS[activeTab]}`}
             </Button>
           )}

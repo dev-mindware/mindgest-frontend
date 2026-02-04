@@ -9,6 +9,7 @@ import {
   ButtonOnlyAction,
   CreditNotesFiltersTSX,
   CreditNotePreviewDrawer,
+  InvoiceFiltersSkeleton,
 } from "@/components";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { usePagination, useURLSearchParams } from "@/hooks/common";
@@ -78,7 +79,14 @@ export function CreditNotesList({ storeId }: { storeId?: string }) {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <InvoiceFiltersSkeleton />
+        <ListSkeleton />
+      </div>
+    );
+  }
 
   if (isError) {
     return (

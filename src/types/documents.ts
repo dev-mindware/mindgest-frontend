@@ -200,3 +200,33 @@ export type DocumentType =
   | "receipt"
   | "invoice-receipt"
   | "credit-note";
+
+export type DocumentVerificationResponse = {
+  id: string;
+  number: string;
+  type: DocumentType;
+  status: InvoiceStatus;
+  issueDate: string;
+  dueDate?: string;
+  total: number;
+  subtotal: number;
+  taxAmount: number;
+  discountAmount: number;
+  isPaid: boolean;
+  company: {
+    name: string;
+    vatNumber?: string;
+    address?: string;
+  };
+  client: {
+    name: string;
+    taxNumber?: string;
+    address?: string;
+  };
+  items: Array<{
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    total: number;
+  }>;
+};

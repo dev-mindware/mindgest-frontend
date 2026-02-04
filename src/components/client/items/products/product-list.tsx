@@ -8,6 +8,7 @@ import {
   ListSkeleton,
   ButtonOnlyAction,
   ProductCardSkeletonGrid,
+  ItemsFiltersSkeleton,
 } from "@/components";
 import { ItemResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
@@ -115,8 +116,14 @@ export function ProductList() {
     },
   ];
 
-  if (isLoading)
-    return viewMode === "card" ? <ProductCardSkeletonGrid /> : <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <ItemsFiltersSkeleton />
+        {viewMode === "card" ? <ProductCardSkeletonGrid /> : <ListSkeleton />}
+      </div>
+    );
+  }
 
   if (isError) {
     return (

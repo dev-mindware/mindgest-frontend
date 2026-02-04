@@ -15,7 +15,7 @@ import {
   LoaderStoresSkeleton,
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
-import { useGetStores } from "@/hooks/entities";
+import { useGetStores, useSwitchStore } from "@/hooks/entities";
 import { currentStoreStore } from "@/stores/store/current-store-store";
 import { Role } from "@/types";
 
@@ -23,19 +23,14 @@ export function SidebarCompanyInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
   const isCashier = user?.role === "CASHIER";
-  const { currentStore, setCurrentStore } = currentStoreStore();
+  const { currentStore } = currentStoreStore();
+  const { mutate: switchStore } = useSwitchStore();
   const {
     refetch,
     storesData,
     isLoading: loadingStores,
     error: storesError,
   } = useGetStores(user?.role as Role);
-
-  useEffect(() => {
-    if (!currentStore && storesData?.length > 0) {
-      setCurrentStore(storesData[0]);
-    }
-  }, [storesData, currentStore, setCurrentStore]);
 
   if (loadingStores) return <LoaderStoresSkeleton />;
 
@@ -102,7 +97,7 @@ export function SidebarCompanyInfo() {
             {storesData?.map((store) => (
               <DropdownMenuItem
                 key={store.id}
-                onClick={() => setCurrentStore(store)}
+                onClick={() => switchStore(store)}
                 className="gap-2 p-2"
               >
                 <div className="flex items-center justify-center border rounded-md size-6">

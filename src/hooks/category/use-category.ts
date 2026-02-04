@@ -61,7 +61,7 @@ export function useGetCategories() {
   const { currentStore } = currentStoreStore();
   const { data, error, isLoading, refetch } = useFetch<CategoryResponse>(
     "categories",
-    `/categories?page=${page}&limit=10&storeId=${currentStore?.id}`
+    `/categories?page=${page}&limit=10&storeId=${currentStore?.id}`,
   );
 
   const categories =
@@ -70,7 +70,7 @@ export function useGetCategories() {
       value: category.id,
     })) || [];
 
-  const itemsCount = data?.data[0].itemsCount || 0;
+  const itemsCount = data?.data?.[0]?.itemsCount || 0;
 
   return {
     categoryOptions: categories,

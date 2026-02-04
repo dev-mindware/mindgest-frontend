@@ -17,6 +17,7 @@ import {
 } from "@/components";
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores/modal/use-modal-store";
+import { currentStoreStore } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
 import { formatCurrency, parseCurrency } from "@/utils";
 import { useAddItem, useGetCategories } from "@/hooks";
@@ -55,6 +56,7 @@ export function AddProductModal() {
 function AddProductFormContent() {
   const { user } = useAuth();
   const { closeModal, modalData } = useModal();
+  const { currentStore } = currentStoreStore();
   const { mutateAsync: addItemMutate, isPending } = useAddItem();
   const {
     categoryOptions,
@@ -87,7 +89,11 @@ function AddProductFormContent() {
 
   async function onSubmit(data: ItemFormData) {
     try {
-      await addItemMutate({ ...data, cost: data.cost || 0 });
+      await addItemMutate({
+        ...data,
+        cost: data.cost || 0,
+        ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
+      });
       reset();
     } catch (error: any) {
       if (error?.response) {

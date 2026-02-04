@@ -8,6 +8,7 @@ import {
   EmptyState,
   ButtonOnlyAction,
   InvoicePreviewDrawer,
+  InvoiceFiltersSkeleton,
 } from "@/components";
 import { InvoiceResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
@@ -89,31 +90,31 @@ export function InvoiceList() {
 
             ...(item.status === "DRAFT"
               ? [
-                  {
-                    label: "Cancelar Fatura",
-                    onClick: handlerCancelInvoice,
-                  },
-                ]
+                {
+                  label: "Cancelar Fatura",
+                  onClick: handlerCancelInvoice,
+                },
+              ]
               : []),
 
             ...(item.status !== "PAID"
               ? [
-                  {
-                    label: "Gerar Recibo",
-                    onClick: handlerGenerateReceipt,
-                  },
-                ]
+                {
+                  label: "Gerar Recibo",
+                  onClick: handlerGenerateReceipt,
+                },
+              ]
               : []),
 
             ...(item.status === "PAID"
               ? [
-                  {
-                    label: "Emitir Nota",
-                    onClick: () => {
-                      router.push(`/documents/notes/${item.id}`);
-                    },
+                {
+                  label: "Emitir Nota",
+                  onClick: () => {
+                    router.push(`/documents/notes/${item.id}`);
                   },
-                ]
+                },
+              ]
               : []),
           ]}
         />
@@ -121,7 +122,14 @@ export function InvoiceList() {
     },
   ];
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="justify-start mt-6 space-y-8">
+        <InvoiceFiltersSkeleton />
+        <ListSkeleton />
+      </div>
+    );
+  }
 
   if (isError) {
     return (

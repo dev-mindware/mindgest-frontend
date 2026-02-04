@@ -168,11 +168,25 @@ export const menuItems: MenuStructure = {
       minPlan: "Pro",
     },
     {
+      name: "Ponto de Venda",
+      url: "/pos/counter",
+      icon: <Icon name="Computer" />,
+      roles: ["CASHIER"],
+      minPlan: "Pro",
+    },
+    {
+      name: "Movimentações",
+      url: "/pos/movements",
+      icon: <Icon name="Wallet" />,
+      roles: ["CASHIER"],
+      minPlan: "Pro",
+    },
+    {
       name: "Configurações",
       url: "/pos/settings",
       icon: <Icon name="Settings2" />,
       roles: ["CASHIER"],
-      minPlan: "Base",
+      minPlan: "Pro",
     },
   ],
 };
