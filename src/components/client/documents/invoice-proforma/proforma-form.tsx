@@ -60,7 +60,6 @@ export function ProformaForm({
             type: item.item?.type || item.type || "PRODUCT",
             isFromAPI: true,
           })) || [],
-        globalTax: Number(initialData.taxAmount || 0),
         globalRetention: Number(initialData.retentionAmount || 0),
         globalDiscount: Number(initialData.discountAmount || 0),
         storeId: initialData.storeId || "",
@@ -77,7 +76,6 @@ export function ProformaForm({
         address: "",
         phone: "",
       },
-      globalTax: 0,
       globalRetention: 0,
       globalDiscount: 0,
       notes: "",
@@ -126,7 +124,6 @@ export function ProformaForm({
 
   const watchedValues = watch([
     "items",
-    "globalTax",
     "globalRetention",
     "globalDiscount",
     "client.name",
@@ -135,7 +132,6 @@ export function ProformaForm({
 
   const [
     items,
-    globalTax,
     globalRetention,
     globalDiscount,
     clientName,
@@ -144,16 +140,9 @@ export function ProformaForm({
 
   const totals = useInvoiceTotals({
     items: items ?? [],
-    tax: globalTax ?? 0,
     retention: globalRetention ?? 0,
     discount: globalDiscount ?? 0,
   });
-
-  const setGlobalTax = useCallback(
-    (v: number) =>
-      setValue("globalTax", v, { shouldValidate: true, shouldDirty: true }),
-    [setValue]
-  );
 
   const setGlobalRetention = useCallback(
     (v: number) =>
@@ -190,11 +179,11 @@ export function ProformaForm({
         const clientPayload = data.clientId
           ? { id: data.clientId }
           : {
-              name: data.client.name,
-              phone: data.client.phone || undefined,
-              address: data.client.address || undefined,
-              taxNumber: data.client.taxNumber || undefined,
-            };
+            name: data.client.name,
+            phone: data.client.phone || undefined,
+            address: data.client.address || undefined,
+            taxNumber: data.client.taxNumber || undefined,
+          };
 
         const itemsPayload = data.items.map((item) => {
           if (item.isFromAPI && item.id) {
@@ -208,8 +197,10 @@ export function ProformaForm({
             price: item.unitPrice,
             quantity: item.quantity,
             type: item.type,
+            taxId: item.taxId,
           };
         });
+
 
         const finalPayload = {
           issueDate: data.issueDate,
@@ -230,7 +221,7 @@ export function ProformaForm({
 
 
 
-     if (isEdit && id) {
+        if (isEdit && id) {
           await editProforma({ id, data: finalPayload as any });
         } else {
           await createProforma(finalPayload as any);
@@ -243,7 +234,7 @@ export function ProformaForm({
         if (!isEdit) {
           reset();
           setSelectedClient(null);
-        } 
+        }
       } catch (error: any) {
         const errorMessage =
           error?.response?.data?.message ||
@@ -273,7 +264,7 @@ export function ProformaForm({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Proforma:", errors))}
       className="space-y-8 p-8 mt-4 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-3">
@@ -341,13 +332,12 @@ export function ProformaForm({
       <InvoiceItems
         totals={totals}
         fieldArray={fieldArray}
-        setGlobalTax={setGlobalTax}
-        globalTax={globalTax ?? 0}
         globalRetention={globalRetention ?? 0}
         setGlobalRetention={setGlobalRetention}
         globalDiscount={globalDiscount ?? 0}
         setGlobalDiscount={setGlobalDiscount}
       />
+
 
       <div className="space-y-2">
         <RHFSelect
@@ -399,8 +389,8 @@ export function ProformaForm({
           {isLoading || isSubmitting
             ? "Processando..."
             : isEdit
-            ? "Guardar Alterações"
-            : "Criar Proforma"}
+              ? "Guardar Alterações"
+              : "Criar Proforma"}
         </Button>
       </div>
     </form>

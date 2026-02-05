@@ -12,8 +12,6 @@ interface InvoiceSummaryProps {
     discountAmount: number;
     total: number;
   };
-  globalTax: number;
-  setGlobalTax: (value: number) => void;
   globalRetention: number;
   setGlobalRetention: (value: number) => void;
   globalDiscount: number;
@@ -23,29 +21,15 @@ interface InvoiceSummaryProps {
 export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
   ({
     totals,
-    globalTax,
-    setGlobalTax,
     globalRetention,
     setGlobalRetention,
     globalDiscount,
     setGlobalDiscount,
   }) => {
+
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <SelectField
-            label="Imposto (IVA)"
-            value={globalTax}
-            onValueChange={(v) => setGlobalTax(Number(v))}
-            options={[
-              { value: 0, label: "Isento (0%)" },
-              { value: 5, label: "5%" },
-              { value: 7, label: "7%" },
-              { value: 14, label: "14%" },
-              { value: 20, label: "20%" },
-            ]}
-          />
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SelectField
             label="Retenção na Fonte"
             value={globalRetention}
@@ -67,17 +51,18 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
           />
         </div>
 
+
         <div className="flex justify-end">
           <InvoiceTotalsSummary
             subtotal={totals.subtotal}
             total={totals.total}
-            taxPercent={globalTax}
             taxAmount={totals.taxAmount}
             discountPercent={globalDiscount}
             discountAmount={totals.discountAmount}
             retentionPercent={globalRetention}
             retentionAmount={totals.retentionAmount}
           />
+
         </div>
       </div>
     );
@@ -89,7 +74,6 @@ InvoiceSummary.displayName = "InvoiceSummary";
 export interface InvoiceTotalsSummaryProps {
   subtotal: number;
   total: number;
-  taxPercent?: number;
   taxAmount?: number;
   discountPercent?: number;
   discountAmount?: number;
@@ -101,7 +85,6 @@ export function InvoiceTotalsSummary({
   subtotal,
   total,
 
-  taxPercent = 0,
   taxAmount = 0,
 
   discountPercent = 0,
@@ -119,14 +102,15 @@ export function InvoiceTotalsSummary({
       </div>
 
       {/* IVA */}
-      {taxPercent > 0 && (
+      {taxAmount > 0 && (
         <div className="flex justify-between items-center text-green-600">
-          <span className="text-sm">IVA ({taxPercent}%)</span>
+          <span className="text-sm">IVA Total</span>
           <span className="font-mono text-base">
             +{formatCurrency(taxAmount)}
           </span>
         </div>
       )}
+
 
       {/* Retenção */}
       {retentionPercent > 0 && (

@@ -50,7 +50,14 @@ export function ServiceCardView({ service }: ProductCardProps) {
               {formatCurrency(service.price!)}
             </p>
           </div>
+          <div>
+            <p className="mb-1 text-xs text-muted-foreground">Imposto</p>
+            <p className="text-sm font-semibold text-foreground">
+              {service.tax?.rate ? `${service.tax.rate}%` : "Isento"}
+            </p>
+          </div>
         </div>
+
       </CardContent>
     </Card>
   );

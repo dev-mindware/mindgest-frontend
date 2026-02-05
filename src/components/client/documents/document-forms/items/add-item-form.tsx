@@ -1,10 +1,13 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import React, { useState, useCallback } from "react";
-import { Button, Input, SelectField } from "@/components";
+import React, { useState, useCallback, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Button, Input, RHFSelect } from "@/components";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { formatCurrency, parseCurrency } from "@/utils";
+import { useGetTaxes } from "@/hooks/taxes/use-taxes";
+
 
 export interface ProductOption {
   value: string | number;
@@ -15,55 +18,80 @@ export interface ProductOption {
     price: number;
     type: "PRODUCT" | "SERVICE";
     description?: string;
+    tax?: {
+      rate: number;
+    };
   };
   __isNew__?: boolean;
 }
 
 interface AddItemFormProps {
   onAdd: (item: any) => void;
-  globalTax: number;
   globalDiscount: number;
 }
 
+
 export const AddItemForm = React.memo<AddItemFormProps>(
-  ({ onAdd, globalTax, globalDiscount }) => {
+  ({ onAdd, globalDiscount }) => {
+    const { taxOptions } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
-    const [quantity, setQuantity] = useState(1);
-    const [price, setPrice] = useState(0);
-    const [type, setType] = useState<"PRODUCT" | "SERVICE">("PRODUCT");
+
+    const { control, handleSubmit, setValue, getValues, resetField, watch, reset } = useForm({
+      defaultValues: {
+        quantity: 1,
+        price: 0,
+        type: "PRODUCT" as "PRODUCT" | "SERVICE",
+        taxId: "",
+      }
+    });
+
+    const watchedPrice = watch("price");
+    const watchedQuantity = watch("quantity");
+    const watchedType = watch("type");
+    const watchedTaxId = watch("taxId");
+
 
     const handleProductChange = useCallback((option: ProductOption | null) => {
       setSelectedProduct(option);
 
       if (!option) {
-        setPrice(0);
-        setType("PRODUCT");
+        setValue("price", 0);
+        setValue("type", "PRODUCT");
+        setValue("taxId", "");
         return;
       }
 
       if (option.__isNew__) {
-        setPrice(0);
-        setType("PRODUCT");
+        setValue("price", 0);
+        setValue("type", "PRODUCT");
+        setValue("taxId", "");
       } else if (option.data) {
-        setPrice(Number(option.data.price));
-        setType(option.data.type);
+        setValue("price", Number(option.data.price));
+        setValue("type", option.data.type);
       }
-    }, []);
+    }, [setValue]);
 
     const handleAddClick = useCallback(() => {
-      if (!selectedProduct || quantity <= 0 || price <= 0) {
+      const values = getValues();
+      if (!selectedProduct || values.quantity <= 0 || values.price <= 0) {
         return;
       }
 
+      const selectedTax = taxOptions.find((t) => t.value === values.taxId);
+      const taxRate = selectedTax
+        ? Number(selectedTax.label.match(/\((\d+)%\)/)?.[1] || 0)
+        : 0;
+
       const newItem = {
         description: selectedProduct.label,
-        unitPrice: price,
-        quantity,
-        tax: globalTax,
+        unitPrice: values.price,
+        quantity: values.quantity,
+        tax: selectedProduct.data?.tax?.rate || taxRate,
+        taxId: values.taxId || undefined,
         discount: globalDiscount,
-        total: price * quantity,
-        type,
+        total: values.price * values.quantity,
+        type: values.type,
         isFromAPI: !selectedProduct.__isNew__,
         ...(selectedProduct.__isNew__ ? {} : { id: selectedProduct.value }),
       };
@@ -71,18 +99,21 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       onAdd(newItem);
 
       setSelectedProduct(null);
-      setQuantity(1);
-      setPrice(0);
-      setType("PRODUCT");
+      reset({
+        quantity: 1,
+        price: 0,
+        type: "PRODUCT",
+        taxId: "",
+      });
     }, [
       selectedProduct,
-      quantity,
-      price,
-      type,
-      globalTax,
+      getValues,
+      taxOptions,
       globalDiscount,
       onAdd,
+      reset,
     ]);
+
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
@@ -95,7 +126,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     );
 
     const isNewProduct = selectedProduct?.__isNew__ ?? false;
-    const canAdd = selectedProduct && quantity > 0 && price > 0;
+    const canAdd = selectedProduct && watchedQuantity > 0 && watchedPrice > 0;
 
     return (
       <div className="space-y-4" onKeyDown={handleKeyDown}>
@@ -113,34 +144,52 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             />
           </div>
 
-          <Input
-            min={1}
-            type="number"
-            label="Quantidade"
-            value={quantity}
-            onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-            placeholder="1"
+          <Controller
+            control={control}
+            name="quantity"
+            render={({ field }) => (
+              <Input
+                {...field}
+                min={1}
+                type="number"
+                label="Quantidade"
+                onChange={(e) => field.onChange(Math.max(1, Number(e.target.value)))}
+                placeholder="1"
+              />
+            )}
           />
 
-          <Input
-            label="Preço Unitário (Kz)"
-            value={formatCurrency(price)}
-            onChange={(e) => setPrice(parseCurrency(e.target.value))}
-            disabled={!isNewProduct}
-            placeholder="0.00"
+          <Controller
+            control={control}
+            name="price"
+            render={({ field }) => (
+              <Input
+                label="Preço Unitário (Kz)"
+                value={formatCurrency(field.value)}
+                onChange={(e) => field.onChange(parseCurrency(e.target.value))}
+                disabled={!isNewProduct}
+                placeholder="0.00"
+              />
+            )}
           />
         </div>
 
         {isNewProduct && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <SelectField
+            <RHFSelect
+              name="type"
               label="Tipo de Item"
-              value={type}
-              onValueChange={(value) => setType(value as "PRODUCT" | "SERVICE")}
+              control={control}
               options={[
                 { value: "PRODUCT", label: "Produto" },
                 { value: "SERVICE", label: "Serviço" },
               ]}
+            />
+            <RHFSelect
+              name="taxId"
+              label="Imposto"
+              control={control}
+              options={taxOptions}
             />
           </div>
         )}

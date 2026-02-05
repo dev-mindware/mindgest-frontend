@@ -72,6 +72,16 @@ export function ServiceList() {
       ),
     },
     {
+      key: "taxId",
+      header: "Imposto",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">
+          {item.tax?.rate ? `${item.tax.rate}%` : "Isento"}
+        </div>
+      ),
+    },
+
+    {
       key: "status",
       header: "Estado",
       render: (_, item) => <ItemStatusBadge status={item.status} />,

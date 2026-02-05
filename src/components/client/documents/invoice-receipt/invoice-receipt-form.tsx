@@ -36,7 +36,6 @@ export function InvoiceReceiptForm() {
         address: "",
         phone: "",
       },
-      globalTax: 0,
       globalRetention: 0,
       globalDiscount: 0,
       notes: "",
@@ -66,7 +65,6 @@ export function InvoiceReceiptForm() {
 
   const watchedValues = watch([
     "items",
-    "globalTax",
     "globalRetention",
     "globalDiscount",
     "client.name",
@@ -75,7 +73,6 @@ export function InvoiceReceiptForm() {
 
   const [
     items,
-    globalTax,
     globalRetention,
     globalDiscount,
     clientName,
@@ -84,16 +81,9 @@ export function InvoiceReceiptForm() {
 
   const totals = useInvoiceTotals({
     items: items ?? [],
-    tax: globalTax ?? 0,
     retention: globalRetention ?? 0,
     discount: globalDiscount ?? 0,
   });
-
-  const setGlobalTax = useCallback(
-    (v: number) =>
-      setValue("globalTax", v, { shouldValidate: true, shouldDirty: true }),
-    [setValue]
-  );
 
   const setGlobalRetention = useCallback(
     (v: number) =>
@@ -130,11 +120,11 @@ export function InvoiceReceiptForm() {
         const clientPayload = data.clientId
           ? { id: data.clientId }
           : {
-              name: data.client.name,
-              phone: data.client.phone || undefined,
-              address: data.client.address || undefined,
-              taxNumber: data.client.taxNumber || undefined,
-            };
+            name: data.client.name,
+            phone: data.client.phone || undefined,
+            address: data.client.address || undefined,
+            taxNumber: data.client.taxNumber || undefined,
+          };
 
         const itemsPayload = data.items.map((item) => {
           if (item.isFromAPI && item.id) {
@@ -148,8 +138,10 @@ export function InvoiceReceiptForm() {
             price: item.unitPrice,
             quantity: item.quantity,
             type: item.type,
+            taxId: item.taxId,
           };
         });
+
 
         const finalPayload = {
           issueDate: data.issueDate,
@@ -189,7 +181,7 @@ export function InvoiceReceiptForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Fatura Recibo:", errors))}
       className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-2">
@@ -243,13 +235,12 @@ export function InvoiceReceiptForm() {
       <InvoiceItems
         totals={totals}
         fieldArray={fieldArray as any}
-        setGlobalTax={setGlobalTax}
-        globalTax={globalTax ?? 0}
         globalRetention={globalRetention ?? 0}
         setGlobalRetention={setGlobalRetention}
         globalDiscount={globalDiscount ?? 0}
         setGlobalDiscount={setGlobalDiscount}
       />
+
 
       <RHFSelect
         label="Método de pagamento"

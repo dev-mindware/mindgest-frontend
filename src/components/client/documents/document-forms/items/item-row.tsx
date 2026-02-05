@@ -31,11 +31,10 @@ export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove }) => {
       </td>
       <td className="px-4 py-3">
         <span
-          className={`inline-flex px-2 py-1 text-xs rounded-full ${
-            item.type === "PRODUCT"
+          className={`inline-flex px-2 py-1 text-xs rounded-full ${item.type === "PRODUCT"
               ? "bg-blue-100 text-blue-800"
               : "bg-purple-100 text-purple-800"
-          }`}
+            }`}
         >
           {item.type === "PRODUCT" ? "Produto" : "Serviço"}
         </span>
@@ -48,6 +47,9 @@ export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove }) => {
       </td>
       <td className="px-4 py-3 text-right font-mono font-medium text-f">
         {formatCurrency(subtotal)}
+      </td>
+      <td className="px-4 py-3 text-right font-mono text-foreground">
+        {item.tax ? `${item.tax}%` : "Isento"}
       </td>
       <td className="px-4 py-3">
         <Button

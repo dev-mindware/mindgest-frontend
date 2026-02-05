@@ -17,16 +17,20 @@ export const ItemSchema = z.object({
   unitPrice: z
     .number({ invalid_type_error: "O preço unitário deve ser um número" })
     .positive("O preço unitário deve ser maior que 0"),
-  tax: z
-    .number({ invalid_type_error: "O imposto deve ser numérico" })
-    .min(0, "O imposto não pode ser negativo").optional(),
   discount: z
+
     .number({ invalid_type_error: "O desconto deve ser numérico" })
-    .min(0, "O desconto não pode ser negativo").optional(),
+    .min(0, "O desconto não pode ser negativo")
+    .optional()
+    .nullable(),
   total: z
     .number({ invalid_type_error: "O total deve ser um número" })
-    .positive("O total deve ser maior que 0").optional(),
+    .positive("O total deve ser maior que 0")
+    .optional()
+    .nullable(),
+
   isFromAPI: z.boolean().optional(),
+  taxId: z.string().optional(),
 });
 
 export const taxNumberSchema = z
@@ -34,7 +38,7 @@ export const taxNumberSchema = z
   .nonempty("Campo obrigatorio")
   .refine(
     (value) => /^\d{9}[A-Z]{2}\d{3}$/.test(value) || /^\d{10}$/.test(value),
-    "NIF inválido — use formato de pessoa singular ou coletiva"
+    "NIF inválido — use formato de pessoa singular ou coletiva",
   );
 
 export const phoneNumberSchema = z
@@ -42,5 +46,5 @@ export const phoneNumberSchema = z
   .max(9, "O número deve ter 9 dígitos")
   .refine(
     (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
-    "Insira número de telemovél válido"
+    "Insira número de telemovél válido",
   );

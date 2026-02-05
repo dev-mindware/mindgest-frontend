@@ -76,6 +76,16 @@ export function ProductList() {
       ),
     },
     {
+      key: "taxId",
+      header: "Imposto",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">
+          {item.tax?.rate ? `${item.tax.rate}%` : "Isento"}
+        </div>
+      ),
+    },
+
+    {
       key: "quantity",
       header: "Quantidade",
       render: (_, item) => (

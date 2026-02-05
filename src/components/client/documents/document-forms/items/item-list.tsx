@@ -37,8 +37,13 @@ export const ItemList = memo<ItemListProps>(({ items, onRemove }) => {
               <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider">
                 Subtotal
               </th>
+              <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider">
+                IVA (%)
+              </th>
               <th className="px-4 py-3 w-[60px]" aria-label="Ações" />
+
             </tr>
+
           </thead>
           <tbody className="divide-y divide-gray-200 bg-c">
             {items.map((item, index) => (

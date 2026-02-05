@@ -20,7 +20,7 @@ import { useModal } from "@/stores/modal/use-modal-store";
 import { currentStoreStore } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
 import { formatCurrency, parseCurrency } from "@/utils";
-import { useAddItem, useGetCategories } from "@/hooks";
+import { useAddItem, useGetCategories, useGetTaxes } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
 import { useAuth } from "@/hooks/auth";
 
@@ -67,6 +67,7 @@ function AddProductFormContent() {
     page,
     setPage,
   } = useGetCategories();
+  const { taxOptions, isLoading: isTaxesLoading } = useGetTaxes();
 
   const initialBarcode = modalData["add-product"]?.barcode || "";
 
@@ -84,6 +85,7 @@ function AddProductFormContent() {
       cost: 0,
       companyId: String(user?.company?.id),
       type: "PRODUCT",
+      taxId: null,
     },
   });
 
@@ -127,29 +129,6 @@ function AddProductFormContent() {
       onSubmit={handleSubmit(onSubmit)}
       className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
     >
-      <ProOnly>
-        <div className="space-y-6">
-          <div className="rounded-lg bg-sidebar">
-            <div className="p-6">
-              <h3 className="mb-4 font-semibold">Código de Barras</h3>
-              <div className="flex justify-center mb-4">
-                <div className="flex space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-4 h-16 bg-black"></div>
-                  ))}
-                </div>
-              </div>
-              <Input
-                id="barcode"
-                label="Código de Barras"
-                {...register("barcode")}
-                error={errors.barcode?.message}
-              />
-            </div>
-          </div>
-        </div>
-      </ProOnly>
-
       <div className="">
         <div className="space-y-4 sm:w-[35rem]">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -223,6 +202,13 @@ function AddProductFormContent() {
               name="type"
               label="Tipo"
               options={[{ label: "Produto", value: "PRODUCT" }]}
+              control={control}
+            />
+
+            <RHFSelect
+              name="taxId"
+              label="Imposto (Opcional)"
+              options={taxOptions}
               control={control}
             />
           </div>

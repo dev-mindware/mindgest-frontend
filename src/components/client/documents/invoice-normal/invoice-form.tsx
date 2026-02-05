@@ -24,7 +24,6 @@ export function InvoiceForm() {
       issueDate: new Date().toISOString().split("T")[0],
       dueDate: "",
       items: [],
-      globalTax: 0,
       globalRetention: 0,
       globalDiscount: 0,
       client: {
@@ -59,7 +58,6 @@ export function InvoiceForm() {
 
   const watchedValues = watch([
     "items",
-    "globalTax",
     "globalRetention",
     "globalDiscount",
     "client.name",
@@ -68,7 +66,6 @@ export function InvoiceForm() {
 
   const [
     items,
-    globalTax,
     globalRetention,
     globalDiscount,
     clientName,
@@ -77,15 +74,9 @@ export function InvoiceForm() {
 
   const totals = useInvoiceTotals({
     items: items ?? [],
-    tax: globalTax ?? 0,
     retention: globalRetention ?? 0,
     discount: globalDiscount ?? 0,
   });
-
-  const setGlobalTax = useCallback(
-    (v: number) => setValue("globalTax", v, { shouldValidate: true }),
-    [setValue]
-  );
 
   const setGlobalRetention = useCallback(
     (v: number) => setValue("globalRetention", v, { shouldValidate: true }),
@@ -114,23 +105,26 @@ export function InvoiceForm() {
         const clientPayload = data.clientId
           ? { id: data.clientId }
           : {
-              name: data.client.name,
-              phone: data.client.phone || undefined,
-              address: data.client.address || undefined,
-              taxNumber: data.client.taxNumber || undefined,
-            };
+            name: data.client.name,
+            phone: data.client.phone || undefined,
+            address: data.client.address || undefined,
+            taxNumber: data.client.taxNumber || undefined,
+          };
 
         const itemsPayload = data.items.map((item) => {
           if (item.isFromAPI && item.id) {
             return { id: item.id, quantity: item.quantity };
           }
+
           return {
             name: item.description,
             price: item.unitPrice,
             quantity: item.quantity,
             type: item.type,
+            taxId: item.taxId,
           };
         });
+
 
         const finalPayload = {
           issueDate: data.issueDate,
@@ -164,7 +158,7 @@ export function InvoiceForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Fatura:", errors))}
       className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-3">
@@ -225,13 +219,12 @@ export function InvoiceForm() {
       <InvoiceItems
         totals={totals}
         fieldArray={fieldArray as any}
-        setGlobalTax={setGlobalTax}
-        globalTax={globalTax ?? 0}
         globalRetention={globalRetention ?? 0}
         setGlobalRetention={setGlobalRetention}
         globalDiscount={globalDiscount ?? 0}
         setGlobalDiscount={setGlobalDiscount}
       />
+
 
       <Textarea
         {...register("notes")}

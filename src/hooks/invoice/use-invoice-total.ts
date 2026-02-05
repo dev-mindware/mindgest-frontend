@@ -2,28 +2,35 @@ import { useMemo } from "react";
 
 interface Params {
   items: any[];
-  tax: number;
   retention: number;
   discount: number;
 }
 
-export function useInvoiceTotals({ tax, items, retention, discount }: Params) {
+export function useInvoiceTotals({ items, retention, discount }: Params) {
   return useMemo(() => {
     const validItems = Array.isArray(items) ? items : [];
-    const validTax = Number(tax) || 0;
     const validRetention = Number(retention) || 0;
     const validDiscount = Number(discount) || 0;
 
     const subtotal = validItems.reduce((acc, item) => {
       const price = Number(item.unitPrice) || 0;
       const qty = Number(item.quantity) || 0;
-      return acc + (price * qty);
+      return acc + price * qty;
     }, 0);
 
     const discountAmount = subtotal * (validDiscount / 100);
     const taxableBase = subtotal - discountAmount;
 
-    const taxAmount = taxableBase * (validTax / 100);
+    const taxAmount = validItems.reduce((acc, item) => {
+      const price = Number(item.unitPrice) || 0;
+      const qty = Number(item.quantity) || 0;
+      const itemSubtotal = price * qty;
+      const itemDiscount = itemSubtotal * (validDiscount / 100);
+      const itemTaxableBase = itemSubtotal - itemDiscount;
+      const taxRate = Number(item.tax) || 0;
+      return acc + itemTaxableBase * (taxRate / 100);
+    }, 0);
+
     const retentionAmount = taxableBase * (validRetention / 100);
 
     const total = taxableBase + taxAmount - retentionAmount;
@@ -37,7 +44,7 @@ export function useInvoiceTotals({ tax, items, retention, discount }: Params) {
     };
 
     return result;
-  }, [items, tax, retention, discount]);
+  }, [items, retention, discount]);
 }
 
 /* import { useMemo } from "react";

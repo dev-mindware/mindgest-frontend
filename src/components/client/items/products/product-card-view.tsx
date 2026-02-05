@@ -62,7 +62,14 @@ export function ProductCardView({ product }: ProductCardProps) {
               {formatCurrency(product.price!)}
             </p>
           </div>
+          <div>
+            <p className="mb-1 text-xs text-muted-foreground">Imposto</p>
+            <p className="text-sm font-semibold text-foreground">
+              {product.tax?.rate ? `${product.tax.rate}%` : "Isento"}
+            </p>
+          </div>
         </div>
+
         <ProductStockInfo product={product} />
       </CardContent>
     </Card>

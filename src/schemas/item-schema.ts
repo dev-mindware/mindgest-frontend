@@ -30,7 +30,9 @@ export const itemSchema = z
     hasExpiry: z.boolean().optional(),
     expiryDate: z.string().optional(),
     daysToExpiry: z.number().optional(),
+    taxId: z.string().optional().nullable(),
   })
+
   .refine(
     (data) => {
       if (data.maxStock !== undefined && data.minStock !== undefined) {

@@ -10,8 +10,6 @@ import { InvoiceSummary } from "./invoice-summary";
 
 interface InvoiceItemsProps {
   fieldArray: UseFieldArrayReturn<ProformaFormData, "items">;
-  globalTax: number;
-  setGlobalTax: (value: number) => void;
   globalRetention: number;
   setGlobalRetention: (value: number) => void;
   globalDiscount: number;
@@ -27,14 +25,13 @@ interface InvoiceItemsProps {
 
 export function InvoiceItems({
   fieldArray,
-  globalTax,
-  setGlobalTax,
   globalRetention,
   setGlobalRetention,
   globalDiscount,
   setGlobalDiscount,
   totals,
 }: InvoiceItemsProps) {
+
   const { fields, append, remove } = fieldArray;
 
   const handleAddItem = useCallback(
@@ -68,9 +65,9 @@ export function InvoiceItems({
 
       <AddItemForm
         onAdd={handleAddItem}
-        globalTax={globalTax}
         globalDiscount={globalDiscount}
       />
+
 
       {fields.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-6 bg-card rounded-lg border-2 border-dashed">
@@ -87,13 +84,12 @@ export function InvoiceItems({
           <ItemList items={fields} onRemove={handleRemoveItem} />
           <InvoiceSummary
             totals={totals}
-            globalTax={globalTax}
-            setGlobalTax={setGlobalTax}
             globalRetention={globalRetention}
             setGlobalRetention={setGlobalRetention}
             globalDiscount={globalDiscount}
             setGlobalDiscount={setGlobalDiscount}
           />
+
         </>
       )}
     </div>

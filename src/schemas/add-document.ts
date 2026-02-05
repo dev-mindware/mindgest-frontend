@@ -51,8 +51,8 @@ const InvoiceBaseSchema = z.object({
   orderReference: z.string().optional(),
   items: z.array(ItemSchema).min(1, "A proforma deve conter pelo menos 1 item"),
   discount: z.number().optional(),
-  globalTax: z.number().min(0),
   globalRetention: z.number().min(0),
+
   globalDiscount: z.number().min(0),
   notes: z.string().optional(),
 });
@@ -72,7 +72,7 @@ export const InvoiceSchema = InvoiceBaseSchema.extend({
   {
     message: "A data de vencimento não pode ser anterior à data de emissão",
     path: ["dueDate"],
-  }
+  },
 );
 
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
@@ -89,7 +89,7 @@ export const ProformaSchema = InvoiceBaseSchema.extend({
   {
     message: "A data de vencimento não pode ser anterior à data de emissão",
     path: ["proformaExpiresAt"],
-  }
+  },
 );
 export type ProformaFormData = z.infer<typeof ProformaSchema>;
 
@@ -108,7 +108,7 @@ export const InvoiceReceiptSchema = InvoiceBaseSchema.extend({
   {
     message: "A data de vencimento não pode ser anterior à data de emissão",
     path: ["dueDate"],
-  }
+  },
 );
 export type InvoiceReceiptFormData = z.infer<typeof InvoiceReceiptSchema>;
 
