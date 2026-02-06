@@ -12,27 +12,30 @@ export function useInvoiceTotals({ items, retention, discount }: Params) {
     const validRetention = Number(retention) || 0;
     const validDiscount = Number(discount) || 0;
 
+    // Calculate subtotal (sum of all items)
     const subtotal = validItems.reduce((acc, item) => {
       const price = Number(item.unitPrice) || 0;
       const qty = Number(item.quantity) || 0;
       return acc + price * qty;
     }, 0);
 
+    // Calculate discount amount (applied to subtotal)
     const discountAmount = subtotal * (validDiscount / 100);
     const taxableBase = subtotal - discountAmount;
 
+    // Calculate tax on ORIGINAL subtotal (before discount)
     const taxAmount = validItems.reduce((acc, item) => {
       const price = Number(item.unitPrice) || 0;
       const qty = Number(item.quantity) || 0;
       const itemSubtotal = price * qty;
-      const itemDiscount = itemSubtotal * (validDiscount / 100);
-      const itemTaxableBase = itemSubtotal - itemDiscount;
       const taxRate = Number(item.tax) || 0;
-      return acc + itemTaxableBase * (taxRate / 100);
+      return acc + itemSubtotal * (taxRate / 100);
     }, 0);
 
+    // Calculate retention on taxable base (after discount)
     const retentionAmount = taxableBase * (validRetention / 100);
 
+    // Total = taxableBase + taxAmount - retentionAmount
     const total = taxableBase + taxAmount - retentionAmount;
 
     const result = {
