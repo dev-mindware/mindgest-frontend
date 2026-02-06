@@ -46,7 +46,7 @@ export function PosSettingsSetup() {
 
     const { data: currentSession, isLoading } = useQuery({
         queryKey: ["current-cash-session", currentStore?.id],
-        queryFn: () => cashSessionsService.getCurrentSession(currentStore?.id || "mock-store-id"),
+        queryFn: () => cashSessionsService.getCurrentSession(currentStore?.id),
         enabled: activeTab === "general",
     });
 

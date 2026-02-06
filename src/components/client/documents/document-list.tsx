@@ -16,6 +16,7 @@ import { InvoiceReceiptList } from "./invoice-receipt";
 import { ReceiptList } from "./receipts";
 import { CreditNotesList } from "./credits-notes";
 import { cn } from "@/lib";
+import { currentStoreStore } from "@/stores";
 
 type DocumentTab =
   | "invoice"
@@ -27,6 +28,7 @@ type DocumentTab =
 export function DocumentList() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { currentStore } = currentStoreStore();
   const activeTab = (searchParams.get("tab") as DocumentTab) ?? "invoice";
 
   const handleTabChange = useCallback(
@@ -85,23 +87,23 @@ export function DocumentList() {
         </div>
 
         <TabsContent value="invoice">
-          <InvoiceList />
+          <InvoiceList storeId={currentStore?.id} />
         </TabsContent>
 
         <TabsContent value="proforma">
-          <ProformaList />
+          <ProformaList storeId={currentStore?.id} />
         </TabsContent>
 
         <TabsContent value="invoice-receipt">
-          <InvoiceReceiptList />
+          <InvoiceReceiptList storeId={currentStore?.id} />
         </TabsContent>
 
         <TabsContent value="receipt">
-          <ReceiptList />
+          <ReceiptList storeId={currentStore?.id} />
         </TabsContent>
 
         <TabsContent value="credit-notes">
-          <CreditNotesList />
+          <CreditNotesList storeId={currentStore?.id} />
         </TabsContent>
       </Tabs>
     </div>

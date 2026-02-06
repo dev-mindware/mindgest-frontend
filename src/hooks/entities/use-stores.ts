@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePagination } from "../common/use-pagination";
 import { storesService } from "@/services/stores-service";
 import { SucessMessage } from "@/utils/messages";
 import { Role, StoreData } from "@/types";
@@ -21,6 +22,25 @@ export function useGetStores(role?: Role, enabled: boolean = true) {
     })) || [];
 
   return { stores, storesData: data?.data || [], error, isLoading, refetch };
+}
+
+export function useGetStoresPaginated(
+  page: number = 1,
+  limit: number = 10,
+  role?: Role,
+  enabled: boolean = true,
+) {
+  const route = role === "OWNER" ? "stores" : "stores/my-stores";
+
+  return usePagination<StoreResponse>({
+    endpoint: `/${route}`,
+    queryKey: ["stores-paginated"],
+    queryParams: {
+      page,
+      limit,
+    },
+    enabled,
+  });
 }
 
 export function useDeleteStore() {

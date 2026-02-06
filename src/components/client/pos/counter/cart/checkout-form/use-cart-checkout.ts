@@ -71,7 +71,6 @@ export function useCartCheckout({
   const watchedItems = watch("items") as any[];
   const totals = useInvoiceTotals({
     items: watchedItems || [],
-    tax: 0,
     retention: 0,
     discount: 0,
   });

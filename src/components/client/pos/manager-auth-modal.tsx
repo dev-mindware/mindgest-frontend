@@ -18,11 +18,15 @@ export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
   const isOpen = open[MODAL_MANAGER_AUTH_ID] || false;
   const [isLoading, startTransition] = useTransition();
   const [buffer, setBuffer] = useState("");
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualCode, setManualCode] = useState("");
 
   // Barcode listener for the modal
   useEffect(() => {
     if (!isOpen) {
       setBuffer("");
+      setShowManualInput(false);
+      setManualCode("");
       return;
     }
 
@@ -48,10 +52,14 @@ export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
 
   const verifyCode = (codeToVerify: string) => {
     startTransition(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      SucessMessage("Autorização concedida!");
-      onAuthenticated(codeToVerify);
-      closeModal(MODAL_MANAGER_AUTH_ID);
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        await onAuthenticated(codeToVerify);
+        closeModal(MODAL_MANAGER_AUTH_ID);
+      } catch (error) {
+        setBuffer("");
+        setManualCode("");
+      }
     });
   };
 
@@ -84,24 +92,74 @@ export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
           </div>
 
           <div className="w-full py-6 flex flex-col items-center gap-4">
-            <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-primary/5 border border-primary/20 text-primary animate-bounce-slow">
-              <div className="h-2 w-2 rounded-full bg-primary animate-ping"></div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em]">
-                Aguardando Leitura...
-              </span>
-            </div>
+            {!showManualInput ? (
+              <>
+                <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-primary/5 border border-primary/20 text-primary animate-bounce-slow">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-ping"></div>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em]">
+                    Aguardando Leitura...
+                  </span>
+                </div>
 
-            {buffer.length > 0 && (
-              <div className="flex gap-1">
-                {[...Array(13)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "h-1.5 w-1.5 rounded-full transition-all duration-300",
-                      i < buffer.length ? "bg-primary scale-110" : "bg-muted"
-                    )}
-                  />
-                ))}
+                {buffer.length > 0 && (
+                  <div className="flex gap-1">
+                    {[...Array(13)].map((_, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "h-1.5 w-1.5 rounded-full transition-all duration-300",
+                          i < buffer.length ? "bg-primary scale-110" : "bg-muted"
+                        )}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setShowManualInput(true)}
+                  className="mt-2 text-xs font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <Icon name="Keyboard" size={14} />
+                  Inserir código manualmente
+                </button>
+              </>
+            ) : (
+              <div className="w-full space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <Input
+                  autoFocus
+                  label="Código do Gerente"
+                  placeholder="Ex: 1234567890123"
+                  value={manualCode}
+                  onChange={(e) => setManualCode(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && manualCode.length > 0) {
+                      verifyCode(manualCode);
+                    }
+                  }}
+                  startIcon="Key"
+                  disabled={isLoading}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-10 text-xs"
+                    onClick={() => {
+                      setShowManualInput(false);
+                      setManualCode("");
+                    }}
+                    disabled={isLoading}
+                  >
+                    Voltar para Scanner
+                  </Button>
+                  <Button
+                    className="flex-1 h-10 text-xs font-bold"
+                    onClick={() => verifyCode(manualCode)}
+                    disabled={isLoading || manualCode.length < 1}
+                  >
+                    Confirmar
+                  </Button>
+                </div>
               </div>
             )}
           </div>
@@ -109,7 +167,7 @@ export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
           <div className="w-full pt-4">
             <Button
               variant="ghost"
-              className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+              className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 h-10 text-xs uppercase font-bold tracking-widest"
               onClick={() => closeModal(MODAL_MANAGER_AUTH_ID)}
               disabled={isLoading}
             >

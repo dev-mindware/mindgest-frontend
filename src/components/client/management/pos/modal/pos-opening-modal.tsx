@@ -8,29 +8,50 @@ import {
   Button,
   Icon,
   RHFSelect,
-  Checkbox,
   Label,
   RequestError,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Badge,
+  TimeField,
+  DateInput,
 } from "@/components";
 import { useModal } from "@/stores";
-import { availableCashiers, Cashier } from "../data";
-import { useGetStores } from "@/hooks/entities";
+import { useGetStoresPaginated } from "@/hooks/entities";
+import { useGetCashiersPaginated } from "@/hooks/collaborators/cashier";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { cashSessionsService } from "@/services";
-import { SucessMessage } from "@/utils";
+import { SucessMessage, ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
+import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
+import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
+import { parseTime } from "@internationalized/date";
+
+function safeParseTime(timeStr: string) {
+  try {
+    if (!timeStr || timeStr.length < 5) return parseTime("08:00");
+    return parseTime(timeStr.slice(0, 5));
+  } catch (e) {
+    return parseTime("08:00");
+  }
+}
 
 export function PosOpeningModal() {
   const { closeModal } = useModal();
   const { currentCashier, setCurrentCashier } = useCurrentCashierStore();
-  const { stores, isLoading: isLoadingStores, error, refetch } = useGetStores();
-  const [codigo, setCodigo] = useState("");
+  const [storePage, setStorePage] = useState(1);
+
+  const {
+    data: storesData,
+    isLoading: isLoadingStores,
+    isError: storesError,
+    totalPages: storeTotalPages,
+    refetch: refetchStores,
+  } = useGetStoresPaginated(storePage, 10, "OWNER");
+
+  const {
+    data: allCashiers,
+    isLoading: isLoadingCashiers,
+  } = useGetCashiersPaginated(1, 100); // Get more cashiers for the multi-select
 
   const {
     register,
@@ -44,9 +65,10 @@ export function PosOpeningModal() {
     resolver: zodResolver(posOpeningSchema),
     defaultValues: {
       initialCapital: "",
-      workTime: "",
+      workTime: "08:00",
       storeId: "",
       cashierIds: [],
+      fundType: "Coin",
     },
   });
 
@@ -58,7 +80,7 @@ export function PosOpeningModal() {
         initialCapital: (currentCashier.totalSold || 0).toString(),
         workTime: currentCashier.activityTime || "",
         storeId: "", // Mock stores don't match cashier mock yet
-        cashierIds: [currentCashier.id],
+        cashierIds: [currentCashier.id.toString()],
       });
     } else {
       reset({
@@ -83,8 +105,10 @@ export function PosOpeningModal() {
       await cashSessionsService.openSession(data);
       SucessMessage("Caixa aberto com sucesso!");
       handleClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      const message = error?.response?.data?.message || "Ocorreu um erro ao abrir o caixa";
+      ErrorMessage(message);
     }
   };
 
@@ -101,12 +125,12 @@ export function PosOpeningModal() {
     );
   }
 
-  if (error) {
+  if (storesError) {
     return (
-      <GlobalModal id="opening-cashier" title="Abertura de Caixa" canClose>
+      <GlobalModal id="opening-cashier" title="Abertura de Caixa" canClose className="!w-max">
         <div className="p-4">
           <RequestError
-            refetch={refetch}
+            refetch={refetchStores}
             message="Ocorreu um erro ao carregar as lojas"
           />
         </div>
@@ -128,32 +152,50 @@ export function PosOpeningModal() {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <input
-              value={codigo}
-              onChange={(e) => setCodigo(e.target.value)}
-              placeholder="Ler código de barras"
-              className="border p-2 w-full"
-              autoFocus
-            />
-          </div>
-
           <div className="space-y-2 col-span-1">
-            <Input
-              label="Capital Inicial"
-              placeholder="0"
-              startIcon="CircleDollarSign"
-              {...register("initialCapital")}
-              error={errors.initialCapital?.message}
+            <Controller
+              name="initialCapital"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  label="Capital Inicial"
+                  placeholder="0.00 Kz"
+                  startIcon="CircleDollarSign"
+                  value={formatCurrency(value || 0)}
+                  onChange={(e) => onChange(parseCurrency(e.target.value).toString())}
+                  error={errors.initialCapital?.message}
+                />
+              )}
             />
           </div>
           <div className="space-y-2 col-span-1">
-            <Input
-              label="Tempo de Expediente"
-              placeholder="HH:MM"
-              startIcon="Clock"
-              {...register("workTime")}
-              error={errors.workTime?.message}
+            <Controller
+              name="workTime"
+              control={control}
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label>Tempo de Expediente</Label>
+                  <TimeField
+                    aria-label="Tempo de Expediente"
+                    hourCycle={24}
+                    className="w-full"
+                    value={safeParseTime(field.value)}
+                    onChange={(time) => {
+                      if (time) field.onChange(time.toString().slice(0, 5));
+                    }}
+                  >
+                    <div className="relative">
+                      <DateInput id="work-time-input" className="bg-background" />
+                      <Icon name="Clock" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                    </div>
+                  </TimeField>
+                  {errors.workTime && (
+                    <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+                      {errors.workTime.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
           </div>
 
@@ -170,114 +212,54 @@ export function PosOpeningModal() {
             />
           </div>
 
-          <RHFSelect
-            name="storeId"
-            control={control}
-            label="Loja"
-            options={stores}
-          />
-
-          <div>
-            <Label className="text-sm font-medium">
-              {isEdit
-                ? "Caixa sendo editado"
-                : "Caixas Disponíveis para Abertura"}
-            </Label>
-
-            <Popover>
-              <PopoverTrigger asChild disabled={isEdit}>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-between px-4 font-normal hover:bg-muted transition-all text-muted-foreground border-muted-foreground/10",
-                    selectedCashierIds.length > 0 &&
-                    "text-foreground font-medium",
-                    isEdit && "opacity-100 cursor-default"
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <Icon name="LayoutGrid" className="w-4 h-4 opacity-50" />
-                    {isEdit ? (
-                      <div className="flex items-center gap-2">
-                        <span>{currentCashier?.name}</span>
-                        <Badge variant="outline" className="text-[10px] py-0">
-                          {currentCashier?.user}
-                        </Badge>
-                      </div>
-                    ) : selectedCashierIds.length > 0 ? (
-                      <div className="flex items-center gap-2">
-                        <span>
-                          {selectedCashierIds.length} caixas selecionados
-                        </span>
-                      </div>
-                    ) : (
-                      <span>Escolha os caixas</span>
-                    )}
-                  </div>
-                  {!isEdit && (
-                    <Icon
-                      name="ChevronDown"
-                      className="ml-2 h-4 w-4 shrink-0 opacity-50"
-                    />
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="start">
-                <div className="space-y-1 max-h-[250px] overflow-y-auto">
-                  <Controller
-                    name="cashierIds"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        {availableCashiers.map((cashier) => (
-                          <div
-                            key={cashier.id}
-                            className={cn(
-                              "flex items-center space-x-3 p-2.5 rounded-md transition-colors cursor-pointer hover:bg-muted/20",
-                              field.value?.includes(cashier.id) &&
-                              "bg-primary/5 border-primary/10"
-                            )}
-                            onClick={() => {
-                              const current = field.value || [];
-                              const newValue = current.includes(cashier.id)
-                                ? current.filter((id) => id !== cashier.id)
-                                : [...current, cashier.id];
-                              field.onChange(newValue);
-                            }}
-                          >
-                            <Checkbox
-                              id={`cashier-${cashier.id}`}
-                              checked={field.value?.includes(cashier.id)}
-                              onCheckedChange={(checked) => {
-                                const current = field.value || [];
-                                const newValue = checked
-                                  ? [...current, cashier.id]
-                                  : current.filter((id) => id !== cashier.id);
-                                field.onChange(newValue);
-                              }}
-                            />
-                            <div className="grid gap-0.5 leading-none">
-                              <label className="text-sm truncate cursor-pointer">
-                                {cashier.name}
-                              </label>
-                              <p className="text-[10px] text-green-500">
-                                {cashier.status}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            {errors.cashierIds && (
-              <p className="text-[10px] font-bold text-destructive uppercase tracking-widest">
-                {errors.cashierIds.message}
+          <div className="col-span-1">
+            <Controller
+              name="storeId"
+              control={control}
+              render={({ field }) => (
+                <PaginatedSelect
+                  label="Loja"
+                  placeholder="Selecione a loja"
+                  options={storesData.map((s) => ({ label: s.name, value: s.id }))}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isLoading={isLoadingStores}
+                  pagination={{ page: storePage, totalPages: storeTotalPages }}
+                  onPageChange={setStorePage}
+                  className="w-full"
+                />
+              )}
+            />
+            {errors.storeId && (
+              <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+                {errors.storeId.message}
               </p>
             )}
+          </div>
+
+          <div className="col-span-1 md:col-span-2">
+            <Controller
+              name="cashierIds"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  label="Caixas Disponíveis para Abertura"
+                  placeholder="Escolha os caixas"
+                  options={allCashiers.map((c) => ({
+                    label: `${c.name} (${c.email})`,
+                    value: c.id,
+                  }))}
+                  value={allCashiers
+                    .filter((c) => field.value?.includes(c.id))
+                    .map((c) => ({ label: c.name, value: c.id }))}
+                  onChange={(options) =>
+                    field.onChange(options.map((opt) => opt.value))
+                  }
+                  isLoading={isLoadingCashiers}
+                  error={errors.cashierIds?.message}
+                />
+              )}
+            />
           </div>
         </div>
 

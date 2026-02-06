@@ -13,7 +13,7 @@ import {
 import { useModal, currentStoreStore } from "@/stores";
 import { cashSessionsService } from "@/services/cash-sessions-service";
 import { SucessMessage } from "@/utils/messages";
-import { CashSession } from "@/types/cash-sessions";
+import { CashSession } from "@/types/cash-session";
 
 export const MODAL_POS_REGISTER_EXPENSE_ID = "pos-register-expense-modal";
 

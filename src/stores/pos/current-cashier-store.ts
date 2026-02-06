@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Cashier } from "@/components/client/management/pos/data";
+import { Cashier } from "@/types/cashier";
 
 interface CurrentCashierState {
   currentCashier: Cashier | null;

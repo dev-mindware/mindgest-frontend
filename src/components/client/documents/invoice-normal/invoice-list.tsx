@@ -20,7 +20,7 @@ import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
 import { useRouter } from "next/navigation";
 import { useURLSearchParams } from "@/hooks/common";
 
-export function InvoiceList() {
+export function InvoiceList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { search } = useURLSearchParams("search_invoice");
   const { filters, page, setPage } = useInvoiceFilters("invoice");
@@ -41,8 +41,8 @@ export function InvoiceList() {
     refetch,
   } = usePagination<InvoiceResponse>({
     endpoint: "/invoice/normal",
-    queryKey: ["invoice-normal"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryKey: ["invoice-normal", storeId || ""],
+    queryParams: { ...filters, search: debounceSearch, page, storeId },
   });
 
   const columns: Column<InvoiceResponse>[] = [

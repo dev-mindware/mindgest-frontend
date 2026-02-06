@@ -19,7 +19,7 @@ import { InvoiceFiltersTSX } from "../common";
 import { useReceiptActions } from "@/hooks";
 import { ReceiptResponse } from "@/types/receipt";
 
-export function ReceiptList() {
+export function ReceiptList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("receipt");
   const [debounceSearch] = useDebounce(search, 400);
   const { filters, page, setPage } = useInvoiceFilters("receipt");
@@ -34,8 +34,8 @@ export function ReceiptList() {
     refetch,
   } = usePagination<ReceiptResponse>({
     endpoint: "/invoice/receipt",
-    queryKey: ["receipt"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryKey: ["receipt", storeId || ""],
+    queryParams: { ...filters, search: debounceSearch, page, storeId },
   });
 
   const { handlerDetailsReceipt } = useReceiptActions();

@@ -4,7 +4,7 @@ export function parseCurrency(value: string): number {
 }
 
 export function formatCurrency(value: string | number): string {
-  if (!value) return "";
+  if (value === undefined || value === null || value === "") return "";
   // Convert to number directly - parseCurrency is only for formatted user input
   const number =
     typeof value === "number" ? value : parseFloat(value.toString());

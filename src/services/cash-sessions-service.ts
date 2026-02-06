@@ -1,12 +1,12 @@
 import {
   CashSession,
-  CashSessionFilters,
+  CashSessionRequestFilters,
   CashSessionRequest,
-} from "@/types/cash-sessions";
+} from "@/types/cash-session";
 import { api } from "./api";
 
 export const cashSessionsService = {
-  getOpeningRequests: async (filters?: CashSessionFilters) => {
+  getOpeningRequests: async (filters?: CashSessionRequestFilters) => {
     const params = new URLSearchParams();
 
     if (filters?.storeId) params.append("storeId", filters.storeId);
@@ -24,29 +24,16 @@ export const cashSessionsService = {
     return response.data;
   },
 
-  getCurrentSession: async (storeId?: string) => {
-    const params = storeId ? { storeId } : {};
+  getCurrentSession: async (id: string | undefined) => {
+    const { data } = await api.get<CashSession>(
+      "/cash-sessions/opening-sessions",
+    );
+    return data;
+  },
 
-    // We pass storeId if explicitly provided, otherwise interceptor handles it
-    // Mock data fallback forced for now as per previous requirement
-    return {
-      id: "mock-session-id",
-      openingCash: 100,
-      storeId: storeId || "mock-store-id",
-      userId: "user-id",
-      closingCash: 0,
-      totalSales: 250.5,
-      notes: "Sessão de turnos da manhã",
-      openedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-      closedAt: "",
-      expectedClosingCash: 0,
-      cashDifference: 0,
-      duration: "02:00",
-      isOpen: true,
-      fundType: "Dinheiro",
-      workTime: "08:00",
-      authorizedById: "Gerente Silva",
-    } as CashSession;
+  getCashSessions: async (params: any) => {
+    const { data } = await api.get("/cash-sessions", { params });
+    return data;
   },
 
   requestOpening: async (data: { storeId?: string; message: string }) => {
@@ -69,6 +56,16 @@ export const cashSessionsService = {
     data: { closingCash: number; totalSales: number; notes: string },
   ) => {
     const response = await api.patch(`/cash-sessions/${id}/close`, data);
+    return response.data;
+  },
+
+  updateSession: async (id: string, data: any) => {
+    const response = await api.put(`/cash-sessions/${id}`, data);
+    return response.data;
+  },
+
+  deleteSession: async (id: string) => {
+    const response = await api.delete(`/cash-sessions/${id}`);
     return response.data;
   },
 };

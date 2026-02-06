@@ -11,7 +11,7 @@ import {
 import { PosOpeningModal } from "@/components/client/management/pos/modal/pos-opening-modal";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { formatCurrency, formatDateTime } from "@/utils";
-import { CashSession } from "@/types/cash-sessions";
+import { CashSession } from "@/types/cash-session";
 import { DynamicMetricCard } from "@/components/shared/dynamic-metric-card";
 
 interface PosGeneralSettingsProps {

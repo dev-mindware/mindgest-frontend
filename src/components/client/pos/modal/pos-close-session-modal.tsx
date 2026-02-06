@@ -14,7 +14,7 @@ import {
 import { useModal } from "@/stores";
 import { cashSessionsService } from "@/services/cash-sessions-service";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
-import { CashSession } from "@/types/cash-sessions";
+import { CashSession } from "@/types/cash-session";
 import { formatCurrency } from "@/utils";
 
 export const MODAL_POS_CLOSE_SESSION_ID = "pos-close-session-modal";
