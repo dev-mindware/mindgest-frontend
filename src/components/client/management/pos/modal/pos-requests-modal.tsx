@@ -10,7 +10,7 @@ import {
 } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { formatDateTime } from "@/utils";
-import { useGetOpeningRequests } from "@/hooks/entities/use-cash-sessions";
+import { useGetOpeningRequests } from "@/hooks/cash-session/use-cash-sessions";
 import { CashSessionRequest } from "@/types/cash-session";
 
 export function PosRequestsModal() {

@@ -20,6 +20,7 @@ export const PosSalesSchema = z.object({
   paymentMethod: z.enum(["CASH", "CARD", "TRANSFER"]),
   change: z.coerce.number().default(0),
   storeId: z.string().min(1, "Loja é obrigatória"),
+  cashSessionId: z.string().min(1, "Sessão de caixa é obrigatória"),
 });
 
 export type PosSalesFormData = z.infer<typeof PosSalesSchema>;

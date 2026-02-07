@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,12 +19,14 @@ interface UseCartCheckoutProps {
   cartItems: CartItem[];
   type?: "invoice" | "proforma";
   onSuccess?: () => void;
+  cashSessionId: string;
 }
 
 export function useCartCheckout({
   cartItems,
   type = "invoice",
   onSuccess,
+  cashSessionId,
 }: UseCartCheckoutProps) {
   const { user } = useAuthStore();
   const { currentStore } = currentStoreStore();
@@ -61,6 +64,7 @@ export function useCartCheckout({
       receivedValue: 0,
       change: 0,
       paymentMethod: "CARD",
+      cashSessionId: cashSessionId || "",
     },
   });
 
@@ -72,7 +76,7 @@ export function useCartCheckout({
   const totals = useInvoiceTotals({
     items: watchedItems || [],
     retention: 0,
-    discount: 0,
+    discount: 0, // POS não usa desconto global
   });
 
   // Synchronize cartItems with form items
@@ -83,11 +87,12 @@ export function useCartCheckout({
       type: "PRODUCT" as const,
       quantity: item.qty,
       unitPrice: item.price || 0,
-      tax: 0,
+      tax: Number((item as any).tax?.rate || (item as any).taxRate || 0), // ✅ Convert string to number
       discount: 0,
       total: (item.price || 0) * item.qty,
       isFromAPI: true,
     }));
+
     setValue("items", items as any, { shouldValidate: true });
   }, [cartItems, setValue]);
 
@@ -109,6 +114,13 @@ export function useCartCheckout({
     const id = currentStore?.id || user?.store?.id;
     if (id) setValue("storeId", id);
   }, [currentStore, user, setValue]);
+
+  // Synchronize cashSessionId
+  useEffect(() => {
+    if (cashSessionId) {
+      setValue("cashSessionId", cashSessionId);
+    }
+  }, [cashSessionId, setValue]);
 
   // Handle Cash & Change
   useEffect(() => {
@@ -137,6 +149,13 @@ export function useCartCheckout({
       return;
     }
 
+    // Validate cashSessionId
+    if (!cashSessionId) {
+      ErrorMessage("Sessão de caixa não identificada. Recarregue a página.");
+      console.error("cashSessionId is missing:", cashSessionId);
+      return;
+    }
+
     // Prepare payload
     const simplifiedItems = data.items.map((item: any) => ({
       id: item.id,
@@ -152,6 +171,7 @@ export function useCartCheckout({
         typeof data.change === "number" && !isNaN(data.change)
           ? Number(data.change.toFixed(2))
           : 0,
+      cashSessionId,
     };
 
     if (!payload.storeId) {
@@ -182,8 +202,12 @@ export function useCartCheckout({
       if (type === "invoice") {
         await createInvoiceReceipt(pendingPayload as any);
       } else {
+        // Remove payment-specific fields for proforma
+        const { cashSessionId, change, receivedValue, ...proformaData } =
+          pendingPayload;
+
         const proformaPayload = {
-          ...pendingPayload,
+          ...proformaData,
           proformaExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
             .toISOString()
             .split("T")[0],

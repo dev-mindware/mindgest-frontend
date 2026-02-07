@@ -111,6 +111,16 @@ export function ProductCard({
                       Indisponível
                     </Badge>
                   )}
+
+                  {/* Tax Rate Badge */}
+                  {product.tax?.rate && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] px-2 py-0.5 border border-blue-500/30 bg-blue-500/10 text-blue-600 hover:bg-blue-500/15 transition-colors font-medium shadow-sm"
+                    >
+                      IVA {product.tax.rate}%
+                    </Badge>
+                  )}
                 </div>
               </div>
             </TooltipTrigger>

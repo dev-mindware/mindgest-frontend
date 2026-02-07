@@ -2,7 +2,7 @@ import {
   CashSession,
   CashSessionRequestFilters,
   CashSessionRequest,
-} from "@/types/cash-session";
+} from "@/types";
 import { api } from "./api";
 
 export const cashSessionsService = {
@@ -26,7 +26,7 @@ export const cashSessionsService = {
 
   getCurrentSession: async (id: string | undefined) => {
     const { data } = await api.get<CashSession>(
-      "/cash-sessions/opening-sessions",
+      "/cash-sessions/current",
     );
     return data;
   },

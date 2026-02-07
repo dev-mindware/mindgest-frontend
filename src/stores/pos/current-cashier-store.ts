@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { Cashier } from "@/types/cashier";
 
 interface CurrentCashierState {
-  currentCashier: Cashier | null;
-  setCurrentCashier: (cashier: Cashier | null) => void;
+  currentCashier: any | null;
+  setCurrentCashier: (cashier: any | null) => void;
 }
 
 export const useCurrentCashierStore = create<CurrentCashierState>((set) => ({

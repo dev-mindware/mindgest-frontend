@@ -2,5 +2,5 @@ export * from "./use-clients";
 export * from "./clients-filters";
 export * from "./use-client-actions";
 export * from "./use-stores";
-export * from "./use-cash-sessions";
-export * from "./cash-sessions-filters";
+export * from "../cash-session/use-cash-sessions";
+export * from "../cash-session/cash-sessions-filters";

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { Icon, Input, Button, GlobalModal } from "@/components";
-import { SucessMessage, ErrorMessage } from "@/utils/messages";
-import { useModal } from "@/stores/modal/use-modal-store";
+import { ErrorMessage } from "@/utils/messages";
+import { useModal } from "@/stores";
 import { playScannerBeep } from "@/utils/audio";
 import { cn } from "@/lib/utils";
 

@@ -13,3 +13,6 @@ export * from "./invoice-proforma";
 export * from "./credit-notes";
 export * from "./stores";
 export * from "./taxes";
+export * from "./cash-session";
+export * from "./stock";
+export * from "./pos";

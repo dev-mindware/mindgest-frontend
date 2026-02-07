@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { CashSession } from "@/types/cash-session";
 import { useDeleteCashSession } from "@/hooks/entities";
 import { EmptyState } from "@/components/common/empty-state";
+import { useModal } from "@/stores";
+import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 
 interface PosCashierListProps {
   viewMode: "grid" | "table";
@@ -34,26 +36,18 @@ export function PosCashierList({
   page,
   setPage,
 }: PosCashierListProps) {
-  const { mutate: deleteSession } = useDeleteCashSession();
+
+  const { openModal } = useModal();
+  const { setCurrentCashier } = useCurrentCashierStore();
 
   const sessionActions = (item: CashSession) => [
-    {
-      label: "Visualizar",
-      icon: "Eye" as const,
-      onClick: () => { }
-    },
     {
       label: "Editar",
       icon: "Pencil" as const,
       onClick: () => {
-        // Prepare for edit modal if needed
-        console.log("Edit session", item);
+        setCurrentCashier(item);
+        openModal("opening-cashier");
       }
-    },
-    {
-      label: "Nota de Ajuste",
-      icon: "FileText" as const,
-      onClick: () => { }
     },
     {
       type: "separator" as const
@@ -63,9 +57,8 @@ export function PosCashierList({
       icon: "Trash2" as const,
       variant: "destructive" as const,
       onClick: () => {
-        if (confirm("Tem certeza que deseja excluir esta sessão?")) {
-          deleteSession(item.id);
-        }
+        setCurrentCashier(item);
+        openModal("delete-cashier");
       }
     }
   ];
@@ -152,29 +145,38 @@ export function PosCashierList({
 
   if (viewMode === "grid") {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.map((session) => (
           <Card
             key={session.id}
-            className="group hover:border-primary/40 transition-all duration-300 shadow-none border-muted-foreground/10 overflow-hidden"
+            className="group hover:border-primary/30 transition-all duration-500 shadow-sm hover:shadow-xl border-muted-foreground/10 bg-gradient-to-br from-background to-muted/20 overflow-hidden relative"
           >
-            <CardContent className="p-5 space-y-6">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-muted/30 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    <Image
-                      src="/pos-computer-icon.png"
-                      alt="POS"
-                      fill
-                      className="object-contain"
-                    />
+            {/* Background Decorative Element */}
+            <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-500" />
+
+            <CardContent className="p-0">
+              {/* Header Section */}
+              <div className="p-5 flex items-start justify-between border-b border-muted-foreground/5 bg-muted/10">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg group-hover:scale-110 transition-transform duration-500 border border-primary/20 shadow-inner">
+                      {session.user?.name?.charAt(0) || "O"}
+                    </div>
+                    <div className={cn(
+                      "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background shadow-sm",
+                      session.isOpen ? "bg-green-500 animate-pulse" : "bg-muted-foreground"
+                    )} />
                   </div>
-                  <div className="space-y-1">
-                    <h4 className="font-semibold text-base">{session.user?.name || "Operador"}</h4>
-                    <Badge variant={session.isOpen ? "success" : "secondary"}>
-                      <span className={cn("w-1 h-1 rounded-full mr-1.5", session.isOpen ? "bg-green-500" : "bg-muted-foreground")} />
-                      {session.isOpen ? "Aberto" : "Fechado"}
-                    </Badge>
+                  <div className="space-y-0.5">
+                    <h4 className="font-bold text-sm tracking-tight text-foreground/90 leading-tight">
+                      {session.user?.name || "Operador Desconhecido"}
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+                      <Icon name="Calendar" size={12} className="opacity-50" />
+                      {formatDateTime(session.openedAt).split(" ")[0]}
+                      <span className="opacity-40">•</span>
+                      {formatDateTime(session.openedAt).split(" ")[1]}
+                    </p>
                   </div>
                 </div>
                 <ButtonOnlyAction
@@ -183,42 +185,76 @@ export function PosCashierList({
                 />
               </div>
 
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest">
-                      Vendas
-                    </p>
-                    <p className="text-lg tracking-tight font-black">
-                      {formatCurrency(session.totalSales).split(",")[0]}
-                    </p>
+              {/* Main Metric Focus */}
+              <div className="px-5 py-6 flex flex-col items-center justify-center text-center space-y-1 bg-background">
+                <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-[0.15em]">
+                  Total em Vendas
+                </p>
+                <h3 className="text-3xl font-black tracking-tight text-primary drop-shadow-sm">
+                  {formatCurrency(session.totalSales)}
+                </h3>
+              </div>
+
+              {/* Data Grid */}
+              <div className="px-5 pb-5 grid grid-cols-2 gap-x-4 gap-y-4">
+                <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Icon name="CircleDollarSign" size={13} className="text-muted-foreground" />
+                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Cap. Inicial</span>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest">
-                      Início
-                    </p>
-                    <p className="text-sm font-medium">
-                      {formatDateTime(session.openedAt).split(" ")[1]}
-                    </p>
-                  </div>
+                  <p className="text-xs font-bold font-mono text-foreground/80">
+                    {formatCurrency(session.openingCash)}
+                  </p>
                 </div>
 
-                <div className="pt-2 border-t border-muted-foreground/5 flex justify-between items-center">
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                      Cap. Inicial
-                    </p>
-                    <p className="text-xs font-mono">{formatCurrency(session.openingCash)}</p>
+                <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Icon name="Scale" size={13} className="text-muted-foreground" />
+                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Esperado</span>
                   </div>
-                  {session.duration && (
-                    <div className="text-right space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                        Duração
-                      </p>
-                      <p className="text-xs font-medium">{session.duration}</p>
-                    </div>
-                  )}
+                  <p className="text-xs font-bold font-mono text-foreground/80">
+                    {formatCurrency(session.expectedClosingCash || session.openingCash)}
+                  </p>
                 </div>
+
+                <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Icon name="Clock" size={13} className="text-muted-foreground" />
+                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Duração</span>
+                  </div>
+                  <p className="text-xs font-bold text-foreground/80">
+                    {session.duration || "--:--"}
+                  </p>
+                </div>
+
+                <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Icon name="Wallet" size={13} className="text-muted-foreground" />
+                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Fundo</span>
+                  </div>
+                  <p className="text-xs font-bold text-foreground/80 capitalize">
+                    {session.fundType?.toLowerCase() === "coin" ? "Moeda" : "Nota"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Footer */}
+              <div className="px-5 py-3 border-t border-muted-foreground/5 bg-muted/5 flex items-center justify-between">
+                <Badge
+                  variant={session.isOpen ? "success" : "secondary"}
+                  className={cn(
+                    "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                    session.isOpen ? "bg-green-500/10 text-green-600 border-green-500/20 shadow-none" : "bg-muted/50 text-muted-foreground border-muted-foreground/10"
+                  )}
+                >
+                  {session.isOpen ? "Sessão Ativa" : "Sessão Encerrada"}
+                </Badge>
+
+                {!session.isOpen && session.closedAt && (
+                  <p className="text-[10px] text-muted-foreground font-medium italic">
+                    Fim: {formatDateTime(session.closedAt).split(" ")[1]}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent, Icon } from "@/components";
+import { Card, CardContent, Icon, DynamicMetricCard } from "@/components";
 import { useModal } from "@/stores";
 import { cn } from "@/lib/utils";
 import {
@@ -12,7 +12,6 @@ import { PosOpeningModal } from "@/components/client/management/pos/modal/pos-op
 import { useAuth } from "@/hooks/auth/use-auth";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { CashSession } from "@/types/cash-session";
-import { DynamicMetricCard } from "@/components/shared/dynamic-metric-card";
 
 interface PosGeneralSettingsProps {
     currentSession?: CashSession;

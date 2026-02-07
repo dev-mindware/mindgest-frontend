@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
-import { cashSessionsService } from "@/services";
+import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
 import { SucessMessage, ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
@@ -53,6 +53,9 @@ export function PosOpeningModal() {
     isLoading: isLoadingCashiers,
   } = useGetCashiersPaginated(1, 100); // Get more cashiers for the multi-select
 
+  const { mutateAsync: openSession, isPending: isOpening } = useOpenCashSession();
+  const { mutateAsync: updateSession, isPending: isUpdating } = useUpdateCashSession();
+
   const {
     register,
     control,
@@ -60,12 +63,12 @@ export function PosOpeningModal() {
     reset,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<PosOpeningFormData>({
     resolver: zodResolver(posOpeningSchema),
     defaultValues: {
       initialCapital: "",
-      workTime: "08:00",
+      workTime: "06:00",
       storeId: "",
       cashierIds: [],
       fundType: "Coin",
@@ -76,18 +79,25 @@ export function PosOpeningModal() {
 
   useEffect(() => {
     if (isEdit && currentCashier) {
+      // Normalize fundType from API (e.g. "COIN" -> "Coin", "NOTE" -> "Note")
+      const normalizedFundType = currentCashier.fundType
+        ? currentCashier.fundType.charAt(0).toUpperCase() + currentCashier.fundType.slice(1).toLowerCase()
+        : "Coin";
+
       reset({
-        initialCapital: (currentCashier.totalSold || 0).toString(),
-        workTime: currentCashier.activityTime || "",
-        storeId: "", // Mock stores don't match cashier mock yet
-        cashierIds: [currentCashier.id.toString()],
+        initialCapital: (currentCashier.openingCash || 0).toString(),
+        workTime: currentCashier.workTime || "06:00",
+        storeId: currentCashier.storeId || "",
+        cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
+        fundType: normalizedFundType,
       });
     } else {
       reset({
         initialCapital: "",
-        workTime: "",
+        workTime: "06:00",
         storeId: "",
         cashierIds: [],
+        fundType: "Coin",
       });
     }
   }, [isEdit, currentCashier, reset]);
@@ -102,13 +112,14 @@ export function PosOpeningModal() {
 
   const onSubmit = async (data: PosOpeningFormData) => {
     try {
-      await cashSessionsService.openSession(data);
-      SucessMessage("Caixa aberto com sucesso!");
+      if (isEdit && currentCashier) {
+        await updateSession({ id: currentCashier.id.toString(), data });
+      } else {
+        await openSession(data);
+      }
       handleClose();
     } catch (error: any) {
-      console.error(error);
-      const message = error?.response?.data?.message || "Ocorreu um erro ao abrir o caixa";
-      ErrorMessage(message);
+      // Errors are handled by the mutation's onError
     }
   };
 
@@ -269,7 +280,7 @@ export function PosOpeningModal() {
           </Button>
           <Button
             type="submit"
-            loading={isSubmitting}
+            loading={isOpening || isUpdating}
             className="bg-primary hover:bg-primary/90 text-white"
           >
             {isEdit ? "Salvar Alterações" : "Abrir Caixa"}

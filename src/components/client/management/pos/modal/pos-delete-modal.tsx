@@ -4,28 +4,23 @@ import { Button, GlobalModal } from "@/components";
 import { useModal } from "@/stores";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { ErrorMessage, SucessMessage } from "@/utils/messages";
+import { useDeleteCashSession } from "@/hooks/entities";
 
 export function PosDeleteModal() {
   const { closeModal, open } = useModal();
   const isOpen = open["delete-cashier"];
   const { currentCashier, setCurrentCashier } = useCurrentCashierStore();
-
-  // Since we don't have a real delete hook for POS yet, we simulate it
-  const isPending = false;
+  const { mutateAsync: deleteSessionMutate, isPending } = useDeleteCashSession();
 
   const handleDelete = async () => {
     if (!currentCashier) return;
 
     try {
-      console.log("Deletando caixa:", currentCashier.id);
-      // Simular API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      SucessMessage(`Caixa ${currentCashier.name} removido com sucesso.`);
+      await deleteSessionMutate(currentCashier.id);
       setCurrentCashier(null);
       closeModal("delete-cashier");
     } catch (error) {
-      ErrorMessage("Erro ao remover o caixa. Tente novamente.");
+      // Error handled by mutation
     }
   };
 
@@ -37,7 +32,7 @@ export function PosDeleteModal() {
       canClose
       className="!w-max"
       id="delete-cashier"
-      title={`Tem certeza que deseja apagar o ${currentCashier?.name}?`}
+      title={`Tem certeza que deseja apagar a sessão de ${currentCashier?.user?.name || "Operador"}?`}
       description="Lembre-se que esta ação não pode ser desfeita."
     >
       <div className="flex justify-end gap-4 pt-4">
@@ -55,7 +50,7 @@ export function PosDeleteModal() {
           variant="destructive"
           onClick={handleDelete}
         >
-          {isPending ? "Apagando..." : `Apagar ${currentCashier?.name}`}
+          {isPending ? "Apagando..." : "Apagar Sessão"}
         </Button>
       </div>
     </GlobalModal>

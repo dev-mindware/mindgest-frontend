@@ -3,7 +3,7 @@
 import { Button } from "@/components";
 import { InvoicePreviewDrawer as PosInvoicePreviewDrawer } from "../../modals/invoice-preview-drawer";
 import { ErrorMessage } from "@/utils";
-import { useCartCheckout, CartItem } from "./use-cart-checkout";
+import { useCartCheckout, CartItem } from "@/hooks";
 import { PaymentSummary } from "./payment-summary";
 import { CustomerSelection } from "./customer-selection";
 import { PaymentMethods } from "./payment-methods";
@@ -12,12 +12,14 @@ interface CartCheckoutFormProps {
     cartItems: CartItem[];
     onSuccess?: () => void;
     type?: "invoice" | "proforma";
+    cashSessionId: string;
 }
 
 export function CartCheckoutForm({
     cartItems,
     onSuccess,
     type = "invoice",
+    cashSessionId,
 }: CartCheckoutFormProps) {
     const {
         form: { handleSubmit },
@@ -40,13 +42,15 @@ export function CartCheckoutForm({
         setIsPreviewOpen,
         pendingPayload,
         isPending,
-    } = useCartCheckout({ cartItems, type, onSuccess });
+    } = useCartCheckout({ cartItems, type, onSuccess, cashSessionId });
 
     return (
         <>
             <div className="mt-4 p-4 border border-dashed rounded-md bg-muted/30">
                 <PaymentSummary
                     subtotal={totals.subtotal}
+                    taxAmount={totals.taxAmount}
+                    discountAmount={totals.discountAmount}
                     total={totals.total}
                     change={change}
                     paymentMethod={paymentMethod}

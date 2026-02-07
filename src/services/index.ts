@@ -10,3 +10,4 @@ export * from "./credit-notes-service";
 export * from "./cash-sessions-service";
 export * from "./cashier-service";
 export * from "./taxes-service";
+export * from "./cash-sessions-service"

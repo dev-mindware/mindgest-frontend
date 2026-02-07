@@ -1,16 +1,11 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Icon } from "@/components";
+import { Tabs, TabsContent, TabsList, TabsTrigger, Appearance, Icon } from "@/components";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PosGeneralSettings } from "./contents/general";
-import { PosWorkspaceSettings } from "./contents/workspace";
-
+import { PosGeneralSettings, PosWorkspaceSettings } from "./contents";
 import { currentStoreStore } from "@/stores";
 import { useQuery } from "@tanstack/react-query";
-import { cashSessionsService } from "@/services/cash-sessions-service";
-
-import { Appearance } from "@/components/templates/definitions/contents";
+import { cashSessionsService } from "@/services";
 
 export function PosSettingsSetup() {
     const router = useRouter();

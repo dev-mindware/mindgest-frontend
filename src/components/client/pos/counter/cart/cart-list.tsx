@@ -13,10 +13,12 @@ interface CartSectionProps {
     onUpdateQty: (item: CartItem, delta: number) => void;
     onRemove: (itemId: string) => void;
     onDelete: (itemId: string) => void;
+    onClearCart: () => void;
     type?: "invoice" | "proforma";
+    cashSessionId: string;
 }
 
-export function CartList({ cartItems, onUpdateQty, onRemove, onDelete, type = "invoice" }: CartSectionProps) {
+export function CartList({ cartItems, onUpdateQty, onRemove, onDelete, onClearCart, type = "invoice", cashSessionId }: CartSectionProps) {
     return (
         <div className="flex flex-col bg-sidebar rounded-md shadow-sm p-4 m-4 mt-2 border border-border/50 h-auto">
             <h2 className="text-xl font-bold mb-4">
@@ -62,7 +64,12 @@ export function CartList({ cartItems, onUpdateQty, onRemove, onDelete, type = "i
             </div>
 
             {/* Sub-components for checkout summary and payment methods */}
-            <CartCheckoutForm cartItems={cartItems} type={type} />
+            <CartCheckoutForm
+                cartItems={cartItems}
+                type={type}
+                cashSessionId={cashSessionId}
+                onSuccess={onClearCart}
+            />
         </div>
     );
 }

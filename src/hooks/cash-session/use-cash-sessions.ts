@@ -27,6 +27,23 @@ export function useGetCurrentSession(storeId?: string) {
   });
 }
 
+export function useOpenCashSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: any) => cashSessionsService.openSession(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
+      SucessMessage("Caixa aberto com sucesso!");
+    },
+    onError: (error: any) => {
+      ErrorMessage(
+        error?.response?.data?.message || "Ocorreu um erro ao abrir o caixa",
+      );
+    },
+  });
+}
+
 export function useUpdateCashSession() {
   const queryClient = useQueryClient();
 

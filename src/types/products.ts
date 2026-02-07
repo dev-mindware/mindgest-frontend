@@ -6,7 +6,7 @@ export interface Product {
   subcategory?: string;
   quantity: number;
   image?: string;
-  barcode?: number;
+  barcode?: string;
 
   // Preços
   price?: number;
@@ -29,7 +29,11 @@ export interface Product {
   supplier?: string;
   measurement?: string;
   expirydate?: Date;
-  tax?: number;
+  tax?: {
+    id: string;
+    name: string;
+    rate: number;
+  };
   warranty?: number;
   salesperday?: number;
   repositiontime?: number;
@@ -70,4 +74,11 @@ export interface OrderItem {
   title: string;
   price: number;
   quantity: number;
+}
+
+// POS Cart Types
+export type CartType = "invoice" | "proforma";
+
+export interface CartItem extends Product {
+  qty: number;
 }

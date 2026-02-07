@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils";
-import { PaymentMethod } from "./use-cart-checkout";
+import { PaymentMethod } from "@/hooks";
 
 interface PaymentMethodsProps {
     paymentMethod: PaymentMethod;
