@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent, Icon, DynamicMetricCard } from "@/components";
-import { useModal } from "@/stores";
+import { currentStoreStore, useModal } from "@/stores";
 import { cn } from "@/lib/utils";
 import {
     PosOpeningCashierModal,
@@ -12,6 +12,7 @@ import { PosOpeningModal } from "@/components/client/management/pos/modal/pos-op
 import { useAuth } from "@/hooks/auth/use-auth";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { CashSession } from "@/types/cash-session";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface PosGeneralSettingsProps {
     currentSession?: CashSession;
@@ -20,6 +21,8 @@ interface PosGeneralSettingsProps {
 export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) {
     const { openModal } = useModal();
     const { user } = useAuth();
+    const { currentStore } = currentStoreStore();
+    const queryClient = useQueryClient();
     const isOpen = !!currentSession?.isOpen;
     const isManagement = user?.role === "ADMIN" || user?.role === "OWNER" || user?.role === "MANAGER";
 
@@ -164,7 +167,11 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
             )}
 
             <PosOpeningModal />
-            <PosOpeningCashierModal />
+            <PosOpeningCashierModal onSuccess={() => {
+                queryClient.invalidateQueries({
+                    queryKey: ["current-cash-session", currentStore?.id]
+                });
+            }} />
             <PosRequestOpeningModal />
             <PosRegisterExpenseModal currentSession={currentSession} />
             <PosCloseSessionModal currentSession={currentSession} />

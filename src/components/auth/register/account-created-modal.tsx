@@ -1,47 +1,44 @@
 "use client";
 import Link from "next/link";
 import { useModal } from "@/stores";
-import { Button } from "@/components/ui";
+import { Button, Icon } from "@/components";
 import { GlobalModal } from "@/components/modal";
 
 export function AccountCreatedModal() {
   const { closeModal } = useModal();
 
-  function handleClose() {
-    closeModal("account-created");
-  }
-
   return (
     <GlobalModal
       sucess
-      canClose
+      canClose={false}
       id="account-created"
-      title={
-        <p className="text-center">
-          Conta criada com sucesso!
-        </p>
-      }
-      className="p-8"
-      description={
-        <>
-          <span className="text-lg text-gray-700 text-center">
-            🎉 Parabéns! Sua conta foi criada com sucesso.
-          </span>
-        </>
-      }
+      title="Conta Criada"
+      className="!w-lg text-center"
+      description="Tudo pronto para começar!"
     >
-      <div className="w-full mt-2 flex flex-col items-center justify-center">
-        <Link
-          href="/auth/login"
-          className="w-full block"
-        >
-          <Button
-            onClick={handleClose}
-            className="w-full bg-primary-500 hover:bg-primary-600"
-          >
-            Ir para o login
-          </Button>
-        </Link>
+      <div className="flex flex-col items-center justify-center py-6 space-y-4">
+        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-2 animate-bounce">
+          <Icon name="Check" className="w-8 h-8 text-green-600 dark:text-green-500" />
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="text-xl font-bold text-foreground">
+            Bem-vindo(a) à Mindgest!
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Sua conta foi criada com sucesso.
+          </p>
+        </div>
+
+        <div className="w-full pt-4">
+          <Link href="/auth/login" className="w-full block">
+            <Button
+              className="w-full bg-primary hover:bg-primary/90 font-semibold h-11"
+            >
+              Ir para o Login
+            </Button>
+          </Link>
+        </div>
       </div>
     </GlobalModal>
   );

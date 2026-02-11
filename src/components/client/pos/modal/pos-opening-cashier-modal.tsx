@@ -21,7 +21,11 @@ import { ManagerAuthModal, MODAL_MANAGER_AUTH_ID } from "../..";
 import { formatCurrency, parseCurrency } from "@/utils";
 import { parseTime } from "@internationalized/date";
 
-export function PosOpeningCashierModal() {
+interface PosOpeningCashierModalProps {
+    onSuccess?: () => void;
+}
+
+export function PosOpeningCashierModal({ onSuccess }: PosOpeningCashierModalProps) {
     const { closeModal, openModal } = useModal();
     const { user } = useAuth();
     const { currentStore } = currentStoreStore();
@@ -93,6 +97,7 @@ export function PosOpeningCashierModal() {
 
             await cashSessionsService.openSession(payload);
             SucessMessage("Sessão de caixa aberta com sucesso!");
+            if (onSuccess) onSuccess();
             handleClose();
         } catch (error: any) {
             console.error("Erro ao abrir sessão de caixa:", error);
@@ -159,7 +164,16 @@ export function PosOpeningCashierModal() {
                                                 hourCycle={24}
                                                 className="w-full"
                                                 value={value ? parseTime(value as string) : parseTime("08:00")}
-                                                onChange={(val: any) => onChange(val?.toString() || "")}
+                                                onChange={(val: any) => {
+                                                    if (val) {
+                                                        const timeStr = val.toString();
+                                                        // Ensure format is HH:MM
+                                                        const formatted = timeStr.split(':').slice(0, 2).join(':');
+                                                        onChange(formatted);
+                                                    } else {
+                                                        onChange("");
+                                                    }
+                                                }}
                                             >
                                                 <div className="relative">
                                                     <DateInput id="workTime-input" className="bg-background" />

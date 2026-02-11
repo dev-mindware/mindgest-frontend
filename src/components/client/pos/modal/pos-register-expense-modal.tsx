@@ -52,7 +52,6 @@ export function PosRegisterExpenseModal({ currentSession }: PosRegisterExpenseMo
             await cashSessionsService.registerExpense({
                 description: data.description,
                 amount: data.amount,
-                storeId: currentStore.id,
                 cashSessionId: currentSession.id,
             });
             SucessMessage("Despesa registada com sucesso!");

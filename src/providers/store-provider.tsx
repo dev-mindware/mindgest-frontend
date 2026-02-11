@@ -19,21 +19,22 @@ export function StoreProvider({ children }: StoreProviderProps) {
 
     const isAuthPage = pathname?.includes("/auth/");
     const { storesData } = useGetStores(user?.role as Role, !isAuthPage && !!user);
-    const { mutate: switchStore } = useSwitchStore();
+    const { mutate: switchStore, isPending: isSwitching } = useSwitchStore();
 
     useEffect(() => {
-        if (isAuthPage || !user) return;
+        if (isAuthPage || !user || !storesData || storesData.length === 0 || isSwitching) return;
 
         // If we have stores and none is selected, select the first one
-        if (!currentStore && storesData && storesData.length > 0) {
+        if (!currentStore) {
             switchStore(storesData[0]);
+            return;
         }
 
-        // If the user has only one store (like a cashier), ensure it's selected
-        if (storesData && storesData.length === 1 && currentStore?.id !== storesData[0].id) {
+        // If the user has only one store (like a cashier), ensure it's correctly selected if different
+        if (storesData.length === 1 && currentStore.id !== storesData[0].id) {
             switchStore(storesData[0]);
         }
-    }, [storesData, currentStore, switchStore, user, isAuthPage]);
+    }, [storesData, currentStore, switchStore, user, isAuthPage, isSwitching]);
 
     return <>{children}</>;
 }

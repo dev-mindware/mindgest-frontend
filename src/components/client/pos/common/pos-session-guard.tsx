@@ -12,12 +12,13 @@ import {
     Button,
     Icon,
 } from "@/components";
-import { currentStoreStore } from "@/stores";
+import { currentStoreStore, useAuthStore } from "@/stores";
 import { Loader2 } from "lucide-react";
 
 export function PosSessionGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
+    const { logout, isLoggingOut } = useAuthStore();
     const { currentStore } = currentStoreStore();
     const { data: currentSession, isLoading, error } = useGetCurrentSession(currentStore?.id);
 
@@ -29,7 +30,7 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
     if (!isProtectedPath) return <>{children}</>;
 
     // Show loading state while checking session
-    if (isLoading) {
+    if (isLoading || isLoggingOut) {
         return (
             <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/80 backdrop-blur-md">
                 <div className="relative flex flex-col items-center gap-6 p-10 rounded-3xl bg-card border border-primary/5 shadow-2xl">
@@ -126,7 +127,7 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
                         </Button>
                         <Button
                             variant="ghost"
-                            onClick={() => router.push("/dashboard")}
+                            onClick={() => logout()}
                         >
                             <Icon name="House" className="h-4 w-4" />
                             Voltar ao Início

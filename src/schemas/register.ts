@@ -6,6 +6,7 @@ export const registerSchema = z.object({
     .object({
       name: z
         .string()
+        .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
       email: z.string().email("Email invalido"),
@@ -14,7 +15,7 @@ export const registerSchema = z.object({
         .max(9, "O número deve ter 9 dígitos")
         .refine(
           (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
-          "Insira número de telemovél válido"
+          "Insira número de telemovél válido",
         ),
       password: z
         .string()

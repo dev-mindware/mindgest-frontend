@@ -48,11 +48,6 @@ export function PosOpeningModal() {
     refetch: refetchStores,
   } = useGetStoresPaginated(storePage, 10, "OWNER");
 
-  const {
-    data: allCashiers,
-    isLoading: isLoadingCashiers,
-  } = useGetCashiersPaginated(1, 100); // Get more cashiers for the multi-select
-
   const { mutateAsync: openSession, isPending: isOpening } = useOpenCashSession();
   const { mutateAsync: updateSession, isPending: isUpdating } = useUpdateCashSession();
 
@@ -74,6 +69,13 @@ export function PosOpeningModal() {
       fundType: "Coin",
     },
   });
+
+  const selectedStoreId = watch("storeId");
+
+  const {
+    data: allCashiers,
+    isLoading: isLoadingCashiers,
+  } = useGetCashiersPaginated(1, 100, "", selectedStoreId);
 
   const isEdit = !!currentCashier;
 

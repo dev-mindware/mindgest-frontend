@@ -55,7 +55,9 @@ api.interceptors.request.use(async (config) => {
     config.url &&
     whitelistedRoutes.some((route) => config.url?.includes(route)) &&
     !isGlobalRoute &&
-    !config.url.includes("receipt");
+    !config.url.includes("receipt") &&
+    !config.url.includes("/close") &&
+    !config.url.includes("/expenses");
 
   if (shouldInject) {
     const currentStore = currentStoreStore.getState().currentStore;

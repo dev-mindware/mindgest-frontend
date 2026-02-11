@@ -25,9 +25,7 @@ export const cashSessionsService = {
   },
 
   getCurrentSession: async (id: string | undefined) => {
-    const { data } = await api.get<CashSession>(
-      "/cash-sessions/current",
-    );
+    const { data } = await api.get<CashSession>("/cash-sessions/current");
     return data;
   },
 
@@ -44,7 +42,6 @@ export const cashSessionsService = {
   registerExpense: async (data: {
     description: string;
     amount: number;
-    storeId: string;
     cashSessionId: string;
   }) => {
     const response = await api.post("/cash-sessions/expenses", data);

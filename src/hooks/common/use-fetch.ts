@@ -14,9 +14,6 @@ export function useFetch<T>(key: string, endpoint: string, options = {}) {
       const response = await api.get<T>(endpoint);
       return response.data;
     },
-    refetchInterval: 10000,
-    refetchOnWindowFocus: true,
-    staleTime: 5000, 
     ...options,
   });
 }
