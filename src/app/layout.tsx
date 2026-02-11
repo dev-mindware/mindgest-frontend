@@ -8,6 +8,7 @@ import { SidebarProvider } from "@/components";
 import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { NotificationDetail } from "@/components/shared/notifications";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -60,6 +61,7 @@ export default function RootLayout({
                 </NuqsAdapter>
               </FeatureGateProvider>
             </AuthProvider>
+            <Analytics />
           </ReactQueryProvider>
         </ThemeProvider>
       </body>
