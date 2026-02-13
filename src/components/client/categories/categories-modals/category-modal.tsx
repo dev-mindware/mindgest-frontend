@@ -75,7 +75,6 @@ export function CategoryModal({ action }: CategoryModalProps) {
   };
 
   if (action === "edit" && !currentCategory || !isOpen) return null;
-  console.log(errors)
   return (
     <GlobalModal
       canClose

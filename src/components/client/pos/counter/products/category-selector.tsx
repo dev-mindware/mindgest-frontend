@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/components";
 import { Button } from "@/components/ui/button";
 import { Category } from "@/types";
+import { EmptyState } from "@/components/common/empty-state";
 
 interface CategorySectionProps {
   categories: Category[];
@@ -28,6 +29,16 @@ export function CategorySelector({
       });
     }
   };
+
+  if (categories.length === 0) {
+    return (
+      <EmptyState
+        icon="LayoutGrid"
+        title="Nenhuma categoria encontrada"
+        description="Adicione categorias para começar a vender."
+      />
+    );
+  }
 
   return (
     <div className="w-full mb-6 relative group">

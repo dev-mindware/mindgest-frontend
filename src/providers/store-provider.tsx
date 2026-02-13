@@ -21,11 +21,25 @@ export function StoreProvider({ children }: StoreProviderProps) {
     const { storesData } = useGetStores(user?.role as Role, !isAuthPage && !!user);
     const { mutate: switchStore, isPending: isSwitching } = useSwitchStore();
 
-    useEffect(() => {
-        if (isAuthPage || !user || !storesData || storesData.length === 0 || isSwitching) return;
+    const setCurrentStore = currentStoreStore((state) => state.setCurrentStore);
 
-        // If we have stores and none is selected, select the first one
+    useEffect(() => {
+        if (!user) {
+            setCurrentStore(undefined);
+            return;
+        }
+
+        if (isAuthPage || !storesData || storesData.length === 0 || isSwitching) return;
+
+        // If no store is selected, select the first one
         if (!currentStore) {
+            switchStore(storesData[0]);
+            return;
+        }
+
+        // If the selected store is not in the user's list, select the first one
+        const isCurrentStoreValid = storesData.some((store) => store.id === currentStore.id);
+        if (!isCurrentStoreValid) {
             switchStore(storesData[0]);
             return;
         }
@@ -34,7 +48,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
         if (storesData.length === 1 && currentStore.id !== storesData[0].id) {
             switchStore(storesData[0]);
         }
-    }, [storesData, currentStore, switchStore, user, isAuthPage, isSwitching]);
+    }, [storesData, currentStore, switchStore, user, isAuthPage, isSwitching, setCurrentStore]);
 
     return <>{children}</>;
 }

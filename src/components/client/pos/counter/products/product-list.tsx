@@ -2,6 +2,7 @@
 
 import { Product } from "@/types";
 import { ProductCard } from "./product-card";
+import { EmptyState } from "@/components/common/empty-state";
 
 interface ProductSectionProps {
     products: Product[];
@@ -18,6 +19,16 @@ export function ProductList({
     onRemoveFromCart,
     onUpdateQuantity,
 }: ProductSectionProps) {
+    if (products.length === 0) {
+        return (
+            <EmptyState
+                icon="PackageOpen"
+                title="Nenhum produto encontrado"
+                description="Tente buscar outro termo ou adicione novos produtos."
+            />
+        );
+    }
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
             {products.map((product) => (

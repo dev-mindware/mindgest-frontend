@@ -74,7 +74,7 @@ export function SidebarCompanyInfo() {
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">
                 <span className="font-medium truncate">
-                  {currentStore?.name || user?.company?.name || "Empresa"}
+                  {currentStore?.name || "Empresa"}
                 </span>
                 <span className="text-xs truncate">
                   {currentStore ? "Loja Selecionada" : "Selecione uma loja"}

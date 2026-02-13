@@ -5,12 +5,14 @@ import { SucessMessage } from "@/utils/messages";
 import { Role, StoreData } from "@/types";
 import { useFetch } from "../common/use-fetch";
 import { StoresResponse } from "@/types/entities";
+import { useAuth } from "../auth";
 
 export function useGetStores(role?: Role, enabled: boolean = true) {
+  const { user } = useAuth();
   const route = role === "OWNER" ? "stores" : "stores/my-stores";
 
   const { data, error, isLoading, refetch } = useFetch<StoresResponse>(
-    "stores",
+    `stores-${user?.id}`,
     `${route}?page=1&limit=10`,
     { enabled },
   );
