@@ -5,7 +5,11 @@ import { CategoriesPageContent, Icon } from "@/components";
 import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
 import { Notification } from "./contents/notifications";
-import { CollaboratorsPageContent, EntitiesPageContent } from "./contents";
+import {
+  CollaboratorsPageContent,
+  EntitiesPageContent,
+  SubscriptionInfo,
+} from "./contents";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface DefSetupProps {
@@ -25,7 +29,8 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   const { user } = useAuth();
 
   // Default to "Base" if undefined
-  const currentPlan = (user?.company?.subscription?.plan?.name as PlanType) || "Base";
+  const currentPlan =
+    (user?.company?.subscription?.plan?.name as PlanType) || "Base";
   const isOwner = user?.role === "OWNER";
 
   const allTabs = [
@@ -50,6 +55,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       label: "Notificações",
       icon: "Bell",
       component: <Notification />,
+      category: "general",
+      isVisible: isOwner,
+    },
+    {
+      id: "subscription",
+      label: "Subscrição",
+      icon: "CreditCard",
+      component: <SubscriptionInfo />,
       category: "general",
       isVisible: isOwner,
     },
@@ -79,18 +92,21 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     },
   ];
 
-  const tabs = allTabs.filter(tab => tab.isVisible);
+  const tabs = allTabs.filter((tab) => tab.isVisible);
 
   const enabledTabs = tabs.filter((tab) => !disabledTabs.includes(tab.id));
   const generalTabs = enabledTabs.filter((tab) => tab.category === "general");
   const workplaceTabs = enabledTabs.filter(
-    (tab) => tab.category === "workplace"
+    (tab) => tab.category === "workplace",
   );
 
   if (enabledTabs.length === 0) return null;
 
   const defaultTab = enabledTabs[0]?.id || "appearance";
-  const activeTab = currentTab && enabledTabs.some(t => t.id === currentTab) ? currentTab : defaultTab;
+  const activeTab =
+    currentTab && enabledTabs.some((t) => t.id === currentTab)
+      ? currentTab
+      : defaultTab;
 
   // Função para limpar query params ao trocar de tab
   const handleTabChange = (value: string) => {
@@ -99,7 +115,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
 
   const renderTabTrigger = (
     tab: (typeof tabs)[0],
-    isDesktop: boolean = true
+    isDesktop: boolean = true,
   ) => {
     const baseClasses = isDesktop
       ? "hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
@@ -108,14 +124,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     return (
       <TabsTrigger key={tab.id} value={tab.id} className={baseClasses}>
         <Icon
-          name={
-            tab.icon as
-            | "User"
-            | "Bell"
-            | "Users"
-            | "BriefcaseBusiness"
-            | "Sparkles"
-          }
+          name={tab.icon as any}
           className={isDesktop ? "-ms-0.5 me-1.5 opacity-60" : ""}
           size={16}
           aria-hidden="true"
