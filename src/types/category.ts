@@ -1,6 +1,6 @@
 export type CategoryData = {
   name: string;
-  description: string;
+  description?: string;
 };
 
 export interface Category {
