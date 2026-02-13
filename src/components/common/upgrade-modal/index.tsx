@@ -53,7 +53,15 @@ export function UpgradeModal({ feature }: { feature: string }) {
           >
             Talvez Depois
           </Button>
-          <Link href="/pricing" target="_blank" className="block flex-1">
+          <Link
+            onClick={(e) => {
+              e.stopPropagation();
+              closeModal("upgrade-modal");
+            }}
+            href="/plans"
+            target="_blank"
+            className="block flex-1"
+          >
             <Button className="w-full bg-primary text-white hover:opacity-90">
               Ver Planos
             </Button>

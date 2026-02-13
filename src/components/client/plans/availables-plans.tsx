@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Icon,
   Badge,
@@ -7,22 +9,16 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
+  PlansPageSkeleton,
 } from "@/components";
-import { useCurrentPlanStore } from "@/stores";
 import { Plan } from "@/types";
+import { usePlans } from "@/hooks";
+import { useCurrentPlanStore } from "@/stores";
 import { formatCurrency } from "@/utils";
+import { PlanInclusionFeatures } from "./plan-inclusion-features";
 
-interface AvailablePlansProps {
-  plans: Plan[];
-  currentPlanId: string | undefined;
-  hasActiveSubscription: boolean;
-}
-
-export function AvailablePlans({
-  plans,
-  currentPlanId,
-  hasActiveSubscription,
-}: AvailablePlansProps) {
+export function AvailablePlans() {
+  const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
 
   function onHandlerChoosePlan(plan: Plan) {
@@ -45,96 +41,112 @@ export function AvailablePlans({
     hasPosManagement: "Gestão de POS",
   };
 
-  const activePlanId = currentPlanId || plans[1]?.id;
-
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-6">Planos Disponíveis</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {plans.map((plan, index) => {
-          const isActive = activePlanId === plan.id;
-          const isPopular = index === 1;
-          const buttonIsDisabled = isActive || hasActiveSubscription;
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            Escolha o Plano Ideal para o Seu Negócio
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Otimize a gestão do seu negócio com nossas soluções completas.
+            Escolha o plano que melhor se adapta às suas necessidades.
+          </p>
+        </div>
 
-          const features: string[] = [
-            `Até ${
-              plan.maxUsers === -1
-                ? "usuários ilimitados"
-                : plan.maxUsers + " usuários"
-            }`,
-            `Até ${
-              plan.maxStores === -1
-                ? "lojas ilimitadas"
-                : plan.maxStores + " loja(s)"
-            }`,
-            ...Object.entries(plan.features)
-              .filter(([_, enabled]) => enabled)
-              .map(([key]) => featureLabels[key] || key),
-          ];
+        {isLoading ? (
+          <PlansPageSkeleton />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {plans.map((plan, index) => {
+                const isPopular = index === 1;
 
-          return (
-            <Card
-              key={plan.id}
-              className={`relative rounded-lg shadow-md ${
-                isActive
-                  ? "border-2 border-primary-500 bg-primary-300/10 shadow-xl"
-                  : "border border-border bg-card"
-              }`}
-            >
-              {isActive && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary-500/10 text-foreground">
-                    <Icon
-                      name={currentPlanId ? "Crown" : "Star"}
-                      className="h-3 w-3 mr-1"
-                    />
-                    {currentPlanId ? "Atual" : "Popular"}
-                  </Badge>
-                </div>
-              )}
+                const features: string[] = [
+                  `Até ${
+                    plan.maxUsers === -1
+                      ? "usuários ilimitados"
+                      : plan.maxUsers + " usuários"
+                  }`,
+                  `Até ${
+                    plan.maxStores === -1
+                      ? "lojas ilimitadas"
+                      : plan.maxStores + " loja(s)"
+                  }`,
+                  ...Object.entries(plan.features)
+                    .filter(([_, enabled]) => enabled)
+                    .map(([key]) => featureLabels[key] || key),
+                ];
 
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg">{plan.name}</CardTitle>
-                <div className="text-2xl font-bold text-primary-600">
-                  {formatCurrency(Number(plan.priceMonthly))}
-                  <span className="text-base text-foreground"> /mês</span>
-                </div>
-                <p className="text-sm text-foreground">
-                  {plan.isPublic ? "Disponível publicamente" : "Plano privado"}
-                </p>
-              </CardHeader>
+                return (
+                  <Card
+                    key={plan.id}
+                    className={`relative border-border rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl ${
+                      isPopular
+                        ? "border-2 border-primary-500 bg-primary-300/5 shadow-2xl scale-105"
+                        : "border border-border bg-card"
+                    }`}
+                  >
+                    {isPopular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <Badge className="bg-primary-500 text-white px-4 py-1 shadow-lg">
+                          <Icon name="Star" className="h-3 w-3 mr-1" />
+                          Mais Popular
+                        </Badge>
+                      </div>
+                    )}
 
-              <CardContent className="grow">
-                <ul className="space-y-2 mb-6">
-                  {features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-2">
-                      <Icon
-                        name="Check"
-                        className="h-4 w-4 text-green-600 flex-shrink-0"
-                      />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
+                    <CardHeader className="text-center pb-4">
+                      <CardTitle className="text-2xl font-bold mb-2">
+                        {plan.name}
+                      </CardTitle>
+                      <div className="text-4xl font-bold text-primary-600 mb-2">
+                        {formatCurrency(Number(plan.priceMonthly))}
+                        <span className="text-base text-muted-foreground font-normal">
+                          {" "}
+                          /mês
+                        </span>
+                      </div>
+                    </CardHeader>
 
-              <CardFooter>
-                <Button
-                  onClick={() => onHandlerChoosePlan(plan)}
-                  className={`w-full ${buttonIsDisabled && "bg-muted"}`}
-                  variant={isActive ? "outline" : "default"}
-                  disabled={buttonIsDisabled}
-                >
-                  {isActive
-                    ? currentPlanId
-                      ? "Plano Atual"
-                      : "Plano Popular"
-                    : "Escolher Plano"}
-                </Button>
-              </CardFooter>
-            </Card>
-          );
-        })}
+                    <CardContent className="flex-grow">
+                      <ul className="space-y-3">
+                        {features.map((feature, featureIndex) => (
+                          <li
+                            key={featureIndex}
+                            className="flex items-start gap-3"
+                          >
+                            <div className="mt-0.5">
+                              <Icon
+                                name="Check"
+                                className="h-5 w-5 text-green-600 flex-shrink-0"
+                              />
+                            </div>
+                            <span className="text-sm text-foreground">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+
+                    <CardFooter className="pt-6">
+                      <Button
+                        onClick={() => onHandlerChoosePlan(plan)}
+                        className="w-full"
+                        variant={isPopular ? "default" : "outline"}
+                        size="lg"
+                      >
+                        Escolher {plan.name}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
+            <PlanInclusionFeatures />
+          </>
+        )}
       </div>
     </div>
   );

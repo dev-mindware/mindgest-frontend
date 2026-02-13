@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
-import { Inter, Outfit } from "next/font/google";
-import { ThemeProvider, FeatureGateProvider, StoreProvider } from "@/providers";
+import { Inter, Outfit, } from "next/font/google";
+import { ThemeProvider } from "@/providers";
 import { CustomToaster } from "@/utils";
 import { SidebarProvider } from "@/components";
 import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { NotificationDetail } from "@/components/shared/notifications";
-import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -51,17 +50,12 @@ export default function RootLayout({
         >
           <ReactQueryProvider>
             <AuthProvider>
-              <FeatureGateProvider>
-                <NuqsAdapter>
-                  <StoreProvider>
-                    <SidebarProvider>{children}</SidebarProvider>
-                  </StoreProvider>
-                  <CustomToaster />
-                  <NotificationDetail />
-                </NuqsAdapter>
-              </FeatureGateProvider>
+              <NuqsAdapter>
+                <SidebarProvider>{children}</SidebarProvider>
+                <CustomToaster />
+                <NotificationDetail />
+              </NuqsAdapter>
             </AuthProvider>
-            <Analytics />
           </ReactQueryProvider>
         </ThemeProvider>
       </body>

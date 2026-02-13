@@ -1,7 +1,6 @@
 "use client";
 import { usePlans } from "@/hooks";
 import { InfoBanner, PlansPageSkeleton, RequestError } from "@/components";
-import { AvailablePlans } from "./availables-plans";
 import { useAuth } from "@/hooks/auth";
 import { CurrentPlanCard } from "./current-plan-card";
 import { WithoutActivePlan } from "./without-active-plan";
@@ -42,11 +41,11 @@ export function PlansAvailableInfo() {
                 <WithoutActivePlan />
               )}
 
-              <AvailablePlans
+              {/* <AvailablePlans
                 plans={plans}
                 currentPlanId={currentPlan?.id}
                 hasActiveSubscription={hasSubscription}
-              />
+              /> */}
             </div>
           </div>
         </div>
