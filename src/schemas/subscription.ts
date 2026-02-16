@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FileSchema } from "./helps";
 
 export const FeaturesSchema = z.object({
   hasPOS: z.boolean(),
@@ -26,9 +27,11 @@ const PlanSchema = z.object({
 export const subscriptionSchema = z.object({
   status: z.string().trim(),
   companyId: z.string().trim(),
-  planId: z.string().trim(),
 
-  billingPeriodInMonths: z.number().min(1, "Informe pelo menos 1 mês"),
+  planId: z.string().trim(),
+  frequency: z.enum(["MONTHLY", "ANNUAL"]),
+  proofPayment: z.any().optional(),
+
   periodStartsAt: z.string().trim().datetime().optional(),
   periodEndsAt: z.string().trim().datetime().optional(),
   canceledAt: z.string().trim().datetime().nullable().optional(),

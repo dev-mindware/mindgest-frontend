@@ -3,6 +3,7 @@ import {
   Card,
   Input,
   Button,
+  Label,
   CardTitle,
   AlertError,
   CardHeader,
@@ -11,11 +12,12 @@ import {
   RequestError,
   SubscriptionSkeleton,
   SubscriptionSummary,
+  FileUpload,
 } from "@/components";
 import { Plan } from "@/types";
 import { usePlans } from "@/hooks";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
 import { PlanCard } from "./plan-card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCurrentPlanStore } from "@/stores";
@@ -24,39 +26,33 @@ import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
 import { useAuth } from "@/hooks/auth";
 
 interface SubscriptionFormProps {
-  onNext: (data: SubscriptionFormData) => void;
+  form: UseFormReturn<SubscriptionFormData>;
+  onNext: () => void;
 }
 
-export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
+export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
   const { user } = useAuth();
   const { plans, error, isLoading, refetch } = usePlans();
   const { currentPlanSelected, setCurrentPlanSelected } = useCurrentPlanStore();
   const {
-    watch,
+    control,
     register,
-    handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<SubscriptionFormData>({
-    resolver: zodResolver(subscriptionSchema),
-    defaultValues: {
-      status: "PENDING_PAYMENT",
-      billingPeriodInMonths: 1,
-    }
-  })
- 
+  } = form;
+
   useEffect(() => {
     if (plans.length > 0) {
       if (currentPlanSelected) {
         setValue("plan", currentPlanSelected);
         setValue("planId", currentPlanSelected.id)
-        
+
       } else {
         setValue("plan", plans[0]);
         setValue("planId", plans[0].id)
         setCurrentPlanSelected(plans[0]);
       }
-      
+
       setValue("companyId", user?.company?.id || "");
       setValue("name", user?.name || "");
       setValue("email", user?.email || "");
@@ -68,27 +64,23 @@ export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
   if (isLoading) return <SubscriptionSkeleton />;
   if (error) return <RequestError refetch={refetch} />;
 
-  const handleNext = (data: SubscriptionFormData) => {
+  const handleNext = () => {
     if (!currentPlanSelected) {
       ErrorMessage("Por favor, selecione um plano.");
       return;
     }
 
-    onNext({
-      ...data,
-      planId: currentPlanSelected.id,
-      status: "PENDING_PAYMENT",
-    });
+    // Set the planId before proceeding
+    setValue("planId", currentPlanSelected.id);
+    setValue("status", "PENDING_PAYMENT");
+
+    onNext();
   };
 
   const handlePlanSelect = (plan: Plan) => {
     setCurrentPlanSelected(plan);
     setValue("plan", plan);
   };
-
-  if (!plans.length) {
-    return <p className="text-foreground">Nenhum plano disponível</p>;
-  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -164,22 +156,41 @@ export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
 
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-foreground">
-                  Duração da Assinatura
+                  Tipo de Assinatura
                 </h3>
-                <Input
-                  min={1}
-                  type="number"
-                  defaultValue={watch("billingPeriodInMonths")}
-                  label="Meses (Número de meses que deseja assinar)"
-                  {...register("billingPeriodInMonths", { valueAsNumber: true })}
-                  className="border-border focus:border-primary-500 focus:ring-primary-500"
-                  error={errors?.billingPeriodInMonths && errors?.billingPeriodInMonths?.message}
-                />
+
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">Tipo de Pagamento</Label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        value="MONTHLY"
+                        {...register("frequency")}
+                        defaultChecked
+                        className="w-4 h-4 text-primary-500 border-gray-300 focus:ring-primary-500"
+                      />
+                      <span className="text-sm text-foreground">Mensal</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        value="ANNUAL"
+                        {...register("frequency")}
+                        className="w-4 h-4 text-primary-500 border-gray-300 focus:ring-primary-500"
+                      />
+                      <span className="text-sm text-foreground">Anual</span>
+                    </label>
+                  </div>
+                  {errors.frequency && (
+                    <AlertError errorMessage={errors.frequency.message} />
+                  )}
+                </div>
               </div>
 
               <Button
                 type="button"
-                onClick={handleSubmit(handleNext)}
+                onClick={handleNext}
                 className="w-full bg-primary-500 hover:bg-primary-600 text-white text-sm py-3 font-semibold"
               >
                 Avançar
@@ -191,7 +202,7 @@ export function SubscriptionForm({ onNext }: SubscriptionFormProps) {
 
       <div className="lg:col-span-1">
         <SubscriptionSummary
-          months={watch("billingPeriodInMonths")}
+          months={1}
           selectedPlan={currentPlanSelected}
         />
       </div>

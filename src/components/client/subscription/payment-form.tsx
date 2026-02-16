@@ -1,6 +1,6 @@
 "use client";
 import { formatCurrency } from "@/utils";
-import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { PaymentTerms } from "./payment-terms";
 import { SubscriptionFormData } from "@/schemas";
 import { PaymentUserInfo } from "./payment-user-info";
@@ -13,41 +13,38 @@ import {
   CardHeader,
   CardContent,
   CardTitle,
+  FileUpload,
 } from "@/components";
 import { ErrorMessage } from "@/utils/messages";
-import { useCreateSubscription } from "@/hooks/susbcription";
 
 interface PaymentFormProps {
-  subscriptionData: SubscriptionFormData;
+  form: UseFormReturn<SubscriptionFormData>;
   onBack: () => void;
+  onSubmit: (data: SubscriptionFormData) => Promise<void>;
+  isPending: boolean;
 }
 
-export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
-  const { mutateAsync, isPending } = useCreateSubscription();
+export function PaymentForm({ form, onBack, onSubmit, isPending }: PaymentFormProps) {
+  const { control, handleSubmit, watch } = form;
 
-  const planValue = Number(subscriptionData?.plan.priceMonthly) || 0;
-  const months = subscriptionData?.billingPeriodInMonths || 1;
+  const subscriptionData = watch();
+
+  const planValue = Number(subscriptionData?.plan?.priceMonthly) || 0;
+  const months = 1;
   const totalToPay = planValue * months;
 
-  const { handleSubmit } = useForm<SubscriptionFormData>({
-    defaultValues: subscriptionData,
-  });
-
-  async function onSubmit(data: SubscriptionFormData) {
-    if (!data) {
+  async function handleFormSubmit(data: SubscriptionFormData) {
+    if (!data.proofPayment) {
       ErrorMessage("Por favor, envie o comprovativo de pagamento");
       return;
     }
 
-    await mutateAsync(data);
-
-    window.location.replace("/owner/dashboard");
-    localStorage.removeItem("plan-storage");
+    await onSubmit(data);
   }
 
   return (
     <div className="container mx-auto py-8">
-      <div className="grid lg:grid-cols-3 bg-pr gap-8 max-w-7xl mx-auto">
+      <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         <div className="lg:col-span-2 space-y-6">
           <div className="flex flex-col gap-4">
             <button
@@ -70,7 +67,14 @@ export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
           <Card className="p-6 border-border shadow-none">
             <h2 className="text-lg font-semibold mb-4">Método de Pagamento</h2>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <FileUpload
+              control={control}
+              name="proofPayment"
+              accept={[".pdf", ".jpg", ".jpeg", ".png"]}
+              label="Comprovante de Pagamento"
+            />
+
+            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
               <Button
                 size="lg"
                 type="submit"
@@ -98,7 +102,7 @@ export function PaymentForm({ subscriptionData, onBack }: PaymentFormProps) {
               <div className="flex items-center justify-between">
                 <span>Plano selecionado:</span>
                 <Badge className="bg-primary-500 text-white">
-                  {subscriptionData?.plan.name}
+                  {subscriptionData?.plan?.name}
                 </Badge>
               </div>
 
