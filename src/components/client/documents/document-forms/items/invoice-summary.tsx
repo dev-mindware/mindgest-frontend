@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Input, SelectField, Separator } from "@/components";
+import { Input, InputCurrency, SelectField, Separator } from "@/components";
 import { formatCurrency } from "@/utils";
 
 interface InvoiceSummaryProps {
@@ -41,14 +41,17 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
             ]}
           />
 
-          <Input
-            min={0}
-            max={100}
-            type="number"
+          <InputCurrency
             label="Desconto (%)"
+            suffix="%"
             value={globalDiscount}
-            onChange={(e) => setGlobalDiscount(Number(e.target.value))}
+            onValueChange={(value) => setGlobalDiscount(value)}
+            decimalScale={2}
+            fixedDecimalScale
+            allowNegative={false}
+            isAllowed={(values) => (values.floatValue ?? 0) <= 100}
           />
+
         </div>
 
 

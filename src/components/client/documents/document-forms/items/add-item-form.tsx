@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import React, { useState, useCallback, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, Input, RHFSelect } from "@/components";
+import { Button, Input, InputCurrency, RHFSelect } from "@/components";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { formatCurrency, parseCurrency } from "@/utils";
 import { useGetTaxes } from "@/hooks/taxes/use-taxes";
@@ -139,7 +139,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
               value={selectedProduct}
               onChange={handleProductChange}
               displayFields={["name", "description"]}
-              minChars={2}
+              minChars={3}
               formatCreateLabel={(input: string) => `➕ Adicionar "${input}"`}
             />
           </div>
@@ -151,7 +151,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
               <Input
                 {...field}
                 min={1}
-                type="number"
+                type="quantity"
                 label="Quantidade"
                 onChange={(e) => field.onChange(Math.max(1, Number(e.target.value)))}
                 placeholder="1"
@@ -163,15 +163,19 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             control={control}
             name="price"
             render={({ field }) => (
-              <Input
-                label="Preço Unitário (Kz)"
-                value={formatCurrency(field.value)}
-                onChange={(e) => field.onChange(parseCurrency(e.target.value))}
-                disabled={!isNewProduct}
-                placeholder="0.00"
+              <InputCurrency
+                ref={field.ref}
+                label="Preço Unitário"
+                placeholder="0,00"
+                value={field.value}
+                onValueChange={(value) => field.onChange(value)}
+                decimalScale={2}
+                fixedDecimalScale
+                allowNegative={false}
               />
             )}
           />
+
         </div>
 
         {isNewProduct && (

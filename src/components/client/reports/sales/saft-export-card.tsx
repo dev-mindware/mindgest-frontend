@@ -32,12 +32,9 @@ export function SaftExportCard() {
   );
   const [isExporting, setIsExporting] = useState(false);
 
-  // Generate last 5 years
   const years = Array.from({ length: 5 }, (_, i) =>
     (currentYear - i).toString()
   );
-
-  // Generate months
   const months = Array.from({ length: 12 }, (_, i) => {
     const date = new Date(2024, i, 1);
     return {
@@ -57,7 +54,6 @@ export function SaftExportCard() {
         responseType: "blob",
       });
 
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -72,10 +68,12 @@ export function SaftExportCard() {
 
       SucessMessage("Ficheiro SAFT exportado com sucesso!");
     } catch (error: any) {
-      console.error("Error exporting SAFT:", error);
-      ErrorMessage(
-        error?.response?.data?.message || "Erro ao exportar ficheiro SAFT"
-      );
+      if (error?.response) {
+        ErrorMessage(error?.response?.data?.message);
+      } else {
+        ErrorMessage("Erro ao exportar ficheiro SAFT");
+      }
+
     } finally {
       setIsExporting(false);
     }

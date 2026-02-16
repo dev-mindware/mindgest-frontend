@@ -14,6 +14,7 @@ import {
   CategoryModal,
   ProductModalSkeleton,
   FeatureGate,
+  InputCurrency,
 } from "@/components";
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores/modal/use-modal-store";
@@ -139,7 +140,7 @@ function AddProductFormContent() {
               error={errors.name?.message}
               placeholder="Ex: Teclado Logitech"
             />
-      
+
 
             <RHFSelect
               name="taxId"
@@ -151,16 +152,20 @@ function AddProductFormContent() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
             <Controller
               control={control}
               name="price"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  startIcon="Coins"
-                  label="Preço de Venda"
-                  placeholder="Ex: 10.00"
-                  value={formatCurrency(value ?? 0)}
-                  onChange={(e) => onChange(parseCurrency(e.target.value))}
+              render={({ field }) => (
+                <InputCurrency
+                  ref={field.ref}
+                  label="Preço Unitário"
+                  placeholder="0,00"
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value)}
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
                   error={errors.price?.message}
                 />
               )}
@@ -168,13 +173,16 @@ function AddProductFormContent() {
             <Controller
               control={control}
               name="cost"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  startIcon="Coins"
+              render={({ field }) => (
+                <InputCurrency
+                  ref={field.ref}
                   label="Custo de Compra"
-                  placeholder="Ex: 10.000"
-                  value={formatCurrency(value ?? 0)}
-                  onChange={(e) => onChange(parseCurrency(e.target.value))}
+                  placeholder="0,00"
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value)}
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
                   error={errors.cost?.message}
                 />
               )}
@@ -209,7 +217,6 @@ function AddProductFormContent() {
 
           </div>
 
-          {/* <ProOnly className="space-y-4"> */}
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
               <Input
