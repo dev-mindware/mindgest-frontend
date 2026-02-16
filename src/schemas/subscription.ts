@@ -11,12 +11,12 @@ export const FeaturesSchema = z.object({
 });
 
 const PlanSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().trim().optional(),
   name: z.enum(["Base", "Pro", "Smart"]),
-  priceMonthly: z.string(),
+  priceMonthly: z.string().trim(),
   isPublic: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().trim(),
+  updatedAt: z.string().trim(),
   maxUsers: z.number(),
   maxStores: z.number(),
   billingIntervals: z.any(),
@@ -24,24 +24,24 @@ const PlanSchema = z.object({
 });
 
 export const subscriptionSchema = z.object({
-  status: z.string(),
-  companyId: z.string(),
-  planId: z.string(),
+  status: z.string().trim(),
+  companyId: z.string().trim(),
+  planId: z.string().trim(),
 
   billingPeriodInMonths: z.number().min(1, "Informe pelo menos 1 mês"),
-  periodStartsAt: z.string().datetime().optional(),
-  periodEndsAt: z.string().datetime().optional(),
-  canceledAt: z.string().datetime().nullable().optional(),
+  periodStartsAt: z.string().trim().datetime().optional(),
+  periodEndsAt: z.string().trim().datetime().optional(),
+  canceledAt: z.string().trim().datetime().nullable().optional(),
 
-  paymentProvider: z.string().optional(),
-  providerClientId: z.string().optional(),
-  providerSubscriptionId: z.string().optional(),
+  paymentProvider: z.string().trim().optional(),
+  providerClientId: z.string().trim().optional(),
+  providerSubscriptionId: z.string().trim().optional(),
 
   plan: PlanSchema,
-  name: z.string(),
-  email: z.string().email(),
-  company: z.string(),
-  phone: z.string(),
+  name: z.string().trim(),
+  email: z.string().trim().email(),
+  company: z.string().trim(),
+  phone: z.string().trim(),
 });
 
 export type SubscriptionFormData = z.infer<typeof subscriptionSchema>;

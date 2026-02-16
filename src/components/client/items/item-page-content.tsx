@@ -15,11 +15,12 @@ import {
 } from "@/components";
 import {
   AddProductModal,
+  EditProductModal,
   ProductList,
   ServiceList,
   ServiceModal,
 } from "@/components/client";
-import { useModal } from "@/stores";
+import { currentProductStore, useModal } from "@/stores";
 import { ChevronDown, Plus, Barcode, Keyboard } from "lucide-react";
 import { BarcodeScannerModal, BARCODE_SCANNER_MODAL_ID } from "./products/product-modals/barcode-scanner-modal";
 import { FeatureGate } from "@/components";
@@ -40,6 +41,7 @@ export function ItemsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { openModal, open } = useModal();
+  const { currentProduct } = currentProductStore();
   const activeTab = (searchParams.get("tab") as ItemTab) ?? "product";
 
   const handleTabChange = useCallback(
@@ -118,6 +120,8 @@ export function ItemsPageContent() {
       </Tabs>
 
       {open["add-product"] && <AddProductModal />}
+
+      {open["edit-product"] && currentProduct && <EditProductModal product={currentProduct} />}
       {open["add-service"] && <ServiceModal action="add" />}
       <BarcodeScannerModal />
     </div>

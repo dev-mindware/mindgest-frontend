@@ -63,11 +63,9 @@ export function DownloadDocumentButton({
         </DropdownMenuItem>
 
         {showThermalOption && (
-          <FeatureGate minPlan="Pro" fallback="disabled">
-            <DropdownMenuItem onClick={() => handleDownload("thermal")}>
-              Talão
-            </DropdownMenuItem>
-          </FeatureGate>
+          <DropdownMenuItem onClick={() => handleDownload("thermal")}>
+            Talão
+          </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

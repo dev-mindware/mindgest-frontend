@@ -1,20 +1,24 @@
 import { z } from "zod";
 
 export const posOpeningSchema = z.object({
-  initialCapital: z.string().min(1, "Capital inicial é obrigatório"),
-  workTime: z.string().min(1, "Tempo de expediente é obrigatório"),
-  storeId: z.string().min(1, "Loja é obrigatória"),
-  cashierIds: z.array(z.string()).min(1, "Selecione pelo menos um caixa"),
-  fundType: z.string().optional(),
+  initialCapital: z.string().trim().min(1, "Capital inicial é obrigatório"),
+  workTime: z.string().trim().min(1, "Tempo de expediente é obrigatório"),
+  storeId: z.string().trim().min(1, "Loja é obrigatória"),
+  cashierIds: z
+    .array(z.string().trim())
+    .min(1, "Selecione pelo menos um caixa"),
+  fundType: z.string().trim().optional(),
 });
 
 export const posOpeningCashierSchema = z.object({
-  initialCapital: z.string().min(1, "Capital inicial é obrigatório"),
-  workTime: z.string().min(1, "Tempo de expediente é obrigatório"),
-  storeId: z.string().min(1, "Loja é obrigatória"),
-  cashierIds: z.array(z.string()).min(1, "Selecione pelo menos um caixa"),
-  fundType: z.string().optional(),
-  managerBarcode: z.string().min(1, "Código do gerente é obrigatório"),
+  initialCapital: z.string().trim().min(1, "Capital inicial é obrigatório"),
+  workTime: z.string().trim().min(1, "Tempo de expediente é obrigatório"),
+  storeId: z.string().trim().min(1, "Loja é obrigatória"),
+  cashierIds: z
+    .array(z.string().trim())
+    .min(1, "Selecione pelo menos um caixa"),
+  fundType: z.string().trim().optional(),
+  managerBarcode: z.string().trim().min(1, "Código do gerente é obrigatório"),
 });
 
 export type PosOpeningFormData = z.infer<typeof posOpeningSchema>;

@@ -2,14 +2,14 @@ import { z } from "zod";
 
 export const FileSchema = z.object({
   size: z.number(),
-  type: z.string(),
-  filename: z.string(),
-  url: z.string().url(),
+  type: z.string().trim(),
+  filename: z.string().trim(),
+  url: z.string().trim().url(),
 });
 
 export const ItemSchema = z.object({
-  id: z.string().optional(),
-  description: z.string().optional(),
+  id: z.string().trim().optional(),
+  description: z.string().trim().optional(),
   type: z.enum(["PRODUCT", "SERVICE"]),
   quantity: z
     .number({ invalid_type_error: "A quantidade deve ser um número" })
@@ -30,11 +30,12 @@ export const ItemSchema = z.object({
     .nullable(),
 
   isFromAPI: z.boolean().optional(),
-  taxId: z.string().optional(),
+  taxId: z.string().trim().optional(),
 });
 
 export const taxNumberSchema = z
   .string()
+  .trim()
   .nonempty("Campo obrigatorio")
   .refine(
     (value) => /^\d{9}[A-Z]{2}\d{3}$/.test(value) || /^\d{10}$/.test(value),
@@ -43,6 +44,7 @@ export const taxNumberSchema = z
 
 export const phoneNumberSchema = z
   .string()
+  .trim()
   .max(9, "O número deve ter 9 dígitos")
   .refine(
     (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
@@ -51,6 +53,7 @@ export const phoneNumberSchema = z
 
 export const passwordSchema = z
   .string()
+  .trim()
   .nonempty("Campo obrigatório")
   .min(8, "A senha deve ter no mínimo 8 caracteres")
   .regex(/[A-Z]/, "Deve conter pelo menos uma letra maiúscula (A-Z)")

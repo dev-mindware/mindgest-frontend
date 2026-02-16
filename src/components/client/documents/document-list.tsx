@@ -53,7 +53,7 @@ export function DocumentList() {
           <div className="overflow-x-auto">
             <TabsList className="w-full sm:w-auto inline-flex">
               <TabsTrigger value="invoice" className="whitespace-nowrap">
-                Fatura Normal
+                Fatura
               </TabsTrigger>
               <TabsTrigger value="invoice-receipt" className="whitespace-nowrap">
                 Fatura Recibo

@@ -10,11 +10,12 @@ export const registerSchema = z.object({
         .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
-      email: z.string().email("Email invalido"),
+      email: z.string().trim().email("Email invalido"),
       phone: phoneNumberSchema,
       password: passwordSchema,
       passwordConfirmation: z
         .string()
+        .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
     })

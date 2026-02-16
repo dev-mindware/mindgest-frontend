@@ -10,7 +10,7 @@ import {
   SidebarSkeleton,
   SidebarCompanyInfo,
 } from "@/components";
-import { adminMenu, menuItems } from "@/constants/menu-items";
+import { menuItems } from "@/constants/menu-items";
 import { useAuth } from "@/hooks/auth";
 import { getSidebarForUser } from "@/lib/get-sidebar-for-user";
 import { PlanType } from "@/types";
@@ -24,10 +24,7 @@ export function AppSidebar() {
     ? (user.company?.subscription?.plan?.name as PlanType)
     : undefined;
 
-  const filteredMenu =
-    user.role === "ADMIN"
-      ? adminMenu
-      : getSidebarForUser(menuItems.items, user.role, plan);
+  const filteredMenu = getSidebarForUser(menuItems.items, user.role, user.company?.subscription, plan);
 
   return (
     <Sidebar collapsible="icon">

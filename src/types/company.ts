@@ -12,7 +12,7 @@ export interface Company {
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
-  subscription: Subscription | null;
+  subscription: Subscription;
 }
 
 export interface Store {

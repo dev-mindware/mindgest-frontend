@@ -14,7 +14,7 @@ import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useCreateInvoiceReceipt, useInvoiceTotals } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { useClientSelection } from "@/hooks/invoice";
-import { currentStoreStore, useAuthStore } from "@/stores";
+import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { paymentMethods } from "@/constants";
 import { InvoiceItems } from "../document-forms/items";
 
@@ -56,6 +56,7 @@ export function InvoiceReceiptForm() {
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
+  const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
 
   const fieldArray = useFieldArray<InvoiceReceiptFormData, "items">({
@@ -158,7 +159,15 @@ export function InvoiceReceiptForm() {
             currentStore?.id && { storeId: currentStore?.id }),
         };
 
-        await createInvoiceReceipt(finalPayload);
+        const response = await createInvoiceReceipt(finalPayload);
+        const invoiceId = response?.data?.id;
+
+        if (invoiceId) {
+          openModal("document-success", {
+            id: invoiceId,
+            type: "invoice-receipt",
+          });
+        }
 
         reset();
         setSelectedClient(null);

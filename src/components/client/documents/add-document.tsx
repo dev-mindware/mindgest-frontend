@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { InvoiceForm } from "./invoice-normal";
 import { InvoiceReceiptForm } from "./invoice-receipt";
 import { ProformaForm } from "./invoice-proforma";
+import { DocumentSuccessModal } from "./modals/document-success-modal";
 
 type TabsAloweds = "invoice" | "invoice-receipt" | "proforma";
 
@@ -57,6 +58,8 @@ export function AddDocuments() {
           <ProformaForm />
         </TabsContent>
       </Tabs>
+
+      <DocumentSuccessModal />
     </div>
   );
 }

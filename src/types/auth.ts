@@ -13,8 +13,8 @@ export type User = {
   email: string;
   name: string;
   role: Role;
-  phone?: string,
-  company?: Company;
+  phone: string,
+  company: Company;
   store?: Store
 }
 

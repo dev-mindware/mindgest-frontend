@@ -5,11 +5,12 @@ export const companySchema = z.object({
   taxNumber: taxNumberSchema,
   name: z
     .string()
+    .trim()
     .nonempty("Campo obrigatorio")
     .min(3, "No minimo 3 caracters"),
-  address: z.string().nonempty("Campo obrigatorio"),
+  address: z.string().trim().nonempty("Campo obrigatorio"),
   phone: phoneNumberSchema,
-  email: z.string().email("Email invalido"),
-  website: z.string().optional().nullable(),
-  logo: z.string().optional(),
+  email: z.string().trim().email("Email invalido"),
+  website: z.string().trim().optional().nullable(),
+  logo: z.string().trim().optional(),
 });

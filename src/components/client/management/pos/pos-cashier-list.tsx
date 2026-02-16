@@ -210,10 +210,20 @@ export function PosCashierList({
                 <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Icon name="Scale" size={13} className="text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Esperado</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Capital de Fecho</span>
                   </div>
                   <p className="text-xs font-bold font-mono text-foreground/80">
-                    {formatCurrency(session.expectedClosingCash || session.openingCash)}
+                    {formatCurrency(session.expectedClosingCash)}
+                  </p>
+                </div>
+
+                <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Icon name="Scale" size={13} className="text-muted-foreground" />
+                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Diferença</span>
+                  </div>
+                  <p className="text-xs font-bold font-mono text-foreground/80">
+                    {formatCurrency(session.cashDifference)}
                   </p>
                 </div>
 

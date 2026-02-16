@@ -107,8 +107,34 @@ export function useSwitchStore() {
       return store;
     },
     onSuccess: () => {
-      // Invalidate all queries to refresh data with the new storeId
-      queryClient.invalidateQueries();
+      // Only invalidate queries that depend on storeId
+      // This prevents unnecessary refetches and improves performance
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          // Invalidate queries that typically depend on store context
+          const storeRelatedKeys = [
+            "products",
+            "items",
+            "documents",
+            "invoices",
+            "receipts",
+            "credit-notes",
+            "proformas",
+            "cash-sessions",
+            "movements",
+            "stock",
+            "inventory",
+            "sales",
+            "customers",
+            "pos",
+          ];
+          return storeRelatedKeys.some((key) =>
+            query.queryKey.some(
+              (k) => typeof k === "string" && k.includes(key),
+            ),
+          );
+        },
+      });
     },
   });
 }

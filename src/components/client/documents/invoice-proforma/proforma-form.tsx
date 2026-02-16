@@ -8,7 +8,7 @@ import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { useCreateProforma, useEditProforma, useInvoiceTotals } from "@/hooks";
 import { useClientSelection } from "@/hooks/invoice/use-invoice-client";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
-import { currentStoreStore, useAuthStore } from "@/stores";
+import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
 
 import { paymentMethods } from "@/constants";
@@ -102,6 +102,7 @@ export function ProformaForm({
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
+  const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
 
   useEffect(() => {
@@ -224,7 +225,12 @@ export function ProformaForm({
         if (isEdit && id) {
           await editProforma({ id, data: finalPayload as any });
         } else {
-          await createProforma(finalPayload as any);
+          const response = await createProforma(finalPayload as any);
+          const invoiceId = response?.data?.id;
+
+          if (invoiceId) {
+            openModal("document-success", { id: invoiceId, type: "proforma" });
+          }
         }
 
         if (onSuccess) {

@@ -3,11 +3,11 @@ import { clientSchema } from "./add-client";
 
 export const PosSalesSchema = z.object({
   client: clientSchema.optional(),
-  issueDate: z.string().min(1, "A data de emissão é obrigatória"),
+  issueDate: z.string().trim().min(1, "A data de emissão é obrigatória"),
   items: z
     .array(
       z.object({
-        id: z.string(),
+        id: z.string().trim(),
         quantity: z.number(),
       }),
     )
@@ -19,8 +19,8 @@ export const PosSalesSchema = z.object({
   receivedValue: z.number().min(0),
   paymentMethod: z.enum(["CASH", "CARD", "TRANSFER"]),
   change: z.coerce.number().default(0),
-  storeId: z.string().min(1, "Loja é obrigatória"),
-  cashSessionId: z.string().min(1, "Sessão de caixa é obrigatória"),
+  storeId: z.string().trim().min(1, "Loja é obrigatória"),
+  cashSessionId: z.string().trim().min(1, "Sessão de caixa é obrigatória"),
 });
 
 export type PosSalesFormData = z.infer<typeof PosSalesSchema>;

@@ -5,9 +5,8 @@ import { CategorySelector, ProductList } from "./products";
 import { CartList } from "./cart";
 import {
   BarcodeProductScanner,
-  MODAL_BARCODE_PRODUCT_ID,
 } from "./modals";
-import { useModal, currentStoreStore } from "@/stores";
+import { currentStoreStore } from "@/stores";
 import { useGetCategories, useGetItems, useGetCurrentSession } from "@/hooks";
 import { useQueryState } from "nuqs";
 import {
@@ -24,7 +23,6 @@ export function CounterContent() {
   const [search] = useQueryState("search", { defaultValue: "" });
   const { categories, isLoading: isLoadingCategories } = useGetCategories();
   const [activeCart, setActiveCart] = useState<CartType>("invoice");
-  const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
   const { data: currentSession } = useGetCurrentSession(currentStore?.id);
 

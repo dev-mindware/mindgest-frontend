@@ -106,7 +106,7 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
                         </div>
 
                         <div className="space-y-2">
-                            <DialogTitle className="text-3xl font-outfit font-black tracking-tight leading-none">
+                            <DialogTitle className="text-3xl text-center font-outfit font-black tracking-tight leading-none">
                                 {isClosed ? "Sessão Encerrada" : "Acesso Restrito"}
                             </DialogTitle>
                             <DialogDescription className="text-base font-medium text-muted-foreground leading-relaxed px-4">

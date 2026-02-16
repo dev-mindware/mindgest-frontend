@@ -1,11 +1,10 @@
 "use client";
-import { useState } from "react";
-import { useFetch } from "../common/use-fetch";
-import { SucessMessage } from "@/utils/messages";
-import { CategoryData, CategoryResponse } from "@/types/category";
-import { categoryService } from "@/services/category-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePagination } from "../common/use-pagination";
+import { Category, CategoryData, CategoryResponse } from "@/types/category";
 import { currentStoreStore } from "@/stores";
+import { categoryService } from "@/services/category-service";
+import { SucessMessage } from "@/utils/messages";
 
 export function useAddCategory() {
   const queryClient = useQueryClient();
@@ -57,33 +56,32 @@ export function useToggleStatusCategory() {
 }
 
 export function useGetCategories() {
-  const [page, setPage] = useState(1);
   const { currentStore } = currentStoreStore();
-  const { data, error, isLoading, refetch } = useFetch<CategoryResponse>(
-    "categories",
-    `/categories?page=${page}&limit=10&storeId=${currentStore?.id}`,
-  );
 
-  const categories =
-    data?.data.map((category) => ({
-      label: `${category.name}`,
-      value: category.id,
-    })) || [];
+  const pagination = usePagination<Category>({
+    endpoint: "/categories",
+    queryKey: "categories",
+    queryParams: {
+      storeId: currentStore?.id,
+    },
+    enabled: !!currentStore?.id,
+  });
 
-  const itemsCount = data?.data?.[0]?.itemsCount || 0;
+  const categoryOptions = pagination.data.map((category) => ({
+    label: category.name,
+    value: category.id,
+  }));
 
   return {
-    categoryOptions: categories,
-    categories: data?.data || [],
-    error,
-    isLoading,
-    refetch,
+    ...pagination,
+    categoryOptions,
+    categories: pagination.data,
+    // Backward compatibility
+    error: pagination.isError,
     pagination: {
-      page: data?.page || 1,
-      totalPages: data?.totalPages || 1,
-      total: data?.total || 0,
+      page: pagination.page,
+      totalPages: pagination.totalPages,
+      total: pagination.total,
     },
-    page,
-    setPage,
   };
 }

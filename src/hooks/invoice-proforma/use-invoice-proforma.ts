@@ -21,9 +21,10 @@ export function useCreateProforma() {
 
   return useMutation({
     mutationFn: (data: ProformData) => proformaService.createProforma(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
       SucessMessage("Proforma criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-proforma"] });
+      return response.data;
     },
   });
 }

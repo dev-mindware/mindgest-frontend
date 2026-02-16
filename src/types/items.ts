@@ -65,7 +65,7 @@ export type CreateItemData = {
   dimensions?: string;
   hasExpiry?: boolean;
   expiryDate?: string;
-  daysToExpiry?: number;
+  daysToExpiry?: string;
   taxId?: string | null;
 };
 

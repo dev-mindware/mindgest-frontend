@@ -1,13 +1,15 @@
 import { Icon } from "@/components";
 import { MenuItem } from "@/constants/menu-items";
-import { Role, PlanType } from "@/types";
+import { Role, PlanType, Subscription, SubscriptionStatus } from "@/types";
 
 export function getSidebarForUser(
   items: MenuItem[],
   role: Role,
-  plan?: PlanType
+  subscription: Subscription,
+  plan?: PlanType,
 ): MenuItem[] {
-  if (!plan) {
+
+  if (subscription.status === SubscriptionStatus.PENDING) {
     return [
       {
         name: "Planos",

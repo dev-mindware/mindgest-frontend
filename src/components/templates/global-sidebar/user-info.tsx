@@ -18,6 +18,7 @@ import {
   useSidebar,
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
+import Link from "next/link";
 
 export function UserInfo() {
   const { user } = useAuth();
@@ -75,17 +76,21 @@ export function UserInfo() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Icon name="Sparkles" />
-                Fazer Upgrade
-              </DropdownMenuItem>
+              <Link href="/settings?tab=subscription">
+                <DropdownMenuItem>
+                  <Icon name="Sparkles" />
+                  Fazer Upgrade
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <Link href="/settings?tab=appearance">
               <DropdownMenuItem>
                 <Icon name="SquarePen" />
                 Aparência
               </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-500" onClick={onLogout}>

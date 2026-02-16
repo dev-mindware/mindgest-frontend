@@ -20,8 +20,8 @@ import {
   Badge,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/utils/format-currency";
-import { ErrorMessage } from "@/utils";
+import { ErrorMessage, formatCurrency } from "@/utils";
+import { useProductActions } from "@/hooks";
 
 interface ProductCardProps {
   product: Product;
@@ -38,6 +38,7 @@ export function ProductCard({
   onRemove,
   onUpdateQuantity,
 }: ProductCardProps) {
+  const { handlerEditProduct } = useProductActions();
   const [isEditing, setIsEditing] = useState(false);
   const [editQty, setEditQty] = useState("");
 
@@ -84,9 +85,22 @@ export function ProductCard({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex flex-col justify-between py-0.5 sm:py-1 flex-1 overflow-hidden cursor-help">
-                <h3 className="font-bold text-xs sm:text-sm leading-tight line-clamp-2 text-foreground/90 group-hover:text-primary transition-colors">
-                  {product.name}
-                </h3>
+                <div className="flex items-start justify-between gap-1">
+                  <h3 className="font-bold text-xs sm:text-sm leading-tight line-clamp-2 text-foreground/90 group-hover:text-primary transition-colors">
+                    {product.name}
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlerEditProduct(product as any);
+                    }}
+                  >
+                    <Icon name="Pencil" className="h-3 w-3" />
+                  </Button>
+                </div>
                 <p className="text-[10px] text-muted-foreground leading-tight truncate mt-0.5">
                   {product.description || "Sem descrição"}
                 </p>

@@ -5,13 +5,16 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Textarea } from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
+import { invoiceService } from "@/services/invoice-service";
 import {
   useClientSelection,
   useCreateInvoice,
+  useDownloadInvoice,
   useInvoiceTotals,
 } from "@/hooks";
+import { toast } from "sonner";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
-import { currentStoreStore, useAuthStore } from "@/stores";
+import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
 
 export function InvoiceForm() {
@@ -49,6 +52,7 @@ export function InvoiceForm() {
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
+  const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
 
   const fieldArray = useFieldArray<InvoiceFormData, "items">({
@@ -141,7 +145,13 @@ export function InvoiceForm() {
             currentStore?.id && { storeId: currentStore?.id }),
         };
 
-        await createInvoiceNormal(finalPayload);
+        const response = await createInvoiceNormal(finalPayload);
+        const invoiceId = response?.data?.id;
+
+        if (invoiceId) {
+          openModal("document-success", { id: invoiceId, type: "invoice" });
+        }
+
         reset();
         setSelectedClient(null);
       } catch (error: any) {

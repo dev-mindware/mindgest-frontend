@@ -1,7 +1,7 @@
 "use client";
 import type React from "react";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -57,6 +57,8 @@ export function GenericTable<T extends { id: string }>({
   route,
 }: DataTableProps<T>) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const newId = searchParams.get("newId");
 
   const getValue = (item: T, key: keyof T | string): any => {
     if (typeof key === "string" && key.includes(".")) {
@@ -106,7 +108,8 @@ export function GenericTable<T extends { id: string }>({
                     key={rowIndex}
                     className={cn(
                       "hover:bg-muted/50 transition-colors",
-                      route && "cursor-pointer"
+                      route && "cursor-pointer",
+                      item.id === newId && "animate-pulse-twice"
                     )}
                     onDoubleClick={() => handleRowDoubleClick(item)}
                   >

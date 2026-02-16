@@ -42,9 +42,10 @@ export function useCreateInvoice() {
 
   return useMutation({
     mutationFn: (data: InvoicePayload) => invoiceService.createInvoice(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
       SucessMessage("Fatura criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      return response.data;
     },
   });
 }
@@ -78,7 +79,7 @@ export function useAnnulationNote() {
     onSuccess: () => {
       SucessMessage("Nota de crédito anulada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
-    },  
+    },
   });
 }
 

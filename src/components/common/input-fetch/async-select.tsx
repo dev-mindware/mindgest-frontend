@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import AsyncCreatableSelect from "react-select/async-creatable";
+import { useState, useEffect, useCallback } from "react";
+import CreatableSelect from "react-select/creatable";
 import { api } from "@/services/api";
 import { useDebounce } from "use-debounce";
+import { components, MenuListProps } from "react-select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Option {
   value: string | number;
@@ -33,50 +36,84 @@ export function AsyncCreatableSelectField({
   value,
   onChange,
   displayFields = ["name"],
-  minChars = 2,
+  minChars = 1,
   formatCreateLabel = (inputValue) => `Criar "${inputValue}"`,
   className,
   error,
   inputId,
 }: AsyncCreatableSelectProps) {
-  const [isLoading, startTransition] = useTransition();
+  const [inputValue, setInputValue] = useState("");
+  const [debouncedSearch] = useDebounce(inputValue, 300);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [options, setOptions] = useState<Option[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const [loadOptions] = useDebounce((inputValue: string) => {
-    return new Promise<any[]>((resolve) => {
-      if (inputValue.length < minChars) {
-        resolve([]);
+  const fetchOptions = useCallback(
+    async (search: string, currentPage: number) => {
+      if (search.length > 0 && search.length < minChars) {
+        setOptions([]);
         return;
       }
 
-      startTransition(async () => {
-        try {
-          const response = await api.get(
-            `${endpoint}?search=${encodeURIComponent(inputValue)}`
-          );
+      setIsSearching(true);
+      try {
+        const response = await api.get(endpoint, {
+          params: {
+            search: search || undefined,
+            page: currentPage,
+            limit: 5,
+          },
+        });
 
-          const data = Array.isArray(response.data?.data)
-            ? response.data.data
-            : Array.isArray(response.data)
-            ? response.data
+        const raw = response.data;
+        const data = Array.isArray(raw?.data)
+          ? raw.data
+          : Array.isArray(raw)
+            ? raw
             : [];
 
-          resolve(
-            data.map((item: any) => ({
-              value: item.id,
-              label: displayFields
-                .map((field) => getNestedValue(item, field))
-                .filter(Boolean)
-                .join(" - "),
-              data: item,
-            }))
-          );
-        } catch (error) {
-          console.error("Erro ao buscar opções:", error);
-          resolve([]);
-        }
-      });
-    });
-  }, 300);
+        const meta = raw?.meta || {};
+        const totalCount = meta.total ?? raw?.total ?? 0;
+        const calculatedTotalPages =
+          meta.totalPages ||
+          meta.total_pages ||
+          raw?.totalPages ||
+          raw?.total_pages ||
+          (totalCount ? Math.ceil(totalCount / 5) : 1);
+
+        setTotalPages(calculatedTotalPages);
+        setTotal(totalCount);
+
+        const mappedOptions = data.map((item: any) => ({
+          value: item.id,
+          label: displayFields
+            .map((field) => getNestedValue(item, field))
+            .filter(Boolean)
+            .join(" - "),
+          data: item,
+        }));
+
+        setOptions(mappedOptions);
+      } catch (error) {
+        console.error("Erro ao buscar opções:", error);
+        setOptions([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [endpoint, displayFields, minChars]
+  );
+
+  useEffect(() => {
+    fetchOptions(debouncedSearch, page);
+  }, [debouncedSearch, page, fetchOptions]);
+
+  // Reset page when search changes - but don't re-trigger fetch if page was already 1
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
 
   const getNestedValue = (obj: any, path: string): any => {
     return path.split(".").reduce((current, key) => current?.[key], obj);
@@ -91,30 +128,91 @@ export function AsyncCreatableSelectField({
     onChange(newOption);
   };
 
+  const Menu = (props: any) => {
+    return (
+      <components.Menu {...props}>
+        <div className="relative">
+          {props.children}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between p-2 border-t bg-card rounded-b-[var(--radius)]">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (page > 1) setPage(page - 1);
+                }}
+                disabled={page <= 1 || isSearching}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-xs text-muted-foreground font-medium">
+                {page} / {totalPages}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (page < totalPages) setPage(page + 1);
+                }}
+                disabled={page >= totalPages || isSearching}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </components.Menu>
+    );
+  };
+
   return (
     <div className={className}>
       <label className="block text-sm font-medium text-foreground mb-1">
         {label}
       </label>
 
-      <AsyncCreatableSelect
-        cacheOptions
-        defaultOptions
+      <CreatableSelect
+        inputValue={inputValue}
+        options={options}
         value={value}
-        loadOptions={loadOptions}
-        onChange={onChange}
+        onInputChange={(val, { action }) => {
+          if (
+            action === "input-change" ||
+            action === "set-value" ||
+            action === "menu-close" ||
+            action === "input-blur"
+          ) {
+            setInputValue(val);
+          }
+        }}
+        onChange={(newValue) => {
+          onChange(newValue as Option | null);
+          // Optional: clear input on selection to keep it clean for next focus
+          // setInputValue(""); 
+        }}
         onCreateOption={handleCreate}
         placeholder={placeholder}
-        isLoading={isLoading}
+        isLoading={isSearching}
         formatCreateLabel={formatCreateLabel}
         inputId={inputId}
-        noOptionsMessage={({ inputValue }) =>
-          inputValue.length < minChars
-            ? `Digite pelo menos ${minChars} caracteres`
-            : "Nenhum resultado encontrado"
-        }
+        noOptionsMessage={({ inputValue }) => {
+          if (inputValue.length > 0 && inputValue.length < minChars) {
+            return `Digite pelo menos ${minChars} caracteres`;
+          }
+          return "Nenhum resultado encontrado";
+        }}
         loadingMessage={() => "Buscando..."}
         isClearable
+        filterOption={() => true}
+        components={{ Menu }}
         styles={{
           control: (base, state) => ({
             ...base,
@@ -124,8 +222,8 @@ export function AsyncCreatableSelectField({
             borderColor: error
               ? "var(--destructive)"
               : state.isFocused
-              ? "var(--ring)"
-              : "var(--border)",
+                ? "var(--ring)"
+                : "var(--border)",
             backgroundColor: "var(--background)",
             boxShadow: state.isFocused
               ? error
@@ -170,6 +268,7 @@ export function AsyncCreatableSelectField({
           menuList: (base) => ({
             ...base,
             padding: "4px",
+            maxHeight: "300px",
           }),
 
           option: (base, state) => ({
@@ -178,8 +277,8 @@ export function AsyncCreatableSelectField({
             backgroundColor: state.isSelected
               ? "var(--primary)"
               : state.isFocused
-              ? "var(--accent)"
-              : "transparent",
+                ? "var(--accent)"
+                : "transparent",
             color: state.isSelected
               ? "var(--primary-foreground)"
               : "var(--foreground)",

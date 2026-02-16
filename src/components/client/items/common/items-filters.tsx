@@ -22,7 +22,7 @@ export function ItemsFiltersTSX({
 }) {
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
-  const { categoryOptions, isLoading, error, refetch, pagination, setPage } =
+  const { categoryOptions, isLoading, isError, refetch, pagination, setPage } =
     useGetCategories();
 
   const hasFilter =
@@ -34,7 +34,7 @@ export function ItemsFiltersTSX({
     filters.maxPrice ||
     search.length > 0;
 
-  if (error)
+  if (isError)
     return (
       <div className="flex items-center gap-2">
         <span className="text-destructive text-sm">Erro ao carregar as categorias</span>

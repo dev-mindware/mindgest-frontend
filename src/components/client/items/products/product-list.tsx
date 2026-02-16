@@ -12,7 +12,7 @@ import {
 } from "@/components";
 import { ItemResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
-import { DetailsProductModal, EditProductModal } from "./product-modals";
+import { DetailsProductModal, AddProductModal, EditProductModal } from "./product-modals";
 import { useItemsFilters, useProductActions } from "@/hooks";
 import {
   DeleteItemModal,
@@ -22,7 +22,7 @@ import {
   ItemViewToggle,
 } from "../common";
 import { useDebounce } from "use-debounce";
-import { currentStoreStore } from "@/stores/store";
+import { currentStoreStore, currentProductStore } from "@/stores";
 
 export function ProductList() {
   const { search } = useURLSearchParams(`search_product`);
@@ -113,13 +113,15 @@ export function ProductList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsProduct },
-            { label: "Editar", onClick: handlerEditProduct },
-            { label: "Deletar", onClick: handlerDeleteProduct },
+            { label: "Ver detalhes", onClick: handlerDetailsProduct, icon: "Eye" },
+            { label: "Editar", onClick: handlerEditProduct, icon: "Pencil" },
+            { type: "separator" },
             {
               label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
               onClick: toggleStatusProduct,
+              icon: item.status === "ACTIVE" ? "Eye" : "EyeOff",
             },
+            { label: "Deletar", onClick: handlerDeleteProduct, variant: "destructive", icon: "Trash" },
           ]}
         />
       ),
@@ -187,7 +189,8 @@ export function ProductList() {
 
       <DetailsProductModal />
       <DeleteItemModal type="Produto" />
-      <EditProductModal />
+      <AddProductModal />
+  
     </div>
   );
 }

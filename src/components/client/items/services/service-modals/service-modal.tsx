@@ -38,7 +38,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
     isPending: isUpdating,
     reset: resetMutate,
   } = useUpdateItem();
-  const { categoryOptions, isLoading, error, refetch } = useGetCategories();
+  const { categoryOptions, isLoading, isError, refetch } = useGetCategories();
   const isOpen = open[modalId];
   const {
     register,
@@ -78,15 +78,29 @@ export function ServiceModal({ action }: ServiceModalProps) {
     }
   }, [isOpen, action, currentService, reset, user]);
 
+  const cleanPayload = (data: ItemFormData) => {
+    return {
+      ...data,
+      cost: data.cost ?? undefined,
+      quantity: data.quantity ?? undefined,
+      weight: data.weight ?? undefined,
+      minStock: data.minStock ?? undefined,
+      maxStock: data.maxStock ?? undefined,
+      daysToExpiry: data.daysToExpiry ?? undefined,
+    } as any;
+  };
+
   const onSubmit = async (data: ItemFormData) => {
     try {
+      const cleanedData = cleanPayload(data);
+
       if (action === "add") {
         await addItemMutate({
-          ...data,
+          ...cleanedData,
           ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
         });
       } else if (currentService) {
-        const { type, ...rest } = data;
+        const { type, companyId, ...rest } = cleanedData;
         await updateService({
           id: currentService.id,
           data: rest,
@@ -105,8 +119,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
     resetMutate();
   };
 
-  console.log("Erro do form...");
-  console.log(errors);
 
   if (!isOpen) return null;
 
@@ -132,7 +144,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
     >
       {isLoading ? (
         <ServiceModalSkeleton />
-      ) : error ? (
+      ) : isError ? (
         <RequestError refetch={refetch} message="Erro ao carregar categorias" />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

@@ -2,14 +2,15 @@ import { z } from "zod";
 import { phoneNumberSchema, taxNumberSchema } from "./helps";
 
 export const clientSchema = z.object({
-  name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
+  name: z.string().trim().min(3, "Nome deve ter pelo menos 3 caracteres"),
   taxNumber: taxNumberSchema,
   phone: phoneNumberSchema,
-  email: z.string().email("Email inválido"),
-  address: z.string().optional(),
+  email: z.string().trim().email("Email inválido"),
+  address: z.string().trim().optional(),
   iban: z
     .string()
-    .transform((val) => val.replace(/\s+/g, "")) 
+    .trim()
+    .transform((val) => val.replace(/\s+/g, ""))
     .optional(),
 });
 

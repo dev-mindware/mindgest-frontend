@@ -2,10 +2,11 @@ import type { AxiosResponse } from "axios";
 
 export function triggerBrowserDownload(
   response: AxiosResponse<Blob>,
-  filename: string
+  filename: string,
 ) {
+  // Ensure we have a Blob with the correct type
   const blob = new Blob([response.data], {
-    type: response.headers["content-type"],
+    type: "application/pdf",
   });
 
   const url = window.URL.createObjectURL(blob);
@@ -17,85 +18,34 @@ export function triggerBrowserDownload(
   document.body.appendChild(link);
   link.click();
 
-  link.remove();
-  window.URL.revokeObjectURL(url);
+  document.body.removeChild(link);
+
+  // Revoke after a short delay to ensure the browser has started the download
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+  }, 100);
 }
 
-
-/* import { AxiosResponse } from "axios";
-
-export function triggerBrowserDownload(
-  response: AxiosResponse<Blob>,
-  fallbackFileName = "download"
-) {
-  const contentDisposition = response.headers["content-disposition"];
-
-  const fileName =
-    contentDisposition
-      ?.split("filename=")[1]
-      ?.replace(/"/g, "") || fallbackFileName;
-
+export function triggerBrowserPreview(response: AxiosResponse<Blob>) {
   const blob = new Blob([response.data], {
-    type: response.headers["content-type"],
+    type: "application/pdf",
   });
 
   const url = window.URL.createObjectURL(blob);
+  const newTab = window.open(url, "_blank");
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
+  if (newTab) {
+    newTab.focus();
+  } else {
+    // If popup is blocked, we can try to use a link click as fallback
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
-  document.body.appendChild(link);
-  link.click();
-
-  link.remove();
-  window.URL.revokeObjectURL(url);
-} */
-
-
-
-/* import axios, { AxiosRequestConfig } from "axios";
-
-type DownloadFileParams = {
-  url: string;
-  fileName?: string;
-  config?: AxiosRequestConfig;
-};
-
-export async function downloadFile({
-  url,
-  fileName = "download",
-  config = {},
-}: DownloadFileParams): Promise<void> {
-  const response = await axios.get(url, {
-    responseType: "blob",
-    headers: {
-      ...config.headers,
-    },
-    ...config,
-  });
-
-  const contentDisposition = response.headers["content-disposition"];
-  const fileNameFromHeader = contentDisposition
-    ?.split("filename=")[1]
-    ?.replace(/"/g, "");
-
-  const finalFileName = fileNameFromHeader || fileName;
-
-  const blob = new Blob([response.data], {
-    type: response.headers["content-type"],
-  });
-
-  const blobUrl = window.URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = blobUrl;
-  link.download = finalFileName;
-
-  document.body.appendChild(link);
-  link.click();
-
-  link.remove();
-  window.URL.revokeObjectURL(blobUrl);
+  // Note: We don't revoke immediately because the new tab needs the URL.
+  // Modern browsers handle blob URLs in new tabs well even if we don't revoke.
 }
- */

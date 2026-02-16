@@ -6,7 +6,6 @@ import {
   Input,
   Button,
   Textarea,
-  ProOnly,
   GlobalModal,
   RHFSelect,
   RequestError,
@@ -17,40 +16,41 @@ import {
   InputCurrency,
 } from "@/components";
 import { PaginatedSelect } from "@/components/shared";
-import { useModal } from "@/stores/modal/use-modal-store";
-import { currentStoreStore } from "@/stores";
+import { useModal, currentStoreStore } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { formatCurrency, parseCurrency } from "@/utils";
-import { useAddItem, useGetCategories, useGetTaxes } from "@/hooks";
+import { useAddItem, useGetCategories, useGetTaxes, useAuth } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
-import { useAuth } from "@/hooks/auth";
 
 export function AddProductModal() {
-  const { open, openModal } = useModal();
+  const { open, openModal, closeModal, modalData } = useModal();
   const isOpen = open["add-product"];
 
+  if (!isOpen) return null;
+
   return (
-    <GlobalModal
-      canClose
-      id="add-product"
-      title={
-        <div className="w-full flex items-center justify-between gap-2 mb-4">
-          <span>Adicionar Producto</span>
-          <Button
-            size="sm"
-            className="sticky right-0"
-            variant="outline"
-            onClick={() => openModal("add-category")}
-          >
-            Adicionar Categoria
-          </Button>
-        </div>
-      }
-      className="!max-h-[85vh] !w-max"
-    >
-      {isOpen ? <AddProductFormContent /> : <ProductModalSkeleton />}
+    <>
+      <GlobalModal
+        canClose
+        id="add-product"
+        title={
+          <div className="w-full flex items-center justify-between gap-2 mb-4">
+            <span>Adicionar Produto</span>
+            <Button
+              size="sm"
+              className="sticky right-0"
+              variant="outline"
+              onClick={() => openModal("add-category")}
+            >
+              Adicionar Categoria
+            </Button>
+          </div>
+        }
+        className="!max-h-[85vh] !w-max"
+      >
+        <AddProductFormContent />
+      </GlobalModal>
       {open["add-category"] && <CategoryModal action="add" />}
-    </GlobalModal>
+    </>
   );
 }
 
@@ -58,14 +58,14 @@ function AddProductFormContent() {
   const { user } = useAuth();
   const { closeModal, modalData } = useModal();
   const { currentStore } = currentStoreStore();
-  const { mutateAsync: addItemMutate, isPending } = useAddItem();
+  const { mutateAsync: addItemMutate, isPending: isAdding } = useAddItem();
+
   const {
     categoryOptions,
-    isLoading,
-    error,
+    isLoading: isLoadingCategories,
+    isError,
     refetch,
     pagination,
-    page,
     setPage,
   } = useGetCategories();
   const { taxOptions, isLoading: isTaxesLoading } = useGetTaxes();
@@ -83,30 +83,38 @@ function AddProductFormContent() {
     defaultValues: {
       barcode: initialBarcode,
       price: 0,
-      cost: 0,
+      cost: undefined,
       companyId: String(user?.company?.id),
       type: "PRODUCT",
-      taxId: null,
+      taxId: "",
+      categoryId: "",
     },
   });
 
+  const cleanPayload = (data: ItemFormData) => {
+    return {
+      ...data,
+      cost: data.cost ?? undefined,
+      quantity: data.quantity ?? undefined,
+      weight: data.weight ?? undefined,
+      minStock: data.minStock ?? undefined,
+      maxStock: data.maxStock ?? undefined,
+      daysToExpiry: data.daysToExpiry ?? undefined,
+    } as any;
+  };
+
   async function onSubmit(data: ItemFormData) {
     try {
+      const cleanedData = cleanPayload(data);
       await addItemMutate({
-        ...data,
-        cost: data.cost || 0,
+        ...cleanedData,
         ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
       });
-      reset();
+      handleCancel();
     } catch (error: any) {
-      if (error?.response) {
-        ErrorMessage(
-          error?.response?.data?.message ||
-          "Ocorreu um erro ao adicionar o item",
-        );
-      } else {
-        ErrorMessage("Ocorreu um erro desconhecido. Tente novamente");
-      }
+      ErrorMessage(
+        error?.response?.data?.message || "Ocorreu um erro ao adicionar o item"
+      );
     }
   }
 
@@ -115,8 +123,8 @@ function AddProductFormContent() {
     closeModal("add-product");
   };
 
-  if (isLoading) return <ProductModalSkeleton />;
-  if (error) {
+  if (isLoadingCategories || isTaxesLoading) return <ProductModalSkeleton />;
+  if (isError) {
     return (
       <RequestError
         refetch={refetch}
@@ -141,18 +149,15 @@ function AddProductFormContent() {
               placeholder="Ex: Teclado Logitech"
             />
 
-
             <RHFSelect
               name="taxId"
               label="Imposto (Opcional)"
               options={taxOptions}
               control={control}
             />
-
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-
             <Controller
               control={control}
               name="price"
@@ -160,7 +165,6 @@ function AddProductFormContent() {
                 <InputCurrency
                   ref={field.ref}
                   label="Preço Unitário"
-                  placeholder="0,00"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                   decimalScale={2}
@@ -199,7 +203,7 @@ function AddProductFormContent() {
                   value={value}
                   options={categoryOptions}
                   onChange={onChange}
-                  isLoading={isLoading}
+                  isLoading={isLoadingCategories}
                   pagination={pagination}
                   onPageChange={setPage}
                   placeholder="Selecione uma opção"
@@ -214,7 +218,6 @@ function AddProductFormContent() {
               options={[{ label: "Produto", value: "PRODUCT" }]}
               control={control}
             />
-
           </div>
 
           <FeatureGate minPlan="Pro" fallback="hidden">
@@ -246,13 +249,14 @@ function AddProductFormContent() {
               />
             </FeatureGate>
             <Input
-              type="number"
+              type="quantity"
               startIcon="Scale"
               label="Quantidade"
               {...register("quantity", { valueAsNumber: true })}
               error={errors.quantity?.message}
             />
           </div>
+
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
               <Input
@@ -297,14 +301,13 @@ function AddProductFormContent() {
             placeholder="Escreva detalhes do item..."
             error={errors.description?.message}
           />
-          {/* </ProOnly> */}
         </div>
 
         <div className="flex justify-end gap-4 mt-5">
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit className="w-max" isLoading={isPending || isSubmitting}>
+          <ButtonSubmit className="w-max" isLoading={isAdding || isSubmitting}>
             Salvar
           </ButtonSubmit>
         </div>

@@ -17,12 +17,13 @@ export interface Subscription {
 
 export type PlanType = "Base" | "Pro" | "Smart";
 
-enum SubscriptionStatus {
+export enum SubscriptionStatus {
   TRIALING = "TRIALING",
   ACTIVE = "ACTIVE",
   PAST_DUE = "PAST_DUE",
   CANCELED = "CANCELED",
   EXPIRED = "EXPIRED",
+  PENDING = "PENDING",
 }
 
 export interface Plan {

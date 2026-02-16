@@ -9,9 +9,10 @@ export function useCreateInvoiceReceipt() {
   return useMutation({
     mutationFn: (data: InvoiceReceiptPayload) =>
       invoiceReceiptService.createInvoiceReceipt(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
       SucessMessage("Fatura Recibo criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
+      return response.data;
     },
   });
 }

@@ -16,6 +16,7 @@ export interface ProductOption {
     id: string | number;
     name: string;
     price: number;
+    quantity: number;
     type: "PRODUCT" | "SERVICE";
     description?: string;
     tax?: {
@@ -69,6 +70,15 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       } else if (option.data) {
         setValue("price", Number(option.data.price));
         setValue("type", option.data.type);
+        // Ensure quantity is at least 1, but capped by stock if product
+        if (option.data.type === "PRODUCT") {
+          const available = option.data.quantity ?? 0;
+          if (available > 0) {
+            setValue("quantity", 1);
+          } else {
+            setValue("quantity", 0);
+          }
+        }
       }
     }, [setValue]);
 
@@ -76,6 +86,14 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       const values = getValues();
       if (!selectedProduct || values.quantity <= 0 || values.price <= 0) {
         return;
+      }
+
+      // Final stock check for products
+      if (!selectedProduct.__isNew__ && selectedProduct.data?.type === "PRODUCT") {
+        const available = selectedProduct.data.quantity ?? 0;
+        if (values.quantity > available) {
+          return;
+        }
       }
 
       const selectedTax = taxOptions.find((t) => t.value === values.taxId);
@@ -126,7 +144,14 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     );
 
     const isNewProduct = selectedProduct?.__isNew__ ?? false;
-    const canAdd = selectedProduct && watchedQuantity > 0 && watchedPrice > 0;
+
+    // Stock validation
+    const availableStock = !isNewProduct && selectedProduct?.data?.type === "PRODUCT"
+      ? (selectedProduct.data.quantity ?? 0)
+      : Infinity;
+
+    const isOverStock = watchedType === "PRODUCT" && watchedQuantity > availableStock;
+    const canAdd = selectedProduct && watchedQuantity > 0 && watchedPrice > 0 && !isOverStock;
 
     return (
       <div className="space-y-4" onKeyDown={handleKeyDown}>
@@ -148,14 +173,29 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             control={control}
             name="quantity"
             render={({ field }) => (
-              <Input
-                {...field}
-                min={1}
-                type="quantity"
-                label="Quantidade"
-                onChange={(e) => field.onChange(Math.max(1, Number(e.target.value)))}
-                placeholder="1"
-              />
+              <div className="space-y-1">
+                <Input
+                  {...field}
+                  min={1}
+                  max={availableStock !== Infinity ? availableStock : undefined}
+                  type="number"
+                  label="Quantidade"
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    const cappedVal = watchedType === "PRODUCT" && availableStock !== Infinity
+                      ? Math.min(val, availableStock)
+                      : val;
+                    field.onChange(Math.max(watchedType === "PRODUCT" ? 0 : 1, cappedVal));
+                  }}
+                  error={isOverStock ? `Máximo: ${availableStock}` : undefined}
+                  placeholder="1"
+                />
+                {!isNewProduct && selectedProduct?.data?.type === "PRODUCT" && (
+                  <p className="text-[10px] text-muted-foreground font-medium px-1">
+                    Disponível: <span className={availableStock <= 0 ? "text-destructive" : "text-primary"}>{availableStock}</span>
+                  </p>
+                )}
+              </div>
             )}
           />
 
@@ -166,7 +206,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
               <InputCurrency
                 ref={field.ref}
                 label="Preço Unitário"
-                placeholder="0,00"
+                // placeholder="0,00"
                 value={field.value}
                 onValueChange={(value) => field.onChange(value)}
                 decimalScale={2}
@@ -199,6 +239,11 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         )}
 
         <div className="flex items-center justify-between pt-2">
+          {isOverStock && (
+            <p className="text-sm text-destructive font-medium">
+              Quantidade superior ao stock disponível ({availableStock})
+            </p>
+          )}
           <Button
             type="button"
             onClick={handleAddClick}

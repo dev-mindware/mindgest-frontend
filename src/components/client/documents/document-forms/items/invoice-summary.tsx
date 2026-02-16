@@ -43,7 +43,6 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
 
           <InputCurrency
             label="Desconto (%)"
-            suffix="%"
             value={globalDiscount}
             onValueChange={(value) => setGlobalDiscount(value)}
             decimalScale={2}

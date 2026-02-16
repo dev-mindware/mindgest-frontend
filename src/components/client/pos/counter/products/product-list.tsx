@@ -3,6 +3,8 @@
 import { Product } from "@/types";
 import { ProductCard } from "./product-card";
 import { EmptyState } from "@/components/common/empty-state";
+import { AddProductModal } from "@/components/client/items/products/product-modals";
+import { useModal } from "@/stores";
 
 interface ProductSectionProps {
     products: Product[];
@@ -19,6 +21,8 @@ export function ProductList({
     onRemoveFromCart,
     onUpdateQuantity,
 }: ProductSectionProps) {
+    const { open } = useModal();
+
     if (products.length === 0) {
         return (
             <EmptyState
@@ -30,17 +34,22 @@ export function ProductList({
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
-            {products.map((product) => (
-                <ProductCard
-                    key={product.id}
-                    product={product}
-                    quantity={cartItems[product.id]?.qty || 0}
-                    onAdd={() => onAddToCart(product)}
-                    onRemove={() => onRemoveFromCart(product.id)}
-                    onUpdateQuantity={(qty) => onUpdateQuantity(product.id, qty)}
-                />
-            ))}
-        </div>
+        <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
+                {products.map((product) => (
+                    <ProductCard
+                        key={product.id}
+                        product={product}
+                        quantity={cartItems[product.id]?.qty || 0}
+                        onAdd={() => onAddToCart(product)}
+                        onRemove={() => onRemoveFromCart(product.id)}
+                        onUpdateQuantity={(qty) => onUpdateQuantity(product.id, qty)}
+                    />
+                ))}
+            </div>
+
+            {/* Global Product Modal for editing/adding from POS */}
+            {(open["add-product"] || open["edit-product"]) && <AddProductModal />}
+        </>
     );
 }
