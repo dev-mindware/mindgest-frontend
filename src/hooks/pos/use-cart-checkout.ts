@@ -33,7 +33,7 @@ export function useCartCheckout({
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("Credit Card");
-  const [cashGiven, setCashGiven] = useState<string>("");
+  const [cashGiven, setCashGiven] = useState<number | "">("");
   const [change, setChange] = useState<number>(0);
 
   const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
@@ -125,7 +125,7 @@ export function useCartCheckout({
   // Handle Cash & Change
   useEffect(() => {
     if (paymentMethod === "Cash") {
-      const cash = parseCurrency(cashGiven) || 0;
+      const cash = typeof cashGiven === "number" ? cashGiven : 0;
       const changeVal = cash >= totals.total ? cash - totals.total : 0;
       const safeChange = isNaN(changeVal) ? 0 : Number(changeVal.toFixed(2));
 
@@ -140,7 +140,7 @@ export function useCartCheckout({
   }, [cashGiven, totals.total, paymentMethod, setValue]);
 
   const handleQuickCash = (amount: number) => {
-    setCashGiven(formatCurrency(amount));
+    setCashGiven(amount);
   };
 
   const handlePreview = async (data: any) => {

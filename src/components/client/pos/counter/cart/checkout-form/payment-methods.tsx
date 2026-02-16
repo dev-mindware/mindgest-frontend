@@ -8,8 +8,8 @@ import { PaymentMethod } from "@/hooks";
 interface PaymentMethodsProps {
     paymentMethod: PaymentMethod;
     onMethodChange: (method: PaymentMethod) => void;
-    cashGiven: string;
-    onCashChange: (val: string) => void;
+    cashGiven: number | "";
+    onCashChange: (val: number) => void;
     onQuickCash: (amount: number) => void;
     change: number;
 }
@@ -81,13 +81,11 @@ export function PaymentMethods({
                         ))}
                     </div>
                     <div className="space-y-1">
-                        <label className="text-xs font-medium">Valor Entregue</label>
-
                         <InputCurrency
-                            label="Custo de Compra"
+                            label="Valor Entregue"
                             placeholder="0,00"
                             value={cashGiven}
-                            onValueChange={(value) => onCashChange(String(value))}
+                            onValueChange={(value) => onCashChange(value)}
                             decimalScale={2}
                             fixedDecimalScale
                             allowNegative={false}
