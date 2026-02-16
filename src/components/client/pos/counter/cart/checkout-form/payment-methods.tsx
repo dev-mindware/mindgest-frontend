@@ -1,6 +1,5 @@
-import { Icon } from "@/components";
+import { Icon, InputCurrency } from "@/components";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils";
@@ -66,7 +65,6 @@ export function PaymentMethods({
                 </Tooltip>
             </div>
 
-            {/* Cash Logic */}
             {paymentMethod === "Cash" && (
                 <div className="space-y-3 bg-muted/30 p-3 rounded-xl border border-dashed mb-3">
                     <div className="grid grid-cols-4 gap-2">
@@ -84,14 +82,15 @@ export function PaymentMethods({
                     </div>
                     <div className="space-y-1">
                         <label className="text-xs font-medium">Valor Entregue</label>
-                        <Input
-                            startIcon="Coins"
+
+                        <InputCurrency
+                            label="Custo de Compra"
+                            placeholder="0,00"
                             value={cashGiven}
-                            onChange={(e) => onCashChange(formatCurrency(e.target.value))}
-                            type="text"
-                            inputMode="numeric"
-                            data-layout="numeric"
-                            autoFocus
+                            onValueChange={(value) => onCashChange(String(value))}
+                            decimalScale={2}
+                            fixedDecimalScale
+                            allowNegative={false}
                         />
                     </div>
                     <div

@@ -12,6 +12,7 @@ import {
   ButtonSubmit,
   CategoryModal,
   ServiceModalSkeleton,
+  InputCurrency,
 } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
@@ -151,16 +152,20 @@ export function ServiceModal({ action }: ServiceModalProps) {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 mt-4">
+
               <Controller
                 control={control}
                 name="price"
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    startIcon="Coins"
+                render={({ field }) => (
+                  <InputCurrency
+                    ref={field.ref}
                     label="Preço de Venda"
-                    placeholder="Ex: 10.00"
-                    value={formatCurrency(value ?? 0)}
-                    onChange={(e) => onChange(parseCurrency(e.target.value))}
+                    placeholder="100,00"
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
+                    decimalScale={2}
+                    fixedDecimalScale
+                    allowNegative={false}
                     error={errors.price?.message}
                   />
                 )}

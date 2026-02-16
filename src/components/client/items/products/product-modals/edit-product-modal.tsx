@@ -15,6 +15,7 @@ import {
   ButtonSubmit,
   ProductModalSkeleton,
   RequestError,
+  InputCurrency,
 } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { AddProductFormData, addProductSchema } from "@/schemas";
@@ -161,26 +162,25 @@ export function EditProductModal() {
                   control={control}
                   label="Categoria"
                 />
+
                 <Controller
                   control={control}
                   name="price"
-                  render={({ field: { onChange, value } }) => (
-                    <Input
-                      id="price"
-                      type="text"
-                      startIcon="Coins"
+                  render={({ field }) => (
+                    <InputCurrency
+                      ref={field.ref}
                       label="Preço de Venda"
-                      placeholder="Preço"
+                      placeholder="0,00"
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      allowNegative={false}
                       error={errors.price?.message}
-                      value={formatCurrency(value ?? 0)}
-                      defaultValue={currentProduct?.price}
-                      onChange={(e) => {
-                        const rawNumber = parseCurrency(e.target.value);
-                        onChange(rawNumber);
-                      }}
                     />
                   )}
                 />
+
               </div>
 
               <ProOnly className="space-y-4">
