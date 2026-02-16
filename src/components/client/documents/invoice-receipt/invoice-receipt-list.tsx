@@ -28,7 +28,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { user } = useAuth();
   const { search } = useURLSearchParams("search_invoice_receipt");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
   const { handlerDetailsInvoice } = useInvoiceActions();
   const { openModal } = useModal();

@@ -1,7 +1,7 @@
 "use client"
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components";
-import Link from "next/link";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
@@ -67,16 +67,6 @@ export function SecondStep() {
           error={
             errors?.step2?.company?.address &&
             errors?.step2?.company?.address?.message
-          }
-        />
-        <Input
-          label="Website (Opcional)"
-          startIcon="Globe"
-          placeholder="Insira seu website"
-          {...register("step2.company.website")}
-          error={
-            errors?.step2?.company?.website &&
-            errors?.step2?.company?.website?.message
           }
         />
       </div>

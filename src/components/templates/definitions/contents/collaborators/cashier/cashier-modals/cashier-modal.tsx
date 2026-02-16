@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
@@ -9,11 +9,10 @@ import {
   Input,
   GlobalModal,
   ButtonSubmit,
-  RHFSelect,
   RequestError,
-  MultiSelect,
+  PaginatedSelect,
 } from "@/components";
-import { useGetStores } from "@/hooks/entities";
+import { useGetStoresPaginated } from "@/hooks/entities";
 import {
   CashierFormData,
   cashierSchema,
@@ -37,12 +36,21 @@ export function CashierModal({ action }: CashierModalProps) {
     useAddCashier();
   const { mutateAsync: editCashier, isPending: isEditing } =
     useUpdateCashier();
-  const { currentStore } = currentStoreStore();
-  const [selectedStores, setSelectedStores] = useState<
-    { label: string; value: string }[]
-  >([]);
 
-  const { stores, isLoading: isLoadingStores, error, refetch } = useGetStores();
+  const {
+    data: storesData,
+    isLoading: isLoadingStores,
+    isError,
+    refetch,
+    page: storesPage,
+    setPage: setStoresPage,
+    totalPages: storesTotalPages,
+  } = useGetStoresPaginated();
+
+  const stores = storesData?.map((store) => ({
+    label: store.name,
+    value: store.id,
+  })) || [];
 
   const {
     reset,
@@ -53,6 +61,9 @@ export function CashierModal({ action }: CashierModalProps) {
   } = useForm<CashierFormData>({
     resolver: zodResolver(cashierSchema),
     mode: "onChange",
+    defaultValues: {
+      role: "CASHIER",
+    },
   });
 
   useEffect(() => {
@@ -102,14 +113,16 @@ export function CashierModal({ action }: CashierModalProps) {
   };
 
   if ((action === "edit" && !currentCashier) || !isOpen) return null;
-  if (isLoadingStores) return <p>Carregando lojas...</p>;
-  if (error)
+  if (isLoadingStores && !storesData) return <p>Carregando lojas...</p>;
+  if (isError)
     return (
       <RequestError
         refetch={refetch}
         message="Ocorreu um erro ao carregar as lojas"
       />
     );
+
+  console.log(errors);
 
   return (
     <GlobalModal
@@ -157,22 +170,24 @@ export function CashierModal({ action }: CashierModalProps) {
               />
             </>
           )}
-          
-           <div className="flex items-end gap-2 sm:col-span-2">
+
+          <div className="w-full col-span-2">
             <Controller
               name="storeId"
               control={control}
               render={({ field }) => (
-                <MultiSelect
+                <PaginatedSelect
                   label="Lojas"
                   className="w-full"
                   options={stores}
-                  value={selectedStores}
-                  isLoading={!stores.length}
-                  onChange={(options) => {
-                    setSelectedStores(options);
-                    field.onChange(options.map((o) => o.value));
+                  value={field.value}
+                  isLoading={isLoadingStores}
+                  pagination={{
+                    page: storesPage,
+                    totalPages: storesTotalPages,
                   }}
+                  onPageChange={setStoresPage}
+                  onChange={field.onChange}
                   error={errors.storeId?.message}
                 />
               )}

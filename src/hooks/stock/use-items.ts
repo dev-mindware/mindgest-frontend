@@ -1,4 +1,6 @@
 import { useFetch } from "../common/use-fetch";
+import { usePagination } from "../common/use-pagination";
+import { ItemResponse } from "@/types/items";
 
 export function useGetItems(params?: {
   search?: string;
@@ -17,9 +19,29 @@ export function useGetItems(params?: {
     `items-for-pos-${params?.search || ""}-${params?.categoryId || ""}-${
       params?.type || ""
     }`,
-    `/items?${queryParams.toString()}`
+    `/items?${queryParams.toString()}`,
   );
 
   const items = data?.data || [];
   return { items, error, isLoading, refetch };
+}
+
+export function useGetItemsPaginated(
+  page: number = 1,
+  limit: number = 10,
+  params?: {
+    search?: string;
+    categoryId?: string;
+    type?: string;
+  },
+) {
+  return usePagination<ItemResponse>({
+    endpoint: "/items",
+    queryKey: ["items-paginated"],
+    queryParams: {
+      page,
+      limit,
+      ...params,
+    },
+  });
 }

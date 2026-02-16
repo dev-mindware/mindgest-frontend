@@ -24,7 +24,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { search } = useURLSearchParams("search_invoice");
   const { filters, page, setPage } = useInvoiceFilters("invoice");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const {
     handlerGenerateReceipt,
     handlerCancelInvoice,

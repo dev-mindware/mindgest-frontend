@@ -33,6 +33,7 @@ interface PaginatedSelectProps {
   placeholder?: string;
   className?: string;
   label?: string;
+  error?: string;
 }
 
 export function PaginatedSelect({
@@ -45,6 +46,7 @@ export function PaginatedSelect({
   placeholder = "Selecionar...",
   className,
   label,
+  error,
 }: PaginatedSelectProps) {
   const handlePrevious = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -123,6 +125,11 @@ export function PaginatedSelect({
           )}
         </SelectContent>
       </Select>
+      {error && (
+        <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

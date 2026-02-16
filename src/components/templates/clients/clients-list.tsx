@@ -22,7 +22,7 @@ import { useClientActions, useClientsFilters } from "@/hooks/entities";
 
 export function ClientsList() {
   const { search } = useURLSearchParams("search-client");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useClientsFilters();
   const { handlerToggleStatusClient, handlerDetailsClient, handlerEditClient } =
     useClientActions();
@@ -103,7 +103,7 @@ export function ClientsList() {
   return (
     <div className="mt-6 space-y-8">
       <div className="flex justify-end">
-        
+
       </div>
       <ClientsFiltersTSX hasData={clients.length > 0}>
       </ClientsFiltersTSX>

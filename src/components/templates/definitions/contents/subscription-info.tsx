@@ -130,14 +130,14 @@ export function SubscriptionInfo() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Link href="/plans" className="flex-1">
-              <Button className="w-full gap-2" variant="default">
+          <div className="flex flex-col w-full sm:flex-row gap-3">
+            <Link href="/plans">
+              <Button className="w-max gap-2" variant="default">
                 <Icon name="ArrowUpToLine" size={16} />
                 Upgrade de Plano
               </Button>
             </Link>
-            <Button variant="outline" className="flex-1 gap-2">
+            <Button variant="outline" className="w-max gap-2">
               <Icon name="ReceiptText" size={16} />
               Ver Faturas
             </Button>

@@ -126,6 +126,7 @@ export function ClientModal({ action }: ClientModalProps) {
             startIcon="MapPin"
             {...register("address")}
             error={errors.address?.message}
+            
           />
         </div>
 

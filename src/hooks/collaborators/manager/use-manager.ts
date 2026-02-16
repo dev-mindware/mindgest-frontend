@@ -35,7 +35,7 @@ export function useDeleteManager() {
     mutationFn: (id: string) => managerService.deleteManager(id),
     onSuccess: () => {
       SucessMessage("Gerente removido com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["managers"] });
     },
   });
 }

@@ -9,7 +9,6 @@ export function AccountCreatedModal() {
 
   return (
     <GlobalModal
-      sucess
       canClose={false}
       id="account-created"
       title="Conta Criada"

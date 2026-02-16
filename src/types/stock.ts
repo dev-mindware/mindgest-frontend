@@ -34,7 +34,6 @@ export type StockResponse = StockData & {
 export type StockCreateData = {
   quantity: number;
   itemsId: string;
-  storeId: string;
   reserved?: number;
 };
 

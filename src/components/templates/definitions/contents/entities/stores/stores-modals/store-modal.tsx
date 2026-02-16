@@ -67,6 +67,8 @@ export function StoreModal({ action }: StoreModalProps) {
 
   if ((action === "edit" && !currentStore) || !isOpen) return null;
 
+  console.log(errors)
+
   return (
     <GlobalModal
       canClose

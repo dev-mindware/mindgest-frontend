@@ -9,7 +9,7 @@ export const cashierSchema = z.object({
       (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
       "Insira número de telemovél válido"
     ),
-  role: z.enum(["MANAGER", "CASHIER"], {
+  role: z.enum(["CASHIER"], {
     required_error: "A função é obrigatória",
   }),
   storeId: z.string().optional(),

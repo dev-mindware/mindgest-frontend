@@ -19,7 +19,7 @@ import { useCreditNotesActions, useCreditNotesFilters } from "@/hooks";
 
 export function CreditNotesList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search-credit-note");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useCreditNotesFilters();
   const { handlerDetailsCreditNote } = useCreditNotesActions();
   const {

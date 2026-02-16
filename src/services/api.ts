@@ -36,8 +36,11 @@ api.interceptors.request.use(async (config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  // Inject storeId only for routes that expect it
-  const whitelistedRoutes = [
+  // Routes that require storeId injection
+  const STORE_DEPENDENT_ROUTES: (
+    | string
+    | { path: string; methods: string[] }
+  )[] = [
     "invoice",
     "items",
     "stocks",
@@ -47,23 +50,41 @@ api.interceptors.request.use(async (config) => {
     "documents",
     "dashboard",
     "credit-note",
+    { path: "categories", methods: ["get", "post"] },
   ];
 
-  const isGlobalRoute =
-    config.url?.includes("global") || config.url?.includes("public");
+  // Specific routes or patterns to exclude from injection
+  const EXCLUDED_ROUTES = [
+    "/stocks",
+    "/expenses",
+    "receipt",
+    "/close",
+    "global",
+    "public",
+  ];
+
+  const currentMethod = config.method?.toLowerCase() || "";
+  const matchingRoute = STORE_DEPENDENT_ROUTES.find((route) => {
+    const routePath = typeof route === "string" ? route : route.path;
+    return config.url?.includes(routePath);
+  });
+
+  const isExcluded = EXCLUDED_ROUTES.some((route) =>
+    config.url?.includes(route),
+  );
+
   const shouldInject =
     config.url &&
-    whitelistedRoutes.some((route) => config.url?.includes(route)) &&
-    !isGlobalRoute &&
-    !config.url.includes("receipt") &&
-    !config.url.includes("/close") &&
-    !config.url.includes("/expenses");
+    matchingRoute &&
+    !isExcluded &&
+    (typeof matchingRoute === "string" ||
+      matchingRoute.methods.includes(currentMethod));
 
   if (shouldInject) {
     const currentStore = currentStoreStore.getState().currentStore;
     if (currentStore?.id) {
       // For GET requests, add to params
-      if (config.method === "get") {
+      if (currentMethod === "get") {
         config.params = {
           ...config.params,
           storeId: config.params?.storeId || currentStore.id,
@@ -83,7 +104,7 @@ api.interceptors.request.use(async (config) => {
       // If no data is present but it's a POST/PUT/PATCH, we might want to add storeId
       else if (
         !config.data &&
-        ["post", "put", "patch"].includes(config.method || "")
+        ["post", "put", "patch"].includes(currentMethod)
       ) {
         config.data = { storeId: currentStore.id };
       }

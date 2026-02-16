@@ -9,7 +9,7 @@ export const storeSchema = z.object({
   address: z.string().min(5, "Endereço muito curto"),
   status: z.string().optional(),
   manager: z.string().optional(),
-  companyId: z.string().nonempty("Selecione uma empresa"),
+  companyId: z.string().optional(),
 });
 
 export type StoreFormData = z.infer<typeof storeSchema>;

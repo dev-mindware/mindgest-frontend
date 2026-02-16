@@ -141,7 +141,7 @@ export function EditProductModal() {
               <h3 className="font-semibold">Informação Geral</h3>
             </div>
             <div className="space-y-4 sm:w-[35rem]">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="w-full">
                 <Input
                   className="mt-1"
                   id="product-name"
@@ -151,16 +151,6 @@ export function EditProductModal() {
                   placeholder="Escreva aqui..."
                   error={errors.name?.message}
                   defaultValue={currentProduct?.name}
-                />
-                <Input
-                  id="product-sku"
-                  className="mt-1"
-                  startIcon="IdCard"
-                  {...register("sku")}
-                  error={errors.sku?.message}
-                  label="SKU ou ID do Produto"
-                  placeholder="Escreva aqui..."
-                  defaultValue={currentProduct?.sku}
                 />
               </div>
 

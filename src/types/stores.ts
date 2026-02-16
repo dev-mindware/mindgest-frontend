@@ -11,7 +11,7 @@ export type StoreData = {
   email?: string;
   phone?: string;
   address: string;
-  companyId: string;
+  companyId?: string;
 };
 
 export type StoreResponse = StoreData & {

@@ -48,3 +48,12 @@ export const phoneNumberSchema = z
     (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
     "Insira número de telemovél válido",
   );
+
+export const passwordSchema = z
+  .string()
+  .nonempty("Campo obrigatório")
+  .min(8, "A senha deve ter no mínimo 8 caracteres")
+  .regex(/[A-Z]/, "Deve conter pelo menos uma letra maiúscula (A-Z)")
+  .regex(/[a-z]/, "Deve conter pelo menos uma letra minúscula (a-z)")
+  .regex(/[0-9]/, "Deve conter pelo menos um número (0-9)")
+  .regex(/[^a-zA-Z0-9]/, "Deve conter pelo menos um caractere especial");

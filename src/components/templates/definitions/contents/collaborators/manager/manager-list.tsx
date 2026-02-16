@@ -22,7 +22,7 @@ import {
 
 export function ManagerList() {
   const { search } = useURLSearchParams("search");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useManagerFilters();
   const { handlerDeleteManager, handlerDetailsManager, handlerEditManager } =
     useManagerActions();

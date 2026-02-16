@@ -11,6 +11,7 @@ import {
   ItemStatusBadge,
   ItemViewToggle,
   ItemPaginationControls,
+  EmptyState,
 } from "@/components";
 import { Category } from "@/types";
 import { formatDateTime } from "@/utils";
@@ -26,9 +27,9 @@ import { currentStoreStore } from "@/stores";
 
 export function CategoriesList() {
   const { search } = useURLSearchParams("search-category");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { currentStore } = currentStoreStore();
-  const { filters, setViewMode, viewMode, page, setPage } =
+  const { filters, page, setPage } =
     useCategoryFilters();
   const {
     toggleStatusCategory,
@@ -47,7 +48,7 @@ export function CategoriesList() {
   } = usePagination<Category>({
     endpoint: "/categories",
     queryKey: ["categories"],
-    queryParams: { ...filters, storeId: currentStore?.id, search: debounceSearch, page },
+    queryParams: { ...filters, storeId: currentStore?.id, search: debounceSearch },
   });
 
   const columns: Column<Category>[] = [
@@ -97,7 +98,7 @@ export function CategoriesList() {
   ];
 
   if (isLoading)
-    return viewMode === "card" ? <ProductCardSkeletonGrid /> : <ListSkeleton />;
+    return <ListSkeleton />;
 
   if (isError) {
     return (
@@ -108,48 +109,35 @@ export function CategoriesList() {
     );
   }
 
+
+  console.log(categories);
+
   return (
+
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <CategoriesFilters />
-          <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
-        </div>
-      </div>
+      <CategoriesFilters />
 
-      {viewMode === "card" ? (
-        <div className="w-full grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {categories.length === 0 ? (
-            <p className="text-muted-foreground py-12">
-              Nenhuma categoria encontrada
-            </p>
-          ) : (
-            categories.map((category) => (
-              <CategoryCardView key={category.id} category={category} />
-            ))
-          )}
-        </div>
+      {categories.length > 0 ? (
+        <>
+          <GenericTable<Category>
+            page={page}
+            total={total}
+            setPage={setPage}
+            data={categories}
+            columns={columns}
+            totalPages={totalPages}
+            goToNextPage={goToNextPage}
+            goToPreviousPage={goToPreviousPage}
+          />
+        </>
       ) : (
-        <GenericTable<Category>
-          page={page}
-          total={total}
-          setPage={setPage}
-          data={categories}
-          columns={columns}
-          totalPages={totalPages}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-        />
-      )}
-
-      {viewMode === "card" && totalPages > 1 && (
-        <ItemPaginationControls
-          page={page}
-          setPage={setPage}
-          totalPages={totalPages}
-          goToNextPage={goToNextPage}
-          goToPreviousPage={goToPreviousPage}
-        />
+        <div className="w-full justify-start mt-6 space-y-8">
+          <EmptyState
+            description="Adicione novas categorias"
+            title="Sem Categorias"
+            icon="FileText"
+          />
+        </div>
       )}
 
       <DeleteCategoryModal />
@@ -158,3 +146,4 @@ export function CategoriesList() {
     </div>
   );
 }
+

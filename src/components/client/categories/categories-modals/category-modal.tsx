@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
-import { currentCategoryStore, currentStoreStore, useAuthStore, useModal } from "@/stores";
+import { currentCategoryStore, useModal } from "@/stores";
 import { CategoryFormData, categorySchema } from "@/schemas";
 import { useAddCategory, useUpdateCategory } from "@/hooks/category";
 import {
@@ -19,10 +19,8 @@ type CategoryModalProps = {
 };
 
 export function CategoryModal({ action }: CategoryModalProps) {
-  const { user } = useAuthStore();
   const { closeModal, open } = useModal();
   const isOpen = open["add-category"] || open["edit-category"];
-  const { currentStore } = currentStoreStore();
   const { currentCategory } = currentCategoryStore();
 
   const { mutateAsync: addCategory, isPending: isAdding } = useAddCategory();
@@ -37,10 +35,6 @@ export function CategoryModal({ action }: CategoryModalProps) {
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     mode: "onChange",
-    defaultValues: {
-      storeId: currentStore?.id || "",
-      companyId: user?.company?.id || "",
-    },
   });
 
   useEffect(() => {
@@ -64,7 +58,7 @@ export function CategoryModal({ action }: CategoryModalProps) {
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-          "Ocorreu um erro ao salvar a categoria"
+        "Ocorreu um erro ao salvar a categoria"
       );
     }
   }
@@ -75,6 +69,7 @@ export function CategoryModal({ action }: CategoryModalProps) {
   };
 
   if (action === "edit" && !currentCategory || !isOpen) return null;
+
   return (
     <GlobalModal
       canClose

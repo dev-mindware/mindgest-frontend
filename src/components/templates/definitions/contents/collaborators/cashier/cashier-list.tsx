@@ -23,7 +23,7 @@ import { CashierResponse } from "@/types/collaborators";
 
 export function CashierList() {
   const { search } = useURLSearchParams("search");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useCashierFilters();
   const {
     handlerDeleteCashier,

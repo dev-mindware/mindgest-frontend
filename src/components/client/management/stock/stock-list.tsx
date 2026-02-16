@@ -28,7 +28,7 @@ import { useModal } from "@/stores";
 
 export function StockList() {
   const { search } = useURLSearchParams("search");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useStockFilters();
   const { openModal } = useModal();
   const {
@@ -158,11 +158,6 @@ export function StockList() {
               icon: "Eye",
             },
             {
-              label: "Editar",
-              onClick: handlerEditStock,
-              icon: "SquarePen",
-            },
-            {
               label: "Deletar",
               onClick: handlerDeleteStock,
               variant: "destructive",
@@ -248,8 +243,7 @@ export function StockList() {
       </div>
 
       {/* Modals */}
-      <StockModal action="add" />
-      <StockModal action="edit" />
+      <StockModal />
       <DetailsStockModal />
       <DeleteStockModal />
       <AdjustStockModal />

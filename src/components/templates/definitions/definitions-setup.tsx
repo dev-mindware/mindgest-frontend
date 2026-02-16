@@ -48,7 +48,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "User",
       component: <Profile />,
       category: "general",
-      isVisible: isOwner,
+      isVisible: true,
     },
     {
       id: "notifications",

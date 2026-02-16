@@ -139,13 +139,15 @@ function AddProductFormContent() {
               error={errors.name?.message}
               placeholder="Ex: Teclado Logitech"
             />
-            <Input
-              label="SKU"
-              startIcon="Barcode"
-              {...register("sku")}
-              error={errors.sku?.message}
-              placeholder="Ex: SKU-12345"
+      
+
+            <RHFSelect
+              name="taxId"
+              label="Imposto (Opcional)"
+              options={taxOptions}
+              control={control}
             />
+
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -205,12 +207,6 @@ function AddProductFormContent() {
               control={control}
             />
 
-            <RHFSelect
-              name="taxId"
-              label="Imposto (Opcional)"
-              options={taxOptions}
-              control={control}
-            />
           </div>
 
           {/* <ProOnly className="space-y-4"> */}
@@ -258,6 +254,7 @@ function AddProductFormContent() {
                 label="Peso (Kg) (opcional)"
                 {...register("weight", { valueAsNumber: true })}
                 error={errors.weight?.message}
+                placeholder="300Kg"
               />
               <Input
                 label="Dimensões (opcional)"

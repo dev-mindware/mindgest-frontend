@@ -7,8 +7,8 @@ export interface Company {
   phone: string;
   address: string;
   taxNumber: string;
-  website?: string;
-  logo?: string;
+  website?: string | null;
+  logo?: string | null;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;

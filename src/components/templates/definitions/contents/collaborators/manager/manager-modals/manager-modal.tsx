@@ -31,7 +31,6 @@ export function ManagerModal({ action }: ManagerModalProps) {
     control,
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ManagerFormData>({
     resolver: zodResolver(managerSchema),

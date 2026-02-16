@@ -26,7 +26,7 @@ import { currentStoreStore } from "@/stores";
 
 export function ServiceList() {
   const { search } = useURLSearchParams(`service_search`);
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { currentStore } = currentStoreStore();
   const { filters, setViewMode, viewMode, page, setPage } =
     useItemsFilters("service");

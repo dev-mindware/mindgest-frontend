@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 export function ProformaList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { search } = useURLSearchParams("search_proforma");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("proforma");
   const { handlerDeleteProforma, handlerDetailsProforma } =
     useProformaActions();

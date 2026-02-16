@@ -22,7 +22,7 @@ import { StoreResponse } from "@/types";
 
 export function StoresList() {
   const { search } = useURLSearchParams("search");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useStoresFilters();
   const {
     handlerDeleteStore,

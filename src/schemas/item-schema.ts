@@ -4,7 +4,6 @@ export const itemSchema = z
   .object({
     name: z.string().min(1, "Campo obrigatório"),
     description: z.string().optional(),
-    sku: z.string().optional(),
     barcode: z.string().optional(),
 
     price: z.number(),

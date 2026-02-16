@@ -45,7 +45,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
     control,
     formState: { errors },
     reset,
-    watch,
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
   });
@@ -55,7 +54,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
       if (action === "edit" && currentService) {
         reset({
           type: "SERVICE",
-          sku: currentService.sku,
           name: currentService.name,
           price: currentService.price,
           description: currentService.description || "",
@@ -67,7 +65,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
       } else {
         reset({
           type: "SERVICE",
-          sku: "",
           name: "",
           price: 0,
           description: "",
@@ -143,20 +140,13 @@ export function ServiceModal({ action }: ServiceModalProps) {
               Informação Geral
             </h3>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="w-full">
               <Input
                 label="Nome do Serviço"
                 startIcon="User"
                 {...register("name")}
                 placeholder="Ex: Consultoria Técnica"
                 error={errors.name?.message}
-              />
-              <Input
-                label="SKU"
-                startIcon="Barcode"
-                {...register("sku")}
-                error={errors.sku?.message}
-                placeholder="Opcional"
               />
             </div>
 

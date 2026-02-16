@@ -21,7 +21,7 @@ import { ReceiptResponse } from "@/types/receipt";
 
 export function ReceiptList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("receipt");
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("receipt");
   const {
     data: receipts,

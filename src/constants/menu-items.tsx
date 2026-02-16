@@ -107,7 +107,7 @@ export const menuItems: MenuStructure = {
     },
     {
       name: "Items",
-      url: "/items", //?tab=product
+      url: "/items",
       icon: <Icon name="ShoppingBasket" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
@@ -165,7 +165,7 @@ export const menuItems: MenuStructure = {
       url: "/settings",
       icon: <Icon name="Settings2" />,
       roles: ["MANAGER", "OWNER"],
-      minPlan: "Pro",
+      minPlan: "Base",
     },
     {
       name: "Ponto de Venda",

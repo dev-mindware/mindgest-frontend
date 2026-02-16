@@ -1,35 +1,45 @@
 "use client";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
 import { useModal } from "@/stores";
 import { StockFormData, stockSchema } from "@/schemas/stock-schema";
-import { useAddStock, useUpdateStock } from "@/hooks/stock";
+import { useAddStock } from "@/hooks/stock";
 import {
   Button,
   Input,
   GlobalModal,
   ButtonSubmit,
-  RHFSelect,
+  PaginatedSelect,
+  RequestError,
 } from "@/components";
-import { useGetStores } from "@/hooks/entities";
-import { useGetItems } from "@/hooks/stock";
-import { currentStockStore } from "@/stores/stock";
+import { useGetStoresPaginated } from "@/hooks/entities";
+import { useGetItemsPaginated } from "@/hooks/stock";
+import { useState } from "react";
 
-type StockModalProps = {
-  action: "add" | "edit";
-};
-
-export function StockModal({ action }: StockModalProps) {
+export function StockModal() {
   const { closeModal, open } = useModal();
-  const isOpen = open["add-stock"] || open["edit-stock"];
-  const { currentStock } = currentStockStore();
+  const isOpen = open["add-stock"];
 
   const { mutateAsync: addStock, isPending: isAdding } = useAddStock();
-  const { mutateAsync: editStock, isPending: isEditing } = useUpdateStock();
-  const { stores } = useGetStores();
-  const { items } = useGetItems();
+  const [storePage, setStorePage] = useState(1);
+  const [itemPage, setItemPage] = useState(1);
+
+  const {
+    data: storesData,
+    isLoading: isLoadingStores,
+    isError: storesError,
+    totalPages: storeTotalPages,
+    refetch: refetchStores,
+  } = useGetStoresPaginated(storePage, 10, "OWNER");
+
+  const {
+    data: itemsData,
+    isLoading: isLoadingItems,
+    isError: itemsError,
+    totalPages: itemTotalPages,
+    refetch: refetchItems,
+  } = useGetItemsPaginated(itemPage, 10);
 
   const {
     reset,
@@ -42,30 +52,9 @@ export function StockModal({ action }: StockModalProps) {
     mode: "onChange",
   });
 
-  useEffect(() => {
-    if (action === "edit" && currentStock) {
-      reset({
-        quantity: currentStock.quantity,
-        itemsId: currentStock.itemsId,
-        storeId: currentStock.storeId,
-        reserved: currentStock.reserved,
-      });
-    }
-  }, [action, currentStock, reset]);
-
   async function onSubmit(data: StockFormData) {
     try {
-      if (action === "add") {
-        await addStock(data);
-      } else if (action === "edit" && currentStock) {
-        // When editing, only send quantity and reserved (not storeId and itemsId)
-        const { quantity, reserved } = data;
-        await editStock({
-          id: currentStock.id,
-          data: { quantity, reserved },
-        });
-      }
-
+      await addStock(data);
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
@@ -76,35 +65,82 @@ export function StockModal({ action }: StockModalProps) {
 
   const handleCancel = () => {
     reset();
-    closeModal(action === "add" ? "add-stock" : "edit-stock");
+    closeModal("add-stock");
   };
 
-  if ((action === "edit" && !currentStock) || !isOpen) return null;
+
+  console.log("renderizou")
+  if (!isOpen) return null;
+
+  if (storesError || itemsError) {
+    return (
+      <GlobalModal
+        id="add-stock-error"
+        title="Adicionar Stock"
+        canClose
+        className="!w-max"
+      >
+        <div className="p-4">
+          <RequestError
+            refetch={storesError ? refetchStores : refetchItems}
+            message={`Ocorreu um erro ao carregar os ${storesError ? "lojas" : "produtos"
+              }`}
+          />
+        </div>
+      </GlobalModal>
+    );
+  }
 
   return (
     <GlobalModal
       canClose
-      id={action === "add" ? "add-stock" : "edit-stock"}
-      title={action === "add" ? "Adicionar Stock" : "Editar Stock"}
+      id="add-stock"
+      title="Adicionar Stock"
       className="!max-h-[85vh] !w-max"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid gap-4 sm:grid-cols-2">
-          <RHFSelect
-            control={control}
-            name="itemsId"
-            label="Produto"
-            options={items}
-            disabled={action === "edit"}
-          />
+          <div className="col-span-1">
+            <Controller
+              name="itemsId"
+              control={control}
+              render={({ field }) => (
+                <PaginatedSelect
+                  label="Produto"
+                  placeholder="Selecione o produto"
+                  options={itemsData.map((i) => ({ label: i.name, value: i.id }))}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isLoading={isLoadingItems}
+                  pagination={{ page: itemPage, totalPages: itemTotalPages }}
+                  onPageChange={setItemPage}
+                  className="w-full"
+                  error={errors.itemsId?.message}
+                />
+              )}
+            />
+          </div>
 
-          <RHFSelect
-            control={control}
-            name="storeId"
-            label="Loja"
-            options={stores}
-            disabled={action === "edit"}
-          />
+          <div className="col-span-1">
+            <Controller
+              name="storeId"
+              control={control}
+              render={({ field }) => (
+                <PaginatedSelect
+                  label="Loja"
+                  placeholder="Selecione a loja"
+                  options={storesData.map((s) => ({ label: s.name, value: s.id }))}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isLoading={isLoadingStores}
+                  pagination={{ page: storePage, totalPages: storeTotalPages }}
+                  onPageChange={setStorePage}
+                  className="w-full"
+                  error={errors.storeId?.message}
+                />
+              )}
+            />
+          </div>
 
           <Input
             type="number"
@@ -127,11 +163,8 @@ export function StockModal({ action }: StockModalProps) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit
-            className="w-max"
-            isLoading={isSubmitting || isAdding || isEditing}
-          >
-            {action === "add" ? "Adicionar" : "Salvar Alterações"}
+          <ButtonSubmit className="w-max" isLoading={isSubmitting || isAdding}>
+            Adicionar
           </ButtonSubmit>
         </div>
       </form>

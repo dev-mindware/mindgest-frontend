@@ -27,7 +27,7 @@ import { currentStoreStore } from "@/stores/store";
 export function ProductList() {
   const { search } = useURLSearchParams(`search_product`);
   const { currentStore } = currentStoreStore();
-  const [debounceSearch] = useDebounce(search, 400);
+  const [debounceSearch] = useDebounce(search, 200);
   const { filters, setViewMode, viewMode, page, setPage } =
     useItemsFilters("product");
   const {
