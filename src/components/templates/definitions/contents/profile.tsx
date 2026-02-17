@@ -22,8 +22,11 @@ export function Profile() {
   const { control, watch } = useForm<ProfileFormData>();
 
   const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
-    `/companies/${user?.company?.id}/logo`,
-    "companies"
+    {
+      apiEndpoint: `/companies/${user?.company?.id}/logo`,
+      queryKey: "companies",
+      method: "PUT",
+    }
   );
 
   const companyLogo = watch("companyLogo");
