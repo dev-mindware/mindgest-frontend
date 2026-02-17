@@ -9,3 +9,4 @@ export * from "./format-date";
 export * from "./normalize-string";
 export * from "./messages";
 export * from "./audio";
+export * from "./get-plan-features";

@@ -14,7 +14,7 @@ type CurrentStep = "subscription" | "payment";
 export function SubscriptionPageContent() {
   const { openModal } = useModal();
   const [currentStep, setCurrentStep] = useState<CurrentStep>("subscription");
-  const { mutateAsync: uploadFile, isPending } = useFileUpload("/subscriptions", "subscriptions");
+  const { mutateAsync: uploadFile, isPending } = useFileUpload("/subscriptions", "subscriptions", "POST");
 
   const form = useForm<SubscriptionFormData>({
     resolver: zodResolver(subscriptionSchema),
@@ -46,7 +46,7 @@ export function SubscriptionPageContent() {
         return;
       }
 
-      await uploadFile({
+      const res = await uploadFile({
         files: {
           proofPayment: data.proofPayment
         },
@@ -57,7 +57,6 @@ export function SubscriptionPageContent() {
       });
 
       openModal("subscription-created");
-
       localStorage.removeItem("MGEST-PLAN-STORE");
 
     } catch (error: any) {

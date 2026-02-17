@@ -1,28 +1,25 @@
-/* import { Method } from "@/types";
-import { formatCurrencyUSD } from "@/utils";
+import { Method } from "@/types";
 
 type Props = {
-  totalToPay: number;
   currentMethod: Method;
 };
 
-export function PaymentInstruction({ currentMethod, totalToPay }: Props) {
+export function PaymentInstruction({ currentMethod }: Props) {
   return (
-    <div className="bg-yellow-50 p-4 rounded-lg">
-      <h4 className="font-semibold text-yellow-800 mb-2">
+    <div className="bg-primary-50 dark:bg-primary-900/10 p-4 rounded-lg">
+      <h4 className="font-semibold text-primary-800 dark:text-primary-200 mb-2">
         Instruções para Pagamento:
       </h4>
-      <div className="text-sm text-yellow-700 space-y-1">
+      <div className="text-sm text-primary-700 dark:text-primary-300 space-y-1">
         <p>
-          1. Realize o pagamento de{" "}
-          <strong>{formatCurrencyUSD(totalToPay)}</strong> através do método{" "}
+          1. Realize o pagamento de
+          através do método{" "}
           {currentMethod.name}
         </p>
         <p>2. Baixe o PDF do comprovativo</p>
         <p>3. Envie o arquivo usando o campo acima</p>
-        <p>4. Aguarde a confirmação do pagamento</p>
+        <p>4. Aguarde a aprovação do pagamento</p>
       </div>
     </div>
   );
 }
- */

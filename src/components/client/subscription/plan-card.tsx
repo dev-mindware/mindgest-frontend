@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { Icon } from "@/components";
 import { Badge } from "@/components/ui";
 import { Plan } from "@/types";
-import { formatCurrency } from "@/utils";
+import { formatCurrency, getPlanFeatures } from "@/utils";
 
 interface PlanCardProps {
   plan: Plan;
@@ -17,21 +17,7 @@ export function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
   const [showAll, setShowAll] = useState(false);
 
   const featuresList = useMemo(() => {
-    return [
-      plan.maxUsers > 0
-        ? `Até ${plan.maxUsers} usuários`
-        : "Usuários ilimitados",
-      plan.maxStores > 0
-        ? `Até ${plan.maxStores} loja(s)`
-        : "Lojas ilimitadas",
-      plan.features.canExportSaft && "Exportação SAFT",
-      plan.features.hasSimplifiedReporting && "Relatórios simplificados",
-      plan.features.hasAdvancedReporting && "Relatórios avançados",
-      plan.features.hasStockManagement && "Gestão de estoque",
-      plan.features.hasSupplierManagement && "Gestão de fornecedores",
-      plan.features.hasGestAI && "GestAI incluído",
-      plan.features.hasPOS && "Gestão de POS",
-    ].filter((f): f is string => Boolean(f));
+    return getPlanFeatures(plan);
   }, [plan]);
 
   const visibleFeatures = showAll
@@ -43,11 +29,10 @@ export function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
 
   return (
     <div
-      className={`border-2 rounded-lg p-6 transition-all cursor-pointer ${
-        isSelected
-          ? "border-primary-500 bg-primary-50 dark:bg-primary-300/10"
-          : "border-border hover:border-primary-500"
-      }`}
+      className={`border-2 rounded-lg p-6 transition-all cursor-pointer ${isSelected
+        ? "border-primary-500 bg-primary-50 dark:bg-primary-300/10"
+        : "border-border hover:border-primary-500"
+        }`}
       onClick={onSelect}
     >
       <div className="flex items-center justify-between mb-4">

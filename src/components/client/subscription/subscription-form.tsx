@@ -98,51 +98,40 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
         <Card className="border-border shadow-none">
           <CardHeader>
             <CardTitle className="text-2xl text-primary-500">
-              Dados para Assinatura
+              Dados para Subscrição
             </CardTitle>
-            <CardDescription className="text-foreground">
-              Preencha suas informações para poder subscrever
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">
-                  Informações da Empresa
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    readOnly
-                    label="Nome do Cliente"
-                    {...register("name")}
-                    defaultValue={user?.name || "Cliente"}
-                    className="border-border focus:border-primary-500 focus:ring-primary-500"
-                  />
-                  <Input
-                    readOnly
-                    label="Empresa"
-                    {...register("company")}
-                    defaultValue={user?.company?.name || "Empresa"}
-                    className="border-border focus:border-primary-500 focus:ring-primary-500"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    readOnly
-                    type="email"
-                    label="E-mail"
-                    {...register("email")}
-                    defaultValue={user?.company?.email || "seu@email.com"}
-                    className="border-border focus:border-primary-500 focus:ring-primary-500"
-                  />
-                  <Input
-                    readOnly
-                    label="Telefone"
-                    {...register("phone")}
-                    defaultValue={user?.company?.phone || "9xxxxxxxx"}
-                    className="border-border focus:border-primary-500 focus:ring-primary-500"
-                  />
-                </div>
+              <h3 className="text-lg font-semibold text-foreground">
+                Tipo de Subscrição
+              </h3>
+
+              <div className="space-y-3">
+                <Controller
+                  control={control}
+                  name="frequency"
+                  render={({ field }) => (
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value || "MONTHLY"}
+                      value={field.value || "MONTHLY"}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="MONTHLY" id="MONTHLY" />
+                        <Label htmlFor="MONTHLY" className="cursor-pointer">Mensal</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="ANNUAL" id="ANNUAL" />
+                        <Label htmlFor="ANNUAL" className="cursor-pointer">Anual</Label>
+                      </div>
+                    </RadioGroup>
+                  )}
+                />
+                {errors.frequency && (
+                  <AlertError errorMessage={errors.frequency.message} />
+                )}
               </div>
 
               <div className="space-y-4">
@@ -162,39 +151,6 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
                 {errors.plan && (
                   <AlertError errorMessage={errors?.plan?.message?.toString()} />
                 )}
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">
-                  Tipo de Assinatura
-                </h3>
-
-                <div className="space-y-3">
-                  <Controller
-                    control={control}
-                    name="frequency"
-                    render={({ field }) => (
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value || "MONTHLY"}
-                        value={field.value || "MONTHLY"}
-                        className="flex gap-4"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="MONTHLY" id="MONTHLY" />
-                          <Label htmlFor="MONTHLY" className="cursor-pointer">Mensal</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="ANNUAL" id="ANNUAL" />
-                          <Label htmlFor="ANNUAL" className="cursor-pointer">Anual</Label>
-                        </div>
-                      </RadioGroup>
-                    )}
-                  />
-                  {errors.frequency && (
-                    <AlertError errorMessage={errors.frequency.message} />
-                  )}
-                </div>
               </div>
 
               <Button

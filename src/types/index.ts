@@ -20,3 +20,4 @@ export * from "./dashboard";
 export * from "./tax";
 export * from "./cash-session";
 export * from "./bank";
+export * from "./transaction";

@@ -8,4 +8,5 @@ tirar as informações da empresa emissora ao fazer o pagamento
 ver o redirect do /dashboard
 
 quando a subscrição está pendente não poder ir pra outras telas vida link
+renderizar outros menus, mas travar com o modal - dizer que a sua subscrição está ainda e estado de aprovação e tal 
 ver o modal de upgrade - melhorar a escrita

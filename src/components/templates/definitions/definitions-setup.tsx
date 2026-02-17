@@ -22,15 +22,15 @@ interface DefSetupProps {
 }
 
 export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
-  const { user } = useAuth();
+  const { user, subscriptionStatus } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab");
+  const isActive = subscriptionStatus === "ACTIVE";
 
   const currentPlan =
     (user?.company?.subscription?.plan?.name as PlanType) || "Base";
   const isOwner = user?.role === "OWNER";
-
 
   type Tabs = {
     id: string;
@@ -48,7 +48,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Pencil",
       component: <Appearance />,
       category: "general",
-      isVisible: true,
+      isVisible: isActive,
     },
     {
       id: "profile",
@@ -64,7 +64,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Bell",
       component: <Notification />,
       category: "general",
-      isVisible: isOwner,
+      isVisible: isActive && isOwner ,
     },
     {
       id: "subscription",
@@ -80,7 +80,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "BriefcaseBusiness",
       component: <CollaboratorsPageContent />,
       category: "workplace",
-      isVisible: true,
+      isVisible: isActive,
     },
     {
       id: "categories",
@@ -88,7 +88,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Tag",
       component: <CategoriesPageContent />,
       category: "workplace",
-      isVisible: true,
+      isVisible: isActive,
     },
     {
       id: "entities",
@@ -96,7 +96,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Warehouse",
       component: <EntitiesPageContent />,
       category: "workplace",
-      isVisible: hasPlanAccess(currentPlan, "Smart"),
+      isVisible: isActive && hasPlanAccess(currentPlan, "Smart") && isOwner,
     },
     {
       id: "banks",
@@ -104,7 +104,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Landmark",
       component: <BankPageContent />,
       category: "workplace",
-      isVisible: true,
+      isVisible: isActive,
     },
   ];
 

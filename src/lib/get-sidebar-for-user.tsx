@@ -10,23 +10,22 @@ export function getSidebarForUser(
 ): MenuItem[] {
 
   if (subscription.status === SubscriptionStatus.PENDING) {
-    return [
-      {
-        name: "Planos",
-        url: "/plans",
-        icon: <Icon name="Wallet" />,
-        roles: [role],
-      },
-      {
-        name: "Subscrição",
-        url: "/subscription",
-        icon: <Icon name="CreditCard" />,
-        roles: [role],
-      },
-    ];
+    return items
+      .filter((item) => !item.roles || item.roles.includes(role))
+      .map((item) => {
+        const isPlans = item.url === "/plans";
+        const isSettings = item.url === "/settings";
+
+        if (isPlans || isSettings) return item;
+
+        return {
+          ...item,
+          showUpgrade: true,
+        };
+      });
   }
 
-  return items
+  return items  
     .filter((item) => {
       const roleOk = !item.roles || item.roles.includes(role);
       const planOk = !item.minPlan || plan! >= item.minPlan;

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useModal } from "@/stores";
-import { Button, Icon } from "@/components";
+import { Button } from "@/components";
 import { GlobalModal } from "@/components/modal";
 
 export function AccountCreatedModal() {
@@ -9,32 +9,20 @@ export function AccountCreatedModal() {
 
   return (
     <GlobalModal
+      sucess
       canClose={false}
       id="account-created"
-      title="Conta Criada"
+      title="Bem-vindo(a) à Mindgest!"
       className="!w-lg text-center"
-      description="Tudo pronto para começar!"
+      description="Sua conta foi criada com sucesso."
     >
-      <div className="flex flex-col items-center justify-center py-6 space-y-4">
-        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-2 animate-bounce">
-          <Icon name="Check" className="w-8 h-8 text-green-600 dark:text-green-500" />
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="text-xl font-bold text-foreground">
-            Bem-vindo(a) à Mindgest!
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Sua conta foi criada com sucesso.
-          </p>
-        </div>
-
-        <div className="w-full pt-4">
-          <Link href="/auth/login" className="w-full block">
+      <div className="flex flex-col items-center justify-center py-2 space-y-4">
+        <div className="w-full">
+          <Link href="/auth/login" onClick={() => closeModal("account-created")} className="w-full block">
             <Button
-              className="w-full bg-primary hover:bg-primary/90 font-semibold h-11"
+              className="w-full bg-primary hover:bg-primary/90 font-semibold"
             >
-              Ir para o Login
+              Entrar
             </Button>
           </Link>
         </div>

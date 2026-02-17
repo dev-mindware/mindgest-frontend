@@ -26,7 +26,7 @@ export enum SubscriptionStatus {
   PENDING = "PENDING",
 }
 
-export interface Plan {
+/* export interface Plan {
   id: string;
   name: PlanType;
   priceMonthly: string;
@@ -38,9 +38,9 @@ export interface Plan {
   trialPeriodInDays: number | null;
   billingIntervals: any[];
   features: Features;
-}
+} */
 
-export interface Features {
+/* export interface Features {
   hasPOS: boolean;
   hasGestAI: boolean;
   canExportSaft: boolean;
@@ -48,4 +48,29 @@ export interface Features {
   hasAdvancedReporting: boolean;
   hasSupplierManagement: boolean;
   hasSimplifiedReporting: boolean;
+} */
+
+export interface Plan {
+  id: string
+  name: PlanType
+  priceMonthly: string
+  isPublic: boolean
+  createdAt: string
+  updatedAt: string
+  order: number
+  maxUsers: number
+  maxStores: number
+  trialPeriodInDays?: number
+  features: Features
+}
+
+export interface Features {
+  hasPos: boolean
+  canExportSaft: boolean
+  hasStock: boolean
+  hasInvoices: boolean
+  hasReporting: boolean
+  hasSuppliers: boolean
+  hasAppearance?: boolean
+  hasPrintFormats?: boolean
 }

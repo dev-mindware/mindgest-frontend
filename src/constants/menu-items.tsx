@@ -76,14 +76,14 @@ export const menuItems: MenuStructure = {
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
-    {
+  /*   {
       name: "GestIA",
       url: "/gestia",
       icon: <Icon name="Sparkles" className="w-5 h-5" />,
       roles: ["OWNER"],
       minPlan: "Base",
       showUpgrade: true,
-    },
+    }, */
     {
       name: "Planos",
       url: "/plans",

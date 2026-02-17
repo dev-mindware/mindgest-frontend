@@ -1,5 +1,5 @@
 import { Plan } from "@/types";
-import { formatCurrency } from "@/utils";
+import { formatCurrency, getPlanFeatures } from "@/utils";
 import type { ComponentType, ReactNode } from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components";
 import { Shield, Check, CreditCard } from "lucide-react";
@@ -71,28 +71,14 @@ export function SubscriptionSummary({
   const discount = isAnnual ? subtotal * 0.05 : 0;
   const totalToPay = subtotal - discount;
 
-  const featuresList = [
-    selectedPlan.maxUsers > 0
-      ? `Até ${selectedPlan.maxUsers} usuários`
-      : "Usuários ilimitados",
-    selectedPlan.maxStores > 0
-      ? `Até ${selectedPlan.maxStores} loja(s)`
-      : "Lojas ilimitadas",
-    selectedPlan.features.canExportSaft && "Exportação SAFT",
-    selectedPlan.features.hasSimplifiedReporting && "Relatórios simplificados",
-    selectedPlan.features.hasAdvancedReporting && "Relatórios avançados",
-    selectedPlan.features.hasStockManagement && "Gestão de estoque",
-    selectedPlan.features.hasSupplierManagement && "Gestão de fornecedores",
-    selectedPlan.features.hasGestAI && "GestAI incluído",
-    selectedPlan.features.hasPOS && "Gestão de POS",
-  ].filter(Boolean);
+  const featuresList = getPlanFeatures(selectedPlan);
 
   return (
     <div className="space-y-6">
       <Card className="border-border shadow-none">
         <CardHeader>
           <CardTitle className="text-xl text-foreground">
-            Resumo da Assinatura
+            Resumo da Subscrição
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -102,7 +88,7 @@ export function SubscriptionSummary({
             </Badge>
           </InfoRow>
 
-          <InfoRow label="Tipo de assinatura:">
+          <InfoRow label="Tipo de Subscrição:">
             <span className="font-medium text-foreground">
               {isAnnual ? "Anual (5% desconto)" : "Mensal"}
             </span>
@@ -150,7 +136,7 @@ export function SubscriptionSummary({
           Seus dados estão protegidos com criptografia SSL
         </p>
         <div className="flex space-x-2">
-          <Pill>Transferência</Pill>
+          <Pill>Kwik</Pill>
           <Pill>Express</Pill>
         </div>
       </SectionCard>
