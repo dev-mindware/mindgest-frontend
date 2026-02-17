@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
-import { Role } from "@/types";
-import { useRouter } from "next/navigation";
+import { SubscriptionStatus, Role } from "@/types";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/auth";
 
 interface RouteProtectorProps {
@@ -16,7 +16,8 @@ export function RouteProtector({
   fallback,
 }: RouteProtectorProps) {
   const router = useRouter();
-  const { user, isAuthenticating } = useAuth();
+  const pathname = usePathname();
+  const { user, isAuthenticating, subscriptionStatus } = useAuth();
 
   useEffect(() => {
     // Só redireciona após autenticação completa
@@ -30,7 +31,15 @@ export function RouteProtector({
     if (!allowed.includes(user.role)) {
       router.replace("/unauthorized");
     }
-  }, [user, allowed, router, isAuthenticating]);
+
+    if (
+      subscriptionStatus === SubscriptionStatus.PENDING &&
+      !pathname.startsWith("/settings") &&
+      !pathname.startsWith("/plans")
+    ) {
+      router.replace("/settings?tab=subscription");
+    }
+  }, [user, allowed, router, isAuthenticating, pathname, subscriptionStatus]);
 
   // Enquanto está verificando autenticação/autorização
   if (isAuthenticating) {
@@ -53,6 +62,13 @@ export function RouteProtector({
     return null;
   }
 
-  // Tudo verificado com sucesso, renderiza os children
+  if (
+    subscriptionStatus === SubscriptionStatus.PENDING &&
+    !pathname.startsWith("/settings") &&
+    !pathname.startsWith("/plans") 
+  ) {
+    return null;
+  }
+
   return <>{children}</>;
 }
