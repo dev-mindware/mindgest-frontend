@@ -5,3 +5,7 @@ sobre o redirect do /dashboard
 metodo de pagemento: kwik ou expressna parte dos pagamentos
 
 tirar as informações da empresa emissora ao fazer o pagamento
+ver o redirect do /dashboard
+
+quando a subscrição está pendente não poder ir pra outras telas vida link
+ver o modal de upgrade - melhorar a escrita
