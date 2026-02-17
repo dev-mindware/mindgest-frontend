@@ -99,8 +99,8 @@ export function SubscriptionInfo() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <Link href="/plans">
-              <Button className="gap-2">
+            <Link href="/plans" className={`${isPending && "pointer-events-none"}`}>
+              <Button className="gap-2" disabled={isPending}>
                 <Icon name="ArrowUpToLine" size={16} />
                 Upgrade de Plano
               </Button>

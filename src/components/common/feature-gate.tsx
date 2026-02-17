@@ -14,8 +14,8 @@ type FeatureGateProps = {
 
 const PLAN_HIERARCHY: Record<PlanType, number> = {
     Base: 0,
-    Pro: 1,
-    Smart: 2,
+    Smart: 1,
+    Pro: 2,
 };
 
 export function FeatureGate({

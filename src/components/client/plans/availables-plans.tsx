@@ -24,6 +24,7 @@ export function AvailablePlans() {
 
   const currentPlan = user?.company?.subscription.plan;
   const isCurrentPlan = (plan: Plan) => plan.id === currentPlan?.id;
+  const isPending = user?.company?.subscription.status === "PENDING";
 
   function onHandlerChoosePlan(plan: Plan) {
     setCurrentPlanSelected(plan);
@@ -141,7 +142,7 @@ export function AvailablePlans() {
                       <Button
                         size="lg"
                         className="w-full"
-                        disabled={isCurrent}
+                        disabled={isCurrent || isPending}
                         variant={isPopular ? "default" : "outline"}
                         onClick={() => onHandlerChoosePlan(plan)}
                       >

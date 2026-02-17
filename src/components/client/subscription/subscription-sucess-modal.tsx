@@ -15,19 +15,17 @@ export function SubscriptionSucessModal() {
   return (
     <GlobalModal
       canClose={false}
-      id="account-created"
-      title="Conta Criada"
+      id="subscription-created"
       className="!w-lg text-center"
-      description="Tudo pronto para começar!"
     >
       <div className="flex flex-col items-center justify-center py-6 space-y-4">
-        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-2 animate-bounce">
+        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-2">
           <Icon name="Check" className="w-8 h-8 text-green-600 dark:text-green-500" />
         </div>
 
         <div className="space-y-2">
           <h3 className="text-xl font-bold text-foreground">
-            Assinatura registrada com Sucesso
+            Assinatura criada com sucesso
           </h3>
           <p className="text-sm text-muted-foreground">
             Parabéns! Sua assinatura foi efectuada com sucesso. <br /> Você receberá

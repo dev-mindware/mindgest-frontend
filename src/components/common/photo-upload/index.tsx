@@ -9,19 +9,21 @@ import {
 } from "react-hook-form";
 import type { File as MyFile } from "@/types";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Icon } from "../icon";
 
 interface FileUploadProps<T extends FieldValues> {
   name: Path<T>;
   control?: Control<T>;
-  accept?: string[];
+  accept?: "image" | "pdf";
   label: string;
   info?: string;
   maxSize?: number;
   onChange?: (file: MyFile) => void;
   value?: MyFile;
   disabled?: boolean;
+  className?: string;
 }
 
 const DropzoneContent = ({
@@ -33,6 +35,8 @@ const DropzoneContent = ({
   maxSize,
   disabled,
   name,
+  accept = "pdf",
+  className,
 }: {
   onChange: (file: MyFile | null) => void;
   value: MyFile | null;
@@ -42,6 +46,8 @@ const DropzoneContent = ({
   maxSize: number;
   disabled?: boolean;
   name: string;
+  accept?: "image" | "pdf";
+  className?: string;
 }) => {
   const onDrop = useCallback(
     (acceptedFiles: globalThis.File[]) => {
@@ -58,25 +64,28 @@ const DropzoneContent = ({
           return;
         }
         const customFile: MyFile = {
-          fieldname: name, // Using the field name from props
+          fieldname: name,
           originalname: file.name,
           encoding: "7bit",
           mimetype: file.type,
-          buffer: file, // Store the file object itself as the buffer for now
+          buffer: file,
           size: file.size,
           url: URL.createObjectURL(file),
         };
         onChange(customFile);
       }
     },
-    [onChange, maxSize]
+    [onChange, maxSize, name]
   );
+
+  const acceptTypes =
+    accept === "image"
+      ? { "image/*": [".jpg", ".jpeg", ".png", ".svg", ".webp"] }
+      : { "application/pdf": [".pdf"] };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "image/*": [".jpg", ".jpeg", ".png", ".svg", ".webp"],
-    },
+    accept: acceptTypes as any,
     multiple: false,
     disabled,
   });
@@ -87,8 +96,10 @@ const DropzoneContent = ({
     else return (bytes / 1048576).toFixed(1) + " MB";
   };
 
+  const isImage = accept === "image";
+
   return (
-    <div className="w-full">
+    <div className={cn("w-full", className)}>
       <label className="block text-foreground font-medium text-sm mb-2">
         {label}{" "}
         {info && (
@@ -112,7 +123,10 @@ const DropzoneContent = ({
           <input {...getInputProps()} />
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="p-4 bg-muted rounded-full">
-              <Icon name="CloudUpload" className="h-8 w-8 text-muted-foreground" />
+              <Icon
+                name={isImage ? "ImagePlus" : "CloudUpload"}
+                className="h-8 w-8 text-muted-foreground"
+              />
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">
@@ -121,7 +135,8 @@ const DropzoneContent = ({
                   : "Arraste e solte ou clique para selecionar"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Apenas arquivos PDF (máx. {(maxSize / 1024 / 1024).toFixed(1)}
+                Apenas arquivos {isImage ? "de imagem" : "PDF"} (máx.{" "}
+                {(maxSize / 1024 / 1024).toFixed(1)}
                 MB)
               </p>
             </div>
@@ -129,9 +144,23 @@ const DropzoneContent = ({
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden bg-card shadow-sm">
+          {isImage && value.url ? (
+            <div className="relative aspect-video w-full bg-muted">
+              <Image
+                src={value.url}
+                alt={value.originalname}
+                fill
+                className="object-contain"
+              />
+            </div>
+          ) : null}
+
           <div className="p-4 flex items-center gap-4 border-b border-border bg-muted/30">
             <div className="p-3 bg-primary/10 rounded-lg">
-              <Icon name="FileText" className="h-6 w-6 text-primary" />
+              <Icon
+                name={isImage ? "Image" : "FileText"}
+                className="h-6 w-6 text-primary"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <h4
@@ -141,7 +170,7 @@ const DropzoneContent = ({
                 {value.originalname}
               </h4>
               <p className="text-xs text-muted-foreground mt-1">
-                {formatFileSize(value.size)} • PDF
+                {formatFileSize(value.size)} • {isImage ? "Imagem" : "PDF"}
               </p>
             </div>
           </div>
@@ -175,7 +204,10 @@ const DropzoneContent = ({
       {error && (
         <div className="mt-2 flex items-center gap-1.5 text-destructive">
           <Icon name="CircleAlert" className="h-4 w-4" />
-          <p className="text-xs">Por favor, selecione um arquivo PDF válido</p>
+          <p className="text-xs">
+            Por favor, selecione um arquivo {isImage ? "de imagem" : "PDF"}{" "}
+            válido
+          </p>
         </div>
       )}
     </div>
@@ -187,8 +219,10 @@ export function PhotoUpload<T extends FieldValues>({
   name,
   info,
   control,
+  accept = "pdf",
   maxSize = 1024 * 1024 * 2,
   disabled,
+  className,
 }: FileUploadProps<T>) {
   return (
     <Controller
@@ -204,6 +238,8 @@ export function PhotoUpload<T extends FieldValues>({
           info={info}
           disabled={disabled}
           name={name as string}
+          accept={accept}
+          className={className}
         />
       )}
     />
