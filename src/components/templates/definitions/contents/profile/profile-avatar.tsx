@@ -25,7 +25,8 @@ export function ProfileAvatar({ currentImage, userName = "User", onImageChange }
         }
     };
 
-    const handleRemove = () => {
+    const handleRemove = (e: React.MouseEvent) => {
+        e.stopPropagation();
         setPreview(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
@@ -40,27 +41,46 @@ export function ProfileAvatar({ currentImage, userName = "User", onImageChange }
         .slice(0, 2);
 
     return (
-        <div className="flex gap-6">
-            <div onClick={() => fileInputRef.current?.click()} className="cursor-pointer">
-                <Avatar className="w-24 h-24 transition ring-2 ring-primary/40 hover:ring-primary/80">
-                    <AvatarImage src={preview || currentImage || "/user.jpg"} alt="Avatar" />
-                    <AvatarFallback>{initials}</AvatarFallback>
+        <div className="flex flex-col items-center gap-4">
+            <div
+                onClick={() => fileInputRef.current?.click()}
+                className="relative group cursor-pointer"
+            >
+                <Avatar className="w-32 h-32 transition-all duration-300 ring-4 ring-primary/10 group-hover:ring-primary/40">
+                    <AvatarImage src={preview || currentImage || "/user.jpg"} alt="Avatar" className="object-cover" />
+                    <AvatarFallback className="text-2xl bg-primary/5 text-primary font-bold">
+                        {initials}
+                    </AvatarFallback>
                 </Avatar>
+
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white">
+                    <Icon name="Camera" className="w-8 h-8" />
+                </div>
+
+                {/* Edit Button Badge */}
+                <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground p-2 rounded-full shadow-lg border-4 border-background transform translate-x-1 translate-y-1 transition-transform group-hover:scale-110">
+                    <Icon name="Pencil" className="w-4 h-4" />
+                </div>
+
+                {preview && (
+                    <button
+                        onClick={handleRemove}
+                        className="absolute top-0 right-0 bg-destructive/90 text-destructive-foreground p-1.5 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive translate-x-1 -translate-y-1"
+                        title="Remover foto"
+                    >
+                        <Icon name="X" className="w-3 h-3" />
+                    </button>
+                )}
             </div>
 
-            <div className="space-y-2">
-                <div className="flex flex-wrap gap-2">
-                    <Button type="button" onClick={() => fileInputRef.current?.click()}>
-                        <Icon name="Camera" />
-                    </Button>
-                    <Button type="button" variant="outline" onClick={handleRemove} disabled={!preview}>
-                        <Icon name="Trash2" />
-                    </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                    Apenas ficheiros .JPEG, .PNG e menores que 2MB são suportados
+            <div className="text-center space-y-1">
+                <p className="text-sm font-medium text-foreground">Foto de Perfil</p>
+                <p className="text-xs text-muted-foreground max-w-[200px]">
+                    Recomendado: .jpg ou .png, max 2MB
                 </p>
             </div>
+
             <input
                 type="file"
                 accept="image/*"

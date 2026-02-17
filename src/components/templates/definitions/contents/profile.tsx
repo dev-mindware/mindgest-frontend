@@ -53,46 +53,81 @@ export function Profile() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between border-b pb-6">
         <div>
-          <h2 className="text-2xl text-center md:text-start">Meu Perfil</h2>
-          <p className="text-center text-muted-foreground md:text-start">
-            Personalize o seu perfil MindGest quando quiser.
+          <h2 className="text-3xl font-bold tracking-tight">Meu Perfil</h2>
+          <p className="text-muted-foreground mt-1">
+            Gerencie suas informações pessoais e da empresa.
           </p>
         </div>
-        {user?.role && <span className="font-medium text-primary">{getRoleLabel(user.role)}</span>}
-      </div>
-
-      <div className="flex flex-col justify-between items-center w-full gap-8 md:flex-row">
-        <ProfileAvatar currentImage={user?.company?.logo || undefined} userName={user?.name} />
-
-        {!user?.company?.logo ? (
-          <PhotoUpload
-            label="Logo da Empresa"
-            name="companyLogo"
-            control={control}
-            accept="image"
-            maxSize={1024 * 1024 * 2}
-            className="max-w-xs"
-            disabled={isUploading}
-          />
-        ) : (
-          <img
-            src={user.company.logo}
-            alt="Logo da empresa"
-            className="max-w-xs rounded-md border border-muted"
-          />
+        {user?.role && (
+          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20">
+            {getRoleLabel(user.role)}
+          </span>
         )}
       </div>
 
-      <ProfileForm user={user} />
-      <AccountSecurity user={user} />
-      <SupportAccess />
+      <div className="grid gap-8 md:grid-cols-12">
+        {/* Left Column - Avatar & Personal Info */}
+        <div className="md:col-span-4 space-y-6">
+          <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col items-center text-center">
+            <h3 className="font-semibold mb-6 w-full text-left">Foto de Perfil</h3>
+            <ProfileAvatar currentImage={user?.company?.logo || undefined} userName={user?.name} />
+          </div>
+
+          <div className="bg-card rounded-xl border p-6 shadow-sm">
+            <h3 className="font-semibold mb-4">Logo da Empresa</h3>
+            <div className="flex flex-col items-center">
+              {!user?.company?.logo ? (
+                <PhotoUpload
+                  label="Carregar Logo"
+                  name="companyLogo"
+                  control={control}
+                  accept="image"
+                  maxSize={1024 * 1024 * 2}
+                  className="w-full"
+                  disabled={isUploading}
+                />
+              ) : (
+                <div className="relative group w-full aspect-video bg-muted/30 rounded-lg flex items-center justify-center border-2 border-dashed overflow-hidden">
+                  <img
+                    src={user.company.logo}
+                    alt="Logo da empresa"
+                    className="max-h-full max-w-full object-contain p-2"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <PhotoUpload
+                      label="Alterar"
+                      name="companyLogo"
+                      control={control}
+                      accept="image"
+                      maxSize={1024 * 1024 * 2}
+                      className="w-auto"
+                      disabled={isUploading}
+                    />
+                  </div>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                Exibido em documentos e faturas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Forms & Settings */}
+        <div className="md:col-span-8 space-y-6">
+          <ProfileForm user={user} />
+          <AccountSecurity user={user} />
+          <SupportAccess />
+        </div>
+      </div>
     </div>
   );
 }
- 
+
 
 /* "use client";
 
