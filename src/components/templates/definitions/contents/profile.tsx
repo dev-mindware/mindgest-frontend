@@ -9,6 +9,9 @@ import { ProfileAvatar } from "./profile/profile-avatar";
 import { ProfileForm } from "./profile/profile-form";
 import { AccountSecurity } from "./profile/account-security";
 import { SupportAccess } from "./profile/support-access";
+import { useFileUpload } from "@/hooks/common/use-upload";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface ProfileFormData {
   companyLogo?: MyFile;
@@ -16,7 +19,29 @@ interface ProfileFormData {
 
 export function Profile() {
   const { user } = useAuth();
-  const { control } = useForm<ProfileFormData>();
+  const { control, watch } = useForm<ProfileFormData>();
+
+  const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
+    `/api/companies/${user?.company?.id}/logo`,
+    "companies"
+  );
+
+  const companyLogo = watch("companyLogo");
+
+  useEffect(() => {
+    if (companyLogo && companyLogo.url) {
+      uploadLogo(
+        {
+          files: { file: companyLogo },
+        },
+        {
+          onSuccess: () => toast.success("Logo da empresa atualizada com sucesso!"),
+          onError: (error: any) =>
+            toast.error(error?.response?.data?.message || "Erro ao atualizar logo da empresa"),
+        }
+      );
+    }
+  }, [companyLogo, uploadLogo]);
 
   const getRoleLabel = (role?: string) => {
     const roleMap: Record<string, string> = {
@@ -37,31 +62,33 @@ export function Profile() {
             Personalize o seu perfil MindGest quando quiser.
           </p>
         </div>
-        {user?.role && (
-          <span className="font-medium text-primary">{getRoleLabel(user.role)}</span>
-        )}
+        {user?.role && <span className="font-medium text-primary">{getRoleLabel(user.role)}</span>}
       </div>
 
       <div className="flex flex-col justify-between items-center w-full gap-8 md:flex-row">
-        <ProfileAvatar
-          currentImage={user?.company?.logo || undefined}
-          userName={user?.name}
-        />
+        <ProfileAvatar currentImage={user?.company?.logo || undefined} userName={user?.name} />
 
-        <PhotoUpload
-          label="Logo da Empresa"
-          name="companyLogo"
-          control={control}
-          accept="image"
-          maxSize={1024 * 1024 * 2}
-          className="max-w-xs"
-        />
+        {!user?.company?.logo ? (
+          <PhotoUpload
+            label="Logo da Empresa"
+            name="companyLogo"
+            control={control}
+            accept="image"
+            maxSize={1024 * 1024 * 2}
+            className="max-w-xs"
+            disabled={isUploading}
+          />
+        ) : (
+          <img
+            src={user.company.logo}
+            alt="Logo da empresa"
+            className="max-w-xs rounded-md border border-muted"
+          />
+        )}
       </div>
 
       <ProfileForm user={user} />
-
       <AccountSecurity user={user} />
-
       <SupportAccess />
     </div>
   );
