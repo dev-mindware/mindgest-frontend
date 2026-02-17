@@ -22,7 +22,7 @@ export function Profile() {
   const { control, watch } = useForm<ProfileFormData>();
 
   const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
-    `/api/companies/${user?.company?.id}/logo`,
+    `/companies/${user?.company?.id}/logo`,
     "companies"
   );
 
