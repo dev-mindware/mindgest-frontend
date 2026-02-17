@@ -67,14 +67,19 @@ export function PaymentForm({ form, onBack, onSubmit, isPending }: PaymentFormPr
           <Card className="p-6 border-border shadow-none">
             <h2 className="text-lg font-semibold mb-4">Método de Pagamento</h2>
 
-            <FileUpload
-              control={control}
-              name="proofPayment"
-              accept={[".pdf", ".jpg", ".jpeg", ".png"]}
-              label="Comprovante de Pagamento"
-            />
+            <form
+              onSubmit={handleSubmit(handleFormSubmit, (errors) => {
+                console.log("Validation Errors:", errors);
+              })}
+              className="space-y-6"
+            >
+              <FileUpload
+                control={control}
+                name="proofPayment"
+                accept={[".pdf", ".jpg", ".jpeg", ".png"]}
+                label="Comprovante de Pagamento"
+              />
 
-            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
               <Button
                 size="lg"
                 type="submit"

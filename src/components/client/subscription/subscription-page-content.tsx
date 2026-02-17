@@ -1,20 +1,21 @@
 "use client";
 import { useState } from "react";
+import { useModal } from "@/stores";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
-import { SubscriptionForm } from "./subscription-form";
 import { PaymentForm } from "./payment-form";
-import { useCreateSubscription } from "@/hooks/susbcription";
 import { ErrorMessage } from "@/utils/messages";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubscriptionForm } from "./subscription-form";
+import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
+import { useFileUpload } from "@/hooks/common/use-upload";
 
 type CurrentStep = "subscription" | "payment";
 
 export function SubscriptionPageContent() {
+  const { openModal } = useModal();
   const [currentStep, setCurrentStep] = useState<CurrentStep>("subscription");
-  const { mutateAsync, isPending } = useCreateSubscription();
+  const { mutateAsync: uploadFile, isPending } = useFileUpload("/subscriptions", "subscriptions");
 
-  // Single form instance for the entire flow
   const form = useForm<SubscriptionFormData>({
     resolver: zodResolver(subscriptionSchema),
     defaultValues: {
@@ -25,7 +26,6 @@ export function SubscriptionPageContent() {
   });
 
   async function handleSubscriptionNext() {
-    // Validate subscription step fields before proceeding
     const isValid = await form.trigger(["planId", "frequency", "name", "email", "company", "phone"]);
 
     if (isValid) {
@@ -38,15 +38,36 @@ export function SubscriptionPageContent() {
   }
 
   async function handlePaymentSubmit(data: SubscriptionFormData) {
-    if (!data.proofPayment) {
-      ErrorMessage("Por favor, envie o comprovativo de pagamento");
-      return;
+
+    try {
+
+      if (!data.proofPayment) {
+        ErrorMessage("Por favor, envie o comprovativo de pagamento");
+        return;
+      }
+
+      await uploadFile({
+        files: {
+          proofPayment: data.proofPayment
+        },
+        extraData: {
+          frequency: data.frequency,
+          planId: data.planId,
+        }
+      });
+
+      openModal("subscription-created");
+
+      localStorage.removeItem("MGEST-PLAN-STORE");
+
+    } catch (error: any) {
+      if (error?.response) {
+        ErrorMessage(error?.response?.data?.message);
+      } else {
+        ErrorMessage("Ocorreu um erro ao criar a assinatura. Tente novamente.");
+      }
     }
 
-    await mutateAsync(data);
-
-    window.location.replace("/owner/dashboard");
-    localStorage.removeItem("plan-storage");
   }
 
   return (

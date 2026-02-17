@@ -12,17 +12,18 @@ import {
   RequestError,
   SubscriptionSkeleton,
   SubscriptionSummary,
-  FileUpload,
+  RadioGroup,
+  RadioGroupItem,
 } from "@/components";
+import { Controller } from "react-hook-form";
 import { Plan } from "@/types";
 import { usePlans } from "@/hooks";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { PlanCard } from "./plan-card";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useCurrentPlanStore } from "@/stores";
 import { ErrorMessage } from "@/utils/messages";
-import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
+import { SubscriptionFormData } from "@/schemas";
 import { useAuth } from "@/hooks/auth";
 
 interface SubscriptionFormProps {
@@ -149,8 +150,8 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
                     />
                   ))}
                 </div>
-                {errors.plan?.id && (
-                  <AlertError errorMessage={errors.plan.id.message} />
+                {errors.plan && (
+                  <AlertError errorMessage={errors?.plan?.message?.toString()} />
                 )}
               </div>
 
@@ -160,28 +161,26 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
                 </h3>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Tipo de Pagamento</Label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        value="MONTHLY"
-                        {...register("frequency")}
-                        defaultChecked
-                        className="w-4 h-4 text-primary-500 border-gray-300 focus:ring-primary-500"
-                      />
-                      <span className="text-sm text-foreground">Mensal</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        value="ANNUAL"
-                        {...register("frequency")}
-                        className="w-4 h-4 text-primary-500 border-gray-300 focus:ring-primary-500"
-                      />
-                      <span className="text-sm text-foreground">Anual</span>
-                    </label>
-                  </div>
+                  <Controller
+                    control={control}
+                    name="frequency"
+                    render={({ field }) => (
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || "MONTHLY"}
+                        className="flex gap-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="MONTHLY" id="MONTHLY" />
+                          <Label htmlFor="MONTHLY" className="cursor-pointer">Mensal</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="ANNUAL" id="ANNUAL" />
+                          <Label htmlFor="ANNUAL" className="cursor-pointer">Anual</Label>
+                        </div>
+                      </RadioGroup>
+                    )}
+                  />
                   {errors.frequency && (
                     <AlertError errorMessage={errors.frequency.message} />
                   )}

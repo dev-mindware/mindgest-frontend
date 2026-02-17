@@ -106,7 +106,7 @@ export function SubscriptionSummary({
           </InfoRow>
 
           <InfoRow label="Lojas permitidas:">
-            <span>{selectedPlan.maxStores}</span>
+            <span>{selectedPlan.maxStores == -1 ? "Ilimitado" : selectedPlan.maxStores}</span>
           </InfoRow>
 
           <InfoRow label="Total a pagar:">

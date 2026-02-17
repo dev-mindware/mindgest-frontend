@@ -14,7 +14,7 @@ export const useCurrentPlanStore = create<PlanStore>()(
       setCurrentPlanSelected: (plan) => set({ currentPlanSelected: plan }),
     }),
     {
-      name: "plan-storage",
-    }
-  )
+      name: "MGEST-PLAN-STORE",
+    },
+  ),
 );

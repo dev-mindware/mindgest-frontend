@@ -25,12 +25,12 @@ const PlanSchema = z.object({
 });
 
 export const subscriptionSchema = z.object({
-  status: z.string().trim(),
-  companyId: z.string().trim(),
+  status: z.string().trim().optional(),
+  companyId: z.string().trim().optional(),
 
   planId: z.string().trim(),
   frequency: z.enum(["MONTHLY", "ANNUAL"]),
-  proofPayment: z.any().optional(),
+  proofPayment: FileSchema.nullable(),
 
   periodStartsAt: z.string().trim().datetime().optional(),
   periodEndsAt: z.string().trim().datetime().optional(),
@@ -40,11 +40,11 @@ export const subscriptionSchema = z.object({
   providerClientId: z.string().trim().optional(),
   providerSubscriptionId: z.string().trim().optional(),
 
-  plan: PlanSchema,
-  name: z.string().trim(),
-  email: z.string().trim().email(),
-  company: z.string().trim(),
-  phone: z.string().trim(),
+  plan: z.any().optional(),
+  name: z.string().trim().optional(),
+  email: z.string().trim().email().optional().or(z.literal("")),
+  company: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
 });
 
 export type SubscriptionFormData = z.infer<typeof subscriptionSchema>;

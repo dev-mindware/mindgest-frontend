@@ -23,15 +23,15 @@ import { PlanType } from "@/types";
 // ... inside component
 
 export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
+  const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab");
-  const { user } = useAuth();
 
-  // Default to "Base" if undefined
   const currentPlan =
     (user?.company?.subscription?.plan?.name as PlanType) || "Base";
   const isOwner = user?.role === "OWNER";
+  const isPending = user?.company?.subscription.status === "PENDING";
 
   const allTabs = [
     {
@@ -108,7 +108,6 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       ? currentTab
       : defaultTab;
 
-  // Função para limpar query params ao trocar de tab
   const handleTabChange = (value: string) => {
     router.push(`?tab=${value}`);
   };

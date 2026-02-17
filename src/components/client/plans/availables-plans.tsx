@@ -12,14 +12,18 @@ import {
   PlansPageSkeleton,
 } from "@/components";
 import { Plan } from "@/types";
-import { usePlans } from "@/hooks";
+import { useAuth, usePlans } from "@/hooks";
 import { useCurrentPlanStore } from "@/stores";
 import { formatCurrency } from "@/utils";
 import { PlanInclusionFeatures } from "./plan-inclusion-features";
 
 export function AvailablePlans() {
+  const { user } = useAuth();
   const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
+
+  const currentPlan = user?.company?.subscription.plan;
+  const isCurrentPlan = (plan: Plan) => plan.id === currentPlan?.id;
 
   function onHandlerChoosePlan(plan: Plan) {
     setCurrentPlanSelected(plan);
@@ -28,17 +32,19 @@ export function AvailablePlans() {
 
   const featureLabels: Record<string, string> = {
     hasPOS: "Ponto de Venda (POS)",
-    hasGestAI: "Gestão Inteligente (IA)",
+    // hasGestAI: "Gestão Inteligente (IA)",
     canExportSaft: "Exportação SAF-T",
     hasStockManagement: "Gestão de Estoque",
-    hasAdvancedReporting: "Relatórios Avançados",
-    hasSupplierManagement: "Gestão de Fornecedores",
-    hasSimplifiedReporting: "Relatórios Simplificados",
-    hasAppearanceSettings: "Personalização da Aparência",
     hasMultiplePrintFormats: "Múltiplos formatos de impressão",
     hasFullReports: "Relatórios completos",
     hasSmartStockAnalysis: "Análise de Estoque Inteligente",
-    hasPosManagement: "Gestão de POS",
+    hasPos: "Gestão de POS",
+    hasStock: "Gestão de Estoque",
+    hasInvoices: "Faturas Ilimitadas",
+    hasReporting: "Relatórios Avançados",
+    hasSuppliers: "Gestão de Fornecedores",
+    hasAppearance: "Personalização da Aparência",
+    hasPrintFormats: "Múltiplos formatos de impressão",
   };
 
   return (
@@ -61,6 +67,7 @@ export function AvailablePlans() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {plans.map((plan, index) => {
                 const isPopular = index === 1;
+                const isCurrent = isCurrentPlan(plan);
 
                 const features: string[] = [
                   `Até ${
@@ -132,12 +139,13 @@ export function AvailablePlans() {
 
                     <CardFooter className="pt-6">
                       <Button
-                        onClick={() => onHandlerChoosePlan(plan)}
-                        className="w-full"
-                        variant={isPopular ? "default" : "outline"}
                         size="lg"
+                        className="w-full"
+                        disabled={isCurrent}
+                        variant={isPopular ? "default" : "outline"}
+                        onClick={() => onHandlerChoosePlan(plan)}
                       >
-                        Escolher {plan.name}
+                        {isCurrent ? "Plano Atual" : `Escolher ${plan.name}`}
                       </Button>
                     </CardFooter>
                   </Card>

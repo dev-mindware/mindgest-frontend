@@ -5,8 +5,10 @@ import { api } from "@/services/api";
 
 type UploadFile = MyFile | null | undefined;
 
-type UploadData =
-  Record<string, string | number | boolean | MyFile | MyFile[] | null>;
+type UploadData = Record<
+  string,
+  string | number | boolean | MyFile | MyFile[] | null
+>;
 
 interface MutationVariables {
   files: Record<string, UploadFile | UploadFile[]>; // ✅ aceita array também
@@ -28,16 +30,22 @@ export function useFileUpload(apiEndpoint: string, queryKey?: string) {
         if (Array.isArray(value)) {
           for (const file of value) {
             if (!file) continue;
+            if (!file?.url) continue;
             const response = await fetch(file.url);
             const blob = await response.blob();
-            const fileObject = new File([blob], file.filename, { type: file.type });
+            const fileObject = new File([blob], file.originalname, {
+              type: file.mimetype,
+            });
             formData.append(key, fileObject); // mesmo "key" várias vezes
           }
         } else {
           // Se for um único arquivo
+          if (!value?.url) continue;
           const response = await fetch(value.url);
           const blob = await response.blob();
-          const fileObject = new File([blob], value.filename, { type: value.type });
+          const fileObject = new File([blob], value.originalname, {
+            type: value.mimetype,
+          });
           formData.append(key, fileObject);
         }
       }
@@ -64,5 +72,3 @@ export function useFileUpload(apiEndpoint: string, queryKey?: string) {
 
   return { ...mutation };
 }
-
-

@@ -28,10 +28,10 @@ export function PaymentUserInfo({ subscriptionData }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
-        <Field label="Nome" value={subscriptionData.name} />
-        <Field label="Email" value={subscriptionData.email} />
-        <Field label="Empresa" value={subscriptionData.company} />
-        <Field label="Telefone" value={subscriptionData.phone} />
+        <Field label="Nome" value={subscriptionData.name || ""} />
+        <Field label="Email" value={subscriptionData.email || ""} />
+        <Field label="Empresa" value={subscriptionData.company || ""} />
+        <Field label="Telefone" value={subscriptionData.phone || ""} />
       </CardContent>
     </Card>
   );

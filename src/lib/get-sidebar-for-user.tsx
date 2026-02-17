@@ -18,9 +18,9 @@ export function getSidebarForUser(
         roles: [role],
       },
       {
-        name: "Configurações",
-        url: "/settings",
-        icon: <Icon name="Settings2" />,
+        name: "Subscrição",
+        url: "/subscription",
+        icon: <Icon name="CreditCard" />,
         roles: [role],
       },
     ];

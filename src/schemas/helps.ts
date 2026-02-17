@@ -1,10 +1,13 @@
 import { z } from "zod";
 
 export const FileSchema = z.object({
+  fieldname: z.string().trim().optional(),
+  originalname: z.string().trim(),
+  encoding: z.string().trim().optional(),
+  mimetype: z.string().trim(),
+  buffer: z.any().optional(),
   size: z.number(),
-  type: z.string().trim(),
-  filename: z.string().trim(),
-  url: z.string().trim().url(),
+  url: z.string().trim().url().optional(),
 });
 
 export const ItemSchema = z.object({
