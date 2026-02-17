@@ -1,5 +1,4 @@
 "use client";
-import { formatCurrency } from "@/utils";
 import { UseFormReturn } from "react-hook-form";
 import { PaymentTerms } from "./payment-terms";
 import { SubscriptionFormData } from "@/schemas";
@@ -8,14 +7,11 @@ import {
   Icon,
   Button,
   Card,
-  Badge,
-  SubscriptionSucessModal,
-  CardHeader,
-  CardContent,
-  CardTitle,
   FileUpload,
+  SubscriptionSucessModal,
+  SubscriptionSummary,
 } from "@/components";
-import { ErrorMessage } from "@/utils/messages";
+import { ErrorMessage, SucessMessage } from "@/utils/messages";
 
 interface PaymentFormProps {
   form: UseFormReturn<SubscriptionFormData>;
@@ -28,10 +24,7 @@ export function PaymentForm({ form, onBack, onSubmit, isPending }: PaymentFormPr
   const { control, handleSubmit, watch } = form;
 
   const subscriptionData = watch();
-
-  const planValue = Number(subscriptionData?.plan?.priceMonthly) || 0;
-  const months = 1;
-  const totalToPay = planValue * months;
+  const frequency = subscriptionData.frequency || "MONTHLY";
 
   async function handleFormSubmit(data: SubscriptionFormData) {
     if (!data.proofPayment) {
@@ -65,13 +58,38 @@ export function PaymentForm({ form, onBack, onSubmit, isPending }: PaymentFormPr
           </div>
 
           <Card className="p-6 border-border shadow-none">
-            <h2 className="text-lg font-semibold mb-4">Método de Pagamento</h2>
+            <h2 className="text-lg font-semibold">Método de Pagamento</h2>
+            <div className="flex flex-col gap-2 text-foreground">
+              <span>
+                Banco: BCI
+              </span>
+              <div className="flex items-center gap-2">
+                <span>
+                  IBAN: 0005.0000.0933.1805.1011.5
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const iban = "0005.0000.0933.1805.1011.5";
+                    navigator.clipboard.writeText(iban);
+                    SucessMessage("IBAN copiado para a área de transferência!");
+                  }}
+                  className="p-1.5 hover:bg-accent rounded-md transition-colors text-primary"
+                  title="Copiar IBAN"
+                >
+                  <Icon name="Copy" className="w-4 h-4" />
+                </button>
+              </div>
+              <span>
+                Titular: MINDWARE - COMÉRCIO E SERVIÇOS
+              </span>
+            </div>
 
             <form
               onSubmit={handleSubmit(handleFormSubmit, (errors) => {
                 console.log("Validation Errors:", errors);
               })}
-              className="space-y-6"
+              className="space-y-6 mt-6"
             >
               <FileUpload
                 control={control}
@@ -97,42 +115,11 @@ export function PaymentForm({ form, onBack, onSubmit, isPending }: PaymentFormPr
         </div>
 
         <div className="space-y-6">
-          <Card className="border-border shadow-none">
-            <CardHeader>
-              <CardTitle className="text-xl text-foreground">
-                Resumo da Assinatura
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span>Plano selecionado:</span>
-                <Badge className="bg-primary-500 text-white">
-                  {subscriptionData?.plan?.name}
-                </Badge>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span>Período:</span>
-                <span>
-                  {months} {months === 1 ? "mês" : "meses"}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span>Valor do plano:</span>
-                <span>{formatCurrency(planValue)} / mês</span>
-              </div>
-
-              <hr className="border-border" />
-
-              <div className="flex items-center justify-between text-lg font-bold">
-                <span>Total a Pagar:</span>
-                <span className="text-primary-600">
-                  {formatCurrency(totalToPay)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <SubscriptionSummary
+            selectedPlan={subscriptionData.plan}
+            months={frequency === "ANNUAL" ? 12 : 1}
+            frequency={frequency as any}
+          />
           <PaymentUserInfo subscriptionData={subscriptionData} />
           <PaymentTerms />
         </div>

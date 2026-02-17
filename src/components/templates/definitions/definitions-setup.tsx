@@ -11,16 +11,15 @@ import {
   SubscriptionInfo,
 } from "./contents";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/hooks/auth";
+import { hasPlanAccess } from "@/lib/features";
+import { PlanType } from "@/types";
+import { BankPageContent } from "./contents/banks";
+import { icons } from "lucide-react";
 
 interface DefSetupProps {
   disabledTabs?: string[];
 }
-
-import { useAuth } from "@/hooks/auth";
-import { hasPlanAccess } from "@/lib/features";
-import { PlanType } from "@/types";
-
-// ... inside component
 
 export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   const { user } = useAuth();
@@ -31,9 +30,18 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   const currentPlan =
     (user?.company?.subscription?.plan?.name as PlanType) || "Base";
   const isOwner = user?.role === "OWNER";
-  const isPending = user?.company?.subscription.status === "PENDING";
 
-  const allTabs = [
+
+  type Tabs = {
+    id: string;
+    label: string;
+    icon: keyof typeof icons;
+    component: React.ReactNode;
+    category: "general" | "workplace";
+    isVisible: boolean;
+  }
+
+  const allTabs: Tabs[] = [
     {
       id: "appearance",
       label: "Aparência",
@@ -90,6 +98,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       category: "workplace",
       isVisible: hasPlanAccess(currentPlan, "Smart"),
     },
+    {
+      id: "banks",
+      label: "Bancos",
+      icon: "Landmark",
+      component: <BankPageContent />,
+      category: "workplace",
+      isVisible: true,
+    },
   ];
 
   const tabs = allTabs.filter((tab) => tab.isVisible);
@@ -123,7 +139,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     return (
       <TabsTrigger key={tab.id} value={tab.id} className={baseClasses}>
         <Icon
-          name={tab.icon as any}
+          name={tab.icon}
           className={isDesktop ? "-ms-0.5 me-1.5 opacity-60" : ""}
           size={16}
           aria-hidden="true"

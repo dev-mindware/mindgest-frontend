@@ -76,6 +76,7 @@ const DropzoneContent = ({
     onDrop,
     accept: {
       "application/pdf": [".pdf"],
+      "application/image": [".jpg", ".jpeg", ".png", ".gif", ".webp"],
     },
     multiple: false,
     disabled,
@@ -117,11 +118,11 @@ const DropzoneContent = ({
             <div>
               <p className="text-sm font-medium text-foreground">
                 {isDragActive
-                  ? "Solte o arquivo aqui..."
+                  ? "Solte o arquivo aqui"
                   : "Arraste e solte ou clique para selecionar"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Apenas arquivos PDF (máx. {(maxSize / 1024 / 1024).toFixed(1)}
+                Arquivos PDF/Imagens (máx. {(maxSize / 1024 / 1024).toFixed(1)}
                 MB)
               </p>
             </div>

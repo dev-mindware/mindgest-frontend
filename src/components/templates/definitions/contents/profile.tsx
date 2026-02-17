@@ -5,6 +5,8 @@ import { useFileUpload } from "@/hooks/use-file-upload"
 import { Input, Button, Switch, Label, Separator, Avatar, AvatarFallback, AvatarImage, Icon  } from "@/components"
 import { useRef, useState } from "react"
 import Image from "next/image"
+
+
 export function Profile() {
   const [{ files }, { removeFile, openFileDialog, getInputProps }] = useFileUpload({
     accept: "image/*",

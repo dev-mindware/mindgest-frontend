@@ -53,16 +53,23 @@ function Pill({ children }: { children: ReactNode }) {
 interface SubscriptionSummaryProps {
   selectedPlan: Plan | null;
   months: number;
+  frequency: "MONTHLY" | "ANNUAL";
 }
 
 export function SubscriptionSummary({
   selectedPlan,
   months,
+  frequency,
 }: SubscriptionSummaryProps) {
   if (!selectedPlan) return null;
 
   const price = parseFloat(selectedPlan.priceMonthly);
-  const totalToPay = price * months;
+  const isAnnual = frequency === "ANNUAL";
+  const actualMonths = isAnnual ? 12 : months;
+
+  const subtotal = price * actualMonths;
+  const discount = isAnnual ? subtotal * 0.05 : 0;
+  const totalToPay = subtotal - discount;
 
   const featuresList = [
     selectedPlan.maxUsers > 0
@@ -95,31 +102,44 @@ export function SubscriptionSummary({
             </Badge>
           </InfoRow>
 
+          <InfoRow label="Tipo de assinatura:">
+            <span className="font-medium text-foreground">
+              {isAnnual ? "Anual (5% desconto)" : "Mensal"}
+            </span>
+          </InfoRow>
+
           <InfoRow label="Preço mensal:">
             <span className="font-bold text-primary-600">
               {formatCurrency(price)}
             </span>
           </InfoRow>
 
-          <InfoRow label="Usuários permitidos:">
-            <span>{selectedPlan.maxUsers}</span>
-          </InfoRow>
-
-          <InfoRow label="Lojas permitidas:">
-            <span>{selectedPlan.maxStores == -1 ? "Ilimitado" : selectedPlan.maxStores}</span>
-          </InfoRow>
+          {isAnnual && (
+            <InfoRow label="Desconto anual:">
+              <span className="font-medium text-green-600">
+                - {formatCurrency(discount)}
+              </span>
+            </InfoRow>
+          )}
 
           <InfoRow label="Total a pagar:">
-            <span className="font-bold text-primary-600">
-              {formatCurrency(totalToPay)}
-            </span>
+            <div className="text-right">
+              {isAnnual && (
+                <p className="text-xs text-muted-foreground line-through">
+                  {formatCurrency(subtotal)}
+                </p>
+              )}
+              <p className="font-bold text-primary-600 text-lg">
+                {formatCurrency(totalToPay)}
+              </p>
+            </div>
           </InfoRow>
         </CardContent>
       </Card>
 
       <SectionCard icon={Shield} title="Recursos inclusos">
         <ul className="space-y-2 text-sm">
-          {featuresList.slice(0, 5).map((feature, idx) => (
+          {featuresList.map((feature, idx) => (
             <CheckItem key={idx}>{feature}</CheckItem>
           ))}
         </ul>

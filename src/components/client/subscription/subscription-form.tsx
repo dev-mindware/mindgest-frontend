@@ -35,6 +35,7 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
   const { user } = useAuth();
   const { plans, error, isLoading, refetch } = usePlans();
   const { currentPlanSelected, setCurrentPlanSelected } = useCurrentPlanStore();
+
   const {
     control,
     register,
@@ -71,7 +72,6 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
       return;
     }
 
-    // Set the planId before proceeding
     setValue("planId", currentPlanSelected.id);
     setValue("status", "PENDING_PAYMENT");
 
@@ -79,9 +79,18 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
   };
 
   const handlePlanSelect = (plan: Plan) => {
+    const activePlanId = user?.company?.subscription?.plan.id;
+
+    if (plan.id === activePlanId) {
+      ErrorMessage("Você já possui este plano ativo.");
+      return;
+    }
+
     setCurrentPlanSelected(plan);
     setValue("plan", plan);
   };
+
+  const frequency = form.watch("frequency") || "MONTHLY";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -168,6 +177,7 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value || "MONTHLY"}
+                        value={field.value || "MONTHLY"}
                         className="flex gap-4"
                       >
                         <div className="flex items-center space-x-2">
@@ -201,7 +211,8 @@ export function SubscriptionForm({ form, onNext }: SubscriptionFormProps) {
 
       <div className="lg:col-span-1">
         <SubscriptionSummary
-          months={1}
+          months={frequency === "ANNUAL" ? 12 : 1}
+          frequency={frequency}
           selectedPlan={currentPlanSelected}
         />
       </div>
