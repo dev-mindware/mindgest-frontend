@@ -23,7 +23,7 @@ interface UseFileUploadOptions {
   method?: UploadMethod; // opcional, default POST
 }
 
-export function useFileUpload({ apiEndpoint, queryKey, method = "POST" }: UseFileUploadOptions) {
+export function useFileUpload(apiEndpoint: string, queryKey?: string, method?: UploadMethod) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -76,7 +76,7 @@ export function useFileUpload({ apiEndpoint, queryKey, method = "POST" }: UseFil
           break;
       }
 
-      return response.data;
+      return { data: response?.data };
     },
     onSuccess: () => {
       if (queryKey) {
@@ -96,6 +96,9 @@ export function useFileUpload({ apiEndpoint, queryKey, method = "POST" }: UseFil
 
 
 /* "use client";
+
+
+
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { File as MyFile } from "@/types";
