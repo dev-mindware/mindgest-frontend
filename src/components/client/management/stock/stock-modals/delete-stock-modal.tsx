@@ -35,7 +35,7 @@ export function DeleteStockModal() {
             warning
             canClose
             id="delete-stock"
-            title={`Tem certeza que deseja apagar o ${currentStock.item?.name}?`}
+            title={`Tem certeza que deseja apagar?`}
             description="Lembre-se que esta ação não pode ser desfeita."
             className="!w-max"
         >
@@ -53,7 +53,7 @@ export function DeleteStockModal() {
                     variant="destructive"
                     onClick={() => handleDelete()}
                 >
-                    {isDeleting ? "Apagando..." : `Apagar ${currentStock.item?.name}`}
+                    {isDeleting ? "Apagando..." : `Apagar`}
                 </Button>
             </div>
         </GlobalModal>

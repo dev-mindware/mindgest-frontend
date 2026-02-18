@@ -6,32 +6,32 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Separator,
   Badge,
-  Progress,
-} from "@/components/ui";
-import { Award, Mail, Calendar as CalendarIcon, TrendingUp, Receipt, Users } from "lucide-react";
+  EmptyState,
+} from "@/components";
+import { Award, Mail, Calendar as CalendarIcon, Receipt, Users } from "lucide-react";
 import { ClientAnalyticsResponse } from "@/types";
-import { formatCurrency } from "@/utils";
-import { cn } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/utils";
 
 interface TopClientCardProps {
   client: ClientAnalyticsResponse["clients"][0] | undefined;
 }
 
-const formatDate = (dateString: string) => {
-  return new Intl.DateTimeFormat("pt-AO", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateString));
-};
-
 export function TopClientCard({ client }: TopClientCardProps) {
-  if (!client) return null;
+  if (!client) {
+    return (
+      <Card className="h-full border-none bg-muted/30 flex items-center justify-center p-6 min-h-[400px]">
+        <EmptyState
+          title="Sem Top Cliente"
+          description="Ainda não há dados suficientes para identificar o melhor cliente."
+          icon="Award"
+        />
+      </Card>
+    );
+  }
 
   return (
-    <Card className="relative overflow-hidden border-none bg-gradient-to-br from-primary/10 via-card to-card shadow-lg group">
+    <Card className="relative overflow-hidden border-none bg-gradient-to-br from-primary/10 via-card to-card shadow-lg group h-full">
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
 
       <CardHeader className="relative pb-4">
@@ -53,7 +53,7 @@ export function TopClientCard({ client }: TopClientCardProps) {
               {client.clientEmail}
             </CardDescription>
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+          <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500 shrink-0">
             <Users className="h-6 w-6" />
           </div>
         </div>

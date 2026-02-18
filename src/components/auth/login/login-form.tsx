@@ -78,8 +78,8 @@ export function LoginForm() {
           {isSubmitting ? "" : "Entrar"}
         </ButtonSubmit>
 
-        <OrLine />
-        <GoogleButton />
+        {/* <OrLine />
+        <GoogleButton /> */}
       </div>
       <div className="text-sm text-center">
         Não tem uma conta?{" "}

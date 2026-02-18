@@ -43,7 +43,7 @@ api.interceptors.request.use(async (config) => {
   )[] = [
     "invoice",
     "items",
-    "stocks",
+    { path: "stocks", methods: ["get"] },
     "cash-sessions",
     "reports/dashboard",
     "receipt",
@@ -55,7 +55,6 @@ api.interceptors.request.use(async (config) => {
 
   // Specific routes or patterns to exclude from injection
   const EXCLUDED_ROUTES = [
-    "/stocks",
     "/expenses",
     "receipt",
     "/close",

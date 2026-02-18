@@ -9,6 +9,7 @@ import {
   Badge,
   Button,
   Icon,
+  ItemPaginationControls,
 } from "@/components";
 import { ButtonOnlyAction } from "@/components/common/button-actions";
 import { StockResponse } from "@/types/stock";
@@ -240,6 +241,18 @@ export function StockList() {
           goToPreviousPage={goToPreviousPage}
           emptyMessage="Nenhum item em estoque encontrado"
         />
+
+        {totalPages > 1 && (
+          <div className="mt-6 flex justify-center">
+            <ItemPaginationControls
+              page={page}
+              setPage={setPage}
+              totalPages={totalPages}
+              goToNextPage={goToNextPage}
+              goToPreviousPage={goToPreviousPage}
+            />
+          </div>
+        )}
       </div>
 
       {/* Modals */}

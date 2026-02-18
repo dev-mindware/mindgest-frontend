@@ -5,7 +5,7 @@ import { StockSummaryCharts } from "./stock-summary-charts";
 
 export function StockManagementContent() {
     return (
-        <div className="p-6 space-y-8">
+        <div>
             <StockSummaryCharts />
             <StockList />
         </div>

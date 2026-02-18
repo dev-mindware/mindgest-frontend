@@ -7,22 +7,22 @@ import {
   CardTitle,
   CardDescription,
   Skeleton,
-  Icon,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   EmptyState,
   RequestError,
 } from "@/components";
+import { StockSummarySkeleton, DynamicMetricCard } from "@/components";
 import { useStockSummary } from "@/hooks/stock";
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   XAxis,
+  YAxis,
 } from "recharts";
 import { icons } from "lucide-react";
-import { DynamicMetricCardSkeleton, DynamicMetricCard } from "@/components";
 
 export function StockSummaryCharts() {
   const { summary, isLoading, isError, refetch } = useStockSummary();
@@ -37,13 +37,7 @@ export function StockSummaryCharts() {
   }
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, idx) => (
-          <DynamicMetricCardSkeleton key={idx} />
-        ))}
-      </div>
-    );
+    return <StockSummarySkeleton />;
   }
 
   if (!summary) {
@@ -58,16 +52,24 @@ export function StockSummaryCharts() {
 
   const chartData = [
     {
-      outPercentage: summary.outOfStockPercentage,
-      lowPercentage: summary.lowStockPercentage,
-      adequate: summary.adequateStockCount,
+      name: "Adequado",
+      value: summary.adequateStockCount,
+      fill: "var(--primary)",
+    },
+    {
+      name: "Baixo",
+      value: summary.lowStockCount,
+      fill: "var(--chart-2)",
+    },
+    {
+      name: "Esgotado",
+      value: summary.outOfStockCount,
+      fill: "var(--destructive)",
     },
   ];
 
   const chartConfig = {
-    adequate: { label: "Adequado", color: "var(--primary)" },
-    lowPercentage: { label: "Estoque Baixo", color: "var(--chart-2)" },
-    outPercentage: { label: "Fora de Estoque", color: "var(--destructive)" },
+    value: { label: "Quantidade" },
   };
 
   const stats: {
@@ -76,31 +78,31 @@ export function StockSummaryCharts() {
     icon: keyof typeof icons;
     description: string;
   }[] = [
-    {
-      title: "Total de Itens",
-      value: summary.totalItems,
-      icon: "Package",
-      description: "Tipos de produtos cadastrados",
-    },
-    {
-      title: "Unidades Totais",
-      value: summary.totalUnits,
-      icon: "Boxes",
-      description: "Soma de todas as quantidades",
-    },
-    {
-      title: "Disponível",
-      value: summary.totalAvailable,
-      icon: "CircleCheck",
-      description: "Pronto para venda",
-    },
-    {
-      title: "Reservado",
-      value: summary.totalReserved,
-      icon: "Lock",
-      description: "Em pedidos ou reservas",
-    },
-  ];
+      {
+        title: "Total de Itens",
+        value: summary.totalItems,
+        icon: "Package",
+        description: "Tipos de produtos cadastrados",
+      },
+      {
+        title: "Unidades Totais",
+        value: summary.totalUnits,
+        icon: "Boxes",
+        description: "Soma de todas as quantidades",
+      },
+      {
+        title: "Disponível",
+        value: summary.totalAvailable,
+        icon: "CircleCheck",
+        description: "Pronto para venda",
+      },
+      {
+        title: "Reservado",
+        value: summary.totalReserved,
+        icon: "Lock",
+        description: "Em pedidos ou reservas",
+      },
+    ];
 
   return (
     <div className="space-y-6">
@@ -140,126 +142,53 @@ export function StockSummaryCharts() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
             <div className="space-y-1">
               <CardTitle className="text-xl font-semibold">
-                Estatística Mensal de Estoque
+                Níveis de Inventário
               </CardTitle>
               <CardDescription>
-                Distribuição mensal dos níveis de inventário por categoria
+                Distribuição atual do estoque por categoria
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="pl-2">
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <AreaChart
+              <BarChart
                 data={chartData}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
-                <defs>
-                  <linearGradient
-                    id="colorAdequate"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="5%"
-                      stopColor="var(--primary)"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--primary)"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                  <linearGradient id="colorLow" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--chart-2)"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--chart-2)"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                  <linearGradient id="colorOut" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--destructive)"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--destructive)"
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  vertical={false}
-                  strokeDasharray="3 3"
-                  className="stroke-muted-foreground/10"
-                />
+                <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted-foreground/10" />
                 <XAxis
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
                   tickMargin={10}
-                  className="text-[10px] font-bold uppercase tracking-widest fill-muted-foreground"
+                  className="text-[12px] font-medium fill-muted-foreground"
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  className="text-[12px] font-medium fill-muted-foreground"
                 />
                 <ChartTooltip
+                  cursor={false}
                   content={
                     <ChartTooltipContent
-                      indicator="line"
-                      formatter={(value, name) => {
-                        const label =
-                          chartConfig[name as keyof typeof chartConfig]
-                            ?.label || name;
-                        return (
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">
-                              {label}:
-                            </span>
-                            <span className="font-semibold text-foreground">
-                              {value}
-                              {name === "adequate" ? " itens" : "%"}
-                            </span>
-                          </div>
-                        );
-                      }}
+                      hideLabel
+                      formatter={(value) => (
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">Quantidade:</span>
+                          <span className="font-semibold text-foreground">{value} itens</span>
+                        </div>
+                      )}
                     />
                   }
                 />
-                <Area
-                  type="monotone"
-                  dataKey="adequate"
-                  stroke="var(--primary)"
-                  fillOpacity={1}
-                  fill="url(#colorAdequate)"
-                  strokeWidth={2}
-                  stackId="1"
+                <Bar
+                  dataKey="value"
+                  radius={[4, 4, 0, 0]}
+                  barSize={60}
                 />
-                <Area
-                  type="monotone"
-                  dataKey="lowPercentage"
-                  stroke="var(--chart-2)"
-                  fillOpacity={1}
-                  fill="url(#colorLow)"
-                  strokeWidth={2}
-                  stackId="1"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="outPercentage"
-                  stroke="var(--destructive)"
-                  fillOpacity={1}
-                  fill="url(#colorOut)"
-                  strokeWidth={2}
-                  stackId="1"
-                />
-              </AreaChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>

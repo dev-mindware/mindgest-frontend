@@ -26,11 +26,17 @@ const booleanOptions = [
   { label: "Não", value: "false" },
 ];
 
+import { ItemsFiltersSkeleton } from "@/components";
+
 export function StockFilters() {
-  const { items } = useGetItems();
-  const { stores } = useGetStores();
+  const { items, isLoading: itemsLoading } = useGetItems();
+  const { stores, isLoading: storesLoading } = useGetStores();
   const { filters, setFilters, clearAllFilters } = useStockFilters();
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const isLoading = itemsLoading || storesLoading;
+
+  if (isLoading) return <ItemsFiltersSkeleton />;
 
   const hasFilter = Object.values(filters).some(
     (value) => value !== undefined && value !== null && value !== ""
@@ -79,8 +85,8 @@ export function StockFilters() {
             filters.lowStock === true
               ? "true"
               : filters.lowStock === false
-              ? "false"
-              : ""
+                ? "false"
+                : ""
           }
           onChange={(value) => {
             const lowStock =
@@ -97,8 +103,8 @@ export function StockFilters() {
             filters.outOfStock === true
               ? "true"
               : filters.outOfStock === false
-              ? "false"
-              : ""
+                ? "false"
+                : ""
           }
           onChange={(value) => {
             const outOfStock =
@@ -115,8 +121,8 @@ export function StockFilters() {
             filters.hasReserved === true
               ? "true"
               : filters.hasReserved === false
-              ? "false"
-              : ""
+                ? "false"
+                : ""
           }
           onChange={(value) => {
             const hasReserved =

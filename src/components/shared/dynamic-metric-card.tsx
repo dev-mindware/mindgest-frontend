@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, Icon, Skeleton } from "@/components";
+import { Card, CardContent, Icon } from "@/components";
 import { cn } from "@/lib/utils";
 import { icons } from "lucide-react";
 
@@ -38,12 +38,12 @@ export function DynamicMetricCard({
                 className
             )}
         >
-            <CardContent className="p-4 flex justify-between items-start">
+            <CardContent className="p-3 md:p-4 flex justify-between items-start">
                 <div className="flex flex-col h-full flex-1">
                     <div className="space-y-1">
                         <div className="flex justify-between">
                             <h2 className={cn(
-                                "text-2xl font-bold tracking-tight",
+                                "text-xl md:text-2xl font-bold tracking-tight",
                                 variant === "action" && (isDestructive ? "text-destructive" : "text-primary")
                             )}>
                                 {title}
@@ -60,7 +60,7 @@ export function DynamicMetricCard({
                             )}
                         </div>
                         <p className={cn(
-                            "text-lg text-foreground",
+                            "text-base md:text-lg text-foreground",
                             variant === "action" && (isDestructive ? "text-destructive font-medium" : "text-primary font-medium")
                         )}>
                             {subtitle}

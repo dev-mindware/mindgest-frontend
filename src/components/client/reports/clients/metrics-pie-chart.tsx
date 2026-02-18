@@ -7,7 +7,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { ChartArea, ChartPie } from "lucide-react";
+import { ChartPie } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { formatCurrency } from "@/utils";
 import { ClientAnalyticsResponse } from "@/types";
@@ -23,9 +23,6 @@ export function MetricsPieChart({ summary }: MetricsPieChartProps) {
     const pieChartData = [
         { name: "Receita Total", value: summary.totalRevenue },
         { name: "Ticket Médio", value: summary.averageTicket },
-        // Adjusting values to be comparable if needed, or stick to actual values for transparency
-        // For a donut that looks good, we usually want values that make sense together.
-        // Here we'll just show the distribution as is.
     ];
 
     return (
