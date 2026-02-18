@@ -1,10 +1,10 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CategoriesPageContent, Icon } from "@/components";
-import { Appearance } from "./contents/appearance";
 import { Profile } from "./contents/profile";
+import { Appearance } from "./contents/appearance";
 import { Notification } from "./contents/notifications";
+import { CategoriesPageContent, Icon } from "@/components";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CollaboratorsPageContent,
   EntitiesPageContent,

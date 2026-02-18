@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+const angolaIbanBodyRegex = /^\d{21}$/;
+
+const accountNumberRegex = /^\d{14}$/;
+
 export const FileSchema = z.object({
   fieldname: z.string().trim().optional(),
   originalname: z.string().trim(),
@@ -63,3 +67,13 @@ export const passwordSchema = z
   .regex(/[a-z]/, "Deve conter pelo menos uma letra minúscula (a-z)")
   .regex(/[0-9]/, "Deve conter pelo menos um número (0-9)")
   .regex(/[^a-zA-Z0-9]/, "Deve conter pelo menos um caractere especial");
+
+export const ibanSchema = z
+  .string()
+  .trim()
+  .regex(angolaIbanBodyRegex, "IBAN deve conter exatamente 21 dígitos");
+
+export const accountNumberSchema = z
+  .string()
+  .trim()
+  .regex(accountNumberRegex, "Número da conta deve conter 14 dígitos");

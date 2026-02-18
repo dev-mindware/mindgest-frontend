@@ -13,7 +13,7 @@ export const addServiceSchema = z.object({
   description: z
     .string()
     .trim()
-    .max(500, "Descrição deve ter no máximo 500 caracteres")
+    .max(300, "Descrição deve ter no máximo 500 caracteres")
     .optional(),
 });
 

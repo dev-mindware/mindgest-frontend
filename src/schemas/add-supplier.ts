@@ -1,19 +1,14 @@
 import { z } from "zod";
+import { phoneNumberSchema, taxNumberSchema } from "./helps";
 
 export const supplierSchema = z.object({
   name: z.string().trim().min(3, "Nome deve ter pelo menos 3 caracteres"),
   type: z.enum(["emp", "par"], {
     required_error: "Selecione o tipo de fornecedor",
   }),
-  phone: z
-    .string()
-    .trim()
-    .regex(/^\d{9}$/, "Telefone deve ter 9 dígitos"),
+  phone: phoneNumberSchema,
   email: z.string().trim().email("Email inválido"),
-  nif: z
-    .string()
-    .trim()
-    .regex(/^\d{9}$/, "NIF deve ter 9 dígitos"),
+  nif: taxNumberSchema,
   address: z.string().trim().min(5, "Endereço muito curto"),
   supplyType: z.enum(["src", "prd", "amb"], {
     required_error: "Selecione o tipo de fornecimento",

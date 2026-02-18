@@ -22,7 +22,8 @@ export function Profile() {
 
   const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
     `/companies/${user?.company?.id}/logo`,
-    "companies", "PUT"
+    "companies",
+    "PUT",
   );
 
   const companyLogo = watch("companyLogo");
@@ -34,10 +35,14 @@ export function Profile() {
           files: { file: companyLogo },
         },
         {
-          onSuccess: () => toast.success("Logo da empresa atualizada com sucesso!"),
+          onSuccess: () =>
+            toast.success("Logo da empresa atualizada com sucesso!"),
           onError: (error: any) =>
-            toast.error(error?.response?.data?.message || "Erro ao atualizar logo da empresa"),
-        }
+            toast.error(
+              error?.response?.data?.message ||
+                "Erro ao atualizar logo da empresa",
+            ),
+        },
       );
     }
   }, [companyLogo, uploadLogo]);
@@ -53,8 +58,7 @@ export function Profile() {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Header */}
+    <div className="space-y-6" suppressHydrationWarning>
       <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between border-b pb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Meu Perfil</h2>
@@ -70,11 +74,15 @@ export function Profile() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-12">
-        {/* Left Column - Avatar & Personal Info */}
         <div className="md:col-span-4 space-y-6">
           <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col items-center text-center">
-            <h3 className="font-semibold mb-6 w-full text-left">Foto de Perfil</h3>
-            <ProfileAvatar currentImage={user?.company?.logo || undefined} userName={user?.name} />
+            <h3 className="font-semibold mb-6 w-full text-left">
+              Foto de Perfil
+            </h3>
+            <ProfileAvatar
+              currentImage={user?.company?.logo || undefined}
+              userName={user?.name}
+            />
           </div>
 
           <div className="bg-card rounded-xl border p-6 shadow-sm">
@@ -117,7 +125,6 @@ export function Profile() {
           </div>
         </div>
 
-        {/* Right Column - Forms & Settings */}
         <div className="md:col-span-8 space-y-6">
           <ProfileForm user={user} />
           <AccountSecurity user={user} />
@@ -127,7 +134,6 @@ export function Profile() {
     </div>
   );
 }
-
 
 /* "use client";
 

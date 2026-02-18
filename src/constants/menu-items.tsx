@@ -51,14 +51,14 @@ export const menuItems: MenuStructure = {
       name: "Clientes",
       url: "/clients",
       icon: <Icon name="Users" className="w-5 h-5" />,
-      roles: ["ADMIN", "MANAGER", "OWNER"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
     {
       name: "Documentos",
       url: "/documents",
       icon: <Icon name="ScrollText" className="w-5 h-5" />,
-      roles: ["ADMIN", "MANAGER", "OWNER"],
+      roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
     {
@@ -82,7 +82,7 @@ export const menuItems: MenuStructure = {
         {
           name: "POS",
           url: "/management/pos",
-          minPlan: "Pro",
+          minPlan: "Smart",
         },
       ],
     },
@@ -105,7 +105,7 @@ export const menuItems: MenuStructure = {
         {
           name: "Acesso e Auditoria",
           url: "/reports/access-control",
-          minPlan: "Pro",
+          minPlan: "Smart",
         },
       ],
     },
@@ -135,7 +135,7 @@ export const menuItems: MenuStructure = {
       url: "/pos/movements",
       icon: <Icon name="Wallet" className="w-5 h-5" />,
       roles: ["CASHIER"],
-      minPlan: "Smart",
+      minPlan: "Pro",
     },
     {
       name: "Configurações",

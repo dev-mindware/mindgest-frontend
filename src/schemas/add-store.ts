@@ -1,12 +1,10 @@
 import { z } from "zod";
+import { phoneNumberSchema } from "./helps";
 
 export const storeSchema = z.object({
   name: z.string().trim().min(3, "Nome deve ter pelo menos 3 caracteres"),
   email: z.string().trim().email("Email inválido"),
-  phone: z
-    .string()
-    .trim()
-    .regex(/^\d{9}$/, "Telefone deve ter 9 dígitos"),
+  phone: phoneNumberSchema,
   address: z.string().trim().min(5, "Endereço muito curto"),
   status: z.string().trim().optional(),
   manager: z.string().trim().optional(),
