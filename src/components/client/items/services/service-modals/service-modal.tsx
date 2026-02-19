@@ -16,7 +16,7 @@ import {
 } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useAddItem, useGetCategories, useUpdateItem } from "@/hooks";
+import { useAddItem, useGetCategories, useGetTaxes, useUpdateItem } from "@/hooks";
 import { currentServiceStore, currentStoreStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
@@ -39,6 +39,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
     reset: resetMutate,
   } = useUpdateItem();
   const { categoryOptions, isLoading, isError, refetch } = useGetCategories();
+  const { taxOptions, isLoading: isTaxesLoading } = useGetTaxes();
   const isOpen = open[modalId];
   const {
     register,
@@ -59,6 +60,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
           price: currentService.price,
           description: currentService.description || "",
           categoryId: currentService.categoryId,
+          taxId: currentService.taxId || "",
           ...(user?.role === "OWNER" && {
             companyId: String(user?.company?.id),
           }),
@@ -70,6 +72,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
           price: 0,
           description: "",
           categoryId: "",
+          taxId: "",
           ...(user?.role === "OWNER" && {
             companyId: String(user?.company?.id),
           }),
@@ -142,24 +145,26 @@ export function ServiceModal({ action }: ServiceModalProps) {
       }
       className="!max-h-[85vh] !w-max"
     >
-      {isLoading ? (
+      {isLoading || isTaxesLoading ? (
         <ServiceModalSkeleton />
       ) : isError ? (
         <RequestError refetch={refetch} message="Erro ao carregar categorias" />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="sm:w-[35rem]">
-            <h3 className="font-semibold mb-4 border-b pb-2">
-              Informação Geral
-            </h3>
-
-            <div className="w-full">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Input
                 label="Nome do Serviço"
                 startIcon="User"
                 {...register("name")}
                 placeholder="Ex: Consultoria Técnica"
                 error={errors.name?.message}
+              />
+              <RHFSelect
+                control={control}
+                label="Imposto (Opcional)"
+                options={taxOptions}
+                name="taxId"
               />
             </div>
 

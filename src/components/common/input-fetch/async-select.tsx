@@ -50,6 +50,10 @@ export function AsyncCreatableSelectField({
   const [options, setOptions] = useState<Option[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Stable serialization of displayFields to prevent unnecessary re-renders
+  // when the parent passes a new array literal on every render.
+  const displayFieldsKey = displayFields.join(",");
+
   const fetchOptions = useCallback(
     async (search: string, currentPage: number) => {
       if (search.length > 0 && search.length < minChars) {
@@ -86,9 +90,10 @@ export function AsyncCreatableSelectField({
         setTotalPages(calculatedTotalPages);
         setTotal(totalCount);
 
+        const fields = displayFieldsKey.split(",");
         const mappedOptions = data.map((item: any) => ({
           value: item.id,
-          label: displayFields
+          label: fields
             .map((field) => getNestedValue(item, field))
             .filter(Boolean)
             .join(" - "),
@@ -103,14 +108,30 @@ export function AsyncCreatableSelectField({
         setIsSearching(false);
       }
     },
-    [endpoint, displayFields, minChars]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [endpoint, displayFieldsKey, minChars]
   );
 
+  // Only fetch on mount (initial load) or when the user explicitly interacts
+  // (search term changes or page changes). Changing `fetchOptions` identity
+  // alone (due to parent re-render) should NOT trigger a new fetch.
+  const isFirstRender = useState(true);
   useEffect(() => {
-    fetchOptions(debouncedSearch, page);
-  }, [debouncedSearch, page, fetchOptions]);
+    if (isFirstRender[0]) {
+      isFirstRender[1](false);
+      fetchOptions("", 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Reset page when search changes - but don't re-trigger fetch if page was already 1
+  // Re-fetch when the user types (debouncedSearch changes)
+  useEffect(() => {
+    if (isFirstRender[0]) return; // skip during mount — handled above
+    fetchOptions(debouncedSearch, page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, page]);
+
+  // Reset page when search changes
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch]);

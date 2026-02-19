@@ -1,11 +1,10 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, Input, InputCurrency, RHFSelect } from "@/components";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
-import { formatCurrency, parseCurrency } from "@/utils";
 import { useGetTaxes } from "@/hooks/taxes/use-taxes";
 
 
@@ -29,11 +28,13 @@ export interface ProductOption {
 interface AddItemFormProps {
   onAdd: (item: any) => void;
   globalDiscount: number;
+  /** IDs of items already added to the invoice — prevents duplicates */
+  existingItemIds?: Set<string | number>;
 }
 
 
 export const AddItemForm = React.memo<AddItemFormProps>(
-  ({ onAdd, globalDiscount }) => {
+  ({ onAdd, globalDiscount, existingItemIds = new Set() }) => {
     const { taxOptions } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
@@ -111,7 +112,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         total: values.price * values.quantity,
         type: values.type,
         isFromAPI: !selectedProduct.__isNew__,
-        ...(selectedProduct.__isNew__ ? {} : { id: selectedProduct.value }),
+        apiId: selectedProduct.__isNew__ ? undefined : selectedProduct.value.toString(),
       };
 
       onAdd(newItem);
@@ -151,7 +152,15 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       : Infinity;
 
     const isOverStock = watchedType === "PRODUCT" && watchedQuantity > availableStock;
-    const canAdd = selectedProduct && watchedQuantity > 0 && watchedPrice > 0 && !isOverStock;
+    const isAlreadyAdded = !isNewProduct && selectedProduct
+      ? existingItemIds.has(selectedProduct.value)
+      : false;
+    // Price is locked for catalogue items — edit from the items page if needed
+    const isPriceLocked = !isNewProduct && selectedProduct !== null;
+    const canAdd = selectedProduct && watchedQuantity > 0 && watchedPrice > 0 && !isOverStock && !isAlreadyAdded;
+
+    // Lock quantity input for services (default is already 1)
+    const isService = watchedType === "SERVICE";
 
     return (
       <div className="space-y-4" onKeyDown={handleKeyDown}>
@@ -178,9 +187,11 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   {...field}
                   min={1}
                   max={availableStock !== Infinity ? availableStock : undefined}
-                  type="number"
+                  type="quantity"
                   label="Quantidade"
+                  disabled={isService}
                   onChange={(e) => {
+                    if (isService) return;
                     const val = Number(e.target.value);
                     const cappedVal = watchedType === "PRODUCT" && availableStock !== Infinity
                       ? Math.min(val, availableStock)
@@ -206,12 +217,12 @@ export const AddItemForm = React.memo<AddItemFormProps>(
               <InputCurrency
                 ref={field.ref}
                 label="Preço Unitário"
-                // placeholder="0,00"
                 value={field.value}
                 onValueChange={(value) => field.onChange(value)}
                 decimalScale={2}
                 fixedDecimalScale
                 allowNegative={false}
+                disabled={isPriceLocked}
               />
             )}
           />
@@ -239,7 +250,12 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         )}
 
         <div className="flex items-center justify-between pt-2">
-          {isOverStock && (
+          {isAlreadyAdded && (
+            <p className="text-sm text-destructive font-medium">
+              Este item já foi adicionado à fatura
+            </p>
+          )}
+          {isOverStock && !isAlreadyAdded && (
             <p className="text-sm text-destructive font-medium">
               Quantidade superior ao stock disponível ({availableStock})
             </p>

@@ -54,6 +54,7 @@ export function DetailsClientModal() {
           <DetailRow label="Email" value={currentClient.email} />
           <DetailRow label="Telefone" value={currentClient.phone} />
           <DetailRow label="Endereço" value={currentClient.address} />
+          <DetailRow label="IBAN" value={currentClient.iban} />
         </section>
 
         {/* Empresa e Identificação */}

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-const angolaIbanBodyRegex = /^\d{21}$/;
+// After removing dots/spaces, accepts:
+// - Full Angola IBAN: AO + 2 check digits + 21 numeric digits (25 chars)
+// - Body only: 21 numeric digits
+const angolaIbanBodyRegex = /^(AO\d{2})?\d{21}$/;
+
+/** Normalizes an IBAN by stripping dots, spaces and uppercasing. */
+const normalizeIban = (value: string) =>
+  value.replace(/[.\s]/g, "").toUpperCase();
 
 const accountNumberRegex = /^\d{14}$/;
 
@@ -38,6 +45,7 @@ export const ItemSchema = z.object({
 
   isFromAPI: z.boolean().optional(),
   taxId: z.string().trim().optional(),
+  apiId: z.string().trim().optional(),
 });
 
 export const taxNumberSchema = z
@@ -71,7 +79,10 @@ export const passwordSchema = z
 export const ibanSchema = z
   .string()
   .trim()
-  .regex(angolaIbanBodyRegex, "IBAN deve conter exatamente 21 dígitos");
+  .refine(
+    (val) => val === "" || angolaIbanBodyRegex.test(normalizeIban(val)),
+    "IBAN inválido — utilize o formato AO06.0040.0000.5660.0824.1017.4",
+  );
 
 export const accountNumberSchema = z
   .string()

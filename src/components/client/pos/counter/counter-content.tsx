@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { CategorySelector, ProductList } from "./products";
 import { CartList } from "./cart";
 import {
@@ -54,27 +54,46 @@ export function CounterContent() {
     getCartItemsArray,
   } = useCounterState({ apiProducts, activeCart });
 
-  const handleCategorySelect = (categoryId: string) => {
+  const handleCategorySelect = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
-  };
+  }, []);
 
-  const currentCategoryName = categories.find(
-    (c) => c.id === selectedCategory,
-  )?.name;
+  const currentCategoryName = useMemo(() =>
+    categories.find((c) => c.id === selectedCategory)?.name
+    , [categories, selectedCategory]);
 
-  const products: Product[] = (apiProducts as any[]).map((p) => ({
-    id: p.id,
-    name: p.name,
-    price: p.price || 0,
-    image: p.image,
-    category: p.category?.name || "",
-    quantity: p.quantity || p.reserved || 0,
-    reserved: p.reserved || 0,
-    description: p.description,
-    barcode: p.barcode,
-    sku: p.sku,
-    tax: p.tax, // ✅ Preserve tax data from API
-  }));
+  const products: Product[] = useMemo(() =>
+    (apiProducts as any[]).map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price || 0,
+      image: p.image,
+      category: p.category?.name || "",
+      quantity: p.quantity || p.reserved || 0,
+      reserved: p.reserved || 0,
+      description: p.description,
+      barcode: p.barcode,
+      sku: p.sku,
+      tax: p.tax,
+    })), [apiProducts]);
+
+  const cartItemsMap = useMemo(() =>
+    getCartItemsArray(activeCart).reduce((acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    }, {} as Record<string, any>)
+    , [activeCart, getCartItemsArray]);
+
+  const handleUpdateQtyInvoice = useCallback((item: any, delta: number) =>
+    handleUpdateQuantity(item.id, item.qty + delta)
+    , [handleUpdateQuantity]);
+
+  const handleUpdateQtyProforma = useCallback((item: any, delta: number) =>
+    handleUpdateQuantity(item.id, item.qty + delta)
+    , [handleUpdateQuantity]);
+
+  const handleClearCartInvoice = useCallback(() => handleClearCart("invoice"), [handleClearCart]);
+  const handleClearCartProforma = useCallback(() => handleClearCart("proforma"), [handleClearCart]);
 
   return (
     <div className="flex h-full overflow-hidden">
@@ -105,10 +124,7 @@ export function CounterContent() {
           ) : (
             <ProductList
               products={products}
-              cartItems={getCartItemsArray(activeCart).reduce((acc, item) => {
-                acc[item.id] = item;
-                return acc;
-              }, {} as Record<string, any>)}
+              cartItems={cartItemsMap}
               onAddToCart={handleAddToCart}
               onRemoveFromCart={handleRemoveFromCart}
               onUpdateQuantity={handleUpdateQuantity}
@@ -132,12 +148,10 @@ export function CounterContent() {
               <CartList
                 type="invoice"
                 cartItems={getCartItemsArray("invoice")}
-                onUpdateQty={(item, delta) =>
-                  handleUpdateQuantity(item.id, item.qty + delta)
-                }
-                onRemove={(id) => handleRemoveFromCart(id)}
-                onDelete={(id) => handleDeleteItem(id)}
-                onClearCart={() => handleClearCart("invoice")}
+                onUpdateQty={handleUpdateQtyInvoice}
+                onRemove={handleRemoveFromCart}
+                onDelete={handleDeleteItem}
+                onClearCart={handleClearCartInvoice}
                 cashSessionId={currentSession.id}
               />
             )}
@@ -150,12 +164,10 @@ export function CounterContent() {
               <CartList
                 type="proforma"
                 cartItems={getCartItemsArray("proforma")}
-                onUpdateQty={(item, delta) =>
-                  handleUpdateQuantity(item.id, item.qty + delta)
-                }
-                onRemove={(id) => handleRemoveFromCart(id)}
-                onDelete={(id) => handleDeleteItem(id)}
-                onClearCart={() => handleClearCart("proforma")}
+                onUpdateQty={handleUpdateQtyProforma}
+                onRemove={handleRemoveFromCart}
+                onDelete={handleDeleteItem}
+                onClearCart={handleClearCartProforma}
                 cashSessionId={currentSession.id}
               />
             )}

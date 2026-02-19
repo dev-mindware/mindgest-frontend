@@ -41,9 +41,9 @@ export function ProductList({
                         key={product.id}
                         product={product}
                         quantity={cartItems[product.id]?.qty || 0}
-                        onAdd={() => onAddToCart(product)}
-                        onRemove={() => onRemoveFromCart(product.id)}
-                        onUpdateQuantity={(qty) => onUpdateQuantity(product.id, qty)}
+                        onAdd={onAddToCart}
+                        onRemove={onRemoveFromCart}
+                        onUpdateQuantity={onUpdateQuantity}
                     />
                 ))}
             </div>

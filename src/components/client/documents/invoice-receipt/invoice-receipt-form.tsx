@@ -128,9 +128,9 @@ export function InvoiceReceiptForm() {
           };
 
         const itemsPayload = data.items.map((item) => {
-          if (item.isFromAPI && item.id) {
+          if (item.isFromAPI && item.apiId) {
             return {
-              id: item.id,
+              id: item.apiId,
               quantity: item.quantity,
             };
           }

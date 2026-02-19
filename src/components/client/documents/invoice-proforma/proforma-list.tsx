@@ -15,7 +15,7 @@ import { formatCurrency, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { InvoiceFiltersTSX } from "../common";
 import { useInvoiceFilters, useProformaActions } from "@/hooks";
-import { DeleteProformaModal } from "../modals";
+import { DeleteProformaModal, ConvertProformaModal, DocumentSuccessModal } from "../modals";
 import { useRouter } from "next/navigation";
 
 export function ProformaList({ storeId }: { storeId?: string }) {
@@ -23,7 +23,7 @@ export function ProformaList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search_proforma");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("proforma");
-  const { handlerDeleteProforma, handlerDetailsProforma } =
+  const { handlerDeleteProforma, handlerDetailsProforma, handlerConvertProforma } =
     useProformaActions();
   const {
     data: proformas,
@@ -74,6 +74,10 @@ export function ProformaList({ storeId }: { storeId?: string }) {
           data={item}
           actions={[
             { label: "Ver Proforma", onClick: handlerDetailsProforma },
+            {
+              label: "Converter em Fatura",
+              onClick: handlerConvertProforma,
+            },
             {
               label: "Editar",
               onClick: () => {
@@ -138,6 +142,8 @@ export function ProformaList({ storeId }: { storeId?: string }) {
 
       <ProformaPreviewDrawer />
       <DeleteProformaModal />
+      <ConvertProformaModal />
+      <DocumentSuccessModal />
     </div>
   );
 }

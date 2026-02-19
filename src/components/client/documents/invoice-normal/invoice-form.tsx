@@ -5,14 +5,11 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Textarea } from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
-import { invoiceService } from "@/services/invoice-service";
 import {
   useClientSelection,
   useCreateInvoice,
-  useDownloadInvoice,
   useInvoiceTotals,
 } from "@/hooks";
-import { toast } from "sonner";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
@@ -98,6 +95,10 @@ export function InvoiceForm() {
     return { hasClient, isNewClient };
   }, [clientName, clientId]);
 
+  // Stable reference — prevents AsyncCreatableSelectField from re-fetching
+  // every time the parent form re-renders (e.g. on typing in another input).
+  const clientDisplayFields = useMemo(() => ["name", "email"], []);
+
   const onSubmit = useCallback(
     async (data: InvoiceFormData) => {
       try {
@@ -116,8 +117,8 @@ export function InvoiceForm() {
           };
 
         const itemsPayload = data.items.map((item) => {
-          if (item.isFromAPI && item.id) {
-            return { id: item.id, quantity: item.quantity };
+          if (item.isFromAPI && item.apiId) {
+            return { id: item.apiId, quantity: item.quantity };
           }
 
           return {
@@ -194,7 +195,7 @@ export function InvoiceForm() {
           placeholder="Digite o nome do cliente..."
           value={selectedClient}
           onChange={handleClientChange}
-          displayFields={["name", "email"]}
+          displayFields={clientDisplayFields}
           formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
           error={errors.client?.name?.message}
         />

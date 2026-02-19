@@ -28,7 +28,7 @@ export const itemSchema = z
 
     hasExpiry: z.boolean().optional(),
     expiryDate: z.string().trim().optional(),
-    daysToExpiry: z.string().optional(),
+    daysToExpiry: z.coerce.string().optional(),
     taxId: z.string().trim().optional().nullable(),
   })
 

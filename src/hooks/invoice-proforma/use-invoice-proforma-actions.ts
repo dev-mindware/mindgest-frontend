@@ -22,9 +22,15 @@ export function useProformaActions() {
     setCurrentProforma(proforma);
   }
 
+  function handlerConvertProforma(proforma: InvoiceResponse) {
+    setCurrentProforma(proforma);
+    openModal("convert-proforma");
+  }
+
   return {
     handlerDeleteProforma,
     handlerDetailsProforma,
     hanlderEditProforma,
+    handlerConvertProforma,
   };
 }

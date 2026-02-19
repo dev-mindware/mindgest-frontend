@@ -46,6 +46,7 @@ export function InvoiceFiltersTSX({ type, hasData }: Props) {
             search={search}
             setSearch={setSearch}
             className="w-full"
+            placeholder="Pesquise por cliente ou nº da Factura"
           />
           <Input
             type="search"

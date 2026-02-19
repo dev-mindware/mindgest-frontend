@@ -46,7 +46,7 @@ export function ItemsFiltersTSX({
     <div
       className={cn(
         "w-full flex flex-col gap-4 px-2 sm:px-0",
-        !hasData && "pointer-events-none opacity-50"
+        !hasData && !hasFilter && "pointer-events-none opacity-50"
       )}
     >
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-baseline">

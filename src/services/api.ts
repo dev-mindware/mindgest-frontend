@@ -49,7 +49,7 @@ api.interceptors.request.use(async (config) => {
     "receipt",
     "documents",
     "dashboard",
-    "credit-note",
+    { path: "credit-note", methods: ["get"] },
     { path: "categories", methods: ["get", "post"] },
   ];
 

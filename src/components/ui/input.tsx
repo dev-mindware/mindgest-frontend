@@ -24,7 +24,7 @@ type InputProps = {
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, error, startIcon, endIcon, className, type = "text", onChange, value, name, ...props },
+    { label, error, startIcon, endIcon, className, type = "text", onChange, value, name, disabled, ...props },
     ref
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -47,10 +47,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ? "text"
         : "password"
       : isQuantidade
-      ? "number"
-      : isDate
-      ? "date"
-      : type;
+        ? "number"
+        : isDate
+          ? "date"
+          : type;
 
     const propagateChange = (newValue: number) => {
       setQuantity(newValue);
@@ -88,7 +88,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={handleDecrement}
-              className="flex items-center justify-center w-10 h-10 rounded-md bg-muted hover:bg-muted/80"
+              disabled={disabled}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-muted hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Minus className="w-5 h-5 text-foreground" />
             </button>
@@ -118,13 +119,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 )}
                 {...props}
+                disabled={disabled}
               />
             </div>
 
             <button
               type="button"
               onClick={handleIncrement}
-              className="flex items-center justify-center w-10 h-10 rounded-md bg-muted hover:bg-muted/80"
+              disabled={disabled}
+              className="flex items-center justify-center w-10 h-10 rounded-md bg-muted hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-5 h-5 text-foreground" />
             </button>
@@ -152,6 +155,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               name={name}
               value={value}
               onChange={onChange}
+              disabled={disabled}
               className={cn(
                 "flex-1 bg-transparent placeholder:text-muted-foreground text-foreground outline-none text-left",
                 "disabled:cursor-not-allowed disabled:opacity-50"

@@ -53,7 +53,7 @@ export function ProformaForm({
         },
         items:
           initialData.items?.map((item: any) => ({
-            id: item.item?.id || item.id,
+            apiId: item.item?.id || item.id,
             description: item.item?.name || item.description || item.name,
             unitPrice: Number(item.price || item.unitPrice || 0),
             quantity: Number(item.quantity || 1),
@@ -187,9 +187,9 @@ export function ProformaForm({
           };
 
         const itemsPayload = data.items.map((item) => {
-          if (item.isFromAPI && item.id) {
+          if (item.isFromAPI && item.apiId) {
             return {
-              id: item.id,
+              id: item.apiId,
               quantity: item.quantity,
             };
           }

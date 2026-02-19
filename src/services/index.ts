@@ -11,3 +11,4 @@ export * from "./cash-sessions-service";
 export * from "./cashier-service";
 export * from "./taxes-service";
 export * from "./download-invoice-service";
+export * from "./banks-service"

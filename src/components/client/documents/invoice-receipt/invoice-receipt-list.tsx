@@ -27,7 +27,7 @@ import { useModal } from "@/stores/modal/use-modal-store";
 export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { user } = useAuth();
-  const { search } = useURLSearchParams("search_invoice_receipt");
+  const { search } = useURLSearchParams("search_invoice-receipt");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
   const { handlerDetailsInvoice } = useInvoiceActions();

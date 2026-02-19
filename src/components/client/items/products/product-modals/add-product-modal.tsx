@@ -288,7 +288,7 @@ function AddProductFormContent() {
                 type="number"
                 placeholder="14"
                 label="Dias até Expirar (opcional)"
-                {...register("daysToExpiry", { valueAsNumber: true })}
+                {...register("daysToExpiry")}
                 error={errors.daysToExpiry?.message}
               />
             </div>

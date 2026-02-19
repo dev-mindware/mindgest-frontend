@@ -1,5 +1,5 @@
 "use client";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Separator } from "@/components";
 import { UseFieldArrayReturn } from "react-hook-form";
 import { ProformaFormData } from "@/schemas";
@@ -7,6 +7,7 @@ import { Package } from "lucide-react";
 import { AddItemForm } from "./add-item-form";
 import { ItemList } from "./item-list";
 import { InvoiceSummary } from "./invoice-summary";
+import { DefaultBankCard } from "./default-bank-card";
 
 interface InvoiceItemsProps {
   fieldArray: UseFieldArrayReturn<ProformaFormData, "items">;
@@ -33,6 +34,12 @@ export function InvoiceItems({
 }: InvoiceItemsProps) {
 
   const { fields, append, remove } = fieldArray;
+
+  // Stable set of IDs already in the invoice — used to prevent duplicates
+  const existingItemIds = useMemo(
+    () => new Set(fields.map((f: any) => f.apiId).filter(Boolean)),
+    [fields]
+  );
 
   const handleAddItem = useCallback(
     (item: any) => {
@@ -66,6 +73,7 @@ export function InvoiceItems({
       <AddItemForm
         onAdd={handleAddItem}
         globalDiscount={globalDiscount}
+        existingItemIds={existingItemIds}
       />
 
 
@@ -82,13 +90,18 @@ export function InvoiceItems({
       ) : (
         <>
           <ItemList items={fields} onRemove={handleRemoveItem} />
-          <InvoiceSummary
-            totals={totals}
-            globalRetention={globalRetention}
-            setGlobalRetention={setGlobalRetention}
-            globalDiscount={globalDiscount}
-            setGlobalDiscount={setGlobalDiscount}
-          />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <DefaultBankCard />
+            <div className="w-full">
+              <InvoiceSummary
+                totals={totals}
+                globalRetention={globalRetention}
+                setGlobalRetention={setGlobalRetention}
+                globalDiscount={globalDiscount}
+                setGlobalDiscount={setGlobalDiscount}
+              />
+            </div>
+          </div>
 
         </>
       )}

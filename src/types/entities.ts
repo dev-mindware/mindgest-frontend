@@ -7,6 +7,7 @@ export type ClientData = {
   address?: string;
   taxNumber: string;
   companyId?: string;
+  iban?: string;
 };
 
 export type ClientResponse = ClientData & {
