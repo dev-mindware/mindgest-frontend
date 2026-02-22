@@ -36,26 +36,31 @@ export function ClientModal({ action }: ClientModalProps) {
         phone: currentClient.phone,
         address: currentClient.address,
         taxNumber: currentClient.taxNumber,
-        iban: currentClient.taxNumber,
+        iban: currentClient.iban,
       });
     }
   }, [action, currentClient, reset]);
 
   async function onSubmit(data: ClientFormData) {
     try {
-      const { iban, ...finalData } = data;
+      const finalData = {
+        ...data,
+        email: data.email || undefined,
+        iban: data.iban || undefined,
+        address: data.address || undefined,
+      };
 
       if (action === "add") {
-        await addClient(finalData);
+        await addClient(finalData as any);
       } else if (action === "edit" && currentClient) {
-        await editClient({ id: currentClient.id, data: finalData });
+        await editClient({ id: currentClient.id, data: finalData as any });
       }
 
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-          "Ocorreu um erro ao salvar o cliente."
+        "Ocorreu um erro ao salvar o cliente."
       );
     }
   }
@@ -126,7 +131,7 @@ export function ClientModal({ action }: ClientModalProps) {
             startIcon="MapPin"
             {...register("address")}
             error={errors.address?.message}
-            
+
           />
         </div>
 

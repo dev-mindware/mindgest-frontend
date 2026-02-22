@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateInvoiceReceipt, useCreateProforma } from "@/hooks";
-import { currentStoreStore, useAuthStore } from "@/stores";
+import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
@@ -30,6 +30,7 @@ export function useCartCheckout({
 }: UseCartCheckoutProps) {
   const { user } = useAuthStore();
   const { currentStore } = currentStoreStore();
+  const { openModal } = useModal();
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("Credit Card");
@@ -200,7 +201,16 @@ export function useCartCheckout({
     try {
       console.log("FINAL PAYLOAD:", JSON.stringify(pendingPayload, null, 2));
       if (type === "invoice") {
-        await createInvoiceReceipt(pendingPayload as any);
+        const response = await createInvoiceReceipt(pendingPayload as any);
+        const invoiceId = response?.data?.id;
+
+        if (invoiceId) {
+          openModal("document-success", {
+            id: invoiceId,
+            type: "invoice-receipt",
+            format: "thermal",
+          });
+        }
       } else {
         // Remove payment-specific fields for proforma
         const { cashSessionId, change, receivedValue, ...proformaData } =
@@ -212,7 +222,16 @@ export function useCartCheckout({
             .toISOString()
             .split("T")[0],
         };
-        await createProforma(proformaPayload as any);
+        const response = await createProforma(proformaPayload as any);
+        const proformaId = response?.data?.id;
+
+        if (proformaId) {
+          openModal("document-success", {
+            id: proformaId,
+            type: "proforma",
+            format: "thermal",
+          });
+        }
       }
 
       setCashGiven("");

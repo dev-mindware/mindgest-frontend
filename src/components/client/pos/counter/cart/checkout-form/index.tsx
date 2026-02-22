@@ -7,6 +7,7 @@ import { useCartCheckout, CartItem } from "@/hooks";
 import { PaymentSummary } from "./payment-summary";
 import { CustomerSelection } from "./customer-selection";
 import { PaymentMethods } from "./payment-methods";
+import { DocumentSuccessModal } from "@/components/client/documents/modals/document-success-modal";
 
 interface CartCheckoutFormProps {
     cartItems: CartItem[];
@@ -95,6 +96,8 @@ export function CartCheckoutForm({
                 isLoading={isPending}
                 type={type}
             />
+
+            <DocumentSuccessModal />
         </>
     );
 }

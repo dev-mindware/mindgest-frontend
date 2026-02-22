@@ -14,6 +14,7 @@ export interface Client {
   phone: string;
   address: string;
   taxNumber?: string;
+  iban?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

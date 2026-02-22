@@ -2,7 +2,7 @@ import { Category } from "./category";
 
 export type ClientData = {
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   address?: string;
   taxNumber: string;

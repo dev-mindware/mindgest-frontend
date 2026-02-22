@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 interface DocumentSuccessModalData {
     id: string;
     type: DocumentType;
+    format?: "pdf" | "thermal";
 }
 
 export function DocumentSuccessModal() {
@@ -18,6 +19,7 @@ export function DocumentSuccessModal() {
     const { closeModal, open, modalData } = useModal();
     const isOpen = open["document-success"];
     const data = modalData["document-success"] as DocumentSuccessModalData;
+    const format = data?.format || "pdf";
     const [blobUrl, setBlobUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export function DocumentSuccessModal() {
                 setIsLoading(true);
                 setError(null);
                 try {
-                    const response = await downloadDocument(data.id, data.type, "pdf");
+                    const response = await downloadDocument(data.id, data.type, format);
                     const blob = new Blob([response.data], { type: "application/pdf" });
                     url = window.URL.createObjectURL(blob);
                     setBlobUrl(url);
@@ -51,12 +53,14 @@ export function DocumentSuccessModal() {
             }
             setBlobUrl(null);
         };
-    }, [isOpen, data?.id, data?.type]);
+    }, [isOpen, data?.id, data?.type, format]);
 
     if (!isOpen) return null;
 
     const handleClose = () => {
         closeModal("document-success");
+
+        if (format === "thermal") return;
 
         // Map document type to the correct tab in the documents list
         const tabMap: Record<string, string> = {
@@ -71,16 +75,18 @@ export function DocumentSuccessModal() {
         router.push(`/documents?tab=${tab}&newId=${data.id}`);
     };
 
+    const isThermal = format === "thermal";
+
     return (
         <GlobalModal
             id="document-success"
             canClose
             title="Documento Criado!"
-            description="Visualize abaixo a versão A4 do seu documento."
-            className="max-w-4xl max-h-[90vh] overflow-y-auto"
+            description={isThermal ? "Visualize abaixo o talão do seu documento." : "Visualize abaixo a versão A4 do seu documento."}
+            className={isThermal ? "max-w-md max-h-[90vh] overflow-y-auto" : "max-w-4xl max-h-[90vh] overflow-y-auto"}
         >
             <div className="flex flex-col gap-4 mt-4">
-                <div className="relative w-full aspect-[1/1.4] bg-muted rounded-lg border overflow-hidden">
+                <div className={isThermal ? "relative w-full aspect-[1/2] bg-muted rounded-lg border overflow-hidden" : "relative w-full aspect-[1/1.4] bg-muted rounded-lg border overflow-hidden"}>
                     {isLoading && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-10 text-center">
                             <Skeleton className="w-full h-full" />
@@ -112,7 +118,7 @@ export function DocumentSuccessModal() {
 
                 <div className="flex justify-between items-center px-1">
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
-                        Versão A4
+                        {isThermal ? "Versão Talão" : "Versão A4"}
                     </p>
                     <Button
                         onClick={handleClose}
