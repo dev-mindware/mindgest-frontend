@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext, Controller } from "react-hook-form";
 import { Label, Checkbox } from "@/components/ui";
@@ -38,11 +38,6 @@ export function ThirdStep() {
             digitais com conteúdos informativos, promocionais ou relacionados
             aos serviços contratados;
           </BulletItem>
-          <BulletItem>
-            A ciência de que a Mindgest poderá atualizar seus termos a qualquer
-            momento, sendo responsabilidade do usuário verificar periodicamente
-            as alterações;
-          </BulletItem>
         </ul>
 
         <p className="pt-4 text-muted-foreground">
@@ -61,8 +56,18 @@ export function ThirdStep() {
                   id="termos"
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  className="
+            bg-white dark:bg-gray-600
+            border-gray-300 dark:border-gray-600
+            checked:bg-primary dark:checked:bg-primary
+            focus:ring-2 focus:ring-primary dark:focus:ring-primary
+            transition-colors
+          "
                 />
-                <Label htmlFor="termos" className="text-sm font-normal">
+                <Label
+                  htmlFor="termos"
+                  className="text-sm font-normal text-gray-700 dark:text-gray-300"
+                >
                   Eu li e concordo com os termos acima.
                 </Label>
               </div>

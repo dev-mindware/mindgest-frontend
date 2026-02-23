@@ -18,6 +18,7 @@ import { ThirdStep } from "./third-step";
 import { HeroImageSide } from "../../_components";
 import { useAddCompany } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
+import Link from "next/link";
 
 export function RegisterForm() {
   const steps = [1, 2, 3];
@@ -78,7 +79,8 @@ export function RegisterForm() {
       } catch (error: any) {
         if (error?.response?.data) {
           ErrorMessage(
-            error?.response?.data?.message || "Ocorreu um erro ao criar a conta"
+            error?.response?.data?.message ||
+              "Ocorreu um erro ao criar a conta",
           );
         } else {
           ErrorMessage("Ocorreu um erro desconhecido.Tente novamente");
@@ -112,17 +114,27 @@ export function RegisterForm() {
               </Stepper>
             </div>
 
-            <div className="flex items-center justify-center flex-1">
+            <div className="flex flex-col gap-8 items-center justify-center flex-1">
               <div className="w-full max-w-md">{renderCurrentForm()}</div>
-            </div>
 
-            <NavigationButtons
-              currentStep={currentStep}
-              totalSteps={steps.length}
-              handlePrevStep={handlePrevStep}
-              handleNextStep={handleNextStep}
-              isLoading={isLoading || isPending}
-            />
+              <NavigationButtons
+                currentStep={currentStep}
+                totalSteps={steps.length}
+                handlePrevStep={handlePrevStep}
+                handleNextStep={handleNextStep}
+                isLoading={isLoading || isPending}
+              />
+
+              <div className="text-sm text-center">
+                Já tens uma conta?{" "}
+                <Link
+                  href="/auth/login"
+                  className="font-medium text-primary hover:underline underline-offset-4"
+                >
+                  Entrar
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </form>

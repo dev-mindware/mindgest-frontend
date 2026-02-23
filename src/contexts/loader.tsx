@@ -1,14 +1,20 @@
 export function Loader() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-background">
+    <div className="flex flex-col items-center justify-center h-screen bg-background relative">
+      {/* Círculo girando */}
+      <div className="absolute">
+        <div className="w-28 h-28 border-4 border-t-purple-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+      </div>
+
+      {/* Logo */}
       <img
         src="/mindware.png"
         alt="Logo"
-        className="w-20 h-20 mb-4 animate-pulse"
+        className="w-20 h-20 z-10"
       />
-      <div className="text-muted-foreground font-semibold">MINDGEST</div>
+
+      {/* Texto */}
+      <div className="text-muted-foreground font-semibold mt-4">MINDGEST</div>
     </div>
   );
 }
-
-// na aba de items, verificar pela current tab pra a pesquisa bao bugar kkkk

@@ -18,7 +18,7 @@ export function NavigationButtons({
   isLoading,
 }: Props) {
   return (
-    <div className="flex items-center justify-center gap-5 mt-5">
+    <div className="flex items-center justify-center gap-5">
       {currentStep > 1 && (
         <Button
           type="button"

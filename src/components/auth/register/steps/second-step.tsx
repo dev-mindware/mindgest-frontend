@@ -1,5 +1,4 @@
 "use client"
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components";
 import { RegisterFormData } from "@/schemas";
@@ -69,16 +68,7 @@ export function SecondStep() {
             errors?.step2?.company?.address?.message
           }
         />
-      </div>
-      <div className="text-sm text-center">
-        Já tens uma conta?{" "}
-        <Link
-          href="/auth/login"
-          className="font-medium text-primary hover:underline underline-offset-4"
-        >
-          Entre
-        </Link>
-      </div>
+      </div>     
     </div>
   );
 }
