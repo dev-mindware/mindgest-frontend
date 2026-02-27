@@ -17,6 +17,6 @@ export function useGetTaxes() {
   return {
     ...rest,
     taxes: data || [],
-    taxOptions: [{ label: "Isento", value: "" }, ...taxOptions],
+    taxOptions: [{ label: "Isento (0%)", value: "" }, ...taxOptions],
   };
 }

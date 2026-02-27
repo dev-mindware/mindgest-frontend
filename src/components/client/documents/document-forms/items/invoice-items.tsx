@@ -10,7 +10,7 @@ import { InvoiceSummary } from "./invoice-summary";
 import { DefaultBankCard } from "./default-bank-card";
 
 interface InvoiceItemsProps {
-  fieldArray: UseFieldArrayReturn<ProformaFormData, "items">;
+  fieldArray: UseFieldArrayReturn<any, "items">;
   globalRetention: number;
   setGlobalRetention: (value: number) => void;
   globalDiscount: number;

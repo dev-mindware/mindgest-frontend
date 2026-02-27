@@ -36,6 +36,7 @@ export function InvoiceReceiptForm() {
         address: "",
         phone: "",
       },
+      clientId: "",
       globalRetention: 0,
       globalDiscount: 0,
       notes: "",
@@ -213,6 +214,8 @@ export function InvoiceReceiptForm() {
           formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
           error={errors.client?.name?.message}
         />
+        <input type="hidden" {...register("clientId")} />
+        <input type="hidden" {...register("client.name")} />
       </div>
 
       {clientState.hasClient && (

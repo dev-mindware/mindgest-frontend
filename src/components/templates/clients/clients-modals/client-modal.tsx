@@ -36,7 +36,6 @@ export function ClientModal({ action }: ClientModalProps) {
         phone: currentClient.phone,
         address: currentClient.address,
         taxNumber: currentClient.taxNumber,
-        iban: currentClient.iban,
       });
     }
   }, [action, currentClient, reset]);
@@ -46,7 +45,6 @@ export function ClientModal({ action }: ClientModalProps) {
       const finalData = {
         ...data,
         email: data.email || undefined,
-        iban: data.iban || undefined,
         address: data.address || undefined,
       };
 
@@ -114,15 +112,6 @@ export function ClientModal({ action }: ClientModalProps) {
             placeholder="Ex: cea.co@gmail.com"
             {...register("email")}
             error={errors.email?.message}
-          />
-
-          <Input
-            label="IBAN"
-            startIcon="FileDigit"
-            placeholder="Ex: AO06004000005603309410251"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("iban")}
-            error={errors.iban?.message}
           />
 
           <Input

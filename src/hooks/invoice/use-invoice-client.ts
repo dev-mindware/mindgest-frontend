@@ -1,40 +1,56 @@
-"use client"
+"use client";
 import { useCallback, useState } from "react";
 import { ClientSelectOption } from "@/types/clients";
 import { UseFormSetValue } from "react-hook-form";
 
 export function useClientSelection(setValue: UseFormSetValue<any>) {
-  const [selectedClient, setSelectedClient] = useState<ClientSelectOption | null>(null);
+  const [selectedClient, setSelectedClient] =
+    useState<ClientSelectOption | null>(null);
 
   const handleClientChange = useCallback(
     (option: ClientSelectOption | null) => {
       setSelectedClient(option);
 
       if (!option) {
-        setValue("client", { name: "", taxNumber: "", address: "", phone: "" });
-        setValue("clientId", "");
+        setValue(
+          "client",
+          { name: "", taxNumber: "", address: "", phone: "" },
+          { shouldValidate: true, shouldDirty: true },
+        );
+        setValue("clientId", "", { shouldValidate: true, shouldDirty: true });
         return;
       }
 
       if (option.__isNew__) {
-        setValue("client", {
-          name: option.label,
-          taxNumber: "",
-          address: "",
-          phone: "",
-        });
-        setValue("clientId", "");
+        setValue(
+          "client",
+          {
+            name: option.label,
+            taxNumber: "",
+            address: "",
+            phone: "",
+          },
+          { shouldValidate: true, shouldDirty: true },
+        );
+        setValue("clientId", "", { shouldValidate: true, shouldDirty: true });
       } else if (option.data) {
-        setValue("client", {
-          name: option.data.name,
-          taxNumber: option.data.taxNumber || "",
-          address: option.data.address || "",
-          phone: option.data.phone || "",
+        setValue(
+          "client",
+          {
+            name: option.data.name,
+            taxNumber: option.data.taxNumber || "",
+            address: option.data.address || "",
+            phone: option.data.phone || "",
+          },
+          { shouldValidate: true, shouldDirty: true },
+        );
+        setValue("clientId", option.data.id, {
+          shouldValidate: true,
+          shouldDirty: true,
         });
-        setValue("clientId", option.data.id);
       }
     },
-    [setValue]
+    [setValue],
   );
 
   return {

@@ -30,6 +30,7 @@ export const itemSchema = z
     expiryDate: z.string().trim().optional(),
     daysToExpiry: z.coerce.string().optional(),
     taxId: z.string().trim().optional().nullable(),
+    exemptionCode: z.string().trim().optional(),
   })
 
   .refine(

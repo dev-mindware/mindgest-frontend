@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,6 +13,7 @@ import {
   CategoryModal,
   ServiceModalSkeleton,
   InputCurrency,
+  PaginatedSelect,
 } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
@@ -21,6 +22,7 @@ import { currentServiceStore, currentStoreStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
 import { formatCurrency, parseCurrency } from "@/utils";
+import { taxExemptionReasons } from "@/constants/tax-exemption";
 
 type ServiceModalProps = {
   action: "add" | "edit";
@@ -31,6 +33,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
   const modalId = `${action}-service`;
   const { closeModal, open, openModal } = useModal();
   const { currentService } = currentServiceStore();
+  const [exemptionPage, setExemptionPage] = useState(1);
   const { currentStore } = currentStoreStore();
   const { mutateAsync: addItemMutate, isPending: isAdding } = useAddItem();
   const {
@@ -45,6 +48,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
     reset,
   } = useForm<ItemFormData>({
@@ -61,6 +65,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
           description: currentService.description || "",
           categoryId: currentService.categoryId,
           taxId: currentService.taxId || "",
+          exemptionCode: currentService.exemptionCode || "",
           ...(user?.role === "OWNER" && {
             companyId: String(user?.company?.id),
           }),
@@ -73,6 +78,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
           description: "",
           categoryId: "",
           taxId: "",
+          exemptionCode: "",
           ...(user?.role === "OWNER" && {
             companyId: String(user?.company?.id),
           }),
@@ -167,6 +173,48 @@ export function ServiceModal({ action }: ServiceModalProps) {
                 name="taxId"
               />
             </div>
+
+            {(() => {
+              const taxId = watch("taxId");
+              const selectedTax = taxOptions.find((t) => t.value === taxId);
+              const taxRate = selectedTax
+                ? Number(selectedTax.label.match(/\((\d+)%\)/)?.[1] || 0)
+                : 0;
+
+              if (taxRate === 0 && selectedTax) {
+                const itemsPerPage = 6;
+                const totalPages = Math.ceil(taxExemptionReasons.length / itemsPerPage);
+                const paginatedOptions = taxExemptionReasons.slice(
+                  (exemptionPage - 1) * itemsPerPage,
+                  itemsPerPage * exemptionPage
+                );
+
+                return (
+                  <div className="grid grid-cols-1 gap-4 mb-4">
+                    <Controller
+                      name="exemptionCode"
+                      control={control}
+                      render={({ field }) => (
+                        <PaginatedSelect
+                          label="Motivo de Isenção"
+                          options={paginatedOptions}
+                          value={field.value}
+                          onChange={field.onChange}
+                          pagination={{
+                            page: exemptionPage,
+                            totalPages: totalPages,
+                          }}
+                          onPageChange={setExemptionPage}
+                          className="w-full"
+                          error={errors.exemptionCode?.message}
+                        />
+                      )}
+                    />
+                  </div>
+                );
+              }
+              return null;
+            })()}
 
             <div className="grid gap-4 sm:grid-cols-2 mt-4">
 

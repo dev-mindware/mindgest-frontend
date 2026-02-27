@@ -44,6 +44,7 @@ export type ItemData = {
   storeId: string;
   categoryId: string;
   taxId?: string | null;
+  exemptionCode?: string;
 };
 
 export type CreateItemData = {
@@ -67,6 +68,7 @@ export type CreateItemData = {
   expiryDate?: string;
   daysToExpiry?: string;
   taxId?: string | null;
+  exemptionCode?: string;
 };
 
 import { Tax } from "./tax";

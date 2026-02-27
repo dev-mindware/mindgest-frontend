@@ -32,6 +32,7 @@ export function InvoiceForm() {
         address: "",
         taxNumber: "",
       },
+      clientId: "",
       notes: "",
       storeId: "",
     },
@@ -199,6 +200,8 @@ export function InvoiceForm() {
           formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
           error={errors.client?.name?.message}
         />
+        <input type="hidden" {...register("clientId")} />
+        <input type="hidden" {...register("client.name")} />
       </div>
 
       {clientState.hasClient && (
