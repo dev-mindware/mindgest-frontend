@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/schemas";
-import { ButtonSubmit, GoogleButton, Input, OrLine } from "@/components";
+import { ButtonSubmit, Input } from "@/components";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
 
@@ -44,7 +44,7 @@ export function LoginForm() {
     <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 text-center">
         <Image src={Logo} alt="Logo" className="size-20" />
-        <h1 className="text-2xl font-bold">Bem-vindo de volta</h1>
+        <h1 className="text-2xl font-bold">Bem-vindo ao MindGest</h1>
       </div>
 
       <div className="grid gap-6">

@@ -9,3 +9,5 @@ ver o redirect do /dashboard
 
 quando a subscrição está pendente não poder ir pra outras telas vida link
 renderizar outros menus, mas travar com o miodal - dizer que a sua subscrição está ainda e estado de aprovação e tal [X]
+
+VER O REDIRECT PARA O /OWNER E MELHORAR A AUTENTICAÇÃO

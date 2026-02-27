@@ -12,7 +12,7 @@ import { AuthHeader, BackToLogin } from "../_components";
 import { cn } from "@/lib";
 import Image from "next/image";
 import { useState } from "react";
-import { authService } from "@/services/auth-service";
+import { useForgotPassword } from "@/hooks/auth";
 
 export function RecoveryPassword() {
   const { openModal } = useModal();
@@ -20,22 +20,23 @@ export function RecoveryPassword() {
   const {
     register,
     handleSubmit,
-    getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
-  const email = getValues("email");
 
-  
+  const { mutateAsync: forgotPassword, isPending } = useForgotPassword();
 
   async function onSubmit(data: ForgotPasswordFormData) {
     try {
-      const res = await authService.forgotPassword(email);
+      const res = await forgotPassword(data.email);
       setMessage(res.message);
-      //openModal("otp-modal");
-    } catch (error) {
-      ErrorMessage("Ocorreu um erro ao enviar o email. Tente mais tarde.");
+      openModal("information-modal");
+    } catch (error: any) {
+      ErrorMessage(
+        error?.response?.data?.message ||
+          "Ocorreu um erro ao enviar o email. Tente mais tarde.",
+      );
     }
   }
 
@@ -44,7 +45,7 @@ export function RecoveryPassword() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={cn(
-          "flex flex-col gap-6 w-full max-w-sm mx-auto mb-24 sm:mb-0"
+          "flex flex-col gap-6 w-full max-w-sm mx-auto mb-24 sm:mb-0",
         )}
       >
         <div className="space-y-4">
@@ -67,18 +68,14 @@ export function RecoveryPassword() {
             error={errors.email?.message}
           />
 
-          <ButtonSubmit isLoading={isSubmitting} className="w-full">
-            {isSubmitting ? "Enviando..." : "Verificar"}
+          <ButtonSubmit isLoading={isPending} className="w-full">
+            {isPending ? "Enviando..." : "Verificar"}
           </ButtonSubmit>
-
-          <code>
-            {JSON.stringify(message)}
-          </code>
 
           <BackToLogin />
         </div>
       </form>
-      <OTPModal email={email} />
+      <OTPModal message={message} />
     </>
   );
 }

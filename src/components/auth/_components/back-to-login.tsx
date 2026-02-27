@@ -1,9 +1,14 @@
-import Link from "next/link"; 
+import Link from "next/link";
 
 export function BackToLogin() {
   return (
-    <Link href="/auth/login" className="w-full text-center text-primary block">
-      Voltar para o login
-    </Link>
+    <div className="w-full flex items-center justify-center">
+      <Link
+        href="/auth/login"
+        className="w-max text-primary block text-sm"
+      >
+        Voltar para o login
+      </Link>
+    </div>
   );
 }

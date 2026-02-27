@@ -40,7 +40,7 @@ export async function createSession(payload: SessionPayload) {
 
 export async function destroySession() {
   const authCookies = await cookies();
-  authCookies.delete("session");
+  authCookies.delete(SESSION_COOKIE_KEY);
 }
 
 export async function decrypt(session: string): Promise<SessionPayload | null> {
