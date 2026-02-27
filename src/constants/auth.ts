@@ -1,1 +1,1 @@
-export const SESSION_COOKIE_KEY="_m_session"
+export const SESSION_COOKIE_KEY="m_gest_session"

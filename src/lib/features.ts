@@ -1,11 +1,11 @@
-import { Plan } from "@/types";
+import { PlanType } from "@/types";
 
-export const planHierarchy: Record<Plan, number> = {
-  "BASE": 1,
-  "TSUNAMI": 2,
-  "SMART_PRO": 3
+export const planHierarchy: Record<PlanType, number> = {
+  "Base": 1,
+  "Pro": 2,
+  "Smart": 3
 };
 
-export function hasPlanAccess(userPlan: Plan, requiredPlan: Plan): boolean {
+export function hasPlanAccess(userPlan: PlanType, requiredPlan: PlanType): boolean {
   return planHierarchy[userPlan] >= planHierarchy[requiredPlan];
 }

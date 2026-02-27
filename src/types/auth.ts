@@ -1,30 +1,25 @@
+import { Company, Store } from "./company";
+
 export interface LoginResponse {
-  user: User;
   message: string;
-  accessToken: string;
-  refreshToken: string;
+  user: User;
+  tokens: Tokens;
 }
 
-export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | 'SELLER' | "CASHIER"
+export type Role = 'ADMIN' | 'OWNER' | 'MANAGER' | "CASHIER"
 
-export interface User {
+export type User = {
   id: string;
   email: string;
   name: string;
   role: Role;
+  phone: string,
   company: Company;
-  stores: Store[];
+  store?: Store
 }
 
-interface Store {
-  id: string;
-  name: string;
+export interface Tokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
 }
-
-interface Company {
-  id: string;
-  name: string;
-  plan: Plan;
-}
-
-export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO"

@@ -1,7 +1,4 @@
 "use client";
-
-import { useEffect } from 'react';
-import { useAuthStore } from '@/stores/auth';
 import { User } from '@/types';
 
 type SessionProviderProps = {
@@ -10,11 +7,11 @@ type SessionProviderProps = {
 }
 
 export function SessionProvider({ user, children }: SessionProviderProps) {
-  const { setUser } = useAuthStore();
+/*   const { setUser } = useAuth();
 
   useEffect(() => {
     setUser(user as User);
-  }, [user, setUser]);
+  }, [user, setUser]); */
 
   return <>{children}</>;;
 }

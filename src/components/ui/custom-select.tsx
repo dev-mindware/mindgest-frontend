@@ -17,7 +17,7 @@ import { AlertError } from "../common";
 
 type Option = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 interface RHFSelectProps<T extends FieldValues> {
@@ -39,7 +39,7 @@ export function RHFSelect<T extends FieldValues>({
 }: RHFSelectProps<T>) {
   return (
     <div className="">
-      {label && <Label className="mb-1" htmlFor={name}>{label}</Label>}
+      {label && <Label className="text-sm font-medium mb-1">{label}</Label>}
 
       <Controller
         control={control}
@@ -55,11 +55,18 @@ export function RHFSelect<T extends FieldValues>({
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
               <SelectContent>
-                {options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
+                {options
+                  .filter(
+                    (opt) =>
+                      opt.value !== null &&
+                      opt.value !== undefined &&
+                      opt.value !== ""
+                  )
+                  .map((opt) => (
+                    <SelectItem key={opt.value.toString()} value={opt.value.toString()}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 

@@ -1,22 +1,15 @@
 "use client";
-// import { api } from "@/services";
-import axios from "axios"
+import { useTransition } from "react";
+import { api } from "@/services/api";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useTransition } from "react";
-
-const api = axios.create({
-  baseURL: "https://mamexpress.onrender.com",
-});
-
-
-const TOKEN_TEST = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQwN2RhNDA1LTFhYmYtNDIxZi1hM2U3LWY0NGI0ZTdmOTA0MCIsImlhdCI6MTc1NjU2MjI0NSwiZXhwIjoxNzU2NTkxMDQ1fQ.SkAWkcNC3RTGB0miz_1IYg0cDpH00UcCPYuG4PFgkzE"
 
 export interface PaginationResponse<T> {
   data: T[];
   total: number;
   page: number;
-  pageCount: number;
+  limit: number;
+  totalPages: number;
 }
 
 interface UsePaginatedFetchOptions {
@@ -24,6 +17,7 @@ interface UsePaginatedFetchOptions {
   queryKey: string[] | string;
   queryParams?: Record<string, any>;
   enabled?: boolean;
+  keepPreviousData?: boolean;
 }
 
 export function usePagination<T>({
@@ -31,6 +25,7 @@ export function usePagination<T>({
   queryKey,
   queryParams = {},
   enabled = true,
+  keepPreviousData = true,
 }: UsePaginatedFetchOptions) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -43,18 +38,31 @@ export function usePagination<T>({
       ? [...queryKey, page, queryParams]
       : [queryKey, page, queryParams],
     queryFn: async () => {
-      const response = await api.get<PaginationResponse<T>>(endpoint, {
+      const response = await api.get(endpoint, {
         params: { page, ...queryParams },
-        headers: {
-          Authorization: `Bearer ${TOKEN_TEST}`
-        }
       });
-      return response.data;
+
+      const raw = response.data;
+
+      // 🔹 Normaliza para sempre devolver o mesmo shape
+      const dataKey = Object.keys(raw).find(
+        (key) => Array.isArray(raw[key])
+      ) as keyof typeof raw;
+
+      return {
+        data: (raw[dataKey] as T[]) ?? [],
+        total: raw.total ?? 0,
+        page: raw.page ?? page,
+        limit: raw.limit ?? queryParams.limit ?? 10,
+        totalPages:
+          raw.totalPages ??
+          (raw.total && raw.limit ? Math.ceil(raw.total / raw.limit) : 1),
+      } satisfies PaginationResponse<T>;
     },
     enabled,
-    gcTime: 300_000, // tempo de cache: 5min
+    gcTime: 300_000, // cache: 5min
     retry: 1,
-    placeholderData: (prev) => prev,
+    placeholderData: keepPreviousData ? (prev) => prev : undefined,
   });
 
   const updatePageInUrl = (newPage: number) => {
@@ -66,7 +74,7 @@ export function usePagination<T>({
   };
 
   const goToNextPage = () => {
-    if (query.data && page < query.data.pageCount) {
+    if (query.data && page < query.data.totalPages) {
       updatePageInUrl(page + 1);
     }
   };
@@ -78,10 +86,11 @@ export function usePagination<T>({
   };
 
   return {
-    data: query.data?.data || [],
-    total: query.data?.total || 0,
+    data: query.data?.data ?? [],
+    total: query.data?.total ?? 0,
     page,
-    lastPage: query.data?.pageCount || 1,
+    limit: query.data?.limit ?? queryParams.limit ?? 10,
+    totalPages: query.data?.totalPages ?? 1,
     isLoading: query.isLoading || isPending,
     isError: query.isError,
     goToNextPage,

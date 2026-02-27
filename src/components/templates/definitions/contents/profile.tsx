@@ -1,210 +1,285 @@
-"use client"
+"use client";
+import { Separator } from "@/components";
+import { useAuth } from "@/hooks/auth";
+import { PhotoUpload } from "@/components/common/photo-upload";
+import { useForm } from "react-hook-form";
+import type { File as MyFile } from "@/types";
+import { ProfileAvatar } from "./profile/profile-avatar";
+import { ProfileForm } from "./profile/profile-form";
+import { AccountSecurity } from "./profile/account-security";
+import { SupportAccess } from "./profile/support-access";
+import { useFileUpload } from "@/hooks/common/use-upload";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
-import { CircleUserRoundIcon, XIcon } from "lucide-react"
-import { useFileUpload } from "@/hooks/use-file-upload"
-import { Input, Button, Switch, Label, Separator, Avatar, AvatarFallback, AvatarImage, Icon  } from "@/components"
-import { useRef, useState } from "react"
-import Image from "next/image"
+interface ProfileFormData {
+  companyLogo?: MyFile;
+}
+
 export function Profile() {
-  const [{ files }, { removeFile, openFileDialog, getInputProps }] = useFileUpload({
-    accept: "image/*",
-  })
+  const { user } = useAuth();
+  const { control, watch } = useForm<ProfileFormData>();
 
-  const previewUrl = files[0]?.preview || null
-  const fileName = files[0]?.file.name || null
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [preview, setPreview] = useState<string | null>(null)
+  const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
+    `/companies/${user?.company?.id}/logo`,
+    "companies",
+    "PUT",
+  );
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+  const companyLogo = watch("companyLogo");
+
+  useEffect(() => {
+    if (companyLogo && companyLogo.url) {
+      uploadLogo(
+        {
+          files: { file: companyLogo },
+        },
+        {
+          onSuccess: () =>
+            toast.success("Logo da empresa atualizada com sucesso!"),
+          onError: (error: any) =>
+            toast.error(
+              error?.response?.data?.message ||
+                "Erro ao atualizar logo da empresa",
+            ),
+        },
+      );
     }
-  }
+  }, [companyLogo, uploadLogo]);
 
-  const handleRemove = () => {
-    setPreview(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
-  }
+  const getRoleLabel = (role?: string) => {
+    const roleMap: Record<string, string> = {
+      OWNER: "Proprietário",
+      MANAGER: "Gerente",
+      ADMIN: "Administrador",
+      CASHIER: "Caixa",
+    };
+    return roleMap[role || ""] || role;
+  };
 
   return (
-    <div className="p-6 space-y-6 ">
+    <div className="space-y-6" suppressHydrationWarning>
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between border-b pb-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Meu Perfil</h2>
+          <p className="text-muted-foreground mt-1">
+            Gerencie suas informações pessoais e da empresa.
+          </p>
+        </div>
+        {user?.role && (
+          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20">
+            {getRoleLabel(user.role)}
+          </span>
+        )}
+      </div>
+
+      <div className="grid gap-8 md:grid-cols-12">
+        <div className="md:col-span-4 space-y-6">
+          <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col items-center text-center">
+            <h3 className="font-semibold mb-6 w-full text-left">
+              Foto de Perfil
+            </h3>
+            <ProfileAvatar
+              currentImage={user?.company?.logo || undefined}
+              userName={user?.name}
+            />
+          </div>
+
+          <div className="bg-card rounded-xl border p-6 shadow-sm">
+            <h3 className="font-semibold mb-4">Logo da Empresa</h3>
+            <div className="flex flex-col items-center">
+              {!user?.company?.logo ? (
+                <PhotoUpload
+                  label="Carregar Logo"
+                  name="companyLogo"
+                  control={control}
+                  accept="image"
+                  maxSize={1024 * 1024 * 2}
+                  className="w-full"
+                  disabled={isUploading}
+                />
+              ) : (
+                <div className="relative group w-full aspect-video bg-muted/30 rounded-lg flex items-center justify-center border-2 border-dashed overflow-hidden">
+                  <img
+                    src={user.company.logo}
+                    alt="Logo da empresa"
+                    className="max-h-full max-w-full object-contain p-2"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <PhotoUpload
+                      label="Alterar"
+                      name="companyLogo"
+                      control={control}
+                      accept="image"
+                      maxSize={1024 * 1024 * 2}
+                      className="w-auto"
+                      disabled={isUploading}
+                    />
+                  </div>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                Exibido em documentos e faturas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="md:col-span-8 space-y-6">
+          <ProfileForm user={user} />
+          <AccountSecurity user={user} />
+          <SupportAccess />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* "use client";
+
+import { Separator } from "@/components";
+import { useAuth } from "@/hooks/auth";
+import { PhotoUpload } from "@/components/common/photo-upload";
+import { useForm, Controller } from "react-hook-form";
+import type { File as MyFile } from "@/types";
+import { ProfileAvatar } from "./profile/profile-avatar";
+import { ProfileForm } from "./profile/profile-form";
+import { AccountSecurity } from "./profile/account-security";
+import { SupportAccess } from "./profile/support-access";
+import { useFileUpload } from "@/hooks/common/use-upload";
+import { useState } from "react";
+import { toast } from "sonner";
+
+interface ProfileFormData {
+  companyLogo?: MyFile;
+}
+
+export function Profile() {
+  const { user } = useAuth();
+  const { control, watch, setValue } = useForm<ProfileFormData>();
+  const [selectedFile, setSelectedFile] = useState<MyFile | null>(null);
+
+  const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
+    `/companies/${user?.company?.id}/logo`,
+    "companies",
+    "PUT"
+  );
+
+  const companyLogo = watch("companyLogo");
+
+  const handleUpload = () => {
+    if (!selectedFile) return toast.error("Selecione um arquivo antes de atualizar.");
+
+    uploadLogo(
+      { files: { file: selectedFile } },
+      {
+        onSuccess: () => {
+          toast.success("Logo da empresa atualizada com sucesso!");
+          setSelectedFile(null);
+          setValue("companyLogo", undefined);
+        },
+        onError: (error: any) =>
+          toast.error(error?.response?.data?.message || "Erro ao atualizar logo da empresa"),
+      }
+    );
+  };
+
+  const getRoleLabel = (role?: string) => {
+    const roleMap: Record<string, string> = {
+      OWNER: "Proprietário",
+      MANAGER: "Gerente",
+      ADMIN: "Administrador",
+      CASHIER: "Caixa",
+    };
+    return roleMap[role || ""] || role;
+  };
+
+  return (
+    <div className="space-y-6">
       <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
         <div>
           <h2 className="text-2xl text-center md:text-start">Meu Perfil</h2>
-          <p className="text-center text-muted-foreground md:text-start">Personalize o seu perfil MindGest quando quiser.</p>
+          <p className="text-center text-muted-foreground md:text-start">
+            Personalize o seu perfil MindGest quando quiser.
+          </p>
         </div>
-        <span className="font-medium text-primary">Proprietário</span>
-      </div>
-        <Separator className="-mt-4" />
-
-
-      <div className="flex flex-col justify-between w-full gap-8 md:flex-row md:items-start">
-        
-        <div className="flex gap-6">
-      <div onClick={() => fileInputRef.current?.click()} className="cursor-pointer">
-        <Avatar className="w-24 h-24 transition ring-2 ring-primary/40 hover:ring-primary/80">
-          <AvatarImage src={preview || "/user.jpg"} alt="Avatar" />
-          <AvatarFallback>CC</AvatarFallback>
-        </Avatar>
+        {user?.role && <span className="font-medium text-primary">{getRoleLabel(user.role)}</span>}
       </div>
 
-      <div className="space-y-2">
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" onClick={() => fileInputRef.current?.click()}>
-            <Icon name="Camera" />
-          </Button>
-          <Button type="button" variant="outline" onClick={handleRemove} disabled={!preview}>
-            <Icon name="Trash2" />
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Apenas ficheiros .JPEG, .PNG e menores que 2MB são suportados
-        </p>
-      </div>
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        ref={fileInputRef}
-        onChange={handleImageChange}
-      />
-    </div>
+      <div className="flex flex-col justify-between items-center w-full gap-4 md:flex-row">
+        <ProfileAvatar currentImage={user?.company?.logo || undefined} userName={user?.name} />
 
-        
-        <div className="flex flex-col items-center gap-2">
-          <div className="relative inline-flex">
-            <Button
-              variant="outline"
-              className="relative p-0 overflow-hidden shadow-none size-16"
-              onClick={openFileDialog}
-              aria-label={previewUrl ? "Change image" : "Upload image"}
-            >
-              {previewUrl ? (
-                <Image
-                  className="object-cover size-full"
-                  src={previewUrl}
-                  alt="Preview"
-                  width={64}
-                  height={64}
+        {!user?.company?.logo ? (
+          <div className="flex flex-col items-center gap-2">
+            <Controller
+              name="companyLogo"
+              control={control}
+              render={({ field }) => (
+                <PhotoUpload
+                  label="Logo da Empresa"
+                  {...field}
+                  accept="image"
+                  maxSize={1024 * 1024 * 2}
+                  className="max-w-xs"
+                  onChange={(file) => {
+                    field.onChange(file);
+                    setSelectedFile(file || null);
+                  }}
+                  disabled={isUploading}
                 />
-              ) : (
-                <div aria-hidden="true">
-                  <CircleUserRoundIcon className="size-4 opacity-60" />
-                </div>
               )}
-            </Button>
-            {previewUrl && (
-              <Button
-                onClick={() => removeFile(files[0]?.id)}
-                size="icon"
-                className="absolute border-2 rounded-full shadow-none border-background focus-visible:border-background -top-2 -right-2 size-6"
-                aria-label="Remove image"
-              >
-                <XIcon className="size-3.5" />
-              </Button>
-            )}
-            <input
-              {...getInputProps()}
-              className="sr-only"
-              aria-label="Upload image file"
-              tabIndex={-1}
             />
+            <button
+              type="button"
+              onClick={handleUpload}
+              disabled={!selectedFile || isUploading}
+              className="mt-2 rounded bg-primary px-4 py-2 text-white hover:bg-primary/90 disabled:opacity-50"
+            >
+              {isUploading ? "Enviando..." : "Atualizar Imagem"}
+            </button>
           </div>
-          {fileName && <p className="text-xs text-muted-foreground">{fileName}</p>}
-          <p className="mt-2 text-xs text-muted-foreground">Logo da Empresa</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <Label>Nome</Label>
-          <Input defaultValue="Ceara" />
-        </div>
-        <div>
-          <Label>Sobrenome</Label>
-          <Input defaultValue="Coveney" />
-        </div>
-        <div>
-          <Label>Nome da Empresa</Label>
-          <Input defaultValue="Amazon" />
-        </div>
-        <div>
-          <Label>NIF</Label>
-          <Input placeholder="Ex: 598364343" />
-        </div>
-      </div>
-
-
-      <div>
-        <h3 className="text-2xl text-center md:text-start">Segurança da Conta</h3>
-        <p className="text-center text-muted-foreground md:text-start">Altere as suas configurações de segurança.</p>
-      <Separator className="mt-4"/>
-        <div className="mt-4 space-y-4">
-          <div>
-            <Label>Email</Label>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <Input
-                disabled
-                defaultValue="cea.co@gmail.com"
-                className="w-[50%]"
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            <img
+              src={user.company.logo}
+              alt="Logo da empresa"
+              className="max-w-xs rounded-md border border-muted"
             />
-            <Button className="whitespace-nowrap">Alterar Email</Button>
-            </div>
-
+            <Controller
+              name="companyLogo"
+              control={control}
+              render={({ field }) => (
+                <PhotoUpload
+                  label="Trocar Logo"
+                  {...field}
+                  accept="image"
+                  maxSize={1024 * 1024 * 2}
+                  className="max-w-xs"
+                  onChange={(file) => {
+                    field.onChange(file);
+                    setSelectedFile(file || null);
+                  }}
+                  disabled={isUploading}
+                />
+              )}
+            />
+            <button
+              type="button"
+              onClick={handleUpload}
+              disabled={!selectedFile || isUploading}
+              className="mt-2 rounded bg-primary px-4 py-2 text-white hover:bg-primary/90 disabled:opacity-50"
+            >
+              {isUploading ? "Enviando..." : "Atualizar Imagem"}
+            </button>
           </div>
-          <div>
-            <Label>Senha</Label>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <Input type="password" value="************" disabled className="w-[50%]"/>
-              <Button>Alterar Senha</Button>
-            </div>
-          </div>
-          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-            <div>
-              <Label>Autenticação de 2 passos</Label>
-              <p className="text-xs text-muted-foreground">Implemente uma camada adicional de segurança à sua conta durante o login</p>
-            </div>
-            <Switch />
-          </div>
-        </div>
+        )}
       </div>
 
-      <div>
-        <h3 className="text-2xl text-center md:text-start">Suporte de Acesso</h3>
-        <p className="text-center text-muted-foreground md:text-start">Altere as suas configurações de suporte de acesso.</p>
-        <Separator className="mt-4"/>
-        <div className="mt-4 space-y-4">
-          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-            <div>
-              <Label>Suporte de Acesso</Label>
-              <p className="text-xs text-muted-foreground">
-                Concede-nos acesso à sua conta para efeitos de suporte até 19 de junho de 2025, 11h43.
-              </p>
-            </div>
-            <Switch />
-          </div>
-          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-            <p className="text-sm text-muted-foreground">Log out em todos os dispositivos</p>
-            <Button variant="outline">Log out</Button>
-          </div>
-          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-            <div>
-              <p className="text-sm font-medium text-destructive">Eliminar minha conta</p>
-              <p className="text-xs text-muted-foreground">
-                Eliminar definitivamente a conta e remover o acesso de todos os espaços de trabalho
-              </p>
-            </div>
-            <Button variant="destructive">Eliminar Conta</Button>
-          </div>
-        </div>
-      </div>
+      <ProfileForm user={user} />
+      <AccountSecurity user={user} />
+      <SupportAccess />
     </div>
-  )
+  );
 }
+
+ */

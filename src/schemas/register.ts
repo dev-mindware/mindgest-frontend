@@ -1,32 +1,21 @@
 import { z } from "zod";
 import { companySchema } from "./company";
-
+import { passwordSchema, phoneNumberSchema } from "./helps";
 
 export const registerSchema = z.object({
   step1: z
     .object({
-      full_name: z
+      name: z
         .string()
+        .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
-      email: z.string().email("Email invalido"),
-      phone: z
-        .string()
-        .max(9, "O número deve ter 9 dígitos")
-        .refine(
-          (value: string) => /^(92|99|91|95|93|94|97)\d{7}$/.test(value ?? ""),
-          "Insira número de telemovél válido"
-        ),
-      password: z
-        .string()
-        .nonempty("Campo obrigatório")
-        .min(8, "A senha deve ter no mínimo 8 caracteres")
-        .regex(/[A-Z]/, "Deve conter pelo menos uma letra maiúscula (A-Z)")
-        .regex(/[a-z]/, "Deve conter pelo menos uma letra minúscula (a-z)")
-        .regex(/[0-9]/, "Deve conter pelo menos um número (0-9)")
-        .regex(/[^a-zA-Z0-9]/, "Deve conter pelo menos um caractere especial"),
+      email: z.string().trim().email("Email invalido"),
+      phone: phoneNumberSchema,
+      password: passwordSchema,
       passwordConfirmation: z
         .string()
+        .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
     })

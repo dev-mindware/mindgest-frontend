@@ -1,6 +1,9 @@
-export type File = {
-  url: string;
+export interface File {
+  fieldname?: string;
+  originalname: string;
+  encoding?: string;
+  mimetype: string;
+  buffer?: any;
   size: number;
-  type: string;
-  filename: string;
-};
+  url?: string; // Added for frontend previews
+}

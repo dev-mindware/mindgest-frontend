@@ -1,24 +1,24 @@
-export type Plan = "BASE" | "TSUNAMI" | "SMART_PRO";
+import { PlanType } from "@/types";
 
-const planOrder: Record<Plan, number> = {
-  BASE: 1,
-  TSUNAMI: 2,
-  SMART_PRO: 3,
+const planOrder: Record<PlanType, number> = {
+  "Base": 1,
+  "Pro": 2,
+  "Smart": 3,
 };
 
-export function normalizePlan(plan: string | undefined | null): Plan | null {
+export function normalizePlan(plan: string | undefined | null): PlanType | null {
   if (!plan) return null;
 
   const normalized = plan.toUpperCase().replace("-", "_");
 
-  if (normalized.includes("SMART")) return "SMART_PRO";
-  if (normalized.includes("TSUNAMI")) return "TSUNAMI";
-  if (normalized.includes("BASE")) return "BASE";
+  if (normalized.includes("Smart")) return "Smart";
+  if (normalized.includes("Pro")) return "Pro";
+  if (normalized.includes("Base")) return "Base";
 
   return null;
 }
 
-export function PlanAccess(userPlan: string | null | undefined, requiredPlan: Plan): boolean {
+export function PlanAccess(userPlan: string | null | undefined, requiredPlan: PlanType): boolean {
   const normalized = normalizePlan(userPlan);
   if (!normalized) return false;
   return planOrder[normalized] >= planOrder[requiredPlan];

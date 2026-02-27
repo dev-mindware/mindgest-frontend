@@ -4,10 +4,9 @@ export const DEFAULT_LOGIN_REDIRECT = "/auth/login";
 
 export const roleRedirects: Record<Role, string> = {
   "ADMIN": "/admin/dashboard",
-  "OWNER": "/client/dashboard",
-  "MANAGER": "/client/dashboard",
-  "SELLER": "/client/dashboard",
-  "CASHIER": "/cashier",
+  "OWNER": "/dashboard",
+  "MANAGER": "/dashboard",
+  "CASHIER": "/pos/counter",
 };
 
 export const getRouteByRole = (role: Role): string => {

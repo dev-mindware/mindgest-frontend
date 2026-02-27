@@ -5,12 +5,11 @@ export function IconWarning({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center w-20 h-20 rounded-full bg-amber-500/20 text-amber-500",
+        "flex items-center self-center justify-center px-4 w-14 h-14 rounded-full bg-red-100 text-red-600 shadow-sm",
         className
       )}
     >
-        <Icon name="TriangleAlert" className="h-12 w-12" />
-
+      <Icon name="TriangleAlert" className="h-8 w-8" />
     </div>
   );
 }

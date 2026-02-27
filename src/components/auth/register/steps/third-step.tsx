@@ -1,15 +1,18 @@
-"use client"
+"use client";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext, Controller } from "react-hook-form";
 import { Label, Checkbox } from "@/components/ui";
 import { AlertError } from "@/components/common";
+import { StepsHeader } from "./steps-header";
 
 export function ThirdStep() {
   const { control } = useFormContext<RegisterFormData>();
 
   return (
     <div className="max-w-2xl p-2 mx-auto space-y-8">
-      <h1 className="text-3xl font-bold">Termos e Políticas</h1>
+      <div className="flex flex-col items-center mt-4 gap-2 text-center">
+        <StepsHeader title="Termos e Políticas" />
+      </div>
       <div className="space-y-6">
         <p>Isso inclui, mas não se limita a:</p>
 
@@ -35,11 +38,6 @@ export function ThirdStep() {
             digitais com conteúdos informativos, promocionais ou relacionados
             aos serviços contratados;
           </BulletItem>
-          <BulletItem>
-            A ciência de que a Mindgest poderá atualizar seus termos a qualquer
-            momento, sendo responsabilidade do usuário verificar periodicamente
-            as alterações;
-          </BulletItem>
         </ul>
 
         <p className="pt-4 text-muted-foreground">
@@ -58,8 +56,18 @@ export function ThirdStep() {
                   id="termos"
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  className="
+            bg-white dark:bg-gray-600
+            border-gray-300 dark:border-gray-600
+            checked:bg-primary dark:checked:bg-primary
+            focus:ring-2 focus:ring-primary dark:focus:ring-primary
+            transition-colors
+          "
                 />
-                <Label htmlFor="termos" className="text-sm font-normal">
+                <Label
+                  htmlFor="termos"
+                  className="text-sm font-normal text-gray-700 dark:text-gray-300"
+                >
                   Eu li e concordo com os termos acima.
                 </Label>
               </div>

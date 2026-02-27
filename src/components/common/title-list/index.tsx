@@ -1,20 +1,32 @@
 import { Separator } from "@/components/ui";
 
 interface TitleListProps {
-  title: string;
+  title?: string;
   suTitle?: string;
+  separator?: boolean;
+  children?: React.ReactNode;
 }
 
-export function TitleList({ title, suTitle }: TitleListProps) {
+export function TitleList({
+  title,
+  suTitle,
+  separator,
+  children,
+}: TitleListProps) {
   return (
-    <>
+    <div className="flex items-center justify-between">
       <div>
-        <h2 className="text-2xl text-center md:text-start">{title}</h2>
-        <p className="text-center text-muted-foreground md:text-start">
-          {suTitle}
-        </p>
+        {title && (
+          <h2 className="text-2xl text-start md:text-start">{title}</h2>
+        )}
+        {suTitle && (
+          <p className="text-start text-muted-foreground sm:text-start">
+            {suTitle}
+          </p>
+        )}
       </div>
-      <Separator />
-    </>
+      {separator && <Separator />}
+      {children && children}
+    </div>
   );
 }

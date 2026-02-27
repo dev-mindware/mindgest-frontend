@@ -1,26 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { FirstStep } from "./first-step";
 import { SecondStep } from "./second-step";
 import {
   Stepper,
-  StepperIndicator,
   StepperItem,
-  StepperSeparator,
   StepperTrigger,
+  StepperSeparator,
+  StepperIndicator,
+  AccountCreatedModal,
 } from "@/components";
 import { NavigationButtons } from "./navigation-buttons";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, registerSchema } from "@/schemas";
-import { HeroImageSide, SeparatorLine } from "@/components/auth";
 import { ThirdStep } from "./third-step";
-import { SucessMessage } from "@/utils/messages";
+import { HeroImageSide } from "../../_components";
+import { useAddCompany } from "@/hooks";
+import { ErrorMessage } from "@/utils/messages";
+import Link from "next/link";
 
 export function RegisterForm() {
   const steps = [1, 2, 3];
   const [currentStep, setCurrentStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutateAsync: addCompany, isPending } = useAddCompany();
+  const [isLoading, startTransition] = useTransition();
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -52,25 +56,6 @@ export function RegisterForm() {
     }
   };
 
-  const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true);
-    try {
-      const { passwordConfirmation, ...rest } = data.step1;
-      const finalData = { ...rest, ...data.step2 };
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      SucessMessage("Conta criada com sucesso!");
-
-      window.location.replace("/management/dashboard");
-
-    } catch (error) {
-      console.error("Erro ao enviar dados", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const renderCurrentForm = () => {
     switch (currentStep) {
       case 1:
@@ -84,12 +69,31 @@ export function RegisterForm() {
     }
   };
 
+  function onSubmit(data: RegisterFormData) {
+    startTransition(async () => {
+      try {
+        const { passwordConfirmation, ...rest } = data.step1;
+        const finalData = { ...rest, ...data.step2 };
+
+        await addCompany(finalData);
+      } catch (error: any) {
+        if (error?.response?.data) {
+          ErrorMessage(
+            error?.response?.data?.message ||
+              "Ocorreu um erro ao criar a conta",
+          );
+        } else {
+          ErrorMessage("Ocorreu um erro desconhecido.Tente novamente");
+        }
+      }
+    });
+  }
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative grid min-h-svh lg:grid-cols-2">
           <HeroImageSide source="/register.svg" />
-          <SeparatorLine />
 
           <div className="relative z-20 flex flex-col p-6 md:p-10">
             <div className="max-w-xl mx-auto space-y-8 text-center md:w-[25rem] w-50">
@@ -108,29 +112,33 @@ export function RegisterForm() {
                   </StepperItem>
                 ))}
               </Stepper>
-              <p
-                className="mt-2 text-xs text-muted-foreground"
-                role="region"
-                aria-live="polite"
-              >
-                Passo {currentStep} de {steps.length}
-              </p>
             </div>
 
-            <div className="flex items-center justify-center flex-1">
+            <div className="flex flex-col gap-8 items-center justify-center flex-1">
               <div className="w-full max-w-md">{renderCurrentForm()}</div>
-            </div>
 
-            <NavigationButtons
-              currentStep={currentStep}
-              totalSteps={steps.length}
-              handlePrevStep={handlePrevStep}
-              handleNextStep={handleNextStep}
-              isLoading={isLoading}
-            />
+              <NavigationButtons
+                currentStep={currentStep}
+                totalSteps={steps.length}
+                handlePrevStep={handlePrevStep}
+                handleNextStep={handleNextStep}
+                isLoading={isLoading || isPending}
+              />
+
+              <div className="text-sm text-center">
+                Já tens uma conta?{" "}
+                <Link
+                  href="/auth/login"
+                  className="font-medium text-primary hover:underline underline-offset-4"
+                >
+                  Entrar
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </form>
+      <AccountCreatedModal />
     </FormProvider>
   );
 }

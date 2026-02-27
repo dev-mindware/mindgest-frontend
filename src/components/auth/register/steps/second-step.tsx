@@ -1,7 +1,6 @@
 "use client"
 import { cn } from "@/lib/utils";
 import { Input } from "@/components";
-import Link from "next/link";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
@@ -14,7 +13,7 @@ export function SecondStep() {
 
   return (
     <div className={cn("flex flex-col gap-6")}>
-      <div className="flex flex-col items-center gap-2 text-center">
+      <div className="flex flex-col items-center mt-4 gap-2 text-center">
         <StepsHeader title="Insira os dados da empresa" />
       </div>
       <div className="grid gap-6">
@@ -69,26 +68,7 @@ export function SecondStep() {
             errors?.step2?.company?.address?.message
           }
         />
-        <Input
-          label="Website"
-          startIcon="Globe"
-          placeholder="Insira seu website"
-          {...register("step2.company.website")}
-          error={
-            errors?.step2?.company?.website &&
-            errors?.step2?.company?.website?.message
-          }
-        />
-      </div>
-      <div className="text-sm text-center">
-        Já tens uma conta?{" "}
-        <Link
-          href="/auth/login"
-          className="font-medium text-primary hover:underline underline-offset-4"
-        >
-          Entre
-        </Link>
-      </div>
+      </div>     
     </div>
   );
 }

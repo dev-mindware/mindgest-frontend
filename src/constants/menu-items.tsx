@@ -1,12 +1,11 @@
 import { Icon } from "@/components";
-import { icons } from "lucide-react";
-import { Role, Plan } from "@/types";
+import { Role, PlanType } from "@/types";
 
 type SubMenuItem = {
   name: string;
   url: string;
   roles?: Role[];
-  minPlan?: Plan;
+  minPlan?: PlanType;
 };
 
 export type MenuItem = {
@@ -14,194 +13,136 @@ export type MenuItem = {
   url: string;
   icon?: React.ReactNode;
   roles?: Role[];
-  minPlan?: Plan;
+  minPlan?: PlanType;
   showMoreIcon?: boolean;
   showUpgrade?: boolean;
   items?: SubMenuItem[];
 };
 
-type Team = {
-  name: string;
-  logo: keyof typeof icons;
-  plan: string;
-};
-
 export type MenuStructure = {
-  teams: Team[];
-  menuItems: MenuItem[];
+  items: MenuItem[];
 };
-
-export const adminMenu: MenuItem[] = [
-  {
-    name: "Dashboard Global",
-    url: "/super/dashboard",
-    icon: <Icon name="Globe" />,
-    roles: ["ADMIN"],
-  },
-  {
-    name: "Empresas",
-    url: "/super/companies",
-    icon: <Icon name="Building" />,
-    roles: ["ADMIN"],
-  },
-  {
-    name: "Planos & Billing",
-    url: "/super/plans",
-    icon: <Icon name="Wallet" />,
-    roles: ["ADMIN"],
-  },
-  {
-    name: "Logs do Sistema",
-    url: "/super/logs",
-    icon: <Icon name="FileSearch" />,
-    roles: ["ADMIN"],
-  },
-  {
-    name: "Configurações",
-    url: "/settings",
-    icon: <Icon name="Settings2" />,
-    roles: ["ADMIN"],
-    minPlan: "BASE",
-    items: [
-      { name: "Geral", url: "/settings/general" },
-      { name: "Exportação", url: "/settings/export" },
-    ],
-  },
-];
 
 export const menuItems: MenuStructure = {
-  teams: [
-    { name: "Mindware, Lda", logo: "GalleryVerticalEnd", plan: "Empresa" },
-    { name: "Mindware Studio", logo: "AudioWaveform", plan: "Startup" },
-    { name: "MindSchool", logo: "University", plan: "Free" },
-  ],
-  menuItems: [
+  items: [
     {
       name: "Dashboard",
-      url: "/client/dashboard",
-      icon: <Icon name="LayoutDashboard" />,
-      roles: ["MANAGER", "OWNER", "SELLER"],
-      minPlan: "BASE",
+      url: "/dashboard",
+      icon: <Icon name="LayoutDashboard" className="w-5 h-5" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
+    },
+  /*   {
+      name: "GestIA",
+      url: "/gestia",
+      icon: <Icon name="Sparkles" className="w-5 h-5" />,
+      roles: ["OWNER"],
+      minPlan: "Base",
+      showUpgrade: true,
+    }, */
+    {
+      name: "Planos",
+      url: "/plans",
+      icon: <Icon name="Wallet" className="w-5 h-5" />,
+      roles: ["OWNER"],
+      minPlan: "Base",
     },
     {
-      name: "GestIA",
-      url: "/client/gestia",
-      icon: <Icon name="Sparkles" className="h-5 w-5" />,
-      roles: ["MANAGER", "OWNER", "SELLER"],
-      minPlan: "BASE",
-      showUpgrade: true,
+      name: "Clientes",
+      url: "/clients",
+      icon: <Icon name="Users" className="w-5 h-5" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
     },
     {
       name: "Documentos",
-      url: "/client/documents",
-      icon: <Icon name="ScrollText" />,
-      roles: ["ADMIN", "MANAGER", "OWNER"],
-      minPlan: "BASE",
+      url: "/documents",
+      icon: <Icon name="ScrollText" className="w-5 h-5" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
     },
     {
       name: "Items",
-      url: "/client/items",
-      icon: <Icon name="ShoppingBasket" />,
+      url: "/items",
+      icon: <Icon name="ShoppingBasket" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER"],
-      minPlan: "BASE",
+      minPlan: "Base",
     },
     {
-      name: "Entidades",
-      url: "/client/entities",
-      icon: <Icon name="Users" />,
+      name: "Gestão",
+      url: "#",
+      icon: <Icon name="Boxes" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER"],
-      minPlan: "BASE",
+      minPlan: "Smart",
+      items: [
+        {
+          name: "Estoque",
+          url: "/management/stock",
+        },
+        {
+          name: "POS",
+          url: "/management/pos",
+          minPlan: "Smart",
+        },
+      ],
     },
     {
       name: "Relatórios",
       url: "#",
-      icon: <Icon name="ChartBar" />,
+      icon: <Icon name="ChartNetwork" className="w-5 h-5" />,
       roles: ["OWNER", "MANAGER"],
-      minPlan: "BASE",
+      minPlan: "Base",
       items: [
         {
-          name: "Vendas simplificadas",
-          url: "/client/reports/simple",
+          name: "Vendas",
+          url: "/reports/sales",
         },
         {
-          name: "Vendas filtradas por data",
-          url: "/client/reports/by-date",
-          minPlan: "TSUNAMI",
+          name: "Clientes",
+          url: "/reports/clients",
+          minPlan: "Smart",
         },
         {
-          name: "Controle de Acesso",
-          url: "/client/reports/access-control",
-          minPlan: "SMART_PRO",
-        },
-        {
-          name: "Controle de Estoque",
-          url: "/client/reports/stock-control",
-          minPlan: "SMART_PRO",
+          name: "Acesso e Auditoria",
+          url: "/reports/access-control",
+          minPlan: "Smart",
         },
       ],
     },
-
-    // TSUNAMI+
     {
-      name: "Estoque",
-      url: "/admin/stock",
-      icon: <Icon name="Boxes" />,
+      name: "Notificações",
+      url: "/notifications",
+      icon: <Icon name="Bell" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER"],
-      minPlan: "TSUNAMI",
+      minPlan: "Base",
     },
     {
-      name: "POS",
-      url: "/mindgest/pos",
-      icon: <Icon name="Monitor" />,
-      roles: ["CASHIER", "OWNER"],
-      minPlan: "TSUNAMI",
-      items: [
-        { name: "Novo ponto de Venda", url: "/mindgest/pos/new" },
-        { name: "Movimentos de Caixa", url: "/mindgest/pos/moviments-box" },
-        {
-          name: "Configurações",
-          url: "/mindgest/pos/settings",
-          roles: ["ADMIN"],
-          minPlan: "SMART_PRO",
-        },
-      ],
+      name: "Configurações",
+      url: "/settings",
+      icon: <Icon name="Settings" className="w-5 h-5" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Base",
     },
     {
-      name: "Aparência",
-      url: "/admin/appearance",
-      icon: <Icon name="Palette" />,
-      roles: ["OWNER"],
-      minPlan: "TSUNAMI",
-    },
-
-    // SMART_PRO+
-    {
-      name: "Fornecedores & Lojas",
-      url: "/admin/suppliers",
-      icon: <Icon name="Store" />,
-      roles: ["OWNER", "MANAGER"],
-      minPlan: "SMART_PRO",
+      name: "Ponto de Venda",
+      url: "/pos/counter",
+      icon: <Icon name="Computer" className="w-5 h-5" />,
+      roles: ["CASHIER"],
+      minPlan: "Smart",
     },
     {
-      name: "GestAI",
-      url: "/mindgest/gestai",
-      icon: <Icon name="Bot" />,
-      roles: ["OWNER", "MANAGER"],
-      minPlan: "SMART_PRO",
+      name: "Movimentações",
+      url: "/pos/movements",
+      icon: <Icon name="Wallet" className="w-5 h-5" />,
+      roles: ["CASHIER"],
+      minPlan: "Pro",
     },
     {
-      name: "Análise de Estoque",
-      url: "/admin/stock-analysis",
-      icon: <Icon name="ChartPie" />,
-      roles: ["OWNER", "MANAGER"],
-      minPlan: "SMART_PRO",
-    },
-    {
-      name: "Gestão de POS",
-      url: "/admin/pos-management",
-      icon: <Icon name="SquareTerminal" />,
-      roles: ["OWNER"],
-      minPlan: "SMART_PRO",
+      name: "Configurações",
+      url: "/pos/settings",
+      icon: <Icon name="Settings" className="w-5 h-5" />,
+      roles: ["CASHIER"],
+      minPlan: "Smart",
     },
   ],
 };

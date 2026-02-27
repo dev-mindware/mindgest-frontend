@@ -1,17 +1,18 @@
 import { z } from "zod";
-import { FileSchema } from "./helps";
 
 export const categorySchema = z.object({
   name: z
     .string()
+    .trim()
     .min(2, "A categoria deve ter no mínimo 2 caracteres")
-    .max(15, "A categoria deve ter no máximo 100 caracteres"),
-  abbreviation: z
+    .max(50, "A categoria deve ter no máximo 100 caracteres"),
+  description: z
     .string()
-    .min(2, "A abrevitura deve ter no mínimo 2 caracteres")
-    .max(15, "A abrevitura deve ter no máximo 100 caracteres"),
-
-  icon: FileSchema.refine((file) => file, "Arquivo obrigatório").optional(),
+    .trim()
+    .max(500, "Descrição deve ter no máximo 500 caracteres")
+    .optional(),
+  storeId: z.string().trim().nonempty("Escolha uma loja").optional(),
+  companyId: z.string().trim().nonempty("Escolha uma empresa").optional(),
 });
 
 export type CategoryFormData = z.infer<typeof categorySchema>;

@@ -8,8 +8,6 @@ export function getUserRole(level: Role): string {
       return "owner";
     case "MANAGER":
       return "manager";
-    case "SELLER":
-      return "seller";
     case "CASHIER":
       return "cashier";
     default:

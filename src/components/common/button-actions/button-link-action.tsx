@@ -29,17 +29,15 @@ export function ButtonActionLink({
   handlerSecondaryAction,
 }: Props) {
   const searchParams = useSearchParams();
-  const category = searchParams.get("category") as
-    | "technician"
-    | "department chair"
-    | "industrial"
+  const invoice = searchParams.get("invoice");
+    // clients/documents/new
 
   const getDetailsPath = () => {
-    if (!category) return `${route}/${id}`;
+    if (!invoice) return `${route}/${id}`;
 
     return {
-      pathname: `/${"dssd"}/users/${id}`,
-      query: { category },
+      pathname: `/documents/new`,
+      query: { invoice },
     };
   };
 
@@ -49,9 +47,9 @@ export function ButtonActionLink({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full hover:bg-gray-100"
+          className="w-8 h-8 rounded-full hover:bg-gray-100"
         >
-          <Icon name="Ellipsis" className="h-4 w-4" />
+          <Icon name="Ellipsis" className="w-4 h-4" />
           <span className="sr-only">Abrir menu</span>
         </Button>
       </DropdownMenuTrigger>
@@ -60,25 +58,25 @@ export function ButtonActionLink({
         <DropdownMenuGroup>
           {primaryAction && (
             <DropdownMenuItem
-              className="cursor-pointer rounded-md"
+              className="rounded-md cursor-pointer"
               onClick={handlerPrimaryAction}
             >
-              <Icon name="CheckCheck" className="h-4 w-4 text-gray-500" />
+              <Icon name="CheckCheck" className="w-4 h-4 text-gray-500" />
               <span>{primaryAction}</span>
             </DropdownMenuItem>
           )}
           {handlerSecondaryAction && (
             <DropdownMenuItem
-              className="cursor-pointer rounded-md"
+              className="rounded-md cursor-pointer"
               onClick={handlerSecondaryAction}
             >
-              <Icon name="Ban" className="h-4 w-4 text-gray-500" />
+              <Icon name="Ban" className="w-4 h-4 text-gray-500" />
               <span>{secondaryAction}</span>
             </DropdownMenuItem>
           )}
           <Link href={getDetailsPath()}>
-            <DropdownMenuItem className="cursor-pointer rounded-md">
-              <Icon name="Eye" className="h-4 w-4 text-gray-500" />
+            <DropdownMenuItem className="rounded-md cursor-pointer">
+              <Icon name="Eye" className="w-4 h-4 text-gray-500" />
               <span>Ver detalhes</span>
             </DropdownMenuItem>
           </Link>

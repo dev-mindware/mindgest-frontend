@@ -4,4 +4,6 @@ export * from "./modal";
 export * from "./templates";
 export * from "./custom";
 export * from "./auth";
-export * from "./clients";
+export * from "./client";
+export * from "./shared";
+export * from "./client/pos";
