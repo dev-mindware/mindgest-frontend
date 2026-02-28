@@ -8,6 +8,7 @@ import { SidebarProvider } from "@/components";
 import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { NotificationDetail } from "@/components/shared/notifications";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -48,6 +49,7 @@ export default function RootLayout({
           themes={["light", "dark", "system"]}
           storageKey="mindware-theme"
         >
+          <Analytics />
           <ReactQueryProvider>
             <AuthProvider>
               <NuqsAdapter>
