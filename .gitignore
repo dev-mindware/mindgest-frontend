@@ -18,7 +18,6 @@
 /out/
 
 # agent
-/.agent/
 
 # production
 /build

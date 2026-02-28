@@ -7,6 +7,7 @@ import {
   SESSION_COOKIE_KEY,
 } from "./constants";
 import { roleRedirects } from "./utils";
+import { decrypt } from "./lib/session";
 
 function isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.includes(pathname)) return true;
@@ -26,39 +27,34 @@ function isAuthPage(pathname: string): boolean {
     "/auth/login",
     "/auth/register",
     "/auth/forgot-password",
+    "/auth/reset-password",
   ].includes(pathname);
 }
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith(API_AUTH_PREFIX)) {
     return NextResponse.next();
   }
 
-  const isAuthenticated = Boolean(
-    req.cookies.get(SESSION_COOKIE_KEY)?.value
-  );
+  const cookieValue = req.cookies.get(SESSION_COOKIE_KEY)?.value;
+  const sessionPayload = cookieValue ? await decrypt(cookieValue) : null;
+  const isAuthenticated = Boolean(sessionPayload);
 
   const isPublic = isPublicRoute(pathname);
-  const isPrivate = PRIVATE_ROUTE_PREFIXES.some((p) =>
-    pathname.startsWith(p)
-  );
+  const isPrivate = PRIVATE_ROUTE_PREFIXES.some((p) => pathname.startsWith(p));
 
   if (isPublic) {
     if (isAuthenticated && isAuthPage(pathname)) {
-      return NextResponse.redirect(
-        new URL(roleRedirects["OWNER"], req.url)
-      );
+      return NextResponse.redirect(new URL(roleRedirects["OWNER"], req.url));
     }
 
     return NextResponse.next();
   }
 
   if (!isAuthenticated && isPrivate) {
-    return NextResponse.redirect(
-      new URL(DEFAULT_LOGIN_REDIRECT, req.url)
-    );
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));
   }
 
   return NextResponse.next();

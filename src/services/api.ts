@@ -22,7 +22,8 @@ const processQueue = (error: any, token: string | null = null) => {
 
 export const api = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api",
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://mindgest.mindware-vps.cloud/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -147,10 +148,17 @@ api.interceptors.response.use(
           processQueue(null, newToken);
           original.headers.Authorization = `Bearer ${newToken}`;
           return api(original);
+        } else {
+          throw new Error("Novo access token não recebido após reautenticação");
         }
       } catch (refreshError) {
         processQueue(refreshError, null);
         console.error("Erro ao renovar token:", refreshError);
+
+        // Destructive pill to prevent infinite loop
+        const { clearLocalSession } = await import("@/actions/auth");
+        await clearLocalSession();
+
         window.location.replace("/auth/login");
         return Promise.reject(refreshError);
       } finally {
