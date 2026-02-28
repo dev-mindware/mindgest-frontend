@@ -105,7 +105,7 @@ export function ClientsList() {
       <div className="flex justify-end">
 
       </div>
-      <ClientsFiltersTSX hasData={clients.length > 0}>
+      <ClientsFiltersTSX >
       </ClientsFiltersTSX>
 
       {clients.length > 0 ? (

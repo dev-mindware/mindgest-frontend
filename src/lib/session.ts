@@ -20,7 +20,7 @@ export interface SessionPayload extends JWTPayload {
 
 export async function createSession(payload: SessionPayload) {
   const expiresAt = new Date(Date.now() + HOURS * 60 * 60 * 1000);
-  // const expiresAt = new Date(Date.now() + 2 * 60 * 1000);
+  // const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
 
   const session = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })

@@ -1,8 +1,20 @@
 "use client";
 import { useEffect } from "react";
-import { SubscriptionStatus, Role } from "@/types";
+import { SubscriptionStatus, Role, PlanType, PLAN_HIERARCHY } from "@/types";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/auth";
+import { menuItems, MenuItem } from "@/constants/menu-items";
+
+// Helper to flatten menu items to find urls easily
+const flattenMenu = (items: MenuItem[]): MenuItem[] => {
+  return items.reduce((acc: MenuItem[], item) => {
+    acc.push(item);
+    if (item.items) {
+      acc.push(...flattenMenu(item.items));
+    }
+    return acc;
+  }, []);
+};
 
 interface RouteProtectorProps {
   allowed: Role[];
@@ -30,6 +42,7 @@ export function RouteProtector({
 
     if (!allowed.includes(user.role)) {
       router.replace("/unauthorized");
+      return;
     }
 
     if (
@@ -38,11 +51,32 @@ export function RouteProtector({
       !pathname.startsWith("/plans")
     ) {
       router.replace("/settings?tab=subscription");
+      return;
     }
+
+    // Plan-based route protection
+    const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+    const currentPlanLevel = PLAN_HIERARCHY[currentPlan] || 0;
+
+    const allItems = flattenMenu(menuItems.items);
+
+    const matchingItem = allItems
+      .filter((item) => item.url !== "#" && item.url !== "/" && pathname.startsWith(item.url))
+      .sort((a, b) => b.url.length - a.url.length)[0];
+
+    if (matchingItem && matchingItem.minPlan) {
+      const requiredPlanLevel = PLAN_HIERARCHY[matchingItem.minPlan] || 0;
+
+      if (currentPlanLevel < requiredPlanLevel) {
+        window.location.href = "/dashboard";
+        return;
+      }
+    }
+
   }, [user, allowed, router, isAuthenticating, pathname, subscriptionStatus]);
 
   // Enquanto está verificando autenticação/autorização
-  if (isAuthenticating) {
+  if (isAuthenticating || !user) {
     return (
       fallback || (
         <div className="flex items-center justify-center bg-red-600 min-h-screen">
@@ -50,11 +84,6 @@ export function RouteProtector({
         </div>
       )
     );
-  }
-
-  // Se não há usuário após verificação, retorna null (redirecionamento já foi feito)
-  if (!user) {
-    return null;
   }
 
   // Se usuário não tem permissão, retorna null (redirecionamento já foi feito)
@@ -65,9 +94,25 @@ export function RouteProtector({
   if (
     subscriptionStatus === SubscriptionStatus.PENDING &&
     !pathname.startsWith("/settings") &&
-    !pathname.startsWith("/plans") 
+    !pathname.startsWith("/plans")
   ) {
     return null;
+  }
+
+  // Double check rendering guard for plan
+  const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+  const currentPlanLevel = PLAN_HIERARCHY[currentPlan] || 0;
+
+  const allItems = flattenMenu(menuItems.items);
+  const matchingItem = allItems
+    .filter((item) => item.url !== "#" && item.url !== "/" && pathname.startsWith(item.url))
+    .sort((a, b) => b.url.length - a.url.length)[0];
+
+  if (matchingItem && matchingItem.minPlan) {
+    const requiredPlanLevel = PLAN_HIERARCHY[matchingItem.minPlan] || 0;
+    if (currentPlanLevel < requiredPlanLevel) {
+      return null;
+    }
   }
 
   return <>{children}</>;

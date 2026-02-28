@@ -6,16 +6,14 @@ import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useInvoiceFilters, useURLSearchParams } from "@/hooks";
 import { InvoiceStatus } from "@/types";
-import { cn } from "@/lib";
 
 type InvoiceType = "invoice" | "proforma" | "invoice-receipt" | "receipt";
 
 type Props = {
   type: InvoiceType;
-  hasData: boolean;
 };
 
-export function InvoiceFiltersTSX({ type, hasData }: Props) {
+export function InvoiceFiltersTSX({ type }: Props) {
   const prefix = type;
   const { filters, setFilters, clearAllFilters } = useInvoiceFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
@@ -33,12 +31,7 @@ export function InvoiceFiltersTSX({ type, hasData }: Props) {
   const showStatusFilter = type === "invoice";
 
   return (
-    <div
-      className={cn(
-        "w-full flex flex-col gap-4 px-2 sm:px-0",
-        !hasData && "pointer-events-none opacity-50"
-      )}
-    >
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
       {/* Search Input and Filter Popovers */}
       <div className="w-full flex flex-col gap-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

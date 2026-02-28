@@ -5,9 +5,8 @@ import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useCreditNotesFilters } from "@/hooks/credit-notes";
-import { cn } from "@/lib";
 
-export function CreditNotesFiltersTSX({ hasData }: { hasData: boolean }) {
+export function CreditNotesFiltersTSX() {
   const { filters, setFilters, clearAllFilters } = useCreditNotesFilters();
   const { search, setSearch } = useURLSearchParams("search-credit-note");
 
@@ -21,7 +20,7 @@ export function CreditNotesFiltersTSX({ hasData }: { hasData: boolean }) {
     search.length > 0
 
   return (
-    <div className={cn("w-full flex flex-col gap-4 pointer-events-none", !hasData && "cursor-not-allowed")}>
+    <div className="w-full flex flex-col gap-4">
       <SearchHandlerWrapper
         search={search}
         setSearch={setSearch}

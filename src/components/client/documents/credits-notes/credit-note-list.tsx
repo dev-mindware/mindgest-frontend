@@ -99,7 +99,7 @@ export function CreditNotesList({ storeId }: { storeId?: string }) {
 
   return (
     <div className="mt-6 space-y-8">
-      <CreditNotesFiltersTSX hasData={creditNotes.length > 0} />
+      <CreditNotesFiltersTSX />
       {creditNotes.length > 0 ? (
         <>
           <GenericTable<CreditNotesResponse>

@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { PlanType } from "@/types/subscription";
+import { PlanType, PLAN_HIERARCHY } from "@/types/subscription";
 import { useAuthStore } from "@/stores/auth/auth-store";
 import { useFeatureGate } from "@/contexts/feature-gate-context";
 import {
@@ -15,12 +15,6 @@ type FeatureGateProps = {
   minPlan: PlanType;
   children: ReactNode;
   fallback?: "hidden" | "disabled";
-};
-
-const PLAN_HIERARCHY: Record<PlanType, number> = {
-  Base: 0,
-  Smart: 1,
-  Pro: 2,
 };
 
 export function FeatureGate({
