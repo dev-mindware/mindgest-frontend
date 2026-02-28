@@ -19,7 +19,7 @@ export function InvoiceForm() {
   const { mutateAsync: createInvoiceNormal, isPending } = useCreateInvoice();
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(InvoiceSchema),
-    mode: "onSubmit",
+    mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       dueDate: "",

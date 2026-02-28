@@ -4,10 +4,8 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   PRIVATE_ROUTE_PREFIXES,
   PUBLIC_ROUTES,
-  SESSION_COOKIE_KEY,
 } from "./constants";
 import { roleRedirects } from "./utils";
-import { decrypt } from "./lib/session";
 
 function isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.includes(pathname)) return true;
@@ -31,16 +29,15 @@ function isAuthPage(pathname: string): boolean {
   ].includes(pathname);
 }
 
-export async function proxy(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith(API_AUTH_PREFIX)) {
     return NextResponse.next();
   }
 
-  const cookieValue = req.cookies.get(SESSION_COOKIE_KEY)?.value;
-  const sessionPayload = cookieValue ? await decrypt(cookieValue) : null;
-  const isAuthenticated = Boolean(sessionPayload);
+  const hasRefreshToken = req.cookies.has("refreshToken");
+  const isAuthenticated = Boolean(hasRefreshToken);
 
   const isPublic = isPublicRoute(pathname);
   const isPrivate = PRIVATE_ROUTE_PREFIXES.some((p) => pathname.startsWith(p));

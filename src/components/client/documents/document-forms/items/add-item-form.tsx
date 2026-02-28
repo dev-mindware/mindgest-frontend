@@ -3,10 +3,9 @@
 import { Plus } from "lucide-react";
 import React, { useState, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, Input, InputCurrency, RHFSelect, PaginatedSelect } from "@/components";
+import { Button, Input, InputCurrency, RHFSelect } from "@/components";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { useGetTaxes } from "@/hooks/taxes/use-taxes";
-import { taxExemptionReasons } from "@/constants/tax-exemption";
 
 
 export interface ProductOption {
@@ -40,7 +39,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     const { taxOptions } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
-    const [exemptionPage, setExemptionPage] = useState(1);
 
     const { control, handleSubmit, setValue, getValues, resetField, watch, reset, formState: { errors } } = useForm({
       defaultValues: {
@@ -48,7 +46,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         price: 0,
         type: "PRODUCT" as "PRODUCT" | "SERVICE",
         taxId: "",
-        exemptionCode: "",
       }
     });
 
@@ -65,7 +62,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         setValue("price", 0);
         setValue("type", "PRODUCT");
         setValue("taxId", "");
-        setValue("exemptionCode", "");
         return;
       }
 
@@ -73,7 +69,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         setValue("price", 0);
         setValue("type", "PRODUCT");
         setValue("taxId", "");
-        setValue("exemptionCode", "");
       } else if (option.data) {
         setValue("price", Number(option.data.price));
         setValue("type", option.data.type);
@@ -87,11 +82,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
           }
         }
 
-        // Handle initial tax rate for exemption field
-        const initialTaxRate = option.data.tax?.rate ?? 0;
-        if (initialTaxRate > 0) {
-          setValue("exemptionCode", "");
-        }
         setValue("taxId", String(option.data.taxId ?? ""));
       }
     }, [setValue]);
@@ -121,7 +111,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         quantity: values.quantity,
         tax: selectedProduct.data?.tax?.rate || taxRate,
         taxId: values.taxId || undefined,
-        exemptionCode: taxRate === 0 ? values.exemptionCode : undefined,
         discount: globalDiscount,
         total: values.price * values.quantity,
         type: values.type,
@@ -137,7 +126,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         price: 0,
         type: "PRODUCT",
         taxId: "",
-        exemptionCode: "",
       });
     }, [
       selectedProduct,
@@ -263,48 +251,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             />
           </div>
         )}
-
-        {(() => {
-          const values = getValues();
-          const selectedTax = taxOptions.find((t) => t.value === values.taxId);
-          const taxRate = selectedTax
-            ? Number(selectedTax.label.match(/\((\d+)%\)/)?.[1] || 0)
-            : 0;
-
-          if (taxRate === 0 && selectedTax) {
-            const itemsPerPage = 6;
-            const totalPages = Math.ceil(taxExemptionReasons.length / itemsPerPage);
-            const paginatedOptions = taxExemptionReasons.slice(
-              (exemptionPage - 1) * itemsPerPage,
-              exemptionPage * itemsPerPage
-            );
-
-            return (
-              <div className="grid grid-cols-1 gap-4">
-                <Controller
-                  name="exemptionCode"
-                  control={control}
-                  render={({ field }) => (
-                    <PaginatedSelect
-                      label="Motivo de Isenção"
-                      options={paginatedOptions}
-                      value={field.value}
-                      onChange={field.onChange}
-                      pagination={{
-                        page: exemptionPage,
-                        totalPages: totalPages,
-                      }}
-                      onPageChange={setExemptionPage}
-                      className="w-full"
-                      error={errors.exemptionCode?.message}
-                    />
-                  )}
-                />
-              </div>
-            );
-          }
-          return null;
-        })()}
 
         <div className="flex items-center justify-between pt-2">
           {isAlreadyAdded && (

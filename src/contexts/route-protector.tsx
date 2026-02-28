@@ -79,8 +79,12 @@ export function RouteProtector({
   if (isAuthenticating || !user) {
     return (
       fallback || (
-        <div className="flex items-center justify-center bg-red-600 min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+        <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 border-t-2 border-foreground rounded-full animate-spin w-12 h-12" />
+            <div className="w-8 h-8 rounded-full bg-foreground/10 animate-pulse" />
+          </div>
+          <p className="mt-4 text-sm text-foreground/50 tracking-widest uppercase font-medium">Autenticando</p>
         </div>
       )
     );

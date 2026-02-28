@@ -1,9 +1,13 @@
-import { cookies } from 'next/headers';
-import { decrypt, SessionPayload } from './session';
-import { SESSION_COOKIE_KEY } from '@/constants';
+"use server";
+import { cookies } from "next/headers";
+import { SessionPayload } from "./session";
 
 export async function getSession(): Promise<SessionPayload | null> {
-  const sessionCookie = (await cookies()).get(SESSION_COOKIE_KEY)?.value;
-  if (!sessionCookie) return null;
-  return await decrypt(sessionCookie);
+  const authCookies = await cookies();
+  const accessToken = authCookies.get("accessToken")?.value;
+  const refreshToken = authCookies.get("refreshToken")?.value;
+
+  if (!accessToken || !refreshToken) return null;
+
+  return { accessToken, refreshToken };
 }

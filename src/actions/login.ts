@@ -32,7 +32,6 @@ export async function loginAction({
     console.log(res.data);
 
     await createSession({
-      user,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     });
@@ -70,8 +69,8 @@ export async function logoutAction() {
     console.error("🚨 Erro ao fazer logout remoto:", error);
   } finally {
     // Local purge MUST happen even if API fails
-    const authCookies = await cookies();
-    authCookies.delete(SESSION_COOKIE_KEY);
+    const { destroySession } = await import("@/lib/session");
+    await destroySession();
 
     redirect("/auth/login");
   }

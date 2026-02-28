@@ -21,7 +21,6 @@ import { useModal, currentStoreStore } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
 import { useAddItem, useGetCategories, useGetTaxes, useAuth } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
-import { taxExemptionReasons } from "@/constants/tax-exemption";
 
 export function AddProductModal() {
   const { open, openModal, closeModal, modalData } = useModal();
@@ -59,7 +58,6 @@ export function AddProductModal() {
 function AddProductFormContent() {
   const { user } = useAuth();
   const { closeModal, modalData } = useModal();
-  const [exemptionPage, setExemptionPage] = useState(1);
   const { currentStore } = currentStoreStore();
   const { mutateAsync: addItemMutate, isPending: isAdding } = useAddItem();
 
@@ -92,7 +90,6 @@ function AddProductFormContent() {
       type: "PRODUCT",
       taxId: "",
       categoryId: "",
-      exemptionCode: "",
     },
   });
 
@@ -160,48 +157,6 @@ function AddProductFormContent() {
               control={control}
             />
           </div>
-
-          {(() => {
-            const taxId = watch("taxId");
-            const selectedTax = taxOptions.find((t) => t.value === taxId);
-            const taxRate = selectedTax
-              ? Number(selectedTax.label.match(/\((\d+)%\)/)?.[1] || 0)
-              : 0;
-
-            if (taxRate === 0 && selectedTax) {
-              const itemsPerPage = 6;
-              const totalPages = Math.ceil(taxExemptionReasons.length / itemsPerPage);
-              const paginatedOptions = taxExemptionReasons.slice(
-                (exemptionPage - 1) * itemsPerPage,
-                itemsPerPage * exemptionPage
-              );
-
-              return (
-                <div className="grid grid-cols-1 gap-4">
-                  <Controller
-                    name="exemptionCode"
-                    control={control}
-                    render={({ field }) => (
-                      <PaginatedSelect
-                        label="Motivo de Isenção"
-                        options={paginatedOptions}
-                        value={field.value}
-                        onChange={field.onChange}
-                        pagination={{
-                          page: exemptionPage,
-                          totalPages: totalPages,
-                        }}
-                        onPageChange={setExemptionPage}
-                        className="w-full"
-                        error={errors.exemptionCode?.message}
-                      />
-                    )}
-                  />
-                </div>
-              );
-            }
-            return null;
-          })()}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Controller
