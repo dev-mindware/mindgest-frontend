@@ -37,6 +37,8 @@ const DropzoneContent = ({
   name,
   accept = "pdf",
   className,
+  showConfirmButton = false,
+  onConfirm,
 }: {
   onChange: (file: MyFile | null) => void;
   value: MyFile | null;
@@ -48,6 +50,8 @@ const DropzoneContent = ({
   name: string;
   accept?: "image" | "pdf";
   className?: string;
+  showConfirmButton?: boolean;
+  onConfirm?: () => void;
 }) => {
   const onDrop = useCallback(
     (acceptedFiles: globalThis.File[]) => {
@@ -59,7 +63,7 @@ const DropzoneContent = ({
               maxSize /
               1024 /
               1024
-            ).toFixed(1)}MB.`
+            ).toFixed(1)}MB.`,
           );
           return;
         }
@@ -75,7 +79,7 @@ const DropzoneContent = ({
         onChange(customFile);
       }
     },
-    [onChange, maxSize, name]
+    [onChange, maxSize, name],
   );
 
   const acceptTypes =
@@ -117,7 +121,7 @@ const DropzoneContent = ({
               : "border-border bg-muted/30 hover:bg-muted/50",
             error ? "border-destructive bg-destructive/10" : "",
             "p-6 flex flex-col items-center justify-center cursor-pointer",
-            disabled && "opacity-60 cursor-not-allowed pointer-events-none"
+            disabled && "opacity-60 cursor-not-allowed pointer-events-none",
           )}
         >
           <input {...getInputProps()} />
@@ -197,6 +201,22 @@ const DropzoneContent = ({
               <Icon name="X" className="h-4 w-4" />
               <span>Remover</span>
             </button>
+            {showConfirmButton && onConfirm && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onConfirm();
+                }}
+                disabled={disabled}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md transition-colors",
+                  disabled && "opacity-50 cursor-not-allowed",
+                )}
+              >
+                <Icon name="Check" className="h-4 w-4" />
+                <span>Enviar</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -223,7 +243,12 @@ export function PhotoUpload<T extends FieldValues>({
   maxSize = 1024 * 1024 * 2,
   disabled,
   className,
-}: FileUploadProps<T>) {
+  showConfirmButton = false,
+  onConfirm,
+}: FileUploadProps<T> & {
+  showConfirmButton?: boolean;
+  onConfirm?: () => void;
+}) {
   return (
     <Controller
       name={name}
@@ -240,6 +265,8 @@ export function PhotoUpload<T extends FieldValues>({
           name={name as string}
           accept={accept}
           className={className}
+          showConfirmButton={showConfirmButton}
+          onConfirm={onConfirm}
         />
       )}
     />

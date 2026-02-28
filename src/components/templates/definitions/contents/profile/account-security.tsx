@@ -11,7 +11,7 @@ export function AccountSecurity({ user }: AccountSecurityProps) {
   if (!user) return null;
 
   return (
-    <div>
+    <div className="w-full">
       <h3 className="text-2xl text-center md:text-start">Segurança da Conta</h3>
       <p className="text-center text-muted-foreground md:text-start">
         Altere as suas configurações de segurança.
