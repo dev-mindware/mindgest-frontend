@@ -125,7 +125,7 @@ export function ProfileAvatar({
           >
             {isUploading ? (
               <>
-                <Icon name="Loader2" className="mr-1.5 h-3 w-3 animate-spin" />
+                <Icon name="Loader" className="mr-1.5 h-3 w-3 animate-spin" />
                 Salvando...
               </>
             ) : (
