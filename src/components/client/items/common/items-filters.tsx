@@ -11,14 +11,11 @@ import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { useURLSearchParams } from "@/hooks/common";
-import { cn } from "@/lib";
 
 export function ItemsFiltersTSX({
   prefix,
-  hasData,
 }: {
   prefix: string;
-  hasData: boolean;
 }) {
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
@@ -43,12 +40,7 @@ export function ItemsFiltersTSX({
     );
 
   return (
-    <div
-      className={cn(
-        "w-full flex flex-col gap-4 px-2 sm:px-0",
-        !hasData && !hasFilter && "pointer-events-none opacity-50"
-      )}
-    >
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-baseline">
 
         {/* Search Input */}

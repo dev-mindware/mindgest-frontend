@@ -11,10 +11,8 @@ import { cn } from "@/lib";
 
 export function ClientsFiltersTSX({
   children,
-  hasData = true
 }: {
   children?: React.ReactNode;
-  hasData?: boolean;
 }) {
   const { filters, setFilters, clearAllFilters } = useClientsFilters();
   const { search, setSearch } = useURLSearchParams("search-client");
@@ -29,10 +27,8 @@ export function ClientsFiltersTSX({
 
   return (
     <div
-      className={cn(
-        "w-full flex flex-col gap-4 px-2 sm:px-0",
-        !hasData && "pointer-events-none opacity-50"
-      )}
+      className=
+      "w-full flex flex-col gap-4 px-2 sm:px-0"
     >
       {children && <div className="w-full justify-end sm:w-auto">{children}</div>}
       {/* Search Input and Action Button */}

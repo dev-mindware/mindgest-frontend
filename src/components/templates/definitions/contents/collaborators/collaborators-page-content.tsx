@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { TitleList } from "@/components/common";
+import { FeatureGate, TitleList } from "@/components/common";
 import {
   Tabs,
   TabsContent,
@@ -52,6 +52,8 @@ export function CollaboratorsPageContent() {
               Gerente
             </TabsTrigger>
           )}
+
+          <FeatureGate minPlan="Smart" fallback="disabled">
             <TabsTrigger
               value="cashier"
               onClick={() => setCurrentTab("cashier")}
@@ -59,6 +61,7 @@ export function CollaboratorsPageContent() {
             >
               Caixa
             </TabsTrigger>
+          </FeatureGate>
           </TabsList>
 
           <Button

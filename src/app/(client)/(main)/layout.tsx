@@ -1,4 +1,5 @@
 import { AppSidebar, BreadcrumbProvider, SidebarInset } from "@/components";
+import { PlanGuard } from "@/components/common/plan-guard";
 import { RouteProtector } from "@/contexts";
 import { FeatureGateProvider, StoreProvider } from "@/providers";
 
@@ -13,7 +14,9 @@ export default function ClientLayout({ children }: Props) {
         <FeatureGateProvider>
           <AppSidebar />
           <SidebarInset>
-            <BreadcrumbProvider>{children}</BreadcrumbProvider>
+            <PlanGuard>
+              <BreadcrumbProvider>{children}</BreadcrumbProvider>
+            </PlanGuard>
           </SidebarInset>
         </FeatureGateProvider>
       </StoreProvider>

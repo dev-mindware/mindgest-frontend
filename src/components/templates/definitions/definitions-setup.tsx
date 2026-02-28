@@ -48,7 +48,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Pencil",
       component: <Appearance />,
       category: "general",
-      isVisible: isActive,
+      isVisible: isActive && hasPlanAccess(currentPlan, "Smart") && isOwner,
     },
     {
       id: "profile",
@@ -64,7 +64,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Bell",
       component: <Notification />,
       category: "general",
-      isVisible: isActive && isOwner ,
+      isVisible: isActive && isOwner,
     },
     {
       id: "subscription",
