@@ -29,7 +29,6 @@ export async function loginAction({
     if (!user) {
       throw new Error("Usuário não autorizado");
     }
-    console.log(res.data);
 
     await createSession({
       user,
@@ -38,7 +37,6 @@ export async function loginAction({
     });
 
     const redirectPath = getRedirectPath(user.role);
-    console.log(`Login bem-sucedido! Redirecionando para: ${redirectPath}`);
 
     return { message, user, redirectPath };
   } catch (error: any) {
@@ -69,7 +67,7 @@ export async function logoutAction() {
     await api.post("/auth/logout", { refresh_token: session?.refreshToken });
     authCookies.delete(SESSION_COOKIE_KEY);
   } catch (error) {
-    console.error("🚨 Erro ao fazer logout:", error);
+    console.error("Erro ao fazer logout:", error);
   } finally {
     redirect("/auth/login");
   }
