@@ -21,7 +21,6 @@ import {
 } from "@/components";
 import { cn } from "@/lib/utils";
 import { ErrorMessage, formatCurrency } from "@/utils";
-import { useProductActions } from "@/hooks";
 
 interface ProductCardProps {
   product: Product;
@@ -33,7 +32,6 @@ interface ProductCardProps {
 
 export const ProductCard = React.memo<ProductCardProps>(
   ({ product, quantity, onAdd, onRemove, onUpdateQuantity }) => {
-    const { handlerEditProduct } = useProductActions();
     const [isEditing, setIsEditing] = useState(false);
     const [editQty, setEditQty] = useState("");
 
@@ -83,17 +81,6 @@ export const ProductCard = React.memo<ProductCardProps>(
                     <h3 className="font-bold text-xs sm:text-sm leading-tight line-clamp-2 text-foreground/90 group-hover:text-primary transition-colors">
                       {product.name}
                     </h3>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary"
-                      onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        handlerEditProduct(product as any);
-                      }}
-                    >
-                      <Icon name="Pencil" className="h-3 w-3" />
-                    </Button>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-tight truncate mt-0.5">
                     {product.description || "Sem descrição"}

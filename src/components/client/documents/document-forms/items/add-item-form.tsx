@@ -5,6 +5,7 @@ import React, { useState, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, Input, InputCurrency, RHFSelect } from "@/components";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
+import { PaginatedSelect } from "@/components/shared";
 import { useGetTaxes } from "@/hooks/taxes/use-taxes";
 
 
@@ -36,7 +37,7 @@ interface AddItemFormProps {
 
 export const AddItemForm = React.memo<AddItemFormProps>(
   ({ onAdd, globalDiscount, existingItemIds = new Set() }) => {
-    const { taxOptions } = useGetTaxes();
+    const { taxOptions, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
 
@@ -110,7 +111,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         unitPrice: values.price,
         quantity: values.quantity,
         tax: selectedProduct.data?.tax?.rate || taxRate,
-        taxId: values.taxId || undefined,
+        taxId: values.taxId === "none" ? undefined : values.taxId || undefined,
         discount: globalDiscount,
         total: values.price * values.quantity,
         type: values.type,
@@ -243,11 +244,21 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                 { value: "SERVICE", label: "Serviço" },
               ]}
             />
-            <RHFSelect
-              name="taxId"
-              label="Imposto"
+            <Controller
               control={control}
-              options={taxOptions}
+              name="taxId"
+              render={({ field: { onChange, value } }) => (
+                <PaginatedSelect
+                  label="Imposto"
+                  value={value}
+                  options={taxOptions}
+                  onChange={onChange}
+                  pagination={taxPagination}
+                  onPageChange={setTaxPage}
+                  placeholder="Selecione um imposto"
+                  className="w-full"
+                />
+              )}
             />
           </div>
         )}
