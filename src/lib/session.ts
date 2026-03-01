@@ -1,3 +1,4 @@
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/constants";
 import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -10,13 +11,11 @@ export interface SessionPayload {
 }
 
 export async function createSession(payload: SessionPayload) {
-  // Access Token: 24 horas
-  const accessExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  // Refresh Token: 7 dias
+  const accessExpiresAt = new Date(Date.now() + 4 * 60 * 1000);
   const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   const authCookies = await cookies();
-  authCookies.set("accessToken", payload.accessToken, {
+  authCookies.set(ACCESS_TOKEN_KEY, payload.accessToken, {
     httpOnly: true,
     secure: true,
     expires: accessExpiresAt,
@@ -24,7 +23,7 @@ export async function createSession(payload: SessionPayload) {
     path: "/",
   });
 
-  authCookies.set("refreshToken", payload.refreshToken, {
+  authCookies.set(REFRESH_TOKEN_KEY, payload.refreshToken, {
     httpOnly: true,
     secure: true,
     expires: refreshExpiresAt,
@@ -35,6 +34,6 @@ export async function createSession(payload: SessionPayload) {
 
 export async function destroySession() {
   const authCookies = await cookies();
-  authCookies.delete("accessToken");
-  authCookies.delete("refreshToken");
+  authCookies.delete(ACCESS_TOKEN_KEY);
+  authCookies.delete(REFRESH_TOKEN_KEY);
 }

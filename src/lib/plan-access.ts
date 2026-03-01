@@ -1,9 +1,9 @@
 import { PlanType } from "@/types";
 
 const planOrder: Record<PlanType, number> = {
-  "Base": 1,
-  "Pro": 2,
-  "Smart": 3,
+  "Base": 0,
+  "Pro": 1,
+  "Smart": 2,
 };
 
 export function normalizePlan(plan: string | undefined | null): PlanType | null {

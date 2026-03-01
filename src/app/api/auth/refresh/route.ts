@@ -4,12 +4,12 @@ import { createSession } from "@/lib/session";
 import { clearLocalSession } from "@/actions/auth";
 import axios from "axios";
 import { LoginResponse } from "@/types";
+import { REFRESH_TOKEN_KEY } from "@/constants/auth";
 
 export async function POST() {
   try {
     const authCookies = await cookies();
-    const refreshToken = authCookies.get("refreshToken")?.value;
-    const accessToken = authCookies.get("accessToken")?.value;
+    const refreshToken = authCookies.get(REFRESH_TOKEN_KEY)?.value;
 
     if (!refreshToken) {
       return NextResponse.json(
@@ -23,12 +23,6 @@ export async function POST() {
       `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
       {
         refreshToken,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
       },
     );
 

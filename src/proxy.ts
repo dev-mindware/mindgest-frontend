@@ -4,6 +4,7 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   PRIVATE_ROUTE_PREFIXES,
   PUBLIC_ROUTES,
+  REFRESH_TOKEN_KEY,
 } from "./constants";
 import { roleRedirects } from "./utils";
 
@@ -36,7 +37,7 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const hasRefreshToken = req.cookies.has("refreshToken");
+  const hasRefreshToken = req.cookies.has(REFRESH_TOKEN_KEY);
   const isAuthenticated = Boolean(hasRefreshToken);
 
   const isPublic = isPublicRoute(pathname);

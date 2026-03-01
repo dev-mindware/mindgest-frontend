@@ -1,0 +1,13 @@
+Access token expira (4 min)
+        ↓
+axios recebe 401 → chama POST /api/auth/refresh
+        ↓
+Route Handler lê refreshToken do cookie (server-side)
+        ↓
+Chama backend → recebe novo accessToken
+        ↓
+Guarda no cookie + devolve ao axios
+        ↓
+axios repete o request original com novo token
+        ↓
+Utilizador não vê nada

@@ -1,13 +1,11 @@
 "use server";
 import { z } from "zod";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { roleRedirects } from "@/utils";
 import { LoginResponse, Role, User } from "@/types";
 import { loginSchema } from "@/schemas";
 import api from "@/services/api";
 import { createSession } from "@/lib/session";
-import { SESSION_COOKIE_KEY } from "@/constants";
 import { getSession } from "@/lib/auth";
 
 export async function loginAction({
@@ -29,7 +27,6 @@ export async function loginAction({
     if (!user) {
       throw new Error("Usuário não autorizado");
     }
-    console.log(res.data);
 
     await createSession({
       accessToken: tokens.accessToken,
