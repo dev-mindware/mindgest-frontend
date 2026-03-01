@@ -146,11 +146,10 @@ const DropzoneContent = ({
         <div className="border border-border rounded-lg overflow-hidden bg-card shadow-sm">
           {isImage && value.url ? (
             <div className="relative aspect-video w-full bg-muted">
-              <Image
+              <img
                 src={value.url}
                 alt={value.originalname}
-                fill
-                className="object-contain"
+                className="w-full h-full object-contain"
               />
             </div>
           ) : null}
@@ -223,14 +222,20 @@ export function PhotoUpload<T extends FieldValues>({
   maxSize = 1024 * 1024 * 2,
   disabled,
   className,
+  onChange: propOnChange,
 }: FileUploadProps<T>) {
+  if (!control) return null;
+
   return (
     <Controller
       name={name}
       control={control}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <DropzoneContent
-          onChange={onChange}
+          onChange={(f) => {
+            onChange(f);
+            if (propOnChange) propOnChange(f as MyFile);
+          }}
           value={value}
           error={!!error}
           label={label}

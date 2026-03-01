@@ -41,13 +41,13 @@ function ResetPasswordForm() {
     try {
       await resetPassword({
         token,
-        newPassword: data.password,
+        newPassword: data.newPassword,
       });
       openModal("success-reset-modal");
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-          "Ocorreu um erro ao alterar a senha. Tente mais tarde.",
+        "Ocorreu um erro ao alterar a senha. Tente mais tarde.",
       );
     }
   }
@@ -69,18 +69,18 @@ function ResetPasswordForm() {
           <Input
             type="password"
             label="Nova Senha"
-            {...register("password")}
+            {...register("newPassword")}
             placeholder="Digite sua nova senha"
-            error={errors.password && errors.password?.message}
+            error={errors.newPassword && errors.newPassword?.message}
           />
           <Input
             type="password"
             label="Confirmar Nova Senha"
             placeholder="Confirme sua nova senha"
-            {...register("passwordConfirmation")}
+            {...register("confirmPassword")}
             error={
-              errors.passwordConfirmation &&
-              errors.passwordConfirmation?.message
+              errors.confirmPassword &&
+              errors.confirmPassword?.message
             }
           />
           <ButtonSubmit isLoading={isPending} className="w-full">

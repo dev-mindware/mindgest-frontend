@@ -16,6 +16,7 @@ import { hasPlanAccess } from "@/lib/features";
 import { PlanType } from "@/types";
 import { BankPageContent } from "./contents/banks";
 import { icons } from "lucide-react";
+import { Security } from "./contents/security";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -55,6 +56,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       label: "Perfil",
       icon: "User",
       component: <Profile />,
+      category: "general",
+      isVisible: true,
+    },
+    {
+      id: "security",
+      label: "Segurança",
+      icon: "Shield",
+      component: <Security />,
       category: "general",
       isVisible: true,
     },
