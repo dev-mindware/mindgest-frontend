@@ -34,7 +34,6 @@ export async function loginAction({
     });
 
     const redirectPath = getRedirectPath(user.role);
-    console.log(`Login bem-sucedido! Redirecionando para: ${redirectPath}`);
 
     return { message, user, redirectPath };
   } catch (error: any) {
@@ -65,7 +64,6 @@ export async function logoutAction() {
   } catch (error) {
     console.error("🚨 Erro ao fazer logout remoto:", error);
   } finally {
-    // Local purge MUST happen even if API fails
     const { destroySession } = await import("@/lib/session");
     await destroySession();
 
