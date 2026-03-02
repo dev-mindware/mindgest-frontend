@@ -1,186 +1,182 @@
 "use client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/auth";
 import { PhotoUpload } from "@/components/common/photo-upload";
 import { useForm } from "react-hook-form";
 import type { File as MyFile } from "@/types";
 import { ProfileAvatar } from "./profile/profile-avatar";
 import { ProfileForm } from "./profile/profile-form";
-import { AccountSecurity } from "./profile/account-security";
-import { SupportAccess } from "./profile/support-access";
 import { useFileUpload } from "@/hooks/common/use-upload";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { Card } from "@/components/ui";
-
-interface ProfileFormData {
-  companyLogo?: MyFile;
-}
+import { useState } from "react";
+import { Button } from "@/components";
+import { ErrorMessage, getUserRole, SucessMessage } from "@/utils";
+import { useUpdateUser } from "@/hooks/users";
+import type { UpdateUserProfilePayload } from "@/services";
+import { EditProfileFormData } from "@/schemas";
 
 export function Profile() {
   const { user } = useAuth();
-  const { control, watch } = useForm<ProfileFormData>();
+  const [isEditingLogo, setIsEditingLogo] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
+  const { control, watch, setValue, register, handleSubmit } = useForm<EditProfileFormData>({
+    defaultValues: {
+      name: user?.name,
+      phone: user?.phone,
+    }
+  });
+  const companyLogo = watch("companyLogo");
+
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useUpdateUser();
   const { mutate: uploadLogo, isPending: isUploading } = useFileUpload(
     `/companies/${user?.company?.id}/logo`,
     "companies",
     "PUT",
   );
 
-  const companyLogo = watch("companyLogo");
+  const handleUpload = () => {
+    if (!companyLogo) return ErrorMessage("Selecione um arquivo antes de atualizar.");
 
-  const handleUploadLogo = () => {
-    if (companyLogo && companyLogo.url) {
-      uploadLogo(
-        {
-          files: { file: companyLogo },
+    uploadLogo(
+      { files: { file: companyLogo as MyFile } },
+      {
+        onSuccess: () => {
+          SucessMessage("Logo da empresa atualizada com sucesso!");
+          setValue("companyLogo", undefined);
+          setIsEditingLogo(false);
         },
-        {
-          onSuccess: () =>
-            toast.success("Logo da empresa atualizada com sucesso!"),
-          onError: (error: any) =>
-            toast.error(
-              error?.response?.data?.message ||
-                "Erro ao atualizar logo da empresa",
-            ),
-        },
-      );
-    }
+        onError: (error: any) =>
+          ErrorMessage(error?.response?.data?.message || "Erro ao atualizar logo da empresa"),
+      }
+    );
   };
 
-  const getRoleLabel = (role?: string) => {
-    const roleMap: Record<string, string> = {
-      OWNER: "Proprietário",
-      MANAGER: "Gerente",
-      ADMIN: "Administrador",
-      CASHIER: "Caixa",
-    };
-    return roleMap[role || ""] || role;
+  const handleProfileSubmit = (data: EditProfileFormData) => {
+
+    const updateData: UpdateUserProfilePayload = {};
+    if (data.name && data.name !== user?.name) updateData.name = data.name;
+    if (data.phone && data.phone !== user?.phone) updateData.phone = data.phone;
+
+    if (Object.keys(updateData).length === 0) {
+      SucessMessage("Perfil atualizado com sucesso!");
+      setIsEditingProfile(false);
+      return;
+    }
+
+    updateProfile(updateData, {
+      onSuccess: () => {
+        SucessMessage("Perfil atualizado com sucesso!");
+        setIsEditingProfile(false);
+      },
+      onError: (error: any) => {
+        ErrorMessage(error?.response?.data?.message || "Erro ao atualizar perfil");
+      }
+    });
   };
 
   return (
-    <div className="space-y-6" suppressHydrationWarning>
-      <div className="flex flex-col gap-3 md:flex-row md:items-center justify-between border-b pb-6">
+    <div className="space-y-6 max-w-4xl" suppressHydrationWarning>
+      <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between border-b pb-6">
         <div>
-          <h2 className="text-3xl font-[800] tracking-tight">Meu Perfil</h2>
-          <p className="text-muted-foreground mt-1 text-sm/relaxed">
+          <h2 className="text-3xl font-bold tracking-tight">Meu Perfil</h2>
+          <p className="text-muted-foreground mt-1">
             Gerencie suas informações pessoais e da empresa.
           </p>
         </div>
-        {user?.role && (
-          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold tracking-wider uppercase border border-primary/50">
-            {getRoleLabel(user.role)}
-          </span>
+      </div>
+
+      <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+        <ProfileAvatar
+          userName={user?.name}
+        />
+        <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+          <h3 className="text-xl font-bold">{user?.name}</h3>
+          <p className="text-muted-foreground">{getUserRole(user?.role!)}</p>
+          {user?.company?.name && <p className="text-sm text-foreground/80 mt-1">{user.company.name}</p>}
+        </div>
+        <div className="sm:ml-auto flex gap-2">
+          <Button
+            variant={isEditingProfile ? "default" : "outline"}
+            size="sm"
+            className="hidden sm:inline-flex"
+            onClick={() => setIsEditingProfile(!isEditingProfile)}
+          >
+            {isEditingProfile ? "Atualizar Perfil" : "Editar Perfil"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="bg-card rounded-xl border p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b">
+          <h3 className="font-semibold text-lg">Informação Pessoal / Empresa</h3>
+        </div>
+        <ProfileForm user={user} isEditing={isEditingProfile} register={register} />
+
+        {isEditingProfile && (
+          <div className="mt-8 flex justify-end gap-3 border-t pt-6">
+            <Button variant="ghost" onClick={() => setIsEditingProfile(false)} disabled={isUpdatingProfile}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSubmit(handleProfileSubmit)} disabled={isUpdatingProfile}>
+              {isUpdatingProfile ? "A gravar..." : "Guardar Alterações"}
+            </Button>
+          </div>
         )}
       </div>
 
-      <Tabs defaultValue="geral" className="w-full">
-        <TabsList className="mb-6 flex w-full max-w-sm grid-cols-3 bg-muted/50 p-1 rounded-xl">
-          {["Geral", "Empresa", "Segurança"].map((tab) => (
-            <TabsTrigger
-              key={tab}
-              value={tab.includes("ç") ? tab.toLowerCase().replace("ç", "c") : tab.toLowerCase()}
-              className="flex-1 rounded-lg"
-            >
-              {tab}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <div className="bg-card rounded-xl border p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-lg">Logo da Empresa</h3>
+          {user?.company?.logo && !isEditingLogo && (
+            <Button variant="outline" size="sm" onClick={() => setIsEditingLogo(true)}>
+              Trocar Logo
+            </Button>
+          )}
+          {user?.company?.logo && isEditingLogo && (
+            <Button variant="ghost" size="sm" onClick={() => { setIsEditingLogo(false); setValue('companyLogo', undefined); }}>
+              Cancelar
+            </Button>
+          )}
+        </div>
 
-        <TabsContent
-          value="geral"
-          className="mt-4 outline-none animate-in fade-in-50 duration-500"
-        >
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-5">
-            <div className="w-full lg:w-72 shrink-0 space-y-6">
-              <Card className="p-6 flex flex-col items-center text-center relative overflow-hidden group">
-                <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-br from-primary/5 to-transparent -z-10" />
-                <h3 className="font-semibold mb-6 w-full text-left text-xs uppercase tracking-wider text-muted-foreground">
-                  Foto de Perfil
-                </h3>
-                <div className="scale-90 origin-top w-full flex justify-center">
-                  <ProfileAvatar
-                    currentImage={user?.company?.logo || undefined}
-                    userName={user?.name}
-                  />
-                </div>
-              </Card>
-            </div>
-            <div className="flex-1 max-w-3xl">
-              <ProfileForm user={user} />
-            </div>
-          </div>
-        </TabsContent>
+        {(!user?.company?.logo || isEditingLogo) ? (
+          <div className="flex flex-col gap-3 w-full sm:max-w-xs">
+            <PhotoUpload
+              name="companyLogo"
+              control={control}
+              info="Máximo 2MB"
+              label={user?.company?.logo ? "Carregar Nova Logo" : "Carregar Logo"}
+              accept="image"
+              maxSize={1024 * 1024 * 2}
+              className="w-full"
+              disabled={isUploading}
+            />
 
-        <TabsContent
-          value="empresa"
-          className="my-4 outline-none animate-in fade-in-50 duration-500"
-        >
-          <div className="">
-            <Card className="p-6 border-border">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-1">Logo da Empresa</h3>
-                <p className="text-sm text-muted-foreground">
-                  A imagem exibida em seus documentos e faturas. Recomendamos
-                  uma altura máxima de 512px.
-                </p>
-              </div>
-              <div className="flex flex-col lg:flex-row gap-8 items-start">
-                <div className="w-full sm:w-72 shrink-0">
-                  {!user?.company?.logo ? (
-                    <PhotoUpload
-                      label="Carregar Logo"
-                      name="companyLogo"
-                      control={control}
-                      accept="image"
-                      maxSize={1024 * 1024 * 2}
-                      className="w-full"
-                      disabled={isUploading}
-                      showConfirmButton={true}
-                      onConfirm={handleUploadLogo}
-                    />
-                  ) : (
-                    <div className="relative group w-full aspect-video bg-muted/30 rounded-xl flex items-center justify-center border-2 border-dashed border-border/50 overflow-hidden transition-all duration-300 hover:border-primary/50">
-                      <img
-                        src={user.company.logo}
-                        alt="Logo da empresa"
-                        className="max-h-full max-w-full object-contain p-4 transition-transform duration-300 group-hover:scale-95"
-                      />
-                      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                        <PhotoUpload
-                          label="Alterar Logo"
-                          name="companyLogo"
-                          control={control}
-                          accept="image"
-                          maxSize={1024 * 1024 * 2}
-                          className="w-auto scale-90"
-                          disabled={isUploading}
-                          showConfirmButton={true}
-                          onConfirm={handleUploadLogo}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
+            {companyLogo && (
+              <Button
+                type="button"
+                onClick={handleUpload}
+                disabled={isUploading}
+                className="w-full"
+              >
+                {isUploading ? "A enviar..." : "Atualizar Imagem"}
+              </Button>
+            )}
           </div>
-        </TabsContent>
+        ) : (
+          <div className="relative w-40 h-40 bg-muted/30 rounded-xl flex items-center justify-center border border-border overflow-hidden shrink-0 shadow-sm">
+            <img
+              src={user.company.logo}
+              alt="Logo da empresa"
+              className="max-h-full max-w-full object-contain p-2"
+            />
+          </div>
+        )}
 
-        <TabsContent
-          value="seguranca"
-          className="mt-4 outline-none animate-in fade-in-50 duration-500"
-        >
-          <div className="w-ful space-y-6">
-            <Card className="p-6">
-              <AccountSecurity user={user} />
-            </Card>
-            <Card className="p-6">
-              <SupportAccess />
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+        <p className="text-xs text-muted-foreground mt-6">
+          Exibido em documentos, faturas e recibos. (Recomendado: .jpg ou .png)
+        </p>
+      </div>
+
     </div>
   );
 }

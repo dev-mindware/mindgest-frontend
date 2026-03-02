@@ -73,7 +73,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     pagination,
     setPage,
   } = useGetCategories();
-  const { taxOptions, isLoading: isTaxesLoading } = useGetTaxes();
+  const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
 
   const finalCategoryOptions = useMemo(() => {
     const currentId = product.categoryId || (product as any).category_id;
@@ -116,6 +116,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   const cleanPayload = (data: ItemFormData) => {
     return {
       ...data,
+      taxId: data.taxId === "none" ? undefined : data.taxId || undefined,
       cost: data.cost ?? undefined,
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
@@ -173,11 +174,22 @@ function EditProductFormContent({ product }: EditProductModalProps) {
               placeholder="Ex: Teclado Logitech"
             />
 
-            <RHFSelect
-              name="taxId"
-              label="Imposto (Opcional)"
-              options={taxOptions}
+            <Controller
               control={control}
+              name="taxId"
+              render={({ field: { onChange, value } }) => (
+                <PaginatedSelect
+                  label="Imposto (Opcional)"
+                  value={value}
+                  options={taxOptions}
+                  onChange={onChange}
+                  isLoading={isTaxesLoading}
+                  pagination={taxPagination}
+                  onPageChange={setTaxPage}
+                  placeholder="Selecione um imposto"
+                  className="w-full"
+                />
+              )}
             />
           </div>
 

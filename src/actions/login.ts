@@ -1,13 +1,11 @@
 "use server";
 import { z } from "zod";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { roleRedirects } from "@/utils";
 import { LoginResponse, Role, User } from "@/types";
 import { loginSchema } from "@/schemas";
 import api from "@/services/api";
 import { createSession } from "@/lib/session";
-import { SESSION_COOKIE_KEY } from "@/constants";
 import { getSession } from "@/lib/auth";
 
 export async function loginAction({
@@ -31,12 +29,12 @@ export async function loginAction({
     }
 
     await createSession({
-      user,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     });
 
     const redirectPath = getRedirectPath(user.role);
+    console.log(`Login bem-sucedido! Redirecionando para: ${redirectPath}`);
 
     return { message, user, redirectPath };
   } catch (error: any) {
@@ -67,9 +65,9 @@ export async function logoutAction() {
   } catch (error) {
     console.error("🚨 Erro ao fazer logout remoto:", error);
   } finally {
-    // Local purge MUST happen even if API fails  
-    const authCookies = await cookies();
-    authCookies.delete(SESSION_COOKIE_KEY);
+    // Local purge MUST happen even if API fails
+    const { destroySession } = await import("@/lib/session");
+    await destroySession();
 
     redirect("/auth/login");
   }

@@ -17,14 +17,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const { isAuthenticating } = useAuthStore();
   useFetchUser({ enabled: !isAuthRoute });
 
-  if (isAuthRoute) {
-    return <>{children}</>;
-  }
+  if (isAuthRoute) return <>{children}</>;
 
-
-  if (isAuthenticating) {
-    return <Loader />;
-  }
+  if (isAuthenticating) return <Loader />;
 
   return <>{children}</>;
 }

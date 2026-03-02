@@ -27,6 +27,7 @@ import { currentStoreStore, currentProductStore } from "@/stores";
 export function ProductList() {
   const { search } = useURLSearchParams(`search_product`);
   const { currentStore } = currentStoreStore();
+  const { currentProduct } = currentProductStore();
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, setViewMode, viewMode, page, setPage } =
     useItemsFilters("product");
@@ -190,7 +191,8 @@ export function ProductList() {
       <DetailsProductModal />
       <DeleteItemModal type="Produto" />
       <AddProductModal />
-  
+      {currentProduct && <EditProductModal product={currentProduct} />}
+
     </div>
   );
 }

@@ -45,7 +45,6 @@ export const ItemSchema = z.object({
 
   isFromAPI: z.boolean().optional(),
   taxId: z.string().trim().optional(),
-  exemptionCode: z.string().trim().optional(),
   apiId: z.string().trim().optional(),
 });
 

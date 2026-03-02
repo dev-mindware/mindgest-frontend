@@ -86,7 +86,7 @@ export function ProformaForm({
 
   const form = useForm<ProformaFormData>({
     resolver: zodResolver(ProformaSchema),
-    mode: "onSubmit",
+    mode: "onChange",
     defaultValues,
   });
 

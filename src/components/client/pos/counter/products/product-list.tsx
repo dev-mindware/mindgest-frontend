@@ -3,8 +3,8 @@
 import { Product } from "@/types";
 import { ProductCard } from "./product-card";
 import { EmptyState } from "@/components/common/empty-state";
-import { AddProductModal } from "@/components/client/items/products/product-modals";
 import { useModal } from "@/stores";
+import { currentProductStore } from "@/stores";
 
 interface ProductSectionProps {
     products: Product[];
@@ -22,6 +22,7 @@ export function ProductList({
     onUpdateQuantity,
 }: ProductSectionProps) {
     const { open } = useModal();
+    const { currentProduct } = currentProductStore();
 
     if (products.length === 0) {
         return (
@@ -47,9 +48,6 @@ export function ProductList({
                     />
                 ))}
             </div>
-
-            {/* Global Product Modal for editing/adding from POS */}
-            {(open["add-product"] || open["edit-product"]) && <AddProductModal />}
         </>
     );
 }

@@ -16,55 +16,49 @@ import {
     InputCurrency,
 } from "@/components";
 import { PaginatedSelect } from "@/components/shared";
-import { useModal, currentProductStore, currentStoreStore } from "@/stores";
+import { useModal, currentStoreStore } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useAddItem, useUpdateItem, useGetCategories, useGetTaxes, useAuth } from "@/hooks";
+import { useAddItem, useGetCategories, useGetTaxes, useAuth } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
-import { useEffect, useMemo } from "react";
 
-export function ProductModal() {
-    const { open, openModal } = useModal();
-    const isOpenAdd = open["add-product"];
-    const isOpenEdit = open["edit-product"];
-    const isOpen = isOpenAdd || isOpenEdit;
-    const isEdit = !!isOpenEdit;
+export function AddProductModal() {
+    const { open, openModal, closeModal, modalData } = useModal();
+    const isOpen = open["add-product"];
+
+    if (!isOpen) return null;
 
     return (
-        <GlobalModal
-            canClose
-            id={isEdit ? "edit-product" : "add-product"}
-            title={
-                <div className="w-full flex items-center justify-between gap-2 mb-4">
-                    <span>{isEdit ? "Editar Produto" : "Adicionar Producto"}</span>
-                    <Button
-                        size="sm"
-                        className="sticky right-0"
-                        variant="outline"
-                        onClick={() => openModal("add-category")}
-                    >
-                        Adicionar Categoria
-                    </Button>
-                </div>
-            }
-            className="!max-h-[85vh] !w-max"
-        >
-            {isOpen ? (
-                <ProductFormContent isEdit={isEdit} />
-            ) : (
-                <ProductModalSkeleton />
-            )}
+        <>
+            <GlobalModal
+                canClose
+                id="add-product"
+                title={
+                    <div className="w-full flex items-center justify-between gap-2 mb-4">
+                        <span>Adicionar Produto</span>
+                        <Button
+                            size="sm"
+                            className="sticky right-0"
+                            variant="outline"
+                            onClick={() => openModal("add-category")}
+                        >
+                            Adicionar Categoria
+                        </Button>
+                    </div>
+                }
+                className="!max-h-[85vh] !w-max"
+            >
+                <AddProductFormContent />
+            </GlobalModal>
             {open["add-category"] && <CategoryModal action="add" />}
-        </GlobalModal>
+        </>
     );
 }
 
-function ProductFormContent({ isEdit }: { isEdit: boolean }) {
+function AddProductFormContent() {
     const { user } = useAuth();
     const { closeModal, modalData } = useModal();
     const { currentStore } = currentStoreStore();
-    const { currentProduct } = currentProductStore();
     const { mutateAsync: addItemMutate, isPending: isAdding } = useAddItem();
-    const { mutateAsync: updateItemMutate, isPending: isUpdating } = useUpdateItem();
 
     const {
         categoryOptions,
@@ -74,21 +68,9 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
         pagination,
         setPage,
     } = useGetCategories();
-    const { taxOptions, isLoading: isTaxesLoading } = useGetTaxes();
+    const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
 
     const initialBarcode = modalData["add-product"]?.barcode || "";
-
-    const finalCategoryOptions = useMemo(() => {
-        if (!isEdit || !currentProduct) return categoryOptions;
-
-        const currentId = currentProduct.categoryId || (currentProduct as any).category_id;
-        const currentName = currentProduct.category;
-
-        if (currentId && currentName && !categoryOptions.find((o) => o.value === currentId)) {
-            return [{ label: currentName, value: currentId }, ...categoryOptions];
-        }
-        return categoryOptions;
-    }, [isEdit, currentProduct, categoryOptions]);
 
     const {
         reset,
@@ -101,83 +83,45 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
         defaultValues: {
             barcode: initialBarcode,
             price: 0,
-            cost: 0,
+            cost: undefined,
             companyId: String(user?.company?.id),
             type: "PRODUCT",
             taxId: "",
-            categoryId: currentProduct?.categoryId || "",
+            categoryId: "",
         },
     });
-
-    // Pre-fill data when in edit mode
-    useEffect(() => {
-        if (isEdit && currentProduct) {
-            reset({
-                name: currentProduct.name,
-                description: currentProduct.description || "",
-                barcode: currentProduct.barcode || "",
-                price: Number(currentProduct.price) || 0,
-                cost: Number(currentProduct.cost) || 0,
-                quantity: Number(currentProduct.quantity) || 0,
-                minStock: currentProduct.minStock ? Number(currentProduct.minStock) : undefined,
-                maxStock: currentProduct.maxStock ? Number(currentProduct.maxStock) : undefined,
-                unit: currentProduct.unit || "",
-                weight: currentProduct.weight,
-                dimensions: currentProduct.dimensions || "",
-                type: "PRODUCT",
-                companyId: String(user?.company?.id),
-                categoryId: currentProduct.categoryId || (currentProduct as any).category_id || (typeof currentProduct.category === 'string' && currentProduct.category.length > 20 ? currentProduct.category : ""),
-                taxId: currentProduct.taxId || currentProduct.tax?.id || "",
-                // daysToExpiry: currentProduct.daysToExpiry || undefined,
-                expiryDate: currentProduct.expiryDate || "",
-            });
-        }
-    }, [isEdit, currentProduct, reset, user?.company?.id]);
 
     const cleanPayload = (data: ItemFormData) => {
         return {
             ...data,
+            taxId: data.taxId === "none" ? undefined : data.taxId || undefined,
             cost: data.cost ?? undefined,
             quantity: data.quantity ?? undefined,
             weight: data.weight ?? undefined,
             minStock: data.minStock ?? undefined,
             maxStock: data.maxStock ?? undefined,
             daysToExpiry: data.daysToExpiry ?? undefined,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
     };
 
     async function onSubmit(data: ItemFormData) {
         try {
             const cleanedData = cleanPayload(data);
-            const { type, companyId, ...rest } = cleanedData;
-
-            if (isEdit && currentProduct) {
-                await updateItemMutate({
-                    id: currentProduct.id,
-                    data: rest,
-                });
-            } else {
-                await addItemMutate({
-                    ...cleanedData,
-                    ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
-                });
-            }
+            await addItemMutate({
+                ...cleanedData,
+                ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
+            });
             handleCancel();
         } catch (error: any) {
-            if (error?.response) {
-                ErrorMessage(
-                    error?.response?.data?.message ||
-                    `Ocorreu um erro ao ${isEdit ? "atualizar" : "adicionar"} o item`,
-                );
-            } else {
-                ErrorMessage(`Ocorreu um erro desconhecido ao ${isEdit ? "atualizar" : "adicionar"}. Tente novamente`);
-            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ErrorMessage((error as any)?.response?.data?.message || "Ocorreu um erro ao adicionar o item");
         }
     }
 
     const handleCancel = () => {
         reset();
-        closeModal(isEdit ? "edit-product" : "add-product");
+        closeModal("add-product");
     };
 
     if (isLoadingCategories || isTaxesLoading) return <ProductModalSkeleton />;
@@ -205,12 +149,22 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
                             error={errors.name?.message}
                             placeholder="Ex: Teclado Logitech"
                         />
-
-                        <RHFSelect
-                            name="taxId"
-                            label="Imposto (Opcional)"
-                            options={taxOptions}
+                        <Controller
                             control={control}
+                            name="taxId"
+                            render={({ field: { onChange, value } }) => (
+                                <PaginatedSelect
+                                    label="Imposto (Opcional)"
+                                    value={value}
+                                    options={taxOptions}
+                                    onChange={onChange}
+                                    isLoading={isTaxesLoading}
+                                    pagination={taxPagination}
+                                    onPageChange={setTaxPage}
+                                    placeholder="Selecione um imposto"
+                                    className="w-full"
+                                />
+                            )}
                         />
                     </div>
 
@@ -258,17 +212,16 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
                                 <PaginatedSelect
                                     label="Categoria"
                                     value={value}
-                                    options={finalCategoryOptions}
+                                    options={categoryOptions}
                                     onChange={onChange}
                                     isLoading={isLoadingCategories}
                                     pagination={pagination}
                                     onPageChange={setPage}
-                                    placeholder={currentProduct?.category}
+                                    placeholder="Selecione uma opção"
                                     className="w-full"
                                 />
                             )}
                         />
-
                         <RHFSelect
                             name="type"
                             label="Tipo"
@@ -313,6 +266,7 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
                             error={errors.quantity?.message}
                         />
                     </div>
+
                     <FeatureGate minPlan="Pro" fallback="hidden">
                         <div className="grid grid-cols-2 gap-4">
                             <Input
@@ -341,12 +295,11 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
                                 error={errors.expiryDate?.message}
                             />
                             <Input
-                                min={1}
                                 type="number"
                                 placeholder="14"
                                 label="Dias até Expirar (opcional)"
                                 {...register("daysToExpiry")}
-                                error={errors?.daysToExpiry?.message}
+                                error={errors.daysToExpiry?.message}
                             />
                         </div>
                     </FeatureGate>
@@ -364,8 +317,8 @@ function ProductFormContent({ isEdit }: { isEdit: boolean }) {
                     <Button type="button" variant="outline" onClick={handleCancel}>
                         Cancelar
                     </Button>
-                    <ButtonSubmit className="w-max" isLoading={isAdding || isUpdating || isSubmitting}>
-                        {isEdit ? "Atualizar" : "Salvar"}
+                    <ButtonSubmit className="w-max" isLoading={isAdding || isSubmitting}>
+                        Salvar
                     </ButtonSubmit>
                 </div>
             </div>

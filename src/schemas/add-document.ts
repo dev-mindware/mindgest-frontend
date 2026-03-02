@@ -6,14 +6,16 @@ export const CompanySchema = z.object({
     .string()
     .trim()
     .min(3, "O nome da empresa precisa ter pelo menos 3 caracteres")
-    .optional(),
-  taxNumber: taxNumberSchema.optional(),
+    .optional()
+    .or(z.literal("")),
+  taxNumber: taxNumberSchema.optional().or(z.literal("")),
   address: z
     .string()
     .trim()
     .min(5, "O endereço deve ter pelo menos 5 caracteres")
-    .optional(),
-  contact: phoneNumberSchema.optional(),
+    .optional()
+    .or(z.literal("")),
+  contact: phoneNumberSchema.optional().or(z.literal("")),
 });
 
 export type CompanyFormData = z.infer<typeof CompanySchema>;
@@ -23,13 +25,20 @@ const ClientSchema = z.object({
     .string()
     .trim()
     .min(3, "O nome do cliente precisa ter pelo menos 3 caracteres"),
-  taxNumber: taxNumberSchema.optional(),
+  taxNumber: taxNumberSchema.optional().or(z.literal("")),
   address: z
     .string()
     .trim()
-    .min(5, "O endereço deve ter pelo menos 5 caracteres"),
-  phone: phoneNumberSchema.optional(),
-  email: z.string().trim().email("O email informado não é válido").optional(),
+    .min(5, "O endereço deve ter pelo menos 5 caracteres")
+    .optional()
+    .or(z.literal("")),
+  phone: phoneNumberSchema.optional().or(z.literal("")),
+  email: z
+    .string()
+    .trim()
+    .email("O email informado não é válido")
+    .optional()
+    .or(z.literal("")),
 });
 
 /**

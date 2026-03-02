@@ -3,10 +3,10 @@
 import { Plus } from "lucide-react";
 import React, { useState, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, Input, InputCurrency, RHFSelect, PaginatedSelect } from "@/components";
+import { Button, Input, InputCurrency, RHFSelect } from "@/components";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
+import { PaginatedSelect } from "@/components/shared";
 import { useGetTaxes } from "@/hooks/taxes/use-taxes";
-import { taxExemptionReasons } from "@/constants/tax-exemption";
 
 
 export interface ProductOption {
@@ -37,10 +37,9 @@ interface AddItemFormProps {
 
 export const AddItemForm = React.memo<AddItemFormProps>(
   ({ onAdd, globalDiscount, existingItemIds = new Set() }) => {
-    const { taxOptions } = useGetTaxes();
+    const { taxOptions, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
-    const [exemptionPage, setExemptionPage] = useState(1);
 
     const { control, handleSubmit, setValue, getValues, resetField, watch, reset, formState: { errors } } = useForm({
       defaultValues: {
@@ -48,7 +47,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         price: 0,
         type: "PRODUCT" as "PRODUCT" | "SERVICE",
         taxId: "",
-        exemptionCode: "",
       }
     });
 
@@ -65,7 +63,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         setValue("price", 0);
         setValue("type", "PRODUCT");
         setValue("taxId", "");
-        setValue("exemptionCode", "");
         return;
       }
 
@@ -73,7 +70,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         setValue("price", 0);
         setValue("type", "PRODUCT");
         setValue("taxId", "");
-        setValue("exemptionCode", "");
       } else if (option.data) {
         setValue("price", Number(option.data.price));
         setValue("type", option.data.type);
@@ -87,11 +83,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
           }
         }
 
-        // Handle initial tax rate for exemption field
-        const initialTaxRate = option.data.tax?.rate ?? 0;
-        if (initialTaxRate > 0) {
-          setValue("exemptionCode", "");
-        }
         setValue("taxId", String(option.data.taxId ?? ""));
       }
     }, [setValue]);
@@ -120,8 +111,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         unitPrice: values.price,
         quantity: values.quantity,
         tax: selectedProduct.data?.tax?.rate || taxRate,
-        taxId: values.taxId || undefined,
-        exemptionCode: taxRate === 0 ? values.exemptionCode : undefined,
+        taxId: values.taxId === "none" ? undefined : values.taxId || undefined,
         discount: globalDiscount,
         total: values.price * values.quantity,
         type: values.type,
@@ -137,7 +127,6 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         price: 0,
         type: "PRODUCT",
         taxId: "",
-        exemptionCode: "",
       });
     }, [
       selectedProduct,
@@ -255,56 +244,24 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                 { value: "SERVICE", label: "Serviço" },
               ]}
             />
-            <RHFSelect
-              name="taxId"
-              label="Imposto"
+            <Controller
               control={control}
-              options={taxOptions}
+              name="taxId"
+              render={({ field: { onChange, value } }) => (
+                <PaginatedSelect
+                  label="Imposto"
+                  value={value}
+                  options={taxOptions}
+                  onChange={onChange}
+                  pagination={taxPagination}
+                  onPageChange={setTaxPage}
+                  placeholder="Selecione um imposto"
+                  className="w-full"
+                />
+              )}
             />
           </div>
         )}
-
-        {(() => {
-          const values = getValues();
-          const selectedTax = taxOptions.find((t) => t.value === values.taxId);
-          const taxRate = selectedTax
-            ? Number(selectedTax.label.match(/\((\d+)%\)/)?.[1] || 0)
-            : 0;
-
-          if (taxRate === 0 && selectedTax) {
-            const itemsPerPage = 6;
-            const totalPages = Math.ceil(taxExemptionReasons.length / itemsPerPage);
-            const paginatedOptions = taxExemptionReasons.slice(
-              (exemptionPage - 1) * itemsPerPage,
-              exemptionPage * itemsPerPage
-            );
-
-            return (
-              <div className="grid grid-cols-1 gap-4">
-                <Controller
-                  name="exemptionCode"
-                  control={control}
-                  render={({ field }) => (
-                    <PaginatedSelect
-                      label="Motivo de Isenção"
-                      options={paginatedOptions}
-                      value={field.value}
-                      onChange={field.onChange}
-                      pagination={{
-                        page: exemptionPage,
-                        totalPages: totalPages,
-                      }}
-                      onPageChange={setExemptionPage}
-                      className="w-full"
-                      error={errors.exemptionCode?.message}
-                    />
-                  )}
-                />
-              </div>
-            );
-          }
-          return null;
-        })()}
 
         <div className="flex items-center justify-between pt-2">
           {isAlreadyAdded && (

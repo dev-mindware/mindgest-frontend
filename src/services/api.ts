@@ -1,6 +1,5 @@
 import axios from "axios";
 import { getAccessToken } from "@/actions/token";
-import { reauthenticate } from "@/actions/auth";
 
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -119,7 +118,12 @@ api.interceptors.response.use(
   async (err) => {
     const original = err.config;
 
-    if (original.url.includes("/auth/") || original._retry) {
+    // Ignora refresh loops ou rotas que não levam token
+    if (
+      original.url.includes("/auth/login") ||
+      original.url.includes("/api/auth/refresh") ||
+      original._retry
+    ) {
       return Promise.reject(err);
     }
 
@@ -141,8 +145,10 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await reauthenticate();
-        const newToken = await getAccessToken();
+        // Chamada V-Sync à Rota Next.js (que gere os cookies silenciosamente)
+        const response = await axios.post("/api/auth/refresh");
+
+        const newToken = response.data?.accessToken;
 
         if (newToken) {
           processQueue(null, newToken);
@@ -154,10 +160,6 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         console.error("Erro ao renovar token:", refreshError);
-
-        // Destructive pill to prevent infinite loop
-        const { clearLocalSession } = await import("@/actions/auth");
-        await clearLocalSession();
 
         window.location.replace("/auth/login");
         return Promise.reject(refreshError);

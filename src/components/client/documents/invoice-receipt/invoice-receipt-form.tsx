@@ -25,7 +25,7 @@ export function InvoiceReceiptForm() {
 
   const form = useForm<InvoiceReceiptFormData>({
     resolver: zodResolver(InvoiceReceiptSchema),
-    mode: "onSubmit",
+    mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       dueDate: "",

@@ -2,12 +2,9 @@ export function Loader() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background relative selection:bg-transparent">
       <div className="relative flex flex-col items-center justify-center">
-        {/* Container do Loader (tamanho do spinner e logo) */}
         <div className="relative flex items-center justify-center w-32 h-32">
-          {/* Trilho de fundo muito leve */}
           <div className="absolute inset-0 rounded-full border border-purple-500/10 dark:border-purple-400/10"></div>
 
-          {/* Spinner animado com gradiente linear do SVG para o efeito de cauda */}
           <svg
             className="absolute inset-0 w-full h-full animate-spin text-purple-600 dark:text-purple-500"
             viewBox="0 0 100 100"
@@ -31,7 +28,6 @@ export function Loader() {
             />
           </svg>
 
-          {/* Logo alinhada no centro com respiro (whitespace) */}
           <img
             src="/mindware.png"
             alt="Logo"
@@ -39,7 +35,6 @@ export function Loader() {
           />
         </div>
 
-        {/* Texto elegante e minimalista alinhado abaixo centralizado */}
         <div className="absolute -bottom-10 text-[11px] tracking-[0.25em] text-muted-foreground/40 font-medium uppercase font-sans">
           Mindgest
         </div>

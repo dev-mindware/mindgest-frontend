@@ -43,7 +43,6 @@ export function FeatureGate({
     return null;
   }
 
-  // fallback === 'disabled'
   return (
     <TooltipProvider>
       <Tooltip>
@@ -54,9 +53,8 @@ export function FeatureGate({
               e.stopPropagation();
               openUpgradeModal();
             }}
-            className="cursor-not-allowed opacity-60 inline-flex" // Inline-flex to wrap children without breaking layout much
+            className="cursor-not-allowed opacity-60 inline-flex"
           >
-            {/* We disable pointer events on children to ensure the parent div handles the click */}
             <div className="pointer-events-none">{children}</div>
           </div>
         </TooltipTrigger>

@@ -1,8 +1,11 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { taxesService } from "@/services";
+import { useState } from "react";
 
 export function useGetTaxes() {
+  const [page, setPage] = useState(1);
+
   const { data, ...rest } = useQuery({
     queryKey: ["taxes"],
     queryFn: () => taxesService.get(),
@@ -17,6 +20,9 @@ export function useGetTaxes() {
   return {
     ...rest,
     taxes: data || [],
-    taxOptions: [{ label: "Isento (0%)", value: "" }, ...taxOptions],
+    taxOptions,
+    // Pagination stub — taxes are loaded all at once (single page)
+    pagination: { page, totalPages: 1 },
+    setPage,
   };
 }

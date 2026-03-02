@@ -4,6 +4,7 @@ import { SubscriptionStatus, Role, PlanType, PLAN_HIERARCHY } from "@/types";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/auth";
 import { menuItems, MenuItem } from "@/constants/menu-items";
+import { Loader } from "./loader";
 
 // Helper to flatten menu items to find urls easily
 const flattenMenu = (items: MenuItem[]): MenuItem[] => {
@@ -79,9 +80,7 @@ export function RouteProtector({
   if (isAuthenticating || !user) {
     return (
       fallback || (
-        <div className="flex items-center justify-center bg-red-600 min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-        </div>
+        <Loader />
       )
     );
   }
