@@ -11,15 +11,21 @@ export function useGetTaxes() {
     queryFn: () => taxesService.get(),
   });
 
-  const taxOptions =
-    data?.map((tax) => ({
-      label: `${tax.name} (${tax.rate}%)`,
-      value: tax.id,
-    })) || [];
+  // Ensure taxesArray is always an array, even if the API wraps it in data/items
+  const taxesArray: any[] = Array.isArray(data)
+    ? data
+    : data && typeof data === "object"
+      ? (data as any).data || (data as any).items || []
+      : [];
+
+  const taxOptions = taxesArray.map((tax) => ({
+    label: `${tax.name} (${tax.rate}%)`,
+    value: tax.id,
+  }));
 
   return {
     ...rest,
-    taxes: data || [],
+    taxes: taxesArray,
     taxOptions,
     // Pagination stub — taxes are loaded all at once (single page)
     pagination: { page, totalPages: 1 },
