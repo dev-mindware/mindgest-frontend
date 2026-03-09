@@ -23,7 +23,7 @@ export function ProformaList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search_proforma");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("proforma");
-  const { handlerDeleteProforma, handlerDetailsProforma, handlerConvertProforma } =
+  const { handlerDetailsProforma, handlerConvertProforma } =
     useProformaActions();
   const {
     data: proformas,
@@ -84,14 +84,6 @@ export function ProformaList({ storeId }: { storeId?: string }) {
                 router.push(`/documents/${item.id}/edit`);
               },
             },
-            ...(item.status !== "CANCELLED"
-              ? [
-                {
-                  label: "Deletar",
-                  onClick: handlerDeleteProforma,
-                },
-              ]
-              : []),
           ]}
         />
       ),
@@ -141,7 +133,6 @@ export function ProformaList({ storeId }: { storeId?: string }) {
       )}
 
       <ProformaPreviewDrawer />
-      <DeleteProformaModal />
       <ConvertProformaModal />
       <DocumentSuccessModal />
     </div>

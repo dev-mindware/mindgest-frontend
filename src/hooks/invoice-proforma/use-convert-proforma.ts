@@ -59,7 +59,6 @@ export function useConvertProforma() {
     }) => {
       const res = await createDocument(type, proforma);
       const id = res.data?.id ?? res.data?.data?.id;
-      await proformaService.deleteProforma(proforma.id);
       return { id, type };
     },
     onSuccess: (result, { type }) => {

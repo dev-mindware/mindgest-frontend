@@ -262,12 +262,35 @@ export function ChatbotSheet() {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <button
-                    className="flex items-center justify-center gap-2 px-4 h-9 border-2 border-primary/20 rounded-full text-sm font-semibold transition-all hover:border-primary/50 bg-background text-foreground animate-pulse-twice shadow-sm group"
+                <Button
+                    className="
+                        relative flex items-center justify-center gap-3
+                        bg-white/10 dark:bg-white/5
+                        backdrop-blur-xl
+                        rounded-full text-sm font-medium 
+                        text-foreground/90 
+                        shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]
+                        transition-all duration-500 ease-in-out
+                        hover:bg-white/20 dark:hover:bg-white/10
+                        hover:shadow-[0_8px_32px_0_rgba(var(--primary-rgb),0.15)]
+                        hover:-translate-y-0.5
+                        active:scale-[0.98]
+                        group
+                        overflow-hidden
+                    "
                 >
-                    <Icon name="Sparkles" className="h-4 w-4 text-primary" />
-                    <span>Fale com MIND</span>
-                </button>
+                    {/* Glass highlight effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    {/* Subtle inner glow */}
+                    <div className="absolute inset-[1px] rounded-full border border-white/5 pointer-events-none" />
+
+                    <Icon name="Sparkles" className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform duration-500" />
+                    <span className="relative z-10 tracking-tight">Fale com MIND</span>
+
+                    {/* Bloom effect on hover */}
+                    <div className="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" />
+                </Button>
             </SheetTrigger>
 
             <SheetContent

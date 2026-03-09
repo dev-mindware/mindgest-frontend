@@ -43,9 +43,9 @@ export function AddDocuments() {
         onValueChange={handleTabChange}
       >
         <TabsList className="flex justify-center md:justify-start">
-          <TabsTrigger value="invoice">Fatura</TabsTrigger>
-          <TabsTrigger value="invoice-receipt">Fatura Recibo</TabsTrigger>
-          <TabsTrigger value="proforma">Fatura Proforma</TabsTrigger>
+          <TabsTrigger value="invoice">Factura</TabsTrigger>
+          <TabsTrigger value="invoice-receipt">Factura Recibo</TabsTrigger>
+          <TabsTrigger value="proforma">Proforma</TabsTrigger>
         </TabsList>
 
         <TabsContent value="invoice">

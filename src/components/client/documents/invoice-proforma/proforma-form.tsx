@@ -62,6 +62,7 @@ export function ProformaForm({
           })) || [],
         globalRetention: Number(initialData.retentionAmount || 0),
         globalDiscount: Number(initialData.discountAmount || 0),
+        currencyCode: (initialData.currencyCode as any) || "AOA",
         storeId: initialData.storeId || "",
       };
     }
@@ -79,6 +80,7 @@ export function ProformaForm({
       globalRetention: 0,
       globalDiscount: 0,
       notes: "",
+      currencyCode: "AOA" as const,
       paymentMethod: "CASH",
       storeId: "",
     };
@@ -212,6 +214,7 @@ export function ProformaForm({
           retentionAmount: totals.retentionAmount,
           discountAmount: totals.discountAmount,
           subtotal: totals.subtotal,
+          currencyCode: data.currencyCode,
           notes: data.notes || undefined,
           proformaExpiresAt: data.proformaExpiresAt,
           paymentMethod: data.paymentMethod,
@@ -345,16 +348,6 @@ export function ProformaForm({
         globalDiscount={globalDiscount ?? 0}
         setGlobalDiscount={setGlobalDiscount}
       />
-
-
-      <div className="space-y-2">
-        <RHFSelect
-          label="Método de pagamento"
-          name="paymentMethod"
-          control={control}
-          options={paymentMethods}
-        />
-      </div>
 
       <div className="space-y-2">
         <Textarea

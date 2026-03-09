@@ -17,7 +17,7 @@ export function CreditNotesFiltersTSX() {
     !!filters.creditNoteNumber ||
     !!filters.endDate ||
     !!filters.startDate;
-    search.length > 0
+  search.length > 0
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -49,7 +49,7 @@ export function CreditNotesFiltersTSX() {
           label="Motivo"
           value={filters.reason}
           options={[
-            { label: "Anulação", value: "ANNULATION" },
+            { label: "Anulação", value: "ANNULMENT" },
             { label: "Correção", value: "CORRECTION" },
             { label: "Desconto", value: "DISCOUNT" },
           ]}

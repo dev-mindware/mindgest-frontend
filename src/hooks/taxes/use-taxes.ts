@@ -1,34 +1,49 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { taxesService } from "@/services";
-import { useState } from "react";
+import { usePagination } from "../common/use-pagination";
+import { useLocalPagination } from "../common/use-local-pagination";
+import { Tax } from "@/types";
 
 export function useGetTaxes() {
-  const [page, setPage] = useState(1);
-
-  const { data, ...rest } = useQuery({
-    queryKey: ["taxes"],
-    queryFn: () => taxesService.get(),
+  const pagination = usePagination<Tax>({
+    endpoint: "/taxes",
+    queryKey: "taxes",
   });
 
-  // Ensure taxesArray is always an array, even if the API wraps it in data/items
-  const taxesArray: any[] = Array.isArray(data)
-    ? data
-    : data && typeof data === "object"
-      ? (data as any).data || (data as any).items || []
-      : [];
-
-  const taxOptions = taxesArray.map((tax) => ({
+  const taxOptions = pagination.data.map((tax) => ({
     label: `${tax.name} (${tax.rate}%)`,
     value: tax.id,
   }));
 
   return {
-    ...rest,
-    taxes: taxesArray,
+    ...pagination,
+    taxes: pagination.data,
     taxOptions,
-    // Pagination stub — taxes are loaded all at once (single page)
-    pagination: { page, totalPages: 1 },
-    setPage,
+    // Backward compatibility match for existing usage
+    pagination: {
+      page: pagination.page,
+      totalPages: pagination.totalPages,
+    },
+  };
+}
+
+export function useTaxesSelect() {
+  const pagination = useLocalPagination<Tax>({
+    endpoint: "/taxes",
+    queryKey: "taxes_select",
+  });
+
+  const taxOptions = pagination.data.map((tax) => ({
+    label: `${tax.name} (${tax.rate}%)`,
+    value: tax.id,
+  }));
+
+  return {
+    ...pagination,
+    taxes: pagination.data,
+    taxOptions,
+    pagination: {
+      page: pagination.page,
+      totalPages: pagination.totalPages,
+    },
   };
 }
