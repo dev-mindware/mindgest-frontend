@@ -1,13 +1,10 @@
-quando aprovar deve redirecionar automaticamente pra a tela de dashboard
-e os menus devem surgir automaticamente *(notar a mudança na api e renderizar ) [X]
-sobre o redirect do /dashboard
+# Deploy na Vercel — MindGest Frontend
 
-metodo de pagemento: kwik ou expressna parte dos pagamentos [X]
+## Checklist
 
-tirar as informações da empresa emissora ao fazer o pagamento [X]
-ver o redirect do /dashboard
-
-quando a subscrição está pendente não poder ir pra outras telas vida link
-renderizar outros menus, mas travar com o miodal - dizer que a sua subscrição está ainda e estado de aprovação e tal [X]
-
-VER O REDIRECT PARA O /OWNER E MELHORAR A AUTENTICAÇÃO
+- [x] Analisar o projecto e identificar o que falta
+- [/] Criar `.env.example` com documentação das variáveis
+- [ ] Executar `pnpm run build` para verificar erros
+- [ ] Executar `pnpm exec tsc --noEmit` para verificar TypeScript
+- [ ] Executar `pnpm run lint` para verificar linting
+- [ ] Criar walkthrough com instruções finais para a Vercel

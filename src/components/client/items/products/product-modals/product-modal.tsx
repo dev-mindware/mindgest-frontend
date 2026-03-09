@@ -18,7 +18,7 @@ import {
 import { PaginatedSelect } from "@/components/shared";
 import { useModal, currentStoreStore } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useAddItem, useGetCategories, useGetTaxes, useAuth } from "@/hooks";
+import { useAddItem, useCategoriesSelect, useTaxesSelect, useAuth } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
 
 export function AddProductModal() {
@@ -67,8 +67,8 @@ function AddProductFormContent() {
         refetch,
         pagination,
         setPage,
-    } = useGetCategories();
-    const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
+    } = useCategoriesSelect();
+    const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useTaxesSelect();
 
     const initialBarcode = modalData["add-product"]?.barcode || "";
 
@@ -100,7 +100,6 @@ function AddProductFormContent() {
             weight: data.weight ?? undefined,
             minStock: data.minStock ?? undefined,
             maxStock: data.maxStock ?? undefined,
-            daysToExpiry: data.daysToExpiry ?? undefined,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
     };
@@ -222,29 +221,51 @@ function AddProductFormContent() {
                                 />
                             )}
                         />
-                        <RHFSelect
-                            name="type"
-                            label="Tipo"
-                            options={[{ label: "Produto", value: "PRODUCT" }]}
+                        <Controller
                             control={control}
+                            name="quantity"
+                            render={({ field }) => (
+                                <Input
+                                    type="quantity"
+                                    startIcon="Scale"
+                                    label="Quantidade"
+                                    value={field.value ?? 0}
+                                    onChange={(e) => field.onChange(Number(e.target.value))}
+                                    error={errors.quantity?.message}
+                                />
+                            )}
                         />
                     </div>
 
                     <FeatureGate minPlan="Pro" fallback="hidden">
                         <div className="grid grid-cols-2 gap-4">
-                            <Input
-                                type="quantity"
-                                startIcon="Scale"
-                                label="Stock Mínimo"
-                                {...register("minStock", { valueAsNumber: true })}
-                                error={errors.minStock?.message}
+                            <Controller
+                                control={control}
+                                name="minStock"
+                                render={({ field }) => (
+                                    <Input
+                                        type="quantity"
+                                        startIcon="Scale"
+                                        label="Stock Mínimo"
+                                        value={field.value ?? 0}
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                        error={errors.minStock?.message}
+                                    />
+                                )}
                             />
-                            <Input
-                                type="quantity"
-                                startIcon="Scale"
-                                label="Stock Máximo"
-                                {...register("maxStock", { valueAsNumber: true })}
-                                error={errors.maxStock?.message}
+                            <Controller
+                                control={control}
+                                name="maxStock"
+                                render={({ field }) => (
+                                    <Input
+                                        type="quantity"
+                                        startIcon="Scale"
+                                        label="Stock Máximo"
+                                        value={field.value ?? 0}
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                        error={errors.maxStock?.message}
+                                    />
+                                )}
                             />
                         </div>
                     </FeatureGate>
@@ -257,14 +278,13 @@ function AddProductFormContent() {
                                 label="Unidade de Medida (Opcional)"
                                 error={errors.unit?.message}
                             />
+                            <Input
+                                type="date"
+                                label="Data de Validade (opcional)"
+                                {...register("expiryDate")}
+                                error={errors.expiryDate?.message}
+                            />
                         </FeatureGate>
-                        <Input
-                            type="quantity"
-                            startIcon="Scale"
-                            label="Quantidade"
-                            {...register("quantity", { valueAsNumber: true })}
-                            error={errors.quantity?.message}
-                        />
                     </div>
 
                     <FeatureGate minPlan="Pro" fallback="hidden">
@@ -282,24 +302,6 @@ function AddProductFormContent() {
                                 placeholder="Ex: 10x20x30 cm"
                                 {...register("dimensions")}
                                 error={errors.dimensions?.message}
-                            />
-                        </div>
-                    </FeatureGate>
-
-                    <FeatureGate minPlan="Pro" fallback="hidden">
-                        <div className="grid grid-cols-2 gap-4">
-                            <Input
-                                type="date"
-                                label="Data de Validade (opcional)"
-                                {...register("expiryDate")}
-                                error={errors.expiryDate?.message}
-                            />
-                            <Input
-                                type="number"
-                                placeholder="14"
-                                label="Dias até Expirar (opcional)"
-                                {...register("daysToExpiry")}
-                                error={errors.daysToExpiry?.message}
                             />
                         </div>
                     </FeatureGate>

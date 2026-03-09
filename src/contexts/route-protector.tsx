@@ -37,12 +37,16 @@ export function RouteProtector({
     if (isAuthenticating) return;
 
     if (!user) {
-      router.replace("/auth/login");
+      if (pathname !== "/auth/login") {
+        router.replace("/auth/login");
+      }
       return;
     }
 
     if (!allowed.includes(user.role)) {
-      router.replace("/unauthorized");
+      if (pathname !== "/unauthorized") {
+        router.replace("/unauthorized");
+      }
       return;
     }
 
@@ -51,7 +55,10 @@ export function RouteProtector({
       !pathname.startsWith("/settings") &&
       !pathname.startsWith("/plans")
     ) {
-      router.replace("/settings?tab=subscription");
+      const target = "/settings?tab=subscription";
+      if (pathname + (window.location.search || "") !== target) {
+        router.replace(target);
+      }
       return;
     }
 
@@ -69,7 +76,9 @@ export function RouteProtector({
       const requiredPlanLevel = PLAN_HIERARCHY[matchingItem.minPlan] || 0;
 
       if (currentPlanLevel < requiredPlanLevel) {
-        window.location.href = "/dashboard";
+        if (pathname !== "/dashboard") {
+          window.location.href = "/dashboard";
+        }
         return;
       }
     }

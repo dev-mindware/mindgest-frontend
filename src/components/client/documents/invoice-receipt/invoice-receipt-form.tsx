@@ -40,6 +40,7 @@ export function InvoiceReceiptForm() {
       globalRetention: 0,
       globalDiscount: 0,
       notes: "",
+      currencyCode: "AOA" as const,
       paymentMethod: "CASH",
       storeId: "",
     },
@@ -119,14 +120,22 @@ export function InvoiceReceiptForm() {
           return;
         }
 
+        const isManagerOrOwner = user?.role === "OWNER" || user?.role === "MANAGER";
+
         const clientPayload = data.clientId
           ? { id: data.clientId }
-          : {
-            name: data.client.name,
-            phone: data.client.phone || undefined,
-            address: data.client.address || undefined,
-            taxNumber: data.client.taxNumber || undefined,
-          };
+          : (isManagerOrOwner && (!data.client.name)
+            ? {
+              name: "Consumidor Final",
+              taxNumber: "999999999",
+              address: currentStore?.address || "Loja",
+            }
+            : {
+              name: data.client.name as string,
+              phone: data.client.phone || undefined,
+              address: data.client.address || undefined,
+              taxNumber: data.client.taxNumber || undefined,
+            });
 
         const itemsPayload = data.items.map((item) => {
           if (item.isFromAPI && item.apiId) {
@@ -154,9 +163,10 @@ export function InvoiceReceiptForm() {
           retentionAmount: totals.retentionAmount,
           discountAmount: totals.discountAmount,
           subtotal: totals.subtotal,
+          currencyCode: data.currencyCode,
           notes: data.notes || undefined,
-          paymentMethod: data.paymentMethod,
-          ...(user?.role === "OWNER" &&
+          paymentMethod: data.paymentMethod, // This remains but selector was removed by user, default is 'CASH'
+          ...(isManagerOrOwner &&
             currentStore?.id && { storeId: currentStore?.id }),
         };
 
@@ -202,10 +212,21 @@ export function InvoiceReceiptForm() {
           error={errors.issueDate?.message}
           disabled
         />
+        <RHFSelect
+          label="Moeda"
+          name="currencyCode"
+          control={control}
+          placeholder="Selecione a moeda"
+          options={[
+            { value: "AOA", label: "AOA" },
+            { value: "USD", label: "USD" },
+            { value: "EUR", label: "EUR" },
+          ]}
+        />
 
         <AsyncCreatableSelectField
           endpoint="/clients"
-          label="Cliente"
+          label="Cliente (Opcional)"
           placeholder="Digite o nome do cliente..."
           value={selectedClient}
           onChange={handleClientChange}
@@ -251,14 +272,6 @@ export function InvoiceReceiptForm() {
         setGlobalRetention={setGlobalRetention}
         globalDiscount={globalDiscount ?? 0}
         setGlobalDiscount={setGlobalDiscount}
-      />
-
-
-      <RHFSelect
-        label="Método de pagamento"
-        name="paymentMethod"
-        control={control}
-        options={paymentMethods}
       />
 
       <Textarea

@@ -111,17 +111,6 @@ export function GenerateReceiptModal() {
           />
         </div>
 
-        <RHFSelect
-          name="paymentMethod"
-          label="Método de Pagamento"
-          options={[
-            { label: "Dinheiro", value: "CASH" },
-            { label: "Cartão", value: "CARD" },
-            { label: "Transferência", value: "TRANSFER" },
-          ]}
-          control={control}
-        />
-
         <Textarea
           label="Observações (Opcional)"
           placeholder="Ex: Pagamento recebido para pedido #12345"

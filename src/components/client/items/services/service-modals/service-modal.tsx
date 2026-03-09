@@ -17,11 +17,12 @@ import {
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useAddItem, useGetCategories, useGetTaxes, useUpdateItem } from "@/hooks";
+import { useAddItem, useCategoriesSelect, useTaxesSelect, useUpdateItem } from "@/hooks";
 import { currentServiceStore, currentStoreStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
 import { formatCurrency, parseCurrency } from "@/utils";
+import { useMemo } from "react";
 
 type ServiceModalProps = {
   action: "add" | "edit";
@@ -39,9 +40,30 @@ export function ServiceModal({ action }: ServiceModalProps) {
     isPending: isUpdating,
     reset: resetMutate,
   } = useUpdateItem();
-  const { categoryOptions, isLoading, isError, refetch } = useGetCategories();
-  const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
+  const { categoryOptions, isLoading, isError, refetch, pagination: categoryPagination, setPage: setCategoryPage } = useCategoriesSelect();
+  const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useTaxesSelect();
   const isOpen = open[modalId];
+
+  const finalCategoryOptions = useMemo(() => {
+    const currentId = currentService?.categoryId || (currentService as any)?.category_id;
+    const currentName = (currentService as any)?.category;
+
+    if (currentId && currentName && !categoryOptions.find((o) => o.value === currentId)) {
+      return [{ label: currentName, value: currentId }, ...categoryOptions];
+    }
+    return categoryOptions;
+  }, [currentService, categoryOptions]);
+
+  const finalTaxOptions = useMemo(() => {
+    const currentId = currentService?.taxId || currentService?.tax?.id;
+    const currentName = currentService?.tax?.name ? `${currentService.tax.name} (${currentService.tax.rate}%)` : null;
+
+    if (currentId && currentName && !taxOptions.find((o) => o.value === currentId)) {
+      return [{ label: currentName, value: currentId }, ...taxOptions];
+    }
+    return taxOptions;
+  }, [currentService, taxOptions]);
+
   const {
     register,
     handleSubmit,
@@ -170,7 +192,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                   <PaginatedSelect
                     label="Imposto (Opcional)"
                     value={value}
-                    options={taxOptions}
+                    options={finalTaxOptions}
                     onChange={onChange}
                     isLoading={isTaxesLoading}
                     pagination={taxPagination}
@@ -201,11 +223,22 @@ export function ServiceModal({ action }: ServiceModalProps) {
                 )}
               />
 
-              <RHFSelect
+              <Controller
                 control={control}
-                label="Categoria"
-                options={categoryOptions}
                 name="categoryId"
+                render={({ field: { onChange, value } }) => (
+                  <PaginatedSelect
+                    label="Categoria"
+                    value={value}
+                    options={finalCategoryOptions}
+                    onChange={onChange}
+                    isLoading={isLoading}
+                    pagination={categoryPagination}
+                    onPageChange={setCategoryPage}
+                    placeholder="Selecione uma categoria"
+                    className="w-full"
+                  />
+                )}
               />
             </div>
 

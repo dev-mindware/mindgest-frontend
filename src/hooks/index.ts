@@ -17,3 +17,4 @@ export * from "./cash-session";
 export * from "./stock";
 export * from "./pos";
 export * from "./users";
+export * from "./chatbot/use-chatbot";

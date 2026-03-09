@@ -1,20 +1,28 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  invoiceService,
-  invoiceReceiptService,
-  proformaService,
-} from "@/services";
-import { InvoiceResponse } from "@/types";
+import { invoiceService, invoiceReceiptService } from "@/services";
+import { InvoicePayload, InvoiceResponse } from "@/types";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
 
 type ConversionType = "invoice" | "invoice-receipt";
 
-/** Maps proforma InvoiceItem[] to the payload items format expected by both endpoints. */
-function mapItems(items: InvoiceResponse["items"]) {
-  return items.map((item) => ({
-    id: item.itemsId,
-    quantity: item.quantity,
-  }));
+function mapItems(
+  items: InvoiceResponse["items"],
+  defaultType: "PRODUCT" | "SERVICE" = "PRODUCT",
+): InvoicePayload["items"] {
+  return items.map((item) => {
+    if (item.itemsId) {
+      return {
+        id: item.itemsId,
+        quantity: item.quantity,
+      };
+    }
+    return {
+      name: item.name,
+      price: item.unitPrice,
+      quantity: item.quantity,
+      type: (item.item?.type as "PRODUCT" | "SERVICE") || defaultType,
+    };
+  });
 }
 
 async function createDocument(type: ConversionType, proforma: InvoiceResponse) {
@@ -59,7 +67,6 @@ export function useConvertProforma() {
     }) => {
       const res = await createDocument(type, proforma);
       const id = res.data?.id ?? res.data?.data?.id;
-      await proformaService.deleteProforma(proforma.id);
       return { id, type };
     },
     onSuccess: (result, { type }) => {

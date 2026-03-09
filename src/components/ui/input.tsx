@@ -32,16 +32,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const isQuantidade = type === "quantity";
     const isDate = type === "date";
 
-    const [quantity, setQuantity] = React.useState<number>(
-      Number(value ?? props.defaultValue) || 0
-    );
-
-    React.useEffect(() => {
-      if (typeof value !== "undefined") {
-        setQuantity(Number(value));
-      }
-    }, [value]);
-
     const inputType = isPassword
       ? showPassword
         ? "text"
@@ -53,21 +43,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           : type;
 
     const propagateChange = (newValue: number) => {
-      setQuantity(newValue);
-      if (onChange && name) {
-        const syntheticEvent = {
-          target: { name, value: newValue },
+      if (onChange) {
+        const event = {
+          target: { name: name || "", value: String(newValue) },
+          currentTarget: { name: name || "", value: String(newValue) },
         } as unknown as React.ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
+        onChange(event);
       }
     };
 
+    const currentValue = Number(value ?? props.defaultValue ?? 0);
+
     const handleDecrement = () => {
-      propagateChange(Math.max(0, quantity - 1));
+      propagateChange(Math.max(0, currentValue - 1));
     };
 
     const handleIncrement = () => {
-      propagateChange(quantity + 1);
+      propagateChange(currentValue + 1);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +103,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 min={0}
                 max={999999}
                 step={1}
-                value={quantity}
+                value={currentValue}
                 onChange={handleChange}
                 className={cn(
                   "w-full bg-transparent placeholder:text-muted-foreground text-foreground outline-none text-center",

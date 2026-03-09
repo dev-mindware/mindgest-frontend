@@ -17,7 +17,7 @@ type CreditNotesProps = {
 export function CreditNotes({ invoiceId, invoiceType }: CreditNotesProps) {
   const { data, isLoading, isError, refetch } = useFetchById<InvoiceDetails>(
     "invoice",
-    invoiceType === "invoice-receipt" ? "/invoice/receipt" : "/invoice/normal",
+    invoiceType === "invoice-receipt" ? "/invoice/invoice-receipt" : "/invoice/normal",
     invoiceId
   );
 
@@ -57,7 +57,7 @@ export function CreditNotes({ invoiceId, invoiceType }: CreditNotesProps) {
         title="Notas de Crédito"
         suTitle={`Referente à Fatura: ${data.invoiceNumber}`}
       />
-      <CreditNoteForm invoice={data} />
+      <CreditNoteForm invoice={data} docType={invoiceType} />
     </div>
   );
 }

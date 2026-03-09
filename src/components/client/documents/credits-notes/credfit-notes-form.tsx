@@ -9,20 +9,26 @@ import { InvoiceDetails, ReceiptDetails } from "@/types/credit-note";
 import { isInvoice, isReceipt } from "@/types/credit-notes-guards";
 import { mapDocumentToCreditNoteDefaults } from "@/utils/credit-notes";
 import { formatCurrency, parseCurrency } from "@/utils";
-import { ButtonSubmit, Input, RHFSelect, Textarea } from "@/components";
+import { ButtonSubmit, Input, InputCurrency, RHFSelect, Textarea, Separator, Button } from "@/components";
 import { ErrorMessage } from "@/utils/messages";
+
+
+import { Trash2 } from "lucide-react";
+import { ReasonNotesSection } from "./sections/ReasonNotesSection";
+import { ClientDocumentSection } from "./sections/ClientDocumentSection";
+import { ItemsSummarySection } from "./sections/ItemsSummarySection";
 
 type Props = {
   invoice: InvoiceDetails | ReceiptDetails;
+  docType?: "invoice-receipt" | "invoice-normal";
 };
 
-export function CreditNoteForm({ invoice }: Props) {
+export function CreditNoteForm({ invoice, docType }: Props) {
   const router = useRouter();
   const { mutateAsync: annulationNote } = useAnnulationNote();
   const { mutateAsync: createCreditNote } = useCreateCreditNote();
 
   const isInvoiceDoc = isInvoice(invoice);
-  const isReceiptDoc = isReceipt(invoice);
 
   const {
     register,
@@ -39,17 +45,27 @@ export function CreditNoteForm({ invoice }: Props) {
   const reason = useWatch({ control, name: "reason" });
   const watchedItems = useWatch({ control, name: "invoiceBody.items" });
 
-  // Recalculo apenas para INVOICE
+  // Inicializar cliente selecionado
   useEffect(() => {
-    if (!isInvoiceDoc) return;
-    if (reason === "ANNULATION") return;
+    if (invoice.client) {
+      setValue("invoiceBody.client", {
+        id: invoice.client.id,
+        name: invoice.client.name,
+        taxNumber: (invoice.client as any).taxNumber || "",
+        address: (invoice.client as any).address || "",
+        phone: (invoice.client as any).phone || "",
+      });
+    }
+  }, [invoice, setValue]);
 
-    const subtotal =
-      watchedItems?.reduce(
-        (acc, item) =>
-          acc + (Number(item.quantity) || 0) * (Number(item.price) || 0),
-        0
-      ) ?? 0;
+  // Recalculo dos totais e delta (creditNote)
+  useEffect(() => {
+    if (reason === "ANNULMENT") return;
+
+    const subtotal = watchedItems?.reduce(
+      (acc: number, item: any) => acc + (Number(item.quantity) || 0) * (Number(item.price) || 0),
+      0
+    ) ?? 0;
 
     const base = invoice.subtotal || 1;
     const taxRate = invoice.taxAmount / base;
@@ -63,20 +79,58 @@ export function CreditNoteForm({ invoice }: Props) {
     setValue("invoiceBody.taxAmount", +tax.toFixed(2));
     setValue("invoiceBody.discountAmount", +discount.toFixed(2));
     setValue("invoiceBody.total", +total.toFixed(2));
-  }, [watchedItems, reason]);
 
-  const { fields } = useFieldArray({
+    const deltaItems = watchedItems?.map((item: any) => {
+      const original = (invoice as any).items?.find((i: any) => i.id === item.id);
+      if (!original) return null;
+
+      const originalPrice = original.unitPrice;
+      const originalQuantity = original.quantity;
+      const originalTotal = originalPrice * originalQuantity;
+
+      const newPrice = Number(item.price) || 0;
+      const newQuantity = Number(item.quantity) || 0;
+      const newTotal = newPrice * newQuantity;
+
+      return {
+        id: original.id,
+        itemsId: original.id,
+        itemName: original.name,
+        originalPrice,
+        newPrice,
+        originalQuantity,
+        quantity: newQuantity,
+        originalTotal,
+        newTotal,
+        originalTaxAmount: originalTotal * taxRate,
+        newTaxAmount: newTotal * taxRate,
+      };
+    }).filter(Boolean) as any[];
+
+    const deltaSubtotal = Math.max(0, deltaItems.reduce((acc, i) => acc + (i.originalTotal - i.newTotal), 0));
+
+    setValue("creditNote", {
+      subtotal: +deltaSubtotal.toFixed(2),
+      taxAmount: +(deltaSubtotal * taxRate).toFixed(2),
+      discountAmount: +(deltaSubtotal * discountRate).toFixed(2),
+      total: +(deltaSubtotal * (1 + taxRate - discountRate)).toFixed(2),
+      items: deltaItems,
+    });
+  }, [watchedItems, reason, invoice, setValue]);
+
+  const { fields, remove } = useFieldArray({
     control,
     name: "invoiceBody.items",
   });
 
   async function onSubmit(data: CreditNoteFormData) {
     try {
-      if (data.reason === "ANNULATION") {
+      if (data.reason === "ANNULMENT") {
         await annulationNote({
           id: invoice.id,
           reason: data.reason,
           notes: data.notes ?? "",
+          managerBarcode: data.managerBarcode,
         });
       } else {
         await createCreditNote({
@@ -98,60 +152,36 @@ export function CreditNoteForm({ invoice }: Props) {
       onSubmit={handleSubmit(onSubmit)}
       className="p-8 space-y-8 border rounded-lg"
     >
-      <RHFSelect
-        label="Motivo"
-        name="reason"
+      <ReasonNotesSection
         control={control}
-        options={[
-          ...(isInvoiceDoc
-            ? [{ value: "CORRECTION", label: "Correção" }]
-            : []),
-          { value: "ANNULATION", label: "Anulação Total" },
-        ]}
+        register={register}
+        errors={errors}
+        isInvoiceDoc={isInvoiceDoc}
       />
 
-      <Textarea
-        label="Notas"
-        {...register("notes")}
-        error={errors?.notes?.message}
-      />
+      {reason === "CORRECTION" && (
+        <div className="space-y-8">
+          <ClientDocumentSection
+            register={register}
+            errors={errors}
+            isInvoiceDoc={isInvoiceDoc}
+            docType={docType}
+          />
 
-      {isInvoiceDoc && reason === "CORRECTION" && (
-        <div className="space-y-6">
-          {fields.map((field, index) => {
-            const originalItem = invoice.items[index];
-            return (
-              <div key={field.id} className="grid md:grid-cols-3 gap-4">
-                <Input
-                  type="number"
-                  label="Quantidade"
-                  {...register(`invoiceBody.items.${index}.quantity`, {
-                    valueAsNumber: true,
-                  })}
-                />
+          <Separator />
 
-                <Controller
-                  control={control}
-                  name={`invoiceBody.items.${index}.price`}
-                  render={({ field }) => (
-                    <Input
-                      label="Preço Unit."
-                      value={formatCurrency(field.value ?? 0)}
-                      onChange={(e) =>
-                        field.onChange(parseCurrency(e.target.value))
-                      }
-                    />
-                  )}
-                />
-              </div>
-            );
-          })}
+          <ItemsSummarySection
+            control={control}
+            register={register}
+            fields={fields}
+            remove={remove}
+          />
         </div>
       )}
 
       <div className="flex justify-end">
         <ButtonSubmit className="w-max" isLoading={isSubmitting}>
-          {reason === "ANNULATION"
+          {reason === "ANNULMENT"
             ? "Confirmar Anulação"
             : "Emitir Nota de Crédito"}
         </ButtonSubmit>

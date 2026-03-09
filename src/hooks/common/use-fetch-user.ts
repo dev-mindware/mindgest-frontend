@@ -24,6 +24,7 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
     }
 
     if (hasFetched.current) {
+      setIsAuthenticating(false); // Clear loading if we already fetched/avoiding refetch
       return;
     }
 

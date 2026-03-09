@@ -1,6 +1,6 @@
 "use client"
 import { DinamicBreadcrumb } from "@/components/custom";
-import { NotificationDropdown } from "@/components/shared/notifications";
+import { NotificationDropdown, ChatbotSheet } from "@/components/shared";
 import { Separator, SidebarTrigger } from "@/components/ui";
 import { useQueryState } from "nuqs";
 import { Icon, Input, Avatar, AvatarFallback, AvatarImage } from "@/components";
@@ -65,6 +65,7 @@ export function PageWrapper({
         )}
 
         <div className="flex items-center mr-4 space-x-2 md:space-x-4">
+          <ChatbotSheet />
           <NotificationDropdown />
           {variant === "counter" && (
             <div className="flex items-center gap-4">

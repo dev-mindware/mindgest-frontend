@@ -1,6 +1,7 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePagination } from "../common/use-pagination";
+import { useLocalPagination } from "../common/use-local-pagination";
 import { Category, CategoryData, CategoryResponse } from "@/types/category";
 import { currentStoreStore } from "@/stores";
 import { categoryService } from "@/services/category-service";
@@ -78,6 +79,35 @@ export function useGetCategories() {
     categories: pagination.data,
     // Backward compatibility
     error: pagination.isError,
+    pagination: {
+      page: pagination.page,
+      totalPages: pagination.totalPages,
+      total: pagination.total,
+    },
+  };
+}
+
+export function useCategoriesSelect() {
+  const { currentStore } = currentStoreStore();
+
+  const pagination = useLocalPagination<Category>({
+    endpoint: "/categories",
+    queryKey: "categories_select",
+    queryParams: {
+      storeId: currentStore?.id,
+    },
+    enabled: !!currentStore?.id,
+  });
+
+  const categoryOptions = pagination.data.map((category) => ({
+    label: category.name,
+    value: category.id,
+  }));
+
+  return {
+    ...pagination,
+    categoryOptions,
+    categories: pagination.data,
     pagination: {
       page: pagination.page,
       totalPages: pagination.totalPages,

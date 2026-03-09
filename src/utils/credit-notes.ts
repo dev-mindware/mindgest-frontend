@@ -3,49 +3,51 @@ import { CreditNoteFormData } from "@/schemas";
 import { isInvoice } from "@/types/credit-notes-guards";
 
 export function mapDocumentToCreditNoteDefaults(
-  doc: InvoiceDetails | ReceiptDetails
+  doc: InvoiceDetails | ReceiptDetails,
 ): CreditNoteFormData {
   if (isInvoice(doc)) {
+    const defaultInvoiceBody = {
+      client: {
+        id: doc.client.id,
+        name: doc.client.name,
+        phone: (doc.client as any).phone || "",
+        address: (doc.client as any).address || "",
+        taxNumber: (doc.client as any).taxNumber || "",
+      },
+      items: doc.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.unitPrice,
+        type: "PRODUCT" as const, // default
+      })),
+      issueDate: new Date().toISOString().split("T")[0],
+      dueDate: doc.dueDate,
+      subtotal: doc.subtotal,
+      taxAmount: doc.taxAmount,
+      discountAmount: doc.discountAmount,
+      total: doc.total ?? doc.totalAmount ?? 0,
+      notes: "",
+    };
+
     return {
       reason: "CORRECTION",
       notes: "",
-      invoiceBody: {
-        client: {
-          id: doc.clientId,
-          name: doc.clientName,
-          email: doc.clientEmail,
-        },
-        items: doc.items.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
-          price: item.unitPrice,
-        })),
-        issueDate: new Date().toISOString().split("T")[0],
-        dueDate: doc.dueDate,
-        subtotal: doc.subtotal,
-        taxAmount: doc.taxAmount,
-        discountAmount: doc.discountAmount,
-        total: doc.totalAmount,
+      managerBarcode: "",
+      invoiceBody: defaultInvoiceBody,
+      creditNote: {
+        subtotal: 0,
+        taxAmount: 0,
+        discountAmount: 0,
+        total: 0,
+        items: [],
       },
     };
   }
 
   return {
-    reason: "ANNULATION",
+    reason: "ANNULMENT",
     notes: "",
-    invoiceBody: {
-      client: {
-        id: doc.clientId,
-        name: doc.clientName,
-        email: doc.clientEmail,
-      },
-      items: [],
-      issueDate: new Date().toISOString().split("T")[0],
-      dueDate: doc.issueDate, // deve vir da fatura recibo
-      subtotal: doc.subtotal,
-      taxAmount: doc.taxAmount,
-      discountAmount: doc.discountAmount,
-      total: doc.totalAmount,
-    },
+    managerBarcode: "",
   };
 }

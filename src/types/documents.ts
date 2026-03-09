@@ -25,14 +25,16 @@ export type CompanyInfo = {
 
 export type InvoiceItem = {
   id: string;
+  name: string;
   quantity: number;
-  price: string;
-  total: string;
-  invoiceId: string;
-  itemsId: string;
-  taxId: string | null;
-  item: ItemData;
-  tax: string | number;
+  unitPrice: number;
+  price?: string;
+  total: number | string;
+  invoiceId?: string;
+  itemsId?: string;
+  taxId?: string | null;
+  item?: ItemData;
+  tax?: string | number;
 };
 
 // ========================
@@ -137,12 +139,14 @@ export type InvoiceReceiptPayload = {
 export type InvoiceData = {
   id: string;
   number: string;
+  invoiceType: string;
   status: string;
   subtotal: string;
   taxAmount: string;
   discountAmount: string;
   receivedValue: string;
   total: string;
+  currencyCode: string;
   notes?: string;
   dueDate: string;
   paidAt?: string;
@@ -187,7 +191,7 @@ export type CreditNoteData = {
   id: string;
   number: string;
   invoiceNumber: string;
-  reason: "CORRECTION" | "ANNULATION";
+  reason: "CORRECTION" | "ANNULMENT";
   status: "DRAFT" | "ISSUED" | "CANCELLED";
   total: number;
   taxAmount: number;

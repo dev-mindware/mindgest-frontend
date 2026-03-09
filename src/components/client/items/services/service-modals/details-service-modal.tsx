@@ -23,15 +23,15 @@ export function DetailsServiceModal() {
       id="view-service"
       title={
         <>
-          <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10">
+          <div className="flex items-center justify-center mx-auto rounded-full w-20 h-20 bg-primary/10 shadow-sm transition-transform hover:scale-105">
             <Icon name="Store" className="w-10 h-10 text-primary" />
           </div>
 
           <div className="text-center space-y-1 mt-4">
-            <h2 className="text-2xl font-bold">{currentService.name}</h2>
+            <h2 className="text-2xl font-bold tracking-tight">{currentService.name}</h2>
             <div className="flex items-center justify-center gap-2">
-              {currentService.category && (
-                <span className="text-xs text-muted-foreground">
+              {currentService.sku && (
+                <span className="text-xs font-mono text-muted-foreground uppercase">
                   SKU: {currentService.sku}
                 </span>
               )}
@@ -40,21 +40,24 @@ export function DetailsServiceModal() {
           </div>
         </>
       }
-      className="!max-h-[85vh] w-full max-w-md"
+      className="!max-h-[85vh] w-full max-w-md border-none shadow-2xl"
       footer={
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={() => closeModal("view-service")}>
+        <div className="flex justify-end pt-2">
+          <Button variant="outline" className="px-8" onClick={() => closeModal("view-service")}>
             Fechar
           </Button>
         </div>
       }
     >
-      <div className="space-y-6 text-sm">
-        {(currentService.description || currentService.category) && (
-          <section className="space-y-2">
-            <h3 className="font-semibold text-foreground">
+      <div className="space-y-6 py-2 scrollbar-hide overflow-y-auto pr-1 text-sm">
+        <section className="space-y-3">
+          <div className="flex items-center gap-2 border-b pb-1 mb-2">
+            <Icon name="Info" className="w-4 h-4 text-primary" />
+            <h3 className="font-bold text-foreground uppercase tracking-wider text-xs">
               Informações Gerais
             </h3>
+          </div>
+          <div className="grid gap-2 pl-1">
             <DetailRow label="Descrição" value={currentService.description} />
             <DetailRow
               label="Código de Barras"
@@ -62,12 +65,15 @@ export function DetailsServiceModal() {
             />
             <DetailRow label="Categoria" value={currentService.category} />
             <DetailRow label="Tipo" value="Serviço" />
-          </section>
-        )}
+          </div>
+        </section>
 
-        {(currentService.price || currentService.cost) && (
-          <section className="space-y-2">
-            <h3 className="font-semibold text-foreground">Valores</h3>
+        <section className="space-y-3">
+          <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
+            <Icon name="Coins" className="w-4 h-4" />
+            <h3 className="font-bold uppercase tracking-wider text-xs">Financeiro</h3>
+          </div>
+          <div className="grid gap-2 pl-1">
             <DetailRow
               label="Preço de Venda"
               value={
@@ -84,23 +90,25 @@ export function DetailsServiceModal() {
                   : undefined
               }
             />
-          </section>
-        )}
+            {currentService.tax && (
+              <DetailRow
+                label="Imposto"
+                value={`${currentService.tax.name} (${currentService.tax.rate}%)`}
+              />
+            )}
+          </div>
+        </section>
 
-        {(currentService.company ||
-          currentService.createdAt ||
-          currentService.updatedAt) && (
-          <section className="space-y-2">
-            <h3 className="font-semibold text-foreground">
-              Informações Técnicas
-            </h3>
-            <DetailRow label="Loja" value={currentService.storeId} />
+        <section className="space-y-3 opacity-80 mt-4 pt-2 border-t border-dashed">
+          <div className="grid gap-1 pl-1">
+            <p className="text-[10px] text-muted-foreground uppercase font-semibold">Metadata</p>
+            <DetailRow label="ID de Loja" value={currentService.storeId} />
             <DetailRow
               label="Criado em"
               value={formatDateTime(currentService.createdAt)}
             />
-          </section>
-        )}
+          </div>
+        </section>
       </div>
     </GlobalModal>
   );

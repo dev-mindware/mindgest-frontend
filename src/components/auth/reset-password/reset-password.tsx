@@ -1,12 +1,12 @@
 "use client";
 import Logo from "@/assets/brand.png";
 import Image from "next/image";
-import { Button, ButtonSubmit, Input } from "@/components";
+import { ButtonSubmit, Input, ResetPasswordSkeleton } from "@/components";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChangePasswordFormData, changePasswordSchema } from "@/schemas";
 import { ErrorMessage } from "@/utils/messages";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useResetPassword } from "@/hooks/auth";
 import { AuthHeader, BackToLogin } from "../_components";
 import { Suspense } from "react";
@@ -14,10 +14,9 @@ import { useModal } from "@/stores";
 import { SuccessResetModal } from "./success-reset-modal";
 
 function ResetPasswordForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   const {
     register,
@@ -97,13 +96,7 @@ function ResetPasswordForm() {
 
 export function ResetPassword() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center p-8">
-          Carregando...
-        </div>
-      }
-    >
+    <Suspense fallback={<ResetPasswordSkeleton />}>
       <ResetPasswordForm />
     </Suspense>
   );
