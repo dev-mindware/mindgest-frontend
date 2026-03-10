@@ -24,8 +24,13 @@ export const invoiceService = {
   createCreditNote: (id: string, data: CreditNoteFormData) =>
     api.post(`/credit-note/${id}/correction`, data),
 
-  annulationNote: (id: string, reason: string, notes: string) =>
+  annulationNote: (
+    id: string,
+    reason: string,
+    notes?: string,
+    managerBarcode?: string,
+  ) =>
     api.delete(`/credit-note/${id}/annulment`, {
-      data: { reason, notes },
+      data: { reason, notes, managerBarcode },
     }),
 };

@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { NotificationDetail } from "@/components/shared/notifications";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -50,6 +51,7 @@ export default function RootLayout({
           storageKey="mindware-theme"
         >
           <Analytics />
+          <SpeedInsights />
           <ReactQueryProvider>
             <AuthProvider>
               <NuqsAdapter>

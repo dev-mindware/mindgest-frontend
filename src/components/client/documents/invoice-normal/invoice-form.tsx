@@ -3,7 +3,7 @@ import { ErrorMessage } from "@/utils/messages";
 import { useCallback, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Textarea } from "@/components";
+import { Button, Input, RHFSelect, Textarea } from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import {
   useClientSelection,
@@ -34,6 +34,7 @@ export function InvoiceForm() {
       },
       clientId: "",
       notes: "",
+      currencyCode: "AOA" as const,
       storeId: "",
     },
   });
@@ -142,6 +143,7 @@ export function InvoiceForm() {
           retentionAmount: totals.retentionAmount,
           discountAmount: totals.discountAmount,
           subtotal: totals.subtotal,
+          currencyCode: data.currencyCode,
           notes: data.notes || undefined,
           ...(user?.role === "OWNER" &&
             currentStore?.id && { storeId: currentStore?.id }),
@@ -187,6 +189,17 @@ export function InvoiceForm() {
           {...register("dueDate")}
           error={errors.dueDate?.message}
           required
+        />
+        <RHFSelect
+          label="Moeda"
+          name="currencyCode"
+          control={control}
+          placeholder="Selecione a moeda"
+          options={[
+            { value: "AOA", label: "AOA" },
+            { value: "USD", label: "USD" },
+            { value: "EUR", label: "EUR" },
+          ]}
         />
 
         <AsyncCreatableSelectField

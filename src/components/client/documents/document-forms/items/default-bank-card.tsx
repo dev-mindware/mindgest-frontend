@@ -29,7 +29,23 @@ export function DefaultBankCard() {
         );
     }
 
-    if (!defaultBank) return null;
+    if (!defaultBank) {
+        return (
+            <div className="rounded-lg border-2 border-dashed bg-card/50 p-6 flex flex-col items-center justify-center text-center space-y-2">
+                <div className="bg-primary/10 p-3 rounded-full">
+                    <Building2 className="h-6 w-6 text-primary" />
+                </div>
+                <div className="space-y-1">
+                    <p className="text-sm font-semibold text-foreground">
+                        Nenhum Banco Registado
+                    </p>
+                    <p className="text-xs text-muted-foreground max-w-[200px]">
+                        Por favor, vá ao menu de <strong>Configurações</strong> para registar os seus dados bancários.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="rounded-lg border bg-card p-4 space-y-3">

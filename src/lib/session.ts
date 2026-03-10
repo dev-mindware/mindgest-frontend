@@ -1,4 +1,8 @@
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/constants";
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  SESSION_USER_KEY,
+} from "@/constants";
 import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -34,6 +38,17 @@ export async function createSession(payload: SessionPayload) {
 
 export async function destroySession() {
   const authCookies = await cookies();
-  authCookies.delete(ACCESS_TOKEN_KEY);
-  authCookies.delete(REFRESH_TOKEN_KEY);
+
+  // Explicitly set to expired with same options used during creation
+  const options = {
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
+    httpOnly: true,
+    secure: true,
+  };
+
+  authCookies.set(ACCESS_TOKEN_KEY, "", options);
+  authCookies.set(REFRESH_TOKEN_KEY, "", options);
+  authCookies.set(SESSION_USER_KEY, "", options);
 }

@@ -1,6 +1,8 @@
 import axios from "axios";
 import { getAccessToken } from "@/actions/token";
 
+let accessTokenCache: string | null = null;
+
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
@@ -31,9 +33,13 @@ export const api = axios.create({
 import { currentStoreStore } from "@/stores";
 
 api.interceptors.request.use(async (config) => {
-  const token = await getAccessToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  // Use cache if available, otherwise fetch and cache
+  if (!accessTokenCache) {
+    accessTokenCache = await getAccessToken();
+  }
+
+  if (accessTokenCache) {
+    config.headers.Authorization = `Bearer ${accessTokenCache}`;
   }
 
   // Routes that require storeId injection
@@ -127,6 +133,20 @@ api.interceptors.response.use(
       return Promise.reject(err);
     }
 
+    if (err.response?.status === 404) {
+      const isAuthCritical =
+        original.url.includes("/auth/profile") ||
+        original.url.includes("/api/auth/refresh");
+
+      if (isAuthCritical) {
+        console.warn("🚨 [API] 404 em rota crítica de auth. Forçando logout.");
+        accessTokenCache = null;
+        if (typeof window !== "undefined") {
+          window.location.replace("/api/auth/logout");
+        }
+      }
+    }
+
     if (err.response?.status === 401) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
@@ -151,6 +171,7 @@ api.interceptors.response.use(
         const newToken = response.data?.accessToken;
 
         if (newToken) {
+          accessTokenCache = newToken; // Update cache
           processQueue(null, newToken);
           original.headers.Authorization = `Bearer ${newToken}`;
           return api(original);
@@ -158,10 +179,13 @@ api.interceptors.response.use(
           throw new Error("Novo access token não recebido após reautenticação");
         }
       } catch (refreshError) {
+        accessTokenCache = null; // Clear cache on failure
         processQueue(refreshError, null);
         console.error("Erro ao renovar token:", refreshError);
 
-        window.location.replace("/auth/login");
+        if (typeof window !== "undefined") {
+          window.location.replace("/api/auth/logout");
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

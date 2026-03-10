@@ -20,6 +20,24 @@ export const CompanySchema = z.object({
 
 export type CompanyFormData = z.infer<typeof CompanySchema>;
 
+const ClientReceiptSchema = z.object({
+  name: z.string().trim().optional().or(z.literal("")),
+  taxNumber: taxNumberSchema.optional().or(z.literal("")),
+  address: z
+    .string()
+    .trim()
+    .min(5, "O endereço deve ter pelo menos 5 caracteres")
+    .optional()
+    .or(z.literal("")),
+  phone: phoneNumberSchema.optional().or(z.literal("")),
+  email: z
+    .string()
+    .trim()
+    .email("O email informado não é válido")
+    .optional()
+    .or(z.literal("")),
+});
+
 const ClientSchema = z.object({
   name: z
     .string()
@@ -70,6 +88,7 @@ const InvoiceBaseSchema = z.object({
   globalRetention: z.number().min(0),
 
   globalDiscount: z.number().min(0),
+  currencyCode: z.enum(["AOA", "USD", "EUR"]),
   notes: z.string().optional(),
 });
 
@@ -113,6 +132,7 @@ export const ProformaSchema = InvoiceBaseSchema.extend({
 export type ProformaFormData = z.infer<typeof ProformaSchema>;
 
 export const InvoiceReceiptSchema = InvoiceBaseSchema.extend({
+  client: ClientReceiptSchema,
   paymentMethod: z
     .string()
     .trim()
