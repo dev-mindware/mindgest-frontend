@@ -80,9 +80,14 @@ export const menuItems: MenuStructure = {
           url: "/management/stock",
         },
         {
+          name: "Reservar",
+          url: "/management/reserve",
+          minPlan: "Pro",
+        },
+        {
           name: "POS",
           url: "/management/pos",
-          minPlan: "Smart",
+          minPlan: "Pro",
         },
       ],
     },
@@ -105,7 +110,7 @@ export const menuItems: MenuStructure = {
         {
           name: "Acesso e Auditoria",
           url: "/reports/access-control",
-          minPlan: "Smart",
+          minPlan: "Pro",
         },
       ],
     },
@@ -135,7 +140,7 @@ export const menuItems: MenuStructure = {
       url: "/pos/movements",
       icon: <Icon name="Wallet" className="w-5 h-5" />,
       roles: ["CASHIER"],
-      minPlan: "Pro",
+      minPlan: "Smart",
     },
     {
       name: "Configurações",

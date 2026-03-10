@@ -272,7 +272,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
             />
           </div>
 
-          <FeatureGate minPlan="Pro" fallback="hidden">
+          <FeatureGate minPlan="Smart" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
               <Controller
                 control={control}

@@ -101,7 +101,7 @@ export function DetailsProductModal() {
           </div>
         </section>
 
-        <FeatureGate minPlan="Pro">
+        <FeatureGate minPlan="Smart">
           <section className="space-y-3">
             <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
               <Icon name="Scale" className="w-4 h-4" />

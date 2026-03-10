@@ -1,10 +1,10 @@
-import { HeroImageSide, LoginForm } from "@/components";
+import { LoginHeroComposition, LoginForm } from "@/components";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2">
-      <div className="hidden lg:block relative bg-black">
-        <HeroImageSide source="/login-hero.webp" />
+      <div className="hidden lg:block">
+        <LoginHeroComposition />
       </div>
 
       <div className="flex items-center justify-center bg-background p-6 md:p-10">
