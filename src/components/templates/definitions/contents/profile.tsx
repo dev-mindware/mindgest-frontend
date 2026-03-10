@@ -74,7 +74,7 @@ export function Profile() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl" suppressHydrationWarning>
+    <div className="space-y-6" suppressHydrationWarning>
       <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between border-b pb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Meu Perfil</h2>
@@ -82,7 +82,7 @@ export function Profile() {
             Gerencie suas informações pessoais e da empresa.
           </p>
         </div>
-      </div>
+      </div>  
 
       <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
         <ProfileAvatar

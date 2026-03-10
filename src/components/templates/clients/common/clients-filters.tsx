@@ -7,8 +7,6 @@ import { FilterPopover } from "@/components/shared";
 import { useURLSearchParams } from "@/hooks/common";
 import { useClientsFilters } from "@/hooks/entities";
 
-import { cn } from "@/lib";
-
 export function ClientsFiltersTSX({
   children,
 }: {
@@ -26,17 +24,16 @@ export function ClientsFiltersTSX({
     search.length > 0;
 
   return (
-    <div
-      className=
-      "w-full flex flex-col gap-4 px-2 sm:px-0"
-    >
-      {children && <div className="w-full justify-end sm:w-auto">{children}</div>}
-      {/* Search Input and Action Button */}
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
+      {children && (
+        <div className="w-full justify-end sm:w-auto">{children}</div>
+      )}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-baseline">
         <SearchHandlerWrapper
           search={search}
           setSearch={setSearch}
           className="w-full"
+          placeholder="Pesquisar clientes"
         />
         <FilterPopover
           icon="Tag"
@@ -72,16 +69,11 @@ export function ClientsFiltersTSX({
 
       {/* Filters - Grid layout */}
       <div className="flex flex-col sm:flex-row gap-3">
-
         <DatePicker
           value={
-            filters.createdBefore
-              ? new Date(filters.createdBefore)
-              : undefined
+            filters.createdBefore ? new Date(filters.createdBefore) : undefined
           }
-          onChange={(_, formatted) =>
-            setFilters({ createdBefore: formatted })
-          }
+          onChange={(_, formatted) => setFilters({ createdBefore: formatted })}
           placeholder="Cadastrado antes de.."
         />
 

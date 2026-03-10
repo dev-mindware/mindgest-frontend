@@ -1,5 +1,5 @@
-"use client"
-
+"use client";
+import { useNotificationSettingsStore } from "@/stores/notifications";
 import {
   Select,
   SelectContent,
@@ -9,12 +9,14 @@ import {
   Separator,
   Label,
   Switch,
-} from "@/components"
+} from "@/components";
 
 export function Notification() {
+  const { soundEnabled, soundType, setSoundEnabled, setSoundType } =
+    useNotificationSettingsStore();
+
   return (
     <div>
-      {/* Notificações */}
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-semibold">Notificações</h2>
@@ -90,7 +92,6 @@ export function Notification() {
         </div>
       </section>
 
-    
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-semibold">Sons</h2>
@@ -102,8 +103,13 @@ export function Notification() {
 
         <div className="space-y-6 md:p-8">
           <SettingRow
-            label="Desativar o som nas notificações"
-            control={<Switch />}
+            label="Ativar som nas notificações"
+            control={
+              <Switch
+                checked={soundEnabled}
+                onCheckedChange={setSoundEnabled}
+              />
+            }
           />
 
           <Separator />
@@ -111,14 +117,23 @@ export function Notification() {
           <SettingRow
             label="Som padrão"
             control={
-              <Select defaultValue="Paradise">
+              <Select value={soundType} onValueChange={setSoundType}>
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Escolha o som" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Paradise">Paradise</SelectItem>
-                  <SelectItem value="Beep">Beep</SelectItem>
-                  <SelectItem value="Wave">Wave</SelectItem>
+                  <SelectItem value="/sound-effects/notification-1.mp3">
+                    Paradise
+                  </SelectItem>
+                  <SelectItem value="/sound-effects/notification-2.mp3">
+                    Ding
+                  </SelectItem>
+                  <SelectItem value="/sound-effects/notification-3.mp3">
+                    Beep
+                  </SelectItem>
+                  <SelectItem value="/sound-effects/notification-error.mp3">
+                    Alert
+                  </SelectItem>
                 </SelectContent>
               </Select>
             }
@@ -128,7 +143,7 @@ export function Notification() {
         </div>
       </section>
     </div>
-  )
+  );
 }
 
 // Componente reutilizável para linha de configuração
@@ -137,9 +152,9 @@ function SettingRow({
   description,
   control,
 }: {
-  label: string
-  description?: string
-  control: React.ReactNode
+  label: string;
+  description?: string;
+  control: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -151,5 +166,5 @@ function SettingRow({
       </div>
       <div className="mt-2 sm:mt-0">{control}</div>
     </div>
-  )
+  );
 }

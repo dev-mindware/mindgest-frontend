@@ -1,14 +1,13 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Card, CardContent, Badge, Icon } from "@/components";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { GenericTable, Column } from "@/components/common/generic-table";
 import { ButtonOnlyAction } from "@/components/common/button-actions/button-only-action";
 import { PosCardSkeleton } from "./pos-skeletons";
-import { cn } from "@/lib/utils";
 import { CashSession } from "@/types/cash-session";
-import { useDeleteCashSession } from "@/hooks/entities";
 import { EmptyState } from "@/components/common/empty-state";
 import { useModal } from "@/stores";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";

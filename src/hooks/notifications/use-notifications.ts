@@ -1,20 +1,50 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { useModal } from "@/stores/modal/use-modal-store";
-import { useCurrentNotificationStore } from "@/stores";
+import {
+  useCurrentNotificationStore,
+  useNotificationSettingsStore,
+} from "@/stores";
 import { NotificationParams, NotificationType } from "@/types/notification";
 import { notificationsService } from "@/services/notifications-service";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 let socket: Socket;
 
 export function useNotifications(
-  initialFilters: Omit<NotificationParams, "skip" | "take"> = {}
+  initialFilters: Omit<NotificationParams, "skip" | "take"> = {},
 ) {
   const queryClient = useQueryClient();
   const { openModal } = useModal();
   const { setCurrentNotification } = useCurrentNotificationStore();
+  const { soundEnabled, soundType } = useNotificationSettingsStore();
+
+  // O áudio é carregado via ref para não causar montagens desnecessárias
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Inicializar o áudio no client-side com o som escolhido (soundType)
+    audioRef.current = new Audio(soundType);
+    audioRef.current.volume = 0.5; // Ajustar o volume conforme necessário
+  }, [soundType]);
+
+  const playNotificationSound = () => {
+    if (audioRef.current && soundEnabled) {
+      // O play() retorna uma promessa que rejeita se o utilizador não interagiu com a página
+      audioRef.current.currentTime = 0; // Reiniciar o áudio se já estiver a tocar
+      audioRef.current.play().catch((error) => {
+        console.warn(
+          "Navegador bloqueou a reprodução automática do som da notificação:",
+          error,
+        );
+      });
+    }
+  };
 
   const TAKE = 5;
 
@@ -28,6 +58,7 @@ export function useNotifications(
     error,
     refetch,
   } = useInfiniteQuery({
+    // A query key DEPENDE dos filtros, assim quando os filtros mudarem, o cache buscará os novos dados corretos da API
     queryKey: ["notifications", initialFilters],
     queryFn: ({ pageParam = 0 }) =>
       notificationsService.getNotifications({
@@ -61,23 +92,29 @@ export function useNotifications(
 
     socket.on("new_notification", (newNotification: NotificationType) => {
       // Optimistically update the cache
-      queryClient.setQueryData<any>(["notifications", initialFilters], (oldData: any) => {
-        if (!oldData) return oldData;
+      queryClient.setQueryData<any>(
+        ["notifications", initialFilters],
+        (oldData: any) => {
+          if (!oldData) return oldData;
 
-        // Insert into the first page
-        const newPages = [...oldData.pages];
-        if (newPages.length > 0) {
-          newPages[0] = {
-            ...newPages[0],
-            data: [newNotification, ...newPages[0].data]
+          // Tocar som de notificação quando chegar uma nova
+          playNotificationSound();
+
+          // Insert into the first page
+          const newPages = [...oldData.pages];
+          if (newPages.length > 0) {
+            newPages[0] = {
+              ...newPages[0],
+              data: [newNotification, ...newPages[0].data],
+            };
+          }
+
+          return {
+            ...oldData,
+            pages: newPages,
           };
-        }
-
-        return {
-          ...oldData,
-          pages: newPages,
-        };
-      });
+        },
+      );
     });
 
     return () => {
@@ -93,21 +130,24 @@ export function useNotifications(
       // For now, simpler to just invalidate or manually update if critical.
       // Let's manually update cache for responsiveness
 
-      queryClient.setQueryData<any>(["notifications", initialFilters], (oldData: any) => {
-        if (!oldData) return oldData;
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page: any) => ({
-            ...page,
-            data: page.data.map((n: NotificationType) =>
-              n.id === id ? { ...n, isRead: true } : n
-            )
-          }))
-        };
-      });
+      queryClient.setQueryData<any>(
+        ["notifications", initialFilters],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((n: NotificationType) =>
+                n.id === id ? { ...n, isRead: true } : n,
+              ),
+            })),
+          };
+        },
+      );
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] }); 
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       // Optional: Re-fetch to confirm
     },
   });
@@ -115,16 +155,19 @@ export function useNotifications(
   const { mutateAsync: deleteNotification } = useMutation({
     mutationFn: notificationsService.deleteNotification,
     onMutate: async (id) => {
-      queryClient.setQueryData<any>(["notifications", initialFilters], (oldData: any) => {
-        if (!oldData) return oldData;
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page: any) => ({
-            ...page,
-            data: page.data.filter((n: NotificationType) => n.id !== id)
-          }))
-        };
-      });
+      queryClient.setQueryData<any>(
+        ["notifications", initialFilters],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data.filter((n: NotificationType) => n.id !== id),
+            })),
+          };
+        },
+      );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
@@ -150,6 +193,8 @@ export function useNotifications(
     markAsRead,
     deleteNotification,
     handleNotificationClick,
-    refetch
+    refetch,
+    unreadCount:
+      data?.pages[0]?.data.filter((n) => n.isRead === false).length || 0, // Abordagem provisória, idealmente a API devia enviar isto global
   };
 }

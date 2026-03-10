@@ -14,6 +14,7 @@ export function BanksFilters() {
             search={search}
             setSearch={setSearch}
             className="w-full"
+            placeholder="Pesquisar bancos"
           />
         </div>
       </div>

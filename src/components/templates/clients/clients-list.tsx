@@ -11,7 +11,6 @@ import {
   DeleteClientModal,
   DetailsClientModal,
   ClientModal,
-  Button,
   ClientsFiltersSkeleton,
 } from "@/components";
 import { ClientResponse } from "@/types";
@@ -102,11 +101,7 @@ export function ClientsList() {
 
   return (
     <div className="mt-6 space-y-8">
-      <div className="flex justify-end">
-
-      </div>
-      <ClientsFiltersTSX >
-      </ClientsFiltersTSX>
+      <ClientsFiltersTSX />
 
       {clients.length > 0 ? (
         <GenericTable<ClientResponse>
