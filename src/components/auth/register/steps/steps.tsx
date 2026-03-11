@@ -80,7 +80,7 @@ export function RegisterForm() {
         if (error?.response?.data) {
           ErrorMessage(
             error?.response?.data?.message ||
-              "Ocorreu um erro ao criar a conta",
+            "Ocorreu um erro ao criar a conta",
           );
         } else {
           ErrorMessage("Ocorreu um erro desconhecido.Tente novamente");
@@ -93,7 +93,7 @@ export function RegisterForm() {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative grid min-h-svh lg:grid-cols-2">
-          <HeroImageSide source="/register.svg" />
+          <HeroImageSide source="/login2.jpg" />
 
           <div className="relative z-20 flex flex-col p-6 md:p-10">
             <div className="max-w-xl mx-auto space-y-8 text-center md:w-[25rem] w-50">

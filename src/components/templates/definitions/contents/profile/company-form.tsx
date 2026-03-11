@@ -9,6 +9,9 @@ import { User } from "@/types";
 import { useUpdateCompany } from "@/hooks";
 import { ErrorMessage, SucessMessage } from "@/utils";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { companySchema } from "@/schemas/company";
+
 export function CompanyForm({ user }: { user: User }) {
   const [isEditing, setIsEditing] = useState(false);
   const { mutateAsync: updateCompany, isPending } =
@@ -18,7 +21,8 @@ export function CompanyForm({ user }: { user: User }) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CompanyFormData>({
+  } = useForm<CompanyFormData>({  
+    resolver: zodResolver(companySchema),
     defaultValues: {
       name: user?.company?.name || "",
       taxNumber: user?.company?.taxNumber || "",
@@ -27,6 +31,7 @@ export function CompanyForm({ user }: { user: User }) {
       email: user?.company?.email || "",
       website: user?.company?.website || "",
     },
+    mode: "onSubmit"
   });
 
   async function handleCompanySubmit(data: CompanyFormData) {
@@ -49,6 +54,7 @@ export function CompanyForm({ user }: { user: User }) {
 
   console.log("Erros ao editar a empresa...");
   console.log(errors);
+  
   return (
     <div className="bg-card rounded-xl border p-6 shadow-sm">
       <div className="flex items-center justify-between mb-6 pb-4 border-b">

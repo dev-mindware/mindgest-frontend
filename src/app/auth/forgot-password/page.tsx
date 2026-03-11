@@ -4,7 +4,7 @@ export default function ForgotPassPage() {
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2">
       <div className="hidden lg:block">
-        <HeroImageSide source="/ForgotPassword.svg" />
+        <HeroImageSide source="/login2.jpg" />
       </div>
 
       <div className="flex items-center justify-center bg-background p-6 md:p-10">
