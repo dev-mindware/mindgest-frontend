@@ -1,0 +1,117 @@
+"use client";
+
+import { useRef, useState } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import ptLocale from "@fullcalendar/core/locales/pt";
+import { useGetReservations } from "@/hooks/stock-reservations/use-get-reservations";
+import { Card, CardContent, CardHeader, CardTitle, Skeleton, Tabs, TabsList, TabsTrigger, Button } from "@/components";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
+import { ReservationDetailModal } from "./reservation-detail-modal";
+import { StockReservationResponse } from "@/types/stock";
+import { useModal } from "@/stores";
+
+export function ReservationsView() {
+    const calendarRef = useRef<FullCalendar>(null);
+    const { data: reservations, isLoading } = useGetReservations();
+    const [selectedReservation, setSelectedReservation] = useState<StockReservationResponse | null>(null);
+    const { openModal } = useModal();
+    const [view, setView] = useState("dayGridMonth");
+
+    const events = reservations?.map((res) => ({
+        id: res.id,
+        title: `${res.item?.name} (${res.quantity})`,
+        start: res.startDate,
+        end: res.endDate,
+        backgroundColor: res.status === "ACTIVE" ? "var(--primary)" : "#6b7280",
+        borderColor: res.status === "ACTIVE" ? "var(--primary)" : "#6b7280",
+        extendedProps: { ...res },
+    }));
+
+    const handleEventClick = (info: any) => {
+        setSelectedReservation(info.event.extendedProps as StockReservationResponse);
+        openModal("reservation-detail");
+    };
+
+    const handlePrev = () => calendarRef.current?.getApi().prev();
+    const handleNext = () => calendarRef.current?.getApi().next();
+    const handleToday = () => calendarRef.current?.getApi().today();
+    const handleViewChange = (val: string) => {
+        const viewType = val === "month" ? "dayGridMonth" : "timeGridWeek";
+        setView(viewType);
+        calendarRef.current?.getApi().changeView(viewType);
+    };
+
+    if (isLoading) {
+        return (
+            <Card className="w-full">
+                <CardHeader>
+                    <Skeleton className="h-8 w-1/4" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-[600px] w-full" />
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <Card className="w-full shadow-md border-muted">
+            <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b mb-6">
+                <div className="flex items-center gap-2">
+                    <CalendarIcon className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-xl font-bold">Calendário de Reservas</CardTitle>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                    {/* Navigation */}
+                    <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-md border">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handlePrev}>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-8 px-3 text-xs font-semibold" onClick={handleToday}>
+                            Hoje
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleNext}>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+
+                    {/* View Switcher */}
+                    <Tabs value={view === "dayGridMonth" ? "month" : "week"} onValueChange={handleViewChange}>
+                        <TabsList className="bg-muted/50 border">
+                            <TabsTrigger value="month" className="text-xs px-4 h-8">Mês</TabsTrigger>
+                            <TabsTrigger value="week" className="text-xs px-4 h-8">Semana</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    locales={[ptLocale]}
+                    locale="pt"
+                    events={events}
+                    eventClick={handleEventClick}
+                    headerToolbar={false}
+                    height="700px"
+                    nowIndicator={true}
+                    editable={false}
+                    selectable={false}
+                    selectMirror={true}
+                    dayMaxEvents={true}
+                    validRange={{
+                        start: new Date().toISOString().split('T')[0]
+                    }}
+                    initialDate={new Date()}
+                />
+            </CardContent>
+
+            <ReservationDetailModal reservation={selectedReservation} />
+        </Card>
+    );
+}

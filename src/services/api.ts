@@ -55,6 +55,7 @@ api.interceptors.request.use(async (config) => {
     "receipt",
     "documents",
     "dashboard",
+    "stock-reservations",
     { path: "credit-note", methods: ["get"] },
     { path: "categories", methods: ["get", "post"] },
   ];
@@ -142,7 +143,7 @@ api.interceptors.response.use(
         console.warn("🚨 [API] 404 em rota crítica de auth. Forçando logout.");
         accessTokenCache = null;
         if (typeof window !== "undefined") {
-          window.location.replace("/api/auth/logout");
+          window.location.replace("/auth/login");
         }
       }
     }
@@ -184,7 +185,7 @@ api.interceptors.response.use(
         console.error("Erro ao renovar token:", refreshError);
 
         if (typeof window !== "undefined") {
-          window.location.replace("/api/auth/logout");
+          window.location.replace("/auth/login");
         }
         return Promise.reject(refreshError);
       } finally {

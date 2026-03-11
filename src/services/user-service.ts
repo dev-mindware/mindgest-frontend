@@ -31,4 +31,7 @@ export const userService = {
   changePassword: async (id: string, data: ChangeUserPasswordPayload) => {
     return api.patch<User>(`/users/${id}/change-password`, data);
   },
+  getUserById: async (id: string) => {
+    return api.get<User>(`/users/${id}`);
+  },
 };
