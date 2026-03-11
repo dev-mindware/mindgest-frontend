@@ -7,6 +7,7 @@ export const editProfileSchema = z.object({
   email: z.string().trim().email("Email invalido").optional(),
   companyLogo: FileSchema.optional(),
   taxNumber: taxNumberSchema.optional(),
+
   companyName: z.string().min(3, "Nome da empresa é obrigatório").optional(),
 });
 

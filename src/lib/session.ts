@@ -1,8 +1,4 @@
-import {
-  ACCESS_TOKEN_KEY,
-  REFRESH_TOKEN_KEY,
-  SESSION_USER_KEY,
-} from "@/constants";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/constants";
 import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -50,5 +46,4 @@ export async function destroySession() {
 
   authCookies.set(ACCESS_TOKEN_KEY, "", options);
   authCookies.set(REFRESH_TOKEN_KEY, "", options);
-  authCookies.set(SESSION_USER_KEY, "", options);
 }

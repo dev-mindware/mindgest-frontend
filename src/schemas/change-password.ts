@@ -3,6 +3,7 @@ import { passwordSchema } from "./helps";
 
 export const changePasswordSchema = z
   .object({
+    currentPassword: z.string().min(1, "A senha atual é obrigatória"),
     newPassword: passwordSchema,
     confirmPassword: z.string().min(1, "Campo obrigatório"),
   })

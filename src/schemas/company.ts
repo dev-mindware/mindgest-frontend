@@ -14,3 +14,5 @@ export const companySchema = z.object({
   website: z.string().trim().optional().nullable(),
   logo: z.string().trim().optional(),
 });
+
+export type CompanyFormData = z.infer<typeof companySchema>;

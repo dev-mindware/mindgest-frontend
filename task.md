@@ -22,3 +22,5 @@ som nas notificaçõs
 page of o periodo expermental acabou e pivar-lo, forçar a assinatura
 lhe avisar every day
 fornecedores na sidebar?
+
+configurações - notificações guadar nos cookies o som padrão
