@@ -34,6 +34,7 @@ interface PaginatedSelectProps {
   className?: string;
   label?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 export function PaginatedSelect({
@@ -47,6 +48,7 @@ export function PaginatedSelect({
   className,
   label,
   error,
+  disabled,
 }: PaginatedSelectProps) {
   const handlePrevious = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -67,7 +69,7 @@ export function PaginatedSelect({
   return (
     <div className="flex flex-col gap-1.5">
       {label && <Label className="text-sm font-medium">{label}</Label>}
-      <Select value={value || ""} onValueChange={onChange}>
+      <Select value={value || ""} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger className={cn("w-[200px]", className)}>
           {isLoading && !value ? (
             <Skeleton className="h-4 w-24" />

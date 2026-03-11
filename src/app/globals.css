@@ -526,3 +526,98 @@ body {
 .animate-pulse-twice {
   animation: pulse-twice 1s ease-in-out 2;
 }
+
+@layer components {
+  /* FullCalendar Custom Theming */
+  .fc {
+    --fc-border-color: var(--border);
+    --fc-daygrid-event-dot-width: 8px;
+    --fc-list-event-dot-width: 8px;
+    --fc-today-bg-color: var(--muted);
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: var(--muted);
+    --fc-list-event-hover-bg-color: var(--muted);
+    font-family: inherit;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--foreground) !important;
+  }
+
+  .fc .fc-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: var(--background) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--foreground) !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    height: 2.5rem !important;
+    padding: 0 1rem !important;
+    border-radius: var(--radius) !important;
+  }
+
+  .fc .fc-button:hover {
+    background-color: var(--muted) !important;
+  }
+
+  .fc .fc-button-primary:not(:disabled).fc-button-active,
+  .fc .fc-button-primary:not(:disabled):active {
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    border-color: var(--primary) !important;
+  }
+
+  .fc th {
+    padding: 0.75rem 0 !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: var(--muted-foreground) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .fc-theme-standard td,
+  .fc-theme-standard th {
+    border-color: var(--border) !important;
+  }
+
+  .fc .fc-daygrid-day-number {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+    color: var(--foreground) !important;
+  }
+
+  .fc .fc-event {
+    cursor: pointer !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    transition: opacity 0.2s !important;
+  }
+
+  .fc .fc-event:hover {
+    opacity: 0.9 !important;
+  }
+
+  .fc .fc-daygrid-day.fc-day-today {
+    background-color: color-mix(
+      in srgb,
+      var(--muted),
+      transparent 50%
+    ) !important;
+  }
+
+  .fc-view-harness {
+    background-color: var(--card) !important;
+    border-bottom-left-radius: var(--radius) !important;
+    border-bottom-right-radius: var(--radius) !important;
+    overflow: hidden !important;
+  }
+}

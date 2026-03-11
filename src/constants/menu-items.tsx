@@ -80,8 +80,8 @@ export const menuItems: MenuStructure = {
           url: "/management/stock",
         },
         {
-          name: "Reservar",
-          url: "/management/reserve",
+          name: "Reservas",
+          url: "/management/reservation",
           minPlan: "Pro",
         },
         {
