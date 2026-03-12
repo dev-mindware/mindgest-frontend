@@ -620,4 +620,87 @@ body {
     border-bottom-right-radius: var(--radius) !important;
     overflow: hidden !important;
   }
+
+  /* Past Dates and Events Dimming */
+  .fc-day-past {
+    background-color: rgba(var(--muted-foreground), 0.05) !important;
+    opacity: 0.8;
+  }
+
+  .fc-event-past {
+    opacity: 0.5;
+    filter: grayscale(0.5);
+    transition:
+      opacity 0.2s,
+      filter 0.2s !important;
+  }
+
+  .fc-event-past:hover {
+    opacity: 1 !important;
+    filter: grayscale(0) !important;
+  }
+
+  /* More Events Popover Styling */
+  .fc-popover {
+    background-color: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    z-index: 9999 !important;
+    min-width: 280px !important;
+  }
+
+  .fc-popover-header {
+    background-color: var(--secondary) !important;
+    padding: 10px 14px !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    color: var(--foreground) !important;
+    border-bottom: 1px solid var(--border) !important;
+    border-top-left-radius: var(--radius) !important;
+    border-top-right-radius: var(--radius) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .fc-popover-body {
+    padding: 12px !important;
+    background-color: var(--card) !important;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .fc-popover .fc-event {
+    margin-bottom: 6px !important;
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Weekly View Refinements */
+  .fc-timegrid-slot {
+    height: 4rem !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 50%) !important;
+  }
+
+  .fc-timegrid-slot-label-cushion {
+    font-size: 0.75rem !important;
+    color: var(--muted-foreground) !important;
+    padding: 0 8px !important;
+  }
+
+  .fc-timegrid-col.fc-day-today {
+    background-color: color-mix(
+      in srgb,
+      var(--primary),
+      transparent 96%
+    ) !important;
+  }
+
+  .fc-timegrid-now-indicator-line {
+    border-color: var(--primary) !important;
+    border-width: 2px !important;
+  }
 }

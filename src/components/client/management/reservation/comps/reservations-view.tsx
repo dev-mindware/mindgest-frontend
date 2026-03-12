@@ -20,15 +20,25 @@ export function ReservationsView() {
     const { openModal } = useModal();
     const [view, setView] = useState("dayGridMonth");
 
-    const events = reservations?.map((res) => ({
-        id: res.id,
-        title: `${res.item?.name} (${res.quantity})`,
-        start: res.startDate,
-        end: res.endDate,
-        backgroundColor: res.status === "ACTIVE" ? "var(--primary)" : "#6b7280",
-        borderColor: res.status === "ACTIVE" ? "var(--primary)" : "#6b7280",
-        extendedProps: { ...res },
-    }));
+    const events = reservations?.map((res) => {
+        let color = "#9956f6";
+        switch (res.status) {
+            case "SCHEDULED": color = "#f59e0b"; break;
+            case "ACTIVE": color = "#9956f6"; break;
+            case "COMPLETED": color = "#10b981"; break;
+            case "CANCELLED": color = "#ea4335"; break;
+        }
+
+        return {
+            id: res.id,
+            title: `${res.item?.name} (${res.quantity})`,
+            start: res.startDate,
+            end: res.endDate,
+            backgroundColor: color,
+            borderColor: color,
+            extendedProps: { ...res },
+        };
+    });
 
     const handleEventClick = (info: any) => {
         setSelectedReservation(info.event.extendedProps as StockReservationResponse);
@@ -103,11 +113,12 @@ export function ReservationsView() {
                     editable={false}
                     selectable={false}
                     selectMirror={true}
-                    dayMaxEvents={true}
-                    validRange={{
-                        start: new Date().toISOString().split('T')[0]
-                    }}
+                    dayMaxEvents={3}
+                    moreLinkClick="popover"
                     initialDate={new Date()}
+                    slotDuration="00:30:00"
+                    slotLabelInterval="01:00"
+                    allDaySlot={false}
                 />
             </CardContent>
 

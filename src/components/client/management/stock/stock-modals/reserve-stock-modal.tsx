@@ -197,6 +197,7 @@ export function ReserveStockModal() {
                                 render={({ field: { onChange, value } }) => (
                                     <TimeInput
                                         className="w-[120px]"
+                                        hourCycle={24}
                                         value={value ? parseTime(value) : undefined}
                                         onChange={(time: Time) => onChange(time.toString().slice(0, 5))}
                                     />
@@ -226,6 +227,7 @@ export function ReserveStockModal() {
                                 render={({ field: { onChange, value } }) => (
                                     <TimeInput
                                         className="w-[120px]"
+                                        hourCycle={24}
                                         value={value ? parseTime(value) : undefined}
                                         onChange={(time: Time) => onChange(time.toString().slice(0, 5))}
                                     />

@@ -4,12 +4,13 @@ import { useModal, currentStockStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { useGetUser } from "@/hooks/users";
 import { useCancelReservation } from "@/hooks";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { GlobalModal, Button, Badge } from "@/components";
 import { StockReservationResponse } from "@/types/stock";
 import { Loader2, Calendar, User, Package, FileText, Trash2, Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/utils";
+import { CancelReservationModal } from "./cancel-reservation-modal";
+import { ReserveStockModal } from "../../stock";
 
 interface ReservationDetailModalProps {
     reservation: StockReservationResponse | null;
@@ -26,27 +27,20 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
 
     if (!reservation) return null;
 
-    const handleCancel = async () => {
-        if (confirm("Tem certeza que deseja cancelar esta reserva?")) {
-            try {
-                await cancelReservation(reservation.id);
-                router.push("/management/reservation");
-                closeModal("reservation-detail");
-            } catch (error) {
-                // Error managed by hook or generic toast
-            }
+    const getStatusInfo = (status: string) => {
+        switch (status) {
+            case "SCHEDULED": return { label: "Agendada", variant: "pending" as const };
+            case "ACTIVE": return { label: "Ativa", variant: "default" as const };
+            case "COMPLETED": return { label: "Concluída", variant: "success" as const };
+            case "CANCELLED": return { label: "Cancelada", variant: "destructive" as const };
+            default: return { label: status, variant: "outline" as const };
         }
     };
 
-    const formatDate = (dateStr: string) => {
-        try {
-            return format(new Date(dateStr), "PPP 'às' p", { locale: ptBR });
-        } catch (e) {
-            return dateStr;
-        }
-    };
+    const statusInfo = getStatusInfo(reservation.status);
 
     return (
+        <>
         <GlobalModal
             canClose
             id="reservation-detail"
@@ -59,8 +53,8 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
                             <h3 className="text-lg font-bold">{reservation.item?.name}</h3>
-                            <Badge variant={reservation.status === "ACTIVE" ? "default" : "secondary"}>
-                                {reservation.status}
+                            <Badge variant={statusInfo.variant}>
+                                {statusInfo.label}
                             </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground flex items-center gap-1">
@@ -138,8 +132,11 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
                         variant="destructive"
                         size="sm"
                         className="gap-2"
-                        onClick={handleCancel}
-                        disabled={isCancelling}
+                        onClick={() => {
+                            setCurrentReservation(reservation);
+                            openModal("cancel-reservation");
+                            closeModal("reservation-detail");
+                        }}
                     >
                         <Trash2 className="h-4 w-4" /> Cancelar Reserva
                     </Button>
@@ -161,5 +158,8 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
                 </div>
             </div>
         </GlobalModal>
+        <CancelReservationModal />
+        <ReserveStockModal />
+        </>
     );
 }
