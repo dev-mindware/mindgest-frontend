@@ -80,9 +80,9 @@ export function useFileUpload(apiEndpoint: string, queryKey?: string, method?: U
     },
     onSuccess: () => {
       if (queryKey) {
-        queryClient.invalidateQueries({ queryKey: ["current-user", queryKey] });
+        queryClient.invalidateQueries({ queryKey: ["user", queryKey] });
       } else {
-        queryClient.invalidateQueries({ queryKey: ["current-user"] });
+        queryClient.invalidateQueries({ queryKey: ["user"] });
       }
     },
     onError: (error: any) => {
