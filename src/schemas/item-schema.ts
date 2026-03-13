@@ -14,7 +14,7 @@ export const itemSchema = z
     maxStock: z.number().nullable().optional(),
 
     unit: z.string().trim().optional(),
-    weight: z.number().nullable().optional(),
+    weight: z.number().positive("O peso deve ser positivo").optional(),
     dimensions: z.string().trim().optional(),
     image: z.string().trim().url("URL inválida").optional(),
 
@@ -29,7 +29,7 @@ export const itemSchema = z
     hasExpiry: z.boolean().optional(),
     expiryDate: z.string().trim().optional(),
     daysToExpiry: z.coerce.string().optional(),
-    taxId: z.string().trim().optional().nullable(),
+    taxId: z.string().trim(),
   })
 
   .refine(

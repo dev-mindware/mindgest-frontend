@@ -96,7 +96,6 @@ function AddProductFormContent() {
       cost: undefined,
       companyId: String(user?.company?.id),
       type: "PRODUCT",
-      taxId: "",
       categoryId: "",
     },
   });
@@ -104,7 +103,7 @@ function AddProductFormContent() {
   const cleanPayload = (data: ItemFormData) => {
     return {
       ...data,
-      taxId: data.taxId === "none" ? undefined : data.taxId || undefined,
+      taxId: data.taxId,
       cost: data.cost ?? undefined,
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
@@ -303,14 +302,22 @@ function AddProductFormContent() {
 
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="number"
+             <Input
+                type="text"
+                inputMode="decimal"
                 startIcon="Weight"
                 label="Peso (Kg) (opcional)"
-                {...register("weight", { valueAsNumber: true })}
+                {...register("weight", {
+                    setValueAs: (v) => {
+                    if (v === "" || v === null || v === undefined) return undefined;
+                    const normalized = String(v).replace(",", ".");
+                    const parsed = parseFloat(normalized);
+                    return isNaN(parsed) ? undefined : parsed;
+                },
+                })}
                 error={errors.weight?.message}
-                placeholder="300Kg"
-              />
+                placeholder="Ex: 0.24"
+                />
               <Input
                 label="Dimensões (opcional)"
                 placeholder="Ex: 10x20x30 cm"

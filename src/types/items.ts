@@ -43,7 +43,7 @@ export type ItemData = {
   companyId: string;
   storeId: string;
   categoryId: string;
-  taxId?: string | null;
+  taxId: string;
 };
 
 export type CreateItemData = {
@@ -66,7 +66,7 @@ export type CreateItemData = {
   hasExpiry?: boolean;
   expiryDate?: string;
   daysToExpiry?: string;
-  taxId?: string | null;
+  taxId: string;
 };
 
 import { Tax } from "./tax";
@@ -77,7 +77,7 @@ export type ItemResponse = ItemData & {
   status: ItemStatus;
   createdAt: string;
   updatedAt: string;
-  tax?: Tax | null;
+  tax: Tax;
 };
 
 export type ViewMode = "card" | "table";

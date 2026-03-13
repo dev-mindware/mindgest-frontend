@@ -113,6 +113,7 @@ export const InvoiceSchema = InvoiceBaseSchema.extend({
 export type InvoiceFormData = z.infer<typeof InvoiceSchema>;
 
 export const ProformaSchema = InvoiceBaseSchema.extend({
+  client: ClientReceiptSchema,
   proformaExpiresAt: z.string().trim().min(1, "Campo obrigatório"),
   paymentMethod: z
     .string()

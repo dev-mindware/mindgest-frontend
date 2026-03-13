@@ -15,6 +15,7 @@ export function useAddCategory() {
     onSuccess: () => {
       SucessMessage("Categoria adicionada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }
@@ -28,6 +29,7 @@ export function useUpdateCategory() {
     onSuccess: () => {
       SucessMessage("Categoria atualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }
@@ -40,6 +42,7 @@ export function useDeleteCategory() {
     onSuccess: () => {
       SucessMessage("Categoria removida com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }
@@ -52,6 +55,7 @@ export function useToggleStatusCategory() {
     onSuccess: () => {
       SucessMessage("Status da categoria alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }

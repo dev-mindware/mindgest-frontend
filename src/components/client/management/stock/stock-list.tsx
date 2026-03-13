@@ -222,10 +222,10 @@ export function StockList() {
         <div className="rounded-lg border p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Filtros</h3>
-            <Button onClick={() => openModal("add-stock")} size="sm">
+            {/* <Button onClick={() => openModal("add-stock")} size="sm">
               <Icon name="Plus" className="w-4 h-4 mr-2" />
               Adicionar Stock
-            </Button>
+            </Button> */}
           </div>
           <StockFilters />
         </div>
