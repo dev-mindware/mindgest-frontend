@@ -1,4 +1,4 @@
-import { Button, GlobalModal } from "@/components";
+import { Button, GlobalModal, ProtectedAction } from "@/components";
 import { useDeleteSupplier } from "@/hooks/entities/use-suppliers";
 import { currentSupplierStore } from "@/stores/entities/current-supplier-store";
 import { useModal } from "@/stores/modal/use-modal-store";
@@ -43,13 +43,15 @@ export function DeleteSupplierModal() {
         <Button onClick={() => closeModal("delete-supplier")} variant="outline">
           Cancelar
         </Button>
-        <Button
-          disabled={isPending}
-          variant="destructive"
-          onClick={() => handleDelete(currentSupplier?.id!)}
-        >
-          {isPending ? "Apagando..." : `Apagar ${currentSupplier?.name}`}
-        </Button>
+        <ProtectedAction>
+          <Button
+            disabled={isPending}
+            variant="destructive"
+            onClick={() => handleDelete(currentSupplier?.id!)}
+          >
+            {isPending ? "Apagando..." : `Apagar ${currentSupplier?.name}`}
+          </Button>
+        </ProtectedAction>
       </div>
     </GlobalModal>
   );

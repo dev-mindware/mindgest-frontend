@@ -2,20 +2,28 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input } from "@/components";
+import { Badge, Button, Input } from "@/components";
 import type { User } from "@/types";
 import { ProfileAvatar } from "./profile-avatar";
 import { useUpdateUser } from "@/hooks/users";
 import { ErrorMessage, getUserRole, SucessMessage } from "@/utils";
 import type { UpdateUserProfilePayload } from "@/services";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editProfileSchema, EditProfileFormData } from "@/schemas/edit-profile-schema";
+import {
+  editProfileSchema,
+  EditProfileFormData,
+} from "@/schemas/edit-profile-schema";
 import { cn } from "@/lib";
 
 export function ProfileForm({ user }: { user: User | null }) {
   const [isEditing, setIsEditing] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<EditProfileFormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
     mode: "onSubmit",
     defaultValues: {
@@ -24,7 +32,8 @@ export function ProfileForm({ user }: { user: User | null }) {
     },
   });
 
-  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } = useUpdateUser();
+  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } =
+    useUpdateUser();
 
   const handleProfileSubmit = async (data: EditProfileFormData) => {
     const updateData: UpdateUserProfilePayload = {};
@@ -55,18 +64,21 @@ export function ProfileForm({ user }: { user: User | null }) {
 
   return (
     <form onSubmit={handleSubmit(handleProfileSubmit)} className="space-y-6">
-      <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+      <div className="bg-card rounded-lg border p-4 shadow-sm flex flex-col sm:flex-row items-center gap-4">
         <ProfileAvatar userName={user?.name} />
-        <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-          <h3 className="text-xl font-bold">{user?.name}</h3>
-          <p className="text-muted-foreground">{getUserRole(user?.role!)}</p>
-          {user?.company?.name && (
-            <p className="text-sm text-foreground/80 mt-1">
-              {user.company.name}
-            </p>
-          )}
-        </div>
+        <div className="w-full flex justify-between items-center">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <h3 className="text-lg font-bold">{user?.name}</h3>
 
+            {user?.company?.name && (
+              <p className="text-sm text-foreground/80 mt-1">
+                {user.company.name}
+              </p>
+            )}
+          </div>
+
+          <Badge variant="default">{getUserRole(user?.role!)}</Badge>
+        </div>
       </div>
 
       <div className="bg-card rounded-xl border p-6 shadow-sm">
@@ -111,10 +123,7 @@ export function ProfileForm({ user }: { user: User | null }) {
 
         {isEditing && (
           <div className="mt-8 flex justify-end gap-3 border-t pt-6">
-            <Button
-              type="submit"
-              disabled={isUpdatingProfile}
-            >
+            <Button type="submit" disabled={isUpdatingProfile}>
               {isUpdatingProfile ? "A gravar..." : "Guardar Alterações"}
             </Button>
           </div>

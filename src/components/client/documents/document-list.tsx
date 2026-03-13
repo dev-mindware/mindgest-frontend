@@ -17,6 +17,7 @@ import { ReceiptList } from "./receipts";
 import { CreditNotesList } from "./credits-notes";
 import { cn } from "@/lib";
 import { currentStoreStore } from "@/stores";
+import { ProtectedAction } from "@/components/guards";
 
 type DocumentTab =
   | "invoice"
@@ -71,19 +72,21 @@ export function DocumentList() {
           </div>
 
           {/* Button stacks below on mobile, inline on larger screens */}
-          <Link
-            className={cn("w-full sm:w-auto", {
-              "pointer-events-none cursor-not-allowed": activeTab === "credit-notes",
-            })}
-            href={`/documents/new-doc?tab=${activeTab}`}
-          >
-            <Button
-              className="w-full sm:w-auto disabled:cursor-not-allowed"
-              disabled={activeTab === "credit-notes"}
+          <ProtectedAction>
+            <Link
+              className={cn("w-full sm:w-auto", {
+                "pointer-events-none cursor-not-allowed": activeTab === "credit-notes",
+              })}
+              href={`/documents/new-doc?tab=${activeTab}`}
             >
-              Criar Documento
-            </Button>
-          </Link>
+              <Button
+                className="w-full sm:w-auto disabled:cursor-not-allowed"
+                disabled={activeTab === "credit-notes"}
+              >
+                Criar Documento
+              </Button>
+            </Link>
+          </ProtectedAction>
         </div>
 
         <TabsContent value="invoice">

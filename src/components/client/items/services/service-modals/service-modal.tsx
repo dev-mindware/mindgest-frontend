@@ -17,7 +17,12 @@ import {
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useAddItem, useCategoriesSelect, useTaxesSelect, useUpdateItem } from "@/hooks";
+import {
+  useAddItem,
+  useCategoriesSelect,
+  useTaxesSelect,
+  useUpdateItem,
+} from "@/hooks";
 import { currentServiceStore, currentStoreStore } from "@/stores";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
@@ -40,15 +45,32 @@ export function ServiceModal({ action }: ServiceModalProps) {
     isPending: isUpdating,
     reset: resetMutate,
   } = useUpdateItem();
-  const { categoryOptions, isLoading, isError, refetch, pagination: categoryPagination, setPage: setCategoryPage } = useCategoriesSelect();
-  const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useTaxesSelect();
+  const {
+    categoryOptions,
+    isLoading,
+    isError,
+    refetch,
+    pagination: categoryPagination,
+    setPage: setCategoryPage,
+  } = useCategoriesSelect();
+  const {
+    taxOptions,
+    isLoading: isTaxesLoading,
+    pagination: taxPagination,
+    setPage: setTaxPage,
+  } = useTaxesSelect();
   const isOpen = open[modalId];
 
   const finalCategoryOptions = useMemo(() => {
-    const currentId = currentService?.categoryId || (currentService as any)?.category_id;
+    const currentId =
+      currentService?.categoryId || (currentService as any)?.category_id;
     const currentName = (currentService as any)?.category;
 
-    if (currentId && currentName && !categoryOptions.find((o) => o.value === currentId)) {
+    if (
+      currentId &&
+      currentName &&
+      !categoryOptions.find((o) => o.value === currentId)
+    ) {
       return [{ label: currentName, value: currentId }, ...categoryOptions];
     }
     return categoryOptions;
@@ -56,9 +78,15 @@ export function ServiceModal({ action }: ServiceModalProps) {
 
   const finalTaxOptions = useMemo(() => {
     const currentId = currentService?.taxId || currentService?.tax?.id;
-    const currentName = currentService?.tax?.name ? `${currentService.tax.name} (${currentService.tax.rate}%)` : null;
+    const currentName = currentService?.tax?.name
+      ? `${currentService.tax.name} (${currentService.tax.rate}%)`
+      : null;
 
-    if (currentId && currentName && !taxOptions.find((o) => o.value === currentId)) {
+    if (
+      currentId &&
+      currentName &&
+      !taxOptions.find((o) => o.value === currentId)
+    ) {
       return [{ label: currentName, value: currentId }, ...taxOptions];
     }
     return taxOptions;
@@ -125,7 +153,8 @@ export function ServiceModal({ action }: ServiceModalProps) {
       if (action === "add") {
         await addItemMutate({
           ...cleanedData,
-          ...(user?.role === "OWNER" && currentStore?.id && { storeId: currentStore?.id }),
+          ...(user?.role === "OWNER" &&
+            currentStore?.id && { storeId: currentStore?.id }),
         });
       } else if (currentService) {
         const { type, companyId, ...rest } = cleanedData;
@@ -146,7 +175,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
     closeModal(modalId);
     resetMutate();
   };
-
 
   if (!isOpen) return null;
 
@@ -204,7 +232,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2 mt-4">
-
               <Controller
                 control={control}
                 name="price"

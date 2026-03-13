@@ -67,7 +67,6 @@ export function ClientsFiltersTSX({
         />
       </div>
 
-      {/* Filters - Grid layout */}
       <div className="flex flex-col sm:flex-row gap-3">
         <DatePicker
           value={
@@ -75,6 +74,7 @@ export function ClientsFiltersTSX({
           }
           onChange={(_, formatted) => setFilters({ createdBefore: formatted })}
           placeholder="Cadastrado antes de.."
+          className="w-max"
         />
 
         <DatePicker
@@ -83,6 +83,7 @@ export function ClientsFiltersTSX({
           }
           onChange={(_, formatted) => setFilters({ createdAfter: formatted })}
           placeholder="Cadastrado depois de.."
+          className="w-max"
         />
       </div>
 

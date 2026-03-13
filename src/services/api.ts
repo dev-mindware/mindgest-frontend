@@ -147,16 +147,6 @@ api.interceptors.response.use(
       }
     }
 
-    if (err.response?.status === 403) {
-      const errorType = err.response?.data?.error || err.response?.data?.code;
-
-      if (errorType === "subscription_required" || errorType === "subscription_expired") {
-        console.warn("🚨 [API] Subscrição Expirada interceptada. Redirecionando para paywall.");
-        if (typeof window !== "undefined") {
-          window.location.replace("/paywall");
-        }
-      }
-    }
 
     if (err.response?.status === 401) {
       if (isRefreshing) {

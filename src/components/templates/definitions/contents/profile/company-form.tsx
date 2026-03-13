@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { User } from "@/types";
 import { useUpdateCompany } from "@/hooks";
 import { ErrorMessage, SucessMessage } from "@/utils";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { companySchema } from "@/schemas/company";
 
@@ -60,7 +59,7 @@ export function CompanyForm({ user }: { user: User }) {
   return (
     <form
       onSubmit={handleSubmit(handleCompanySubmit)}
-      className="bg-card rounded-xl border p-6 shadow-sm"
+      className="bg-card rounded-lg border p-6 shadow-sm"
     >
       <div className="flex items-center justify-between mb-6 pb-4 border-b">
         <h3 className="font-semibold text-lg">Informação da Empresa</h3>

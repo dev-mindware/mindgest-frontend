@@ -1,4 +1,4 @@
-import { Button, GlobalModal } from "@/components";
+import { Button, GlobalModal, ProtectedAction } from "@/components";
 import { currentManagerStore } from "@/stores";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
@@ -43,13 +43,15 @@ export function DeleteManagerModal() {
         <Button onClick={() => closeModal("delete-manager")} variant="outline">
           Cancelar
         </Button>
-        <Button
-          disabled={isPending}
-          variant="destructive"
-          onClick={() => handleDelete(currentManager?.id!)}
-        >
-          {isPending ? "Apagando..." : `Apagar ${currentManager?.name}`}
-        </Button>
+        <ProtectedAction>
+          <Button
+            disabled={isPending}
+            variant="destructive"
+            onClick={() => handleDelete(currentManager?.id!)}
+          >
+            {isPending ? "Apagando..." : `Apagar ${currentManager?.name}`}
+          </Button>
+        </ProtectedAction>
       </div>
     </GlobalModal>
   );

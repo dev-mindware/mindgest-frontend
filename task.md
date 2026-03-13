@@ -24,5 +24,7 @@ lhe avisar every day
 fornecedores na sidebar?
 quando subscrição expira, não poder criar mais faturas
 
+ao barrar o user mostra um modal like a crunchyral avisando, se ele clicar em renovar 
+lhe leva pra billing e tal...
 
 configurações - notificações guadar nos cookies o som padrão

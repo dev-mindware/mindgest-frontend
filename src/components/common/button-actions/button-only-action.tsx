@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { ProtectedAction } from "@/components/guards";
 
 type ActionVariant = "default" | "destructive" | "outline";
 
@@ -18,6 +19,7 @@ type ActionItem<T> = {
   icon?: keyof typeof icons;
   variant?: ActionVariant;
   className?: string;
+  isProtected?: boolean; // Permite forçar ou remover a proteção manualmente
 };
 
 type SeparatorItem = {
@@ -61,13 +63,17 @@ export function ButtonOnlyAction<T>({ data, actions }: Props<T>) {
           }
 
           const variant = action.variant || "default";
+          const itemKey = action.label + index;
 
-          return (
-            <DropdownMenuItem
-              key={action.label + index}
-              onClick={() => action.onClick(data)}
-              className={cn(variantStyles[variant], action.className)}
-            >
+          // Verifica se a label indica uma ação crítica, a menos que isProtected já tenha sido definido.
+          const isCritical =
+            action.isProtected ??
+            /criar|novo|editar|apagar|excluir|remover|deletar|gerar|baixar|exportar/i.test(
+              action.label
+            );
+
+          const menuItemContent = (
+            <>
               {action.icon && (
                 <Icon
                   name={action.icon}
@@ -77,6 +83,29 @@ export function ButtonOnlyAction<T>({ data, actions }: Props<T>) {
                 />
               )}
               {action.label}
+            </>
+          );
+
+          if (isCritical) {
+            return (
+              <ProtectedAction key={itemKey}>
+                <DropdownMenuItem
+                  onClick={() => action.onClick(data)}
+                  className={cn(variantStyles[variant], action.className)}
+                >
+                  {menuItemContent}
+                </DropdownMenuItem>
+              </ProtectedAction>
+            );
+          }
+
+          return (
+            <DropdownMenuItem
+              key={itemKey}
+              onClick={() => action.onClick(data)}
+              className={cn(variantStyles[variant], action.className)}
+            >
+              {menuItemContent}
             </DropdownMenuItem>
           );
         })}

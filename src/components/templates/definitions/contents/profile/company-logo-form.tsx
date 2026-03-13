@@ -45,7 +45,7 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
   if (!user) return null;
 
   return (
-    <div className="bg-card rounded-xl border p-6 shadow-sm">
+    <div className="bg-card rounded-lg border p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-lg">Logo da Empresa</h3>
         {user?.company?.logo && !isEditingLogo && (
@@ -98,7 +98,7 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
           )}
         </div>
       ) : (
-        <div className="relative h-48 w-full sm:w-80 bg-muted/10 rounded-xl flex items-center justify-center border overflow-hidden shrink-0 shadow-sm p-4">
+        <div className="relative h-48 w-full sm:w-80 bg-muted/10 rounded-lg flex items-center justify-center border overflow-hidden shrink-0 shadow-sm p-4">
           <img
             src={user.company.logo}
             alt="Logo da empresa"

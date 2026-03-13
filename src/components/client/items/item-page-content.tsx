@@ -24,6 +24,7 @@ import { currentProductStore, useModal } from "@/stores";
 import { ChevronDown, Plus, Barcode, Keyboard } from "lucide-react";
 import { BarcodeScannerModal, BARCODE_SCANNER_MODAL_ID } from "./products/product-modals/barcode-scanner-modal";
 import { FeatureGate } from "@/components";
+import { ProtectedAction } from "@/components/guards";
 
 type ItemTab = "product" | "service";
 
@@ -74,39 +75,48 @@ export function ItemsPageContent() {
 
           {activeTab === "product" ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="flex items-center gap-2 w-full sm:w-auto">
-                  <Plus className="h-4 w-4" />
-                  Novo Produto
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
+              <ProtectedAction>
+                <DropdownMenuTrigger asChild>
+                  <Button className="flex items-center gap-2 w-full sm:w-auto">
+                    <Plus className="h-4 w-4" />
+                    Novo Produto
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+              </ProtectedAction>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={() => openModal("add-product")}
-                  className="flex items-center gap-2"
-                >
-                  <Keyboard className="h-4 w-4" />
-                  Manual
-                </DropdownMenuItem>
-                <FeatureGate minPlan="Pro" fallback="disabled">
+                <ProtectedAction>
                   <DropdownMenuItem
-                    onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
+                    onClick={() => openModal("add-product")}
                     className="flex items-center gap-2"
                   >
-                    <Barcode className="h-4 w-4" />
-                    Código de Barra
+                    <Keyboard className="h-4 w-4" />
+                    Manual
                   </DropdownMenuItem>
+                </ProtectedAction>
+                
+                <FeatureGate minPlan="Pro" fallback="disabled">
+                  <ProtectedAction>
+                    <DropdownMenuItem
+                      onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
+                      className="flex items-center gap-2"
+                    >
+                      <Barcode className="h-4 w-4" />
+                      Código de Barra
+                    </DropdownMenuItem>
+                  </ProtectedAction>
                 </FeatureGate>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              onClick={() => openModal(TAB_MODALS[activeTab])}
-              className="w-full sm:w-auto"
-            >
-              {`Novo ${TAB_LABELS[activeTab]}`}
-            </Button>
+            <ProtectedAction>
+              <Button
+                onClick={() => openModal(TAB_MODALS[activeTab])}
+                className="w-full sm:w-auto"
+              >
+                {`Novo ${TAB_LABELS[activeTab]}`}
+              </Button>
+            </ProtectedAction>
           )}
         </div>
 
