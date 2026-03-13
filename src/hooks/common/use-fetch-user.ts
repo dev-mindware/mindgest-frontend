@@ -1,16 +1,27 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "@/stores";
 import { api } from "@/services/api";
 import { User } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 
 interface UseFetchUserOptions {
   enabled?: boolean;
 }
 
 export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
-  const { setUser, user, setIsAuthenticating } = useAuthStore();
-  const hasFetched = useRef(false);
+  const { setUser, setIsAuthenticating } = useAuthStore();
+
+  const { data, isLoading, isError, error, isSuccess } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await api.get<User>("/auth/profile");
+      return response.data;
+    },
+    enabled,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     if (!enabled) {
@@ -18,48 +29,33 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
       return;
     }
 
-    if (user !== null) {
+    // Only set authenticating true if it's the initial loading (no cached data).
+    // This prevents the full-screen loader from flashing during background invalidation refetches.
+    if (isLoading) {
+      setIsAuthenticating(true);
+    } else {
       setIsAuthenticating(false);
-      return;
     }
 
-    if (hasFetched.current) {
-      setIsAuthenticating(false); // Clear loading if we already fetched/avoiding refetch
-      return;
-    }
-
-    let isMounted = true;
-    hasFetched.current = true;
-    // Ensure we start in a loading state if we are going to fetch
-    setIsAuthenticating(true);
-
-    const fetchUser = async () => {
-      try {
-        const response = await api.get<User>("/auth/profile");
-
-        if (!isMounted) return;
-
-        setUser(response.data);
-      } catch (error: any) {
-        if (!isMounted) return;
-
-        if (error.response?.status !== 401) {
-          console.error("Erro ao buscar usuário:", error);
-        }
-        setUser(null);
-      } finally {
-        if (isMounted) {
-          setIsAuthenticating(false);
-        }
+    if (isSuccess && data) {
+      setUser(data);
+    } else if (isError) {
+      const err = error as any;
+      if (err.response?.status !== 401) {
+        console.error("Erro ao buscar usuário:", err);
       }
-    };
+      setUser(null);
+    }
+  }, [
+    enabled,
+    isLoading,
+    isSuccess,
+    isError,
+    data,
+    error,
+    setUser,
+    setIsAuthenticating,
+  ]);
 
-    fetchUser();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return { user };
+  return { user: data || null };
 }

@@ -1,4 +1,5 @@
 import { Company, Store } from "./company";
+import type { Subscription } from "./subscription";
 
 export interface LoginResponse {
   message: string;
@@ -15,7 +16,8 @@ export type User = {
   role: Role;
   phone: string,
   company: Company;
-  store?: Store
+  store?: Store;
+  subscription?: Subscription;
 }
 
 export interface Tokens {

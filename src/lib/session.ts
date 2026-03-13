@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/constants";
 import { cookies } from "next/headers";
 
-const secretKey = process.env.SESSION_SECRET;
+const secretKey = process.env.SESSION_SECRET || "e9b25a7d3f8c14e0f6b4d9a2c5813f7e9b0a45c2f8d1e3b6a7c9d0f4b1e56a8c";
 
 export const encodedKey = new TextEncoder().encode(secretKey);
 

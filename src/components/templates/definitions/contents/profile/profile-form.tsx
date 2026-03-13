@@ -15,18 +15,20 @@ import { cn } from "@/lib";
 export function ProfileForm({ user }: { user: User | null }) {
   const [isEditing, setIsEditing] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<EditProfileFormData>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
+    mode: "onSubmit",
     defaultValues: {
       name: user?.name,
       phone: user?.phone,
     },
   });
 
-  const { mutate: updateProfile, isPending: isUpdatingProfile } = useUpdateUser();
+  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } = useUpdateUser();
 
-  const handleProfileSubmit = (data: EditProfileFormData) => {
+  const handleProfileSubmit = async (data: EditProfileFormData) => {
     const updateData: UpdateUserProfilePayload = {};
+
     if (data.name && data.name !== user?.name) updateData.name = data.name;
     if (data.phone && data.phone !== user?.phone) updateData.phone = data.phone;
 
@@ -36,7 +38,7 @@ export function ProfileForm({ user }: { user: User | null }) {
       return;
     }
 
-    updateProfile(updateData, {
+    await updateProfile(updateData, {
       onSuccess: () => {
         SucessMessage("Perfil atualizado com sucesso!");
         setIsEditing(false);
@@ -52,7 +54,7 @@ export function ProfileForm({ user }: { user: User | null }) {
   if (!user) return null;
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit(handleProfileSubmit)} className="space-y-6">
       <div className="bg-card rounded-xl border p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
         <ProfileAvatar userName={user?.name} />
         <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
@@ -64,23 +66,28 @@ export function ProfileForm({ user }: { user: User | null }) {
             </p>
           )}
         </div>
-        <div className="sm:ml-auto flex gap-2">
-          <Button
-            variant={isEditing ? "default" : "outline"}
-            size="sm"
-            className="hidden sm:inline-flex"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            {isEditing ? "Atualizar Perfil" : "Editar Perfil"}
-          </Button>
-        </div>
+
       </div>
 
       <div className="bg-card rounded-xl border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6 pb-4 border-b">
           <h3 className="font-semibold text-lg">Informação Pessoal</h3>
+          <div className="sm:ml-auto flex gap-2">
+            <Button
+              type="button"
+              variant={isEditing ? "default" : "outline"}
+              size="sm"
+              className="hidden sm:inline-flex"
+              onClick={() => {
+                if (isEditing) reset();
+                setIsEditing(!isEditing);
+              }}
+            >
+              {isEditing ? "Cancelar" : "Editar Perfil"}
+            </Button>
+          </div>
         </div>
-        
+
         <div
           className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", {
             "pointer-events-none": !isEditing,
@@ -105,14 +112,7 @@ export function ProfileForm({ user }: { user: User | null }) {
         {isEditing && (
           <div className="mt-8 flex justify-end gap-3 border-t pt-6">
             <Button
-              variant="ghost"
-              onClick={() => setIsEditing(false)}
-              disabled={isUpdatingProfile}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleSubmit(handleProfileSubmit)}
+              type="submit"
               disabled={isUpdatingProfile}
             >
               {isUpdatingProfile ? "A gravar..." : "Guardar Alterações"}
@@ -120,6 +120,6 @@ export function ProfileForm({ user }: { user: User | null }) {
           </div>
         )}
       </div>
-    </div>
+    </form>
   );
 }

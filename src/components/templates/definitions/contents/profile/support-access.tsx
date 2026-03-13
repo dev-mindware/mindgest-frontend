@@ -1,43 +1,29 @@
-"use client";
 
-import { Button, Separator, Switch, Label } from "@/components";
+import { Button, Separator } from "@/components";
 
 export function SupportAccess() {
   return (
     <div>
-      <h3 className="text-2xl text-center md:text-start">Suporte de Acesso</h3>
+      <h3 className="text-2xl text-center md:text-start text-destructive">
+        Zona de Perigo
+      </h3>
       <p className="text-center text-muted-foreground md:text-start">
-        Altere as suas configurações de suporte de acesso.
+        Ações destrutivas e irreversíveis relacionadas à sua conta.
       </p>
-      <Separator className="mt-4" />
-      <div className="mt-4 space-y-4">
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-          <div>
-            <Label>Suporte de Acesso</Label>
-            <p className="text-xs text-muted-foreground">
-              Concede-nos acesso à sua conta para efeitos de suporte até 19 de
-              junho de 2025, 11h43.
-            </p>
-          </div>
-          <Switch />
-        </div>
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-          <p className="text-sm text-muted-foreground">
-            Log out em todos os dispositivos
-          </p>
-          <Button variant="outline">Log out</Button>
-        </div>
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-          <div>
+      <Separator className="my-4" />
+      <div className="space-y-4">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center p-4 border border-destructive/20 rounded-lg bg-destructive/5">
+          <div className="flex-1">
             <p className="text-sm font-medium text-destructive">
-              Eliminar minha conta
+              Excluir conta
             </p>
-            <p className="text-xs text-muted-foreground">
-              Eliminar definitivamente a conta e remover o acesso de todos os
-              espaços de trabalho
+            <p className="text-xs text-muted-foreground mt-1">
+              A exclusão da sua conta é uma ação permanente e irreversível. Todos os seus dados pessoais, configurações e acessos aos espaços de trabalho serão apagados imediatamente.
             </p>
           </div>
-          <Button variant="destructive">Eliminar Conta</Button>
+          <Button variant="destructive" className="whitespace-nowrap">
+            Excluir Conta
+          </Button>
         </div>
       </div>
     </div>

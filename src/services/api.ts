@@ -23,7 +23,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 export const api = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL,
+    process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -46,18 +46,18 @@ api.interceptors.request.use(async (config) => {
     | string
     | { path: string; methods: string[] }
   )[] = [
-    "invoice",
-    "items",
-    { path: "stocks", methods: ["get"] },
-    "cash-sessions",
-    "reports/dashboard",
-    "receipt",
-    "documents",
-    "dashboard",
-    "stock-reservations",
-    { path: "credit-note", methods: ["get"] },
-    { path: "categories", methods: ["get", "post"] },
-  ];
+      "invoice",
+      "items",
+      { path: "stocks", methods: ["get"] },
+      "cash-sessions",
+      "reports/dashboard",
+      "receipt",
+      "documents",
+      "dashboard",
+      "stock-reservations",
+      { path: "credit-note", methods: ["get"] },
+      { path: "categories", methods: ["get", "post"] },
+    ];
 
   // Specific routes or patterns to exclude from injection
   const EXCLUDED_ROUTES = [
@@ -143,6 +143,17 @@ api.interceptors.response.use(
         accessTokenCache = null;
         if (typeof window !== "undefined") {
           window.location.replace("/auth/login");
+        }
+      }
+    }
+
+    if (err.response?.status === 403) {
+      const errorType = err.response?.data?.error || err.response?.data?.code;
+
+      if (errorType === "subscription_required" || errorType === "subscription_expired") {
+        console.warn("🚨 [API] Subscrição Expirada interceptada. Redirecionando para paywall.");
+        if (typeof window !== "undefined") {
+          window.location.replace("/paywall");
         }
       }
     }

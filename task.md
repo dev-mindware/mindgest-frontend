@@ -18,9 +18,11 @@ renderizar outros menus, mas travar com o miodal - dizer que a sua subscrição 
 VER O REDIRECT PARA O /OWNER E MELHORAR A AUTENTICAÇÃO
 
 periodo expermental
-som nas notificaçõs
+som nas notificaçõs - testar isso
 page of o periodo expermental acabou e pivar-lo, forçar a assinatura
 lhe avisar every day
 fornecedores na sidebar?
+quando subscrição expira, não poder criar mais faturas
+
 
 configurações - notificações guadar nos cookies o som padrão

@@ -5,6 +5,8 @@ import { Loader } from "./loader";
 import { usePathname } from "next/navigation";
 
 
+import { SubscriptionGuard } from "@/components/guards/subscription-guard";
+
 interface AuthProviderProps {
   children: React.ReactNode;
 }
@@ -21,5 +23,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   if (isAuthenticating) return <Loader />;
 
-  return <>{children}</>;
+  return (
+    <SubscriptionGuard>
+      {children}
+    </SubscriptionGuard>
+  );
 }

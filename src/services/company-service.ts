@@ -1,7 +1,6 @@
 import type { User as CompanyResponse, CompanyData } from "@/types";
 import { api } from "./api";
 
-// We assume CompanyData contains all fields for PUT
 export type UpdateCompanyPayload = Partial<CompanyData>;
 
 export const companyService = {

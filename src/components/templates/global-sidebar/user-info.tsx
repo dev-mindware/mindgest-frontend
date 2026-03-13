@@ -95,7 +95,7 @@ export function UserInfo() {
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-500" onClick={onLogout}>
               <Icon name="LogOut" className="text-red-500" />
-              Terminar Sessão
+              Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
