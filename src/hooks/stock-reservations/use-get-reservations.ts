@@ -6,6 +6,7 @@ export function useGetReservations() {
     queryKey: ["stock-reservations"],
     queryFn: async () => {
       const response = await stockReservationsService.getAllReservations();
+      console.log("Minhas reservas:", response.data);
       return response.data;
     },
   });

@@ -69,9 +69,9 @@ export function ReserveStockModal() {
         const item = currentReservation?.item || currentStock;
         if (!item) return;
 
-        // Combine date and time and append .000Z as requested
-        const startDateTime = `${data.startDate}T${data.startTime}:00.000Z`;
-        const endDateTime = `${data.endDate}T${data.endTime}:00.000Z`;
+        // Combine date and time as local ISO string (no Z = local time, avoids UTC shift)
+        const startDateTime = `${data.startDate}T${data.startTime}:00`;
+        const endDateTime = `${data.endDate}T${data.endTime}:00`;
 
         const { startTime, endTime, ...rest } = data;
 

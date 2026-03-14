@@ -29,11 +29,13 @@ export function ReservationsView() {
             case "CANCELLED": color = "#ea4335"; break;
         }
 
+        const stripTz = (d: string) => d.replace(/Z$/, "").replace(/[+-]\d{2}:\d{2}$/, "");
+
         return {
             id: res.id,
             title: `${res.item?.name} (${res.quantity})`,
-            start: res.startDate,
-            end: res.endDate,
+            start: stripTz(res.startDate),
+            end: stripTz(res.endDate),
             backgroundColor: color,
             borderColor: color,
             extendedProps: { ...res },
@@ -66,6 +68,8 @@ export function ReservationsView() {
             </Card>
         );
     }
+
+    
 
     return (
         <Card className="w-full shadow-md border-muted">

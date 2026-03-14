@@ -8,7 +8,7 @@ import { GlobalModal, Button, Badge } from "@/components";
 import { StockReservationResponse } from "@/types/stock";
 import { Loader2, Calendar, User, Package, FileText, Trash2, Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { formatDate } from "@/utils";
+import { formatDateTimeRaw } from "@/utils";
 import { CancelReservationModal } from "./cancel-reservation-modal";
 import { ReserveStockModal } from "../../stock";
 
@@ -78,11 +78,11 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
                         <div className="space-y-2 text-sm">
                             <div>
                                 <p className="text-muted-foreground text-xs uppercase font-bold tracking-wider">Início</p>
-                                <p className="font-medium">{formatDate(reservation.startDate)}</p>
+                                <p className="font-medium">{formatDateTimeRaw(reservation.startDate)}</p>
                             </div>
                             <div>
                                 <p className="text-muted-foreground text-xs uppercase font-bold tracking-wider">Fim</p>
-                                <p className="font-medium">{formatDate(reservation.endDate)}</p>
+                                <p className="font-medium">{formatDateTimeRaw(reservation.endDate)}</p>
                             </div>
                         </div>
                     </div>

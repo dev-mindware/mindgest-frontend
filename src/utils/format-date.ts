@@ -12,6 +12,21 @@ export function formatDateTime(date: Date | string): string {
   return format(dateObj, "dd/MM/yyyy, HH:mm", { locale: pt });
 }
 
+/**
+ * Formata uma string ISO sem converter fuso horário.
+ * Remove o sufixo Z ou ±HH:MM antes de parsear para mostrar
+ * exactamente a hora guardada (sem shift UTC→local).
+ */
+export function formatDateTimeRaw(date: Date | string): string {
+  if (!date) return "N/A";
+  const raw = typeof date === "string"
+    ? date.replace(/Z$/, "").replace(/[+-]\d{2}:\d{2}$/, "")
+    : date;
+  const dateObj = new Date(raw);
+  if (!isValid(dateObj)) return "Data inválida";
+  return format(dateObj, "dd/MM/yyyy, HH:mm", { locale: pt });
+}
+
 export function formatDate(date: Date | string): string {
   if (!date) return "N/A";
   const dateObj = new Date(date);
