@@ -1,5 +1,4 @@
 "use client";
-import { logoutAction } from "@/actions/login";
 import {
   Icon,
   Avatar,
@@ -18,17 +17,19 @@ import {
   useSidebar,
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
+import { useAuthStore } from "@/stores/auth/auth-store";
 import Link from "next/link";
 
 export function UserInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
+  const logout = useAuthStore((s) => s.logout);
 
   if (!user) return null;
 
   async function onLogout() {
     try {
-      await logoutAction();
+      await logout();
     } catch (error) {}
   }
 

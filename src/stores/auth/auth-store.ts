@@ -20,6 +20,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   setIsAuthenticating: (isAuthenticating) => set({ isAuthenticating }),
 
   logout: async () => {
+    localStorage.removeItem("current-store");
     set({ isLoggingOut: true });
     await logoutAction();
     set({ user: null });

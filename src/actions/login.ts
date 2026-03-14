@@ -37,6 +37,7 @@ export async function loginAction({
 
     return { message, user, redirectPath };
   } catch (error: any) {
+
     let messageError = "Ocorreu um erro desconhecido!";
 
     if (error?.response?.data?.message) {
