@@ -40,7 +40,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     component: React.ReactNode;
     category: "general" | "workplace";
     isVisible: boolean;
-  }
+  };
 
   const allTabs: Tabs[] = [
     {
@@ -149,11 +149,17 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       <TabsTrigger key={tab.id} value={tab.id} className={baseClasses}>
         <Icon
           name={tab.icon}
-          className={isDesktop ? "-ms-0.5 me-1.5 opacity-60" : ""}
+          className={isDesktop ? "-ms-0.5 me-1.5 opacity-60 text-primary" : ""}
           size={16}
           aria-hidden="true"
         />
-        {isDesktop && <p className="font-normal">{tab.label}</p>}
+        {isDesktop && (
+          <p
+            className={`font-normal ${activeTab === tab.id ? "text-primary" : ""}`}
+          >
+            {tab.label}
+          </p>
+        )}
       </TabsTrigger>
     );
   };

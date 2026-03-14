@@ -25,6 +25,13 @@ export function ProtectedAction({
     subStatus === SubscriptionStatus.TRIALING;
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    if (subStatus === SubscriptionStatus.PENDING) {
+      e.preventDefault();
+      e.stopPropagation();
+      openModal("pending-subscription-modal");
+      return;
+    }
+
     if (!hasActiveSubscription) {
       e.preventDefault();
       e.stopPropagation();

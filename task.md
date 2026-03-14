@@ -28,3 +28,11 @@ ao barrar o user mostra um modal like a crunchyral avisando, se ele clicar em re
 lhe leva pra billing e tal...
 
 configurações - notificações guadar nos cookies o som padrão
+
+falar das cores nas settings
+
+
+tela inicial dos planos sair, vai logo na finalizar, colocar la o tipo de subs.
+tirar o desnecessario_ dados, pagamantos seguro etc.
+
+deixar o resumo e as features.

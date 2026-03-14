@@ -1,4 +1,4 @@
-import { Button, Separator, ProtectedAction } from "@/components";
+import { Button, Separator } from "@/components";
 
 export function SupportAccess() {
   return (
@@ -17,14 +17,14 @@ export function SupportAccess() {
               Excluir conta
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              A exclusão da sua conta é uma ação permanente e irreversível. Todos os seus dados pessoais, configurações e acessos aos espaços de trabalho serão apagados imediatamente.
+              A exclusão da sua conta é uma ação permanente e irreversível.
+              Todos os seus dados pessoais, configurações e acessos aos espaços
+              de trabalho serão apagados imediatamente.
             </p>
           </div>
-          <ProtectedAction>
-            <Button variant="destructive" className="whitespace-nowrap">
-              Excluir Conta
-            </Button>
-          </ProtectedAction>
+          <Button variant="destructive" className="whitespace-nowrap">
+            Excluir Conta
+          </Button>
         </div>
       </div>
     </div>

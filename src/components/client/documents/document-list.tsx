@@ -71,7 +71,6 @@ export function DocumentList() {
             </TabsList>
           </div>
 
-          {/* Button stacks below on mobile, inline on larger screens */}
           <ProtectedAction>
             <Link
               className={cn("w-full sm:w-auto", {

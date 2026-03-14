@@ -2,7 +2,6 @@
 import { useModal } from "@/stores";
 import { Button } from "@/components/ui";
 import { GlobalModal } from "@/components/modal";
-import { Icon } from "@/components/common";
 import { useRouter } from "next/navigation";
 
 export function SubscriptionSucessModal() {
@@ -10,7 +9,7 @@ export function SubscriptionSucessModal() {
   const { closeModal } = useModal();
 
   function handleClose() {
-    closeModal("subscription-sucess");
+    closeModal("subscription-created");
     router.push("/settings?tab=subscription");
   }
 

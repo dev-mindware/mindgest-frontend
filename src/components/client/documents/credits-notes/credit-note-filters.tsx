@@ -37,11 +37,13 @@ export function CreditNotesFiltersTSX() {
           value={filters.startDate ? new Date(filters.startDate) : undefined}
           onChange={(date) => setFilters({ startDate: date?.toISOString() })}
           placeholder="Data de fim"
+          className="w-full sm:w-max"
         />
         <DatePicker
           value={filters.endDate ? new Date(filters.endDate) : undefined}
           onChange={(date) => setFilters({ endDate: date?.toISOString() })}
           placeholder="Data de inicio"
+          className="w-full sm:w-max"
         />
 
         <FilterPopover

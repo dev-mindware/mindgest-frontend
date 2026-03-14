@@ -18,20 +18,17 @@ import { formatCurrency, getPlanFeatures } from "@/utils";
 import { PlanInclusionFeatures } from "./plan-inclusion-features";
 
 export function AvailablePlans() {
-  const { user, subscriptionStatus } = useAuth();
+  const { user } = useAuth();
   const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
 
   const currentPlan = user?.company?.subscription.plan;
   const isCurrentPlan = (plan: Plan) => plan.id === currentPlan?.id;
-  const isPending = subscriptionStatus === "PENDING";
 
   function onHandlerChoosePlan(plan: Plan) {
     setCurrentPlanSelected(plan);
     window.open("/checkout", "_blank");
   }
-
-
 
   return (
     <div>
@@ -112,7 +109,7 @@ export function AvailablePlans() {
                       <Button
                         size="lg"
                         className="w-full"
-                        disabled={isCurrent || isPending}
+                        disabled={isCurrent}
                         variant={isPopular ? "default" : "outline"}
                         onClick={() => onHandlerChoosePlan(plan)}
                       >

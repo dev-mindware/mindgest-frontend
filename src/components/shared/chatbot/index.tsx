@@ -317,7 +317,7 @@ export function ChatbotSheet() {
       <ProtectedAction>
         <SheetTrigger asChild>
           <Button
-          className="
+            className="
                         relative flex items-center justify-center gap-3
                         bg-white/10 dark:bg-white/5
                         backdrop-blur-xl
@@ -332,22 +332,22 @@ export function ChatbotSheet() {
                         group
                         overflow-hidden
                     "
-        >
-          {/* Glass highlight effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          >
+            {/* Glass highlight effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Subtle inner glow */}
-          <div className="absolute inset-[1px] rounded-full border border-white/5 pointer-events-none" />
+            {/* Subtle inner glow */}
+            <div className="absolute inset-[1px] rounded-full border border-white/5 pointer-events-none" />
 
-          <Icon
-            name="Sparkles"
-            className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform duration-500"
-          />
-          <span className="relative z-10 tracking-tight">Fale com MIND</span>
+            <Icon
+              name="Sparkles"
+              className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform duration-500"
+            />
+            <span className="relative z-10 tracking-tight">Fale com MIND</span>
 
-          {/* Bloom effect on hover */}
-          <div className="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" />
-        </Button>
+            {/* Bloom effect on hover */}
+            <div className="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" />
+          </Button>
         </SheetTrigger>
       </ProtectedAction>
 

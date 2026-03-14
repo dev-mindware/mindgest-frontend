@@ -53,9 +53,6 @@ export function CompanyForm({ user }: { user: User }) {
     );
   };
 
-  console.log("Erros ao editar a empresa...");
-  console.log(errors);
-
   return (
     <form
       onSubmit={handleSubmit(handleCompanySubmit)}

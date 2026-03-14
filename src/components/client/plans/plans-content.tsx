@@ -1,9 +1,9 @@
 "use client";
 import { usePlans } from "@/hooks";
-import { InfoBanner, PlansPageSkeleton, RequestError } from "@/components";
 import { useAuth } from "@/hooks/auth";
 import { CurrentPlanCard } from "./current-plan-card";
 import { WithoutActivePlan } from "./without-active-plan";
+import { InfoBanner, PlansPageSkeleton, RequestError } from "@/components";
 
 export function PlansAvailableInfo() {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ export function PlansAvailableInfo() {
     );
 
   const currentPlan = plans.find(
-    (p) => p.id === user?.company?.subscription?.plan.id
+    (p) => p.id === user?.company?.subscription?.plan.id,
   );
   const hasSubscription = !!currentPlan;
 
@@ -32,21 +32,13 @@ export function PlansAvailableInfo() {
       {isLoading ? (
         <PlansPageSkeleton />
       ) : (
-        <div className="bgre4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="sm:col-span-2 space-y-6">
-              {hasSubscription ? (
-                <CurrentPlanCard currentPlan={currentPlan!} />
-              ) : (
-                <WithoutActivePlan />
-              )}
-
-              {/* <AvailablePlans
-                plans={plans}
-                currentPlanId={currentPlan?.id}
-                hasActiveSubscription={hasSubscription}
-              /> */}
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="sm:col-span-2 space-y-6">
+            {hasSubscription ? (
+              <CurrentPlanCard currentPlan={currentPlan!} />
+            ) : (
+              <WithoutActivePlan />
+            )}
           </div>
         </div>
       )}

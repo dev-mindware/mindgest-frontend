@@ -2,7 +2,7 @@ import { Plan } from "@/types";
 import { formatCurrency, getPlanFeatures } from "@/utils";
 import type { ComponentType, ReactNode } from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components";
-import { Shield, Check, CreditCard } from "lucide-react";
+import { Shield, Check } from "lucide-react";
 
 function InfoRow({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -61,6 +61,7 @@ export function SubscriptionSummary({
   months,
   frequency,
 }: SubscriptionSummaryProps) {
+  
   if (!selectedPlan) return null;
 
   const price = parseFloat(selectedPlan.priceMonthly);
@@ -129,16 +130,6 @@ export function SubscriptionSummary({
             <CheckItem key={idx}>{feature}</CheckItem>
           ))}
         </ul>
-      </SectionCard>
-
-      <SectionCard icon={CreditCard} title="Pagamento Seguro">
-        <p className="text-sm text-foreground mb-4">
-          Seus dados estão protegidos com criptografia SSL
-        </p>
-        <div className="flex space-x-2">
-          <Pill>Kwik</Pill>
-          <Pill>Express</Pill>
-        </div>
       </SectionCard>
     </div>
   );

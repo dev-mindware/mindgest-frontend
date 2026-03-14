@@ -46,7 +46,7 @@ export function NotificationItem({
           style.colorClass
         )}
       >
-        <Icon name={style.icon} className="w-5 h-5" />
+        <Icon name={style.icon} className="w-5 h-5 text-primary" />
       </div>
 
       <div className="flex-1 min-w-0 text-left">

@@ -74,7 +74,7 @@ export function ClientsFiltersTSX({
           }
           onChange={(_, formatted) => setFilters({ createdBefore: formatted })}
           placeholder="Cadastrado antes de.."
-          className="w-max"
+          className="w-full sm:w-max"
         />
 
         <DatePicker
@@ -83,7 +83,7 @@ export function ClientsFiltersTSX({
           }
           onChange={(_, formatted) => setFilters({ createdAfter: formatted })}
           placeholder="Cadastrado depois de.."
-          className="w-max"
+          className="w-full sm:w-max"
         />
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { SubscriptionStatus, Role, PlanType, PLAN_HIERARCHY } from "@/types";
+import { Role, PlanType, PLAN_HIERARCHY } from "@/types";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/auth";
 import { menuItems, MenuItem } from "@/constants/menu-items";
@@ -33,7 +33,6 @@ export function RouteProtector({
   const { user, isAuthenticating, subscriptionStatus } = useAuth();
 
   useEffect(() => {
-    // Só redireciona após autenticação completa
     if (isAuthenticating) return;
 
     if (!user) {
@@ -50,19 +49,7 @@ export function RouteProtector({
       return;
     }
 
-    if (
-      subscriptionStatus === SubscriptionStatus.PENDING &&
-      !pathname.startsWith("/settings") &&
-      !pathname.startsWith("/plans")
-    ) {
-      const target = "/settings?tab=subscription";
-      if (pathname + (window.location.search || "") !== target) {
-        router.replace(target);
-      }
-      return;
-    }
 
-    // Plan-based route protection
     const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
     const currentPlanLevel = PLAN_HIERARCHY[currentPlan] || 0;
 
@@ -85,7 +72,6 @@ export function RouteProtector({
 
   }, [user, allowed, router, isAuthenticating, pathname, subscriptionStatus]);
 
-  // Enquanto está verificando autenticação/autorização
   if (isAuthenticating || !user) {
     return (
       fallback || (
@@ -94,20 +80,11 @@ export function RouteProtector({
     );
   }
 
-  // Se usuário não tem permissão, retorna null (redirecionamento já foi feito)
   if (!allowed.includes(user.role)) {
     return null;
   }
 
-  if (
-    subscriptionStatus === SubscriptionStatus.PENDING &&
-    !pathname.startsWith("/settings") &&
-    !pathname.startsWith("/plans")
-  ) {
-    return null;
-  }
 
-  // Double check rendering guard for plan
   const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
   const currentPlanLevel = PLAN_HIERARCHY[currentPlan] || 0;
 
