@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
-import { Inter, Outfit, } from "next/font/google";
+import { Inter, Outfit, Roboto, Poppins, Plus_Jakarta_Sans } from "next/font/google";
 import { ThemeProvider } from "@/providers";
 import { CustomToaster } from "@/utils";
 import { SidebarProvider } from "@/components";
@@ -16,8 +16,26 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-outfit",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jakarta",
 });
 
 export const metadata: Metadata = {
@@ -34,10 +52,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
+      <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable}  ${outfit.variable}`}
+      className={`${inter.variable} ${outfit.variable} ${roboto.variable} ${poppins.variable} ${plusJakartaSans.variable}`}
     >
       <body
         className="antialiased"
