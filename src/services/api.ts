@@ -9,6 +9,10 @@ let failedQueue: Array<{
   reject: (err: any) => void;
 }> = [];
 
+export const resetAccessTokenCache = () => {
+  accessTokenCache = null;
+};
+
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -32,13 +36,24 @@ export const api = axios.create({
 import { currentStoreStore } from "@/stores";
 
 api.interceptors.request.use(async (config) => {
-  // Use cache if available, otherwise fetch and cache
-  if (!accessTokenCache) {
-    accessTokenCache = await getAccessToken();
-  }
+  const url = config.url || "";
 
-  if (accessTokenCache) {
-    config.headers.Authorization = `Bearer ${accessTokenCache}`;
+  // Rotas públicas de auth não devem enviar Authorization nem tocar no cache de token
+  const isPublicAuthRoute =
+    url.includes("/auth/login") ||
+    url.includes("/auth/register") ||
+    url.includes("/auth/forgot-password") ||
+    url.includes("/auth/reset-password");
+
+  if (!isPublicAuthRoute) {
+    // Usa o cache se disponível, senão lê dos cookies via server action
+    if (!accessTokenCache) {
+      accessTokenCache = await getAccessToken();
+    }
+
+    if (accessTokenCache) {
+      config.headers.Authorization = `Bearer ${accessTokenCache}`;
+    }
   }
 
   // Routes that require storeId injection
@@ -140,7 +155,7 @@ api.interceptors.response.use(
 
       if (isAuthCritical) {
         console.warn("🚨 [API] 404 em rota crítica de auth. Forçando logout.");
-        accessTokenCache = null;
+        resetAccessTokenCache();
         if (typeof window !== "undefined") {
           window.location.replace("/auth/login");
         }
@@ -180,7 +195,7 @@ api.interceptors.response.use(
           throw new Error("Novo access token não recebido após reautenticação");
         }
       } catch (refreshError) {
-        accessTokenCache = null; // Clear cache on failure
+        resetAccessTokenCache(); // Clear cache on failure
         processQueue(refreshError, null);
         console.error("Erro ao renovar token:", refreshError);
 

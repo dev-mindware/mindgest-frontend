@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createSession } from "@/lib/session";
 import { clearLocalSession } from "@/actions/auth";
@@ -6,8 +6,42 @@ import axios from "axios";
 import { LoginResponse } from "@/types";
 import { REFRESH_TOKEN_KEY } from "@/constants/auth";
 
-export async function POST() {
+// Pequena proteção CSRF: só aceita chamadas com Origin da própria app
+function isAllowedOrigin(req: NextRequest) {
+  const origin = req.headers.get("origin");
+  if (!origin) return false;
+
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+
+  if (!appUrl) {
+    // Sem configuração explícita, caímos para um modo mais permissivo,
+    // assumindo que o frontend chama do mesmo host.
+    return true;
+  }
+
   try {
+    const allowed = new URL(appUrl);
+    const current = new URL(origin);
+    return (
+      allowed.protocol === current.protocol &&
+      allowed.hostname === current.hostname &&
+      allowed.port === current.port
+    );
+  } catch {
+    return false;
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json(
+        { message: "Origem não autorizada para refresh de token" },
+        { status: 403 },
+      );
+    }
+
     const authCookies = await cookies();
     const refreshToken = authCookies.get(REFRESH_TOKEN_KEY)?.value;
 
@@ -68,7 +102,6 @@ export async function POST() {
     });
   } catch (error: any) {
     console.error("🚨 [API Route] Erro crítico renovando o token:", error);
-    console.log(JSON.stringify(error, null, 2));
     await clearLocalSession();
     return NextResponse.json(
       {

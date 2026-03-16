@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { roleRedirects } from "@/utils";
 import { LoginResponse, Role, User } from "@/types";
 import { loginSchema } from "@/schemas";
-import api from "@/services/api";
+import { api } from "@/services/api";
 import { createSession } from "@/lib/session";
 import { getSession } from "@/lib/auth";
 
@@ -67,6 +67,9 @@ export async function logoutAction() {
   } finally {
     const { destroySession } = await import("@/lib/session");
     await destroySession();
+    // Garante que qualquer cache local de access token seja limpo
+    const { resetAccessTokenCache } = await import("@/services/api");
+    resetAccessTokenCache();
 
     redirect("/auth/login");
   }
