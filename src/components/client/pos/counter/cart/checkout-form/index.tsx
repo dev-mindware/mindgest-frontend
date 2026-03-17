@@ -77,7 +77,7 @@ export function CartCheckoutForm({
 
                 <Button
                     className="w-full"
-                    onClick={handleSubmit(handlePreview, (errors) => {
+                    onClick={handleSubmit((data) => handlePreview(data), (errors) => {
                         console.error("Form Validation Errors:", errors);
                         ErrorMessage("Verifique os campos obrigatórios");
                     })}

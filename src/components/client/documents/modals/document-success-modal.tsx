@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 
+import printJS from "print-js";
+
 interface DocumentSuccessModalData {
     id: string;
     type: DocumentType;
@@ -54,6 +56,28 @@ export function DocumentSuccessModal() {
             setBlobUrl(null);
         };
     }, [isOpen, data?.id, data?.type, format]);
+
+    const handlePrint = () => {
+        if (blobUrl) {
+            printJS({
+                printable: blobUrl,
+                type: "pdf",
+                onPrintDialogClose: () => console.log("The print dialog was closed"),
+                onError: (err) => console.error("Print error:", err)
+            });
+        }
+    };
+
+    // Auto-trigger print when blobUrl is ready
+    useEffect(() => {
+        if (blobUrl && !isLoading && isOpen) {
+            // Pequeno delay para garantir que o modal carregou
+            const timer = setTimeout(() => {
+                handlePrint();
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [blobUrl, isLoading, isOpen]);
 
     if (!isOpen) return null;
 
@@ -120,13 +144,24 @@ export function DocumentSuccessModal() {
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                         {isThermal ? "Versão Talão" : "Versão A4"}
                     </p>
-                    <Button
-                        onClick={handleClose}
-                        variant="default"
-                        className="w-32"
-                    >
-                        Fechar
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            onClick={handlePrint}
+                            variant="outline"
+                            className="gap-2"
+                            disabled={!blobUrl || isLoading}
+                        >
+                            <Icon name="Printer" size={16} />
+                            Imprimir
+                        </Button>
+                        <Button
+                            onClick={handleClose}
+                            variant="default"
+                            className="w-32"
+                        >
+                            Fechar
+                        </Button>
+                    </div>
                 </div>
             </div>
         </GlobalModal>

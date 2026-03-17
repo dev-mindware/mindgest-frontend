@@ -144,7 +144,7 @@ export function useCartCheckout({
     setCashGiven(amount);
   };
 
-  const handlePreview = async (data: any) => {
+  const handlePreview = async (data: any, skipPreview = false) => {
     if (cartItems.length === 0) {
       ErrorMessage("O carrinho está vazio!");
       return;
@@ -192,16 +192,24 @@ export function useCartCheckout({
     }
 
     setPendingPayload(payload);
-    setIsPreviewOpen(true);
+    
+    if (skipPreview) {
+      await performSubmit(payload);
+    } else {
+      setIsPreviewOpen(true);
+    }
   };
 
   const handleFinalSubmit = async () => {
     if (!pendingPayload) return;
+    await performSubmit(pendingPayload);
+  };
 
+  const performSubmit = async (payload: PosSalesFormData) => {
     try {
-      console.log("FINAL PAYLOAD:", JSON.stringify(pendingPayload, null, 2));
+      console.log("SUBMITTING PAYLOAD:", JSON.stringify(payload, null, 2));
       if (type === "invoice") {
-        const response = await createInvoiceReceipt(pendingPayload as any);
+        const response = await createInvoiceReceipt(payload as any);
         const invoiceId = response?.data?.id;
 
         if (invoiceId) {
@@ -213,8 +221,7 @@ export function useCartCheckout({
         }
       } else {
         // Remove payment-specific fields for proforma
-        const { cashSessionId, change, receivedValue, ...proformaData } =
-          pendingPayload;
+        const { cashSessionId, change, receivedValue, ...proformaData } = payload;
 
         const proformaPayload = {
           ...proformaData,

@@ -16,8 +16,9 @@ import {
   Tabs, TabsContent, TabsList, TabsTrigger,
   ScrollArea
 } from "@/components";
-import { Product, CartType } from "@/types";
-import { useCounterState } from "@/hooks";
+import { Product, CartType, CartItem as TypeCartItem } from "@/types";
+import { useCounterState, useIsMobile } from "@/hooks";
+import { MobilePosLayout } from "../mobile";
 
 export function CounterContent() {
   const [search] = useQueryState("search", { defaultValue: "" });
@@ -52,6 +53,7 @@ export function CounterContent() {
     handleUpdateQuantity,
     handleClearCart,
     getCartItemsArray,
+    handleManualScan,
   } = useCounterState({ apiProducts, activeCart });
 
   const handleCategorySelect = useCallback((categoryId: string) => {
@@ -84,6 +86,8 @@ export function CounterContent() {
     }, {} as Record<string, any>)
     , [activeCart, getCartItemsArray]);
 
+  const isMobile = useIsMobile();
+
   const handleUpdateQtyInvoice = useCallback((item: any, delta: number) =>
     handleUpdateQuantity(item.id, item.qty + delta)
     , [handleUpdateQuantity]);
@@ -94,6 +98,28 @@ export function CounterContent() {
 
   const handleClearCartInvoice = useCallback(() => handleClearCart("invoice"), [handleClearCart]);
   const handleClearCartProforma = useCallback(() => handleClearCart("proforma"), [handleClearCart]);
+
+  if (isMobile) {
+    return (
+      <MobilePosLayout
+        products={products}
+        categories={categories}
+        cartItems={getCartItemsArray(activeCart)}
+        onAddToCart={handleAddToCart}
+        onUpdateQty={(item: TypeCartItem, delta: number) => handleUpdateQuantity(item.id, item.qty + delta)}
+        onRemove={handleRemoveFromCart}
+        onProcessTransaction={() => {
+            // Logic to open checkout drawer/modal for mobile
+            // For now, we can use the existing CartList logic but in a mobile way
+        }}
+        onScan={handleManualScan}
+        activeCategory={selectedCategory}
+        onCategoryChange={handleCategorySelect}
+        isLoading={isLoadingProducts}
+        cashSessionId={currentSession?.id || ""}
+      />
+    );
+  }
 
   return (
     <div className="flex h-full overflow-hidden">

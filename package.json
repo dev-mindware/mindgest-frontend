@@ -43,6 +43,7 @@
     "cookies-next": "^6.1.0",
     "date-fns": "^4.1.0",
     "emblor": "^1.4.8",
+    "html5-qrcode": "^2.3.8",
     "input-otp": "^1.4.2",
     "jose": "^6.0.12",
     "lucide-react": "^0.511.0",

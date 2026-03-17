@@ -68,20 +68,20 @@ export function useCounterState({
     return () => clearTimeout(timer);
   }, [barcodeBuffer]);
 
-  const onConfirmScan = () => {
+  const onConfirmScan = (quantity: number = 1) => {
     if (scannedProduct) {
-      handleAddToCart(scannedProduct);
+      handleAddToCart(scannedProduct, quantity);
       setScannedProduct(null);
     }
   };
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
     setCarts((prev) => {
       const currentCart = prev[activeCart];
       const existingItem = currentCart[product.id];
 
       if (existingItem) {
-        const newQty = existingItem.qty + 1;
+        const newQty = existingItem.qty + quantity;
         const updatedCart = {
           ...currentCart,
           [product.id]: { ...existingItem, qty: newQty },
@@ -90,7 +90,7 @@ export function useCounterState({
       } else {
         const newItem: CartItem = {
           ...product,
-          qty: 1,
+          qty: quantity,
         };
         return {
           ...prev,
@@ -158,6 +158,16 @@ export function useCounterState({
     }));
   };
 
+  const handleManualScan = (barcode: string) => {
+    const product = apiProducts.find(
+      (p) => String(p.barcode) === barcode || p.sku === barcode
+    );
+
+    if (product) {
+      setScannedProduct(product);
+    }
+  };
+
   const getCartItemsArray = (type: CartType): CartItem[] => {
     const items = carts[type];
     return Object.values(items);
@@ -175,5 +185,6 @@ export function useCounterState({
     handleUpdateQuantity,
     handleClearCart,
     getCartItemsArray,
+    handleManualScan,
   };
 }
