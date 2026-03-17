@@ -36,13 +36,9 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
   const currentMethod = paymentMethods[paymentMethod];
 
   async function handleFormSubmit(data: SubscriptionFormData) {
-    if (!data.proofPayment || data.proofPayment === null) {
-      ErrorMessage("Por favor, envie o comprovativo de pagamento");
-      return;
-    }
-
     await onSubmit(data);
   }
+
 
   return (
     <div className="container mx-auto py-8">
@@ -104,11 +100,10 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
                     <button
                       key={key}
                       onClick={() => setPaymentMethod(key as any)}
-                      className={`p-4 border-2 rounded-lg flex flex-col items-center gap-2 transition-all ${
-                        paymentMethod === key
+                      className={`p-4 border-2 rounded-lg flex flex-col items-center gap-2 transition-all ${paymentMethod === key
                           ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
                           : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700"
-                      }`}
+                        }`}
                     >
                       <div className="h-16 w-full relative flex items-center justify-center p-2 mb-2">
                         <img

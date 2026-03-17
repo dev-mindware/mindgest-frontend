@@ -1,5 +1,6 @@
 "use client";
-import { useModal } from "@/stores";
+import { useEffect } from "react";
+import { useModal, useCurrentPlanStore } from "@/stores";
 import { useForm } from "react-hook-form";
 import { PaymentForm } from "./payment-form";
 import { ErrorMessage } from "@/utils/messages";
@@ -9,6 +10,7 @@ import { useFileUpload } from "@/hooks/common/use-upload";
 
 export function SubscriptionPageContent() {
   const { openModal } = useModal();
+  const { currentPlanSelected } = useCurrentPlanStore();
   const { mutateAsync: uploadFile, isPending } = useFileUpload(
     "/subscriptions",
     "subscriptions",
@@ -21,12 +23,19 @@ export function SubscriptionPageContent() {
       status: "PENDING_PAYMENT",
       frequency: "MONTHLY",
       proofPayment: null,
+      planId: currentPlanSelected?.id || "",
     },
   });
 
+  useEffect(() => {
+    if (currentPlanSelected?.id) {
+      form.setValue("planId", currentPlanSelected.id);
+    }
+  }, [currentPlanSelected?.id, form]);
+
   async function handlePaymentSubmit(data: SubscriptionFormData) {
     try {
-      if (!data.proofPayment) {
+      if (!data.proofPayment || data.proofPayment === null) {
         ErrorMessage("Por favor, envie o comprovativo de pagamento");
         return;
       }
