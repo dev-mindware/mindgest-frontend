@@ -166,6 +166,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
             errors={errors}
             isInvoiceDoc={isInvoiceDoc}
             docType={docType}
+            client={invoice.client}
           />
 
           <Separator />

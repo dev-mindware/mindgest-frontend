@@ -4,12 +4,12 @@ import { TabsContent } from "@/components/ui/tabs";
 import { LocalChatHistoryItem } from "./index";
 
 export const QUICK_ACTIONS = [
-    { label: "Visão Geral de Vendas" },
-    { label: "Consultar Stock de Produtos" },
-    { label: "Relatórios de Hoje" },
-    { label: "Desempenho da Equipa" },
+    { label: "Como emitir uma Factura Recibo (FR)?" },
+    { label: "Como converter Proforma em Factura?" },
+    { label: "Como fazer uma reserva de estoque?" },
+    { label: "Como configurar os dados do banco?" },
 ];
-export const SUGGESTION_CHIPS = ["Vendas", "Stock", "Clientes", "Documentos", "Definições"];
+export const SUGGESTION_CHIPS = ["Faturamento", "Estoque", "Relatórios", "Clientes", "Definições"];
 
 export const RenderAIMessage = ({ content, isTyping }: { content: string, isTyping?: boolean }) => {
     const paragraphs = content.split('\n');

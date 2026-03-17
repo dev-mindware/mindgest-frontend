@@ -8,11 +8,11 @@ export function mapDocumentToCreditNoteDefaults(
   if (isInvoice(doc)) {
     const defaultInvoiceBody = {
       client: {
-        id: doc.client.id,
-        name: doc.client.name,
-        phone: (doc.client as any).phone || "",
-        address: (doc.client as any).address || "",
-        taxNumber: (doc.client as any).taxNumber || "",
+        id: doc.client?.id || "",
+        name: doc.client?.name || "",
+        phone: (doc.client as any)?.phone || "",
+        address: (doc.client as any)?.address || "",
+        taxNumber: (doc.client as any)?.taxNumber || "",
       },
       items: doc.items.map((item) => ({
         id: item.id,

@@ -34,17 +34,18 @@ export function GenerateReceiptModal() {
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
       paymentMethod: "CASH",
+      total: String(currentInvoice?.total || "0"),
     },
   });
 
   useEffect(() => {
     if (!currentInvoice) return;
 
-    setValue("originalInvoiceId", currentInvoice.id, { shouldValidate: true });
-    setValue("discountAmount", currentInvoice.discountAmount ?? "0");
-    setValue("taxAmount", currentInvoice.taxAmount ?? "0");
-    setValue("retentionAmount", currentInvoice.receivedValue ?? "0");
-    setValue("total", currentInvoice.total ?? "0");
+    setValue("originalInvoiceId", String(currentInvoice.id), { shouldValidate: true });
+    setValue("discountAmount", String(currentInvoice.discountAmount ?? "0"));
+    setValue("taxAmount", String(currentInvoice.taxAmount ?? "0"));
+    setValue("retentionAmount", String(currentInvoice.receivedValue ?? "0"));
+    setValue("total", String(currentInvoice.total ?? "0"));
   }, [currentInvoice, setValue]);
 
 
