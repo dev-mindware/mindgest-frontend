@@ -89,6 +89,7 @@ export function PaymentMethods({
                             decimalScale={2}
                             fixedDecimalScale
                             allowNegative={false}
+                            inputMode="none"
                         />
                     </div>
                     <div

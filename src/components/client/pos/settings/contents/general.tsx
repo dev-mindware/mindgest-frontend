@@ -117,53 +117,106 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
     ] : [];
 
     return (
-        <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="space-y-8 pb-12">
+            {/* Action Group - iOS Style Shortcut Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {actionCards.map((card, index) => (
-                    <DynamicMetricCard
+                    <button
                         key={index}
-                        {...card}
-                        icon={card.icon as any}
+                        onClick={card.onClick}
+                        disabled={(card as any).disabled}
                         className={cn(
-                            "h-full",
-                            (card as any).disabled && "opacity-50 grayscale pointer-events-none"
+                            "flex flex-col items-center justify-center p-4 rounded-2xl transition-all active:scale-95 text-center gap-2 border shadow-sm",
+                            (card as any).disabled 
+                                ? "opacity-40 grayscale pointer-events-none bg-muted/20 border-border/50" 
+                                : card.colors === "destructive"
+                                    ? "bg-destructive/5 hover:bg-destructive/10 border-destructive/10 text-destructive"
+                                    : "bg-background hover:bg-muted/30 border-border/50 text-foreground"
                         )}
-                    />
+                    >
+                        <div className={cn(
+                            "w-10 h-10 rounded-full flex items-center justify-center mb-1",
+                            card.colors === "destructive" ? "bg-destructive/10" : "bg-primary/10"
+                        )}>
+                            <Icon name={card.icon as any} size={20} className={card.colors === "destructive" ? "text-destructive" : "text-primary"} />
+                        </div>
+                        <div className="space-y-0.5">
+                            <p className="text-xs font-bold leading-tight uppercase tracking-wide opacity-70">{card.title}</p>
+                            <p className="text-sm font-bold truncate max-w-[130px]">{card.subtitle}</p>
+                        </div>
+                    </button>
                 ))}
             </div>
 
             {currentSession && (
-                <Card className="border-primary/10 overflow-hidden shadow-sm hover:shadow-md transition-all">
-                    <div className="bg-muted/30 px-6 py-4 border-b border-primary/5 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <div className={cn(
-                                "p-2 rounded-full",
-                                isOpen ? "bg-green-500/10" : "bg-red-500/10"
-                            )}>
-                                <Icon
-                                    name={isOpen ? "Store" : "Lock"}
-                                    className={cn("h-5 w-5", isOpen ? "text-green-600" : "text-red-600")}
-                                />
+                <div className="space-y-4">
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.1em] px-1">Detalhes da Sessão</p>
+                    
+                    {/* Desktop View: Minimalist Metric Cards */}
+                    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                            { label: "Total em Vendas", value: formatCurrency(currentSession.totalSales || 0), icon: "TrendingUp", color: "text-primary-500", bg: "bg-primary-500/10", valueClass: "text-primary-600" },
+                            { label: "Tempo decorrido", value: currentSession.duration || "00:00:00", icon: "Timer", color: "text-primary-500", bg: "bg-primary-500/10" },
+                            { label: "Fundo de Manejo", value: formatCurrency(currentSession.openingCash), icon: "Wallet", color: "text-primary-500", bg: "bg-primary-500/10" },
+                            { label: "Responsável", value: currentSession.authorizedById || "-", icon: "User", color: "text-primary-500", bg: "bg-primary-500/10" },
+                        ].map((m, i) => (
+                            <div key={i} className="p-4 rounded-2xl bg-card border border-border/50 shadow-sm space-y-3">
+                                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", m.bg)}>
+                                    <Icon name={m.icon as any} size={20} className={m.color} />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{m.label}</p>
+                                    <p className={cn("text-lg font-black font-outfit truncate", m.valueClass)}>{m.value}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="font-outfit font-bold text-lg leading-none">Detalhes da Sessão</h3>
-                                <p className="text-xs text-muted-foreground mt-1 lowercase">loja: {currentSession.storeId || "principal"}</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-                    <CardContent className="p-6">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4">
-                            {sessionMetrics.map((metric, index) => (
-                                <MetricItem key={index} {...metric} />
-                            ))}
 
-                            <div className="col-span-2 md:col-span-4 mt-2 p-3 bg-muted/50 rounded-lg border border-primary/5">
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Notas da Sessão</p>
-                                <p className="text-sm italic">{currentSession.notes || "Nenhuma observação registada para esta sessão."}</p>
+                    {/* Mobile View: iOS Inset Grouped List */}
+                    <div className="md:hidden bg-card rounded-2xl border border-border/50 overflow-hidden divide-y divide-border/30 shadow-sm">
+                        {/* Status Item */}
+                        <div className="flex items-center justify-between p-4 bg-muted/5">
+                            <div className="flex items-center gap-3">
+                                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", isOpen ? "bg-green-500/10" : "bg-red-500/10")}>
+                                    <Icon name={isOpen ? "CircleDot" : "Circle"} size={16} className={isOpen ? "text-green-600" : "text-red-500"} />
+                                </div>
+                                <p className="text-sm font-medium">Estado do Caixa</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className={cn("h-2 w-2 rounded-full", isOpen ? "bg-green-500 animate-pulse" : "bg-red-500")} />
+                                <span className="text-sm font-bold">{isOpen ? "Em Operação" : "Finalizada"}</span>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
+
+                        {[
+                            { label: "Tempo decorrido", value: currentSession.duration || "00:00:00", icon: "Timer", iconColor: "text-primary-500", iconBg: "bg-primary-500/10" },
+                            { label: "Total em Vendas", value: formatCurrency(currentSession.totalSales || 0), icon: "TrendingUp", iconColor: "text-emerald-500", iconBg: "bg-emerald-500/10", valueClass: "text-emerald-600" },
+                            { label: "Fundo de Maneio", value: formatCurrency(currentSession.openingCash), icon: "Wallet", iconColor: "text-orange-500", iconBg: "bg-orange-500/10" },
+                            { label: "Abertura", value: formatDateTime(currentSession.openedAt), icon: "Calendar", iconColor: "text-indigo-500", iconBg: "bg-indigo-500/10" },
+                            { label: "Responsável", value: currentSession.authorizedById || "-", icon: "User", iconColor: "text-gray-500", iconBg: "bg-gray-500/10" },
+                        ].map((m, i) => (
+                            <div key={i} className="flex items-center justify-between p-4 active:bg-muted/30 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", m.iconBg)}>
+                                        <Icon name={m.icon as any} size={16} className={m.iconColor} />
+                                    </div>
+                                    <p className="text-sm font-medium">{m.label}</p>
+                                </div>
+                                <span className={cn("text-sm font-bold", m.valueClass)}>{m.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {currentSession.notes && (
+                        <div className="p-4 bg-muted/30 rounded-2xl border border-dashed border-border flex gap-3">
+                            <Icon name="MessageSquare" size={16} className="text-muted-foreground mt-0.5" />
+                            <div className="space-y-0.5">
+                                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Observações</p>
+                                <p className="text-xs italic text-muted-foreground leading-relaxed">{currentSession.notes}</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
             )}
 
             <PosOpeningModal />

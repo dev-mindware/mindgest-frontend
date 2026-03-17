@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/utils";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useAuthStore, currentStoreStore } from "@/stores";
 
 interface MobileMenuViewProps {
   products: Product[];
@@ -30,6 +31,8 @@ export function MobileMenuView({
   cartItems
 }: MobileMenuViewProps) {
   const [search, setSearch] = useState("");
+  const { logout } = useAuthStore();
+  const { currentStore } = currentStoreStore();
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -44,14 +47,28 @@ export function MobileMenuView({
             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                <Icon name="Store" size={18} className="text-primary" />
             </div>
-            <h1 className="text-lg font-bold">Facturação</h1>
+            <h1 
+              className="text-lg font-bold truncate max-w-[140px]" 
+              title={currentStore?.name}
+            >
+              {currentStore?.name || "Empresa"}
+            </h1>
           </div>
-          <button 
-            onClick={onViewOrder}
-            className="w-10 h-10 rounded-full bg-muted flex items-center justify-center relative"
-          >
-            <Icon name="ShoppingBag" size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={onViewOrder}
+              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center relative"
+            >
+              <Icon name="ShoppingBag" size={20} />
+            </button>
+            <button 
+              onClick={() => logout()}
+              className="w-10 h-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center"
+              title="Sair"
+            >
+              <Icon name="LogOut" size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Search */}
@@ -62,6 +79,7 @@ export function MobileMenuView({
             className="pl-10 h-11 bg-muted/50 border-none rounded-xl"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            inputMode="none"
           />
         </div>
 

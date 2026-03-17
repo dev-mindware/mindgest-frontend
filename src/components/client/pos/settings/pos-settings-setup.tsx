@@ -6,6 +6,7 @@ import { PosGeneralSettings, PosWorkspaceSettings } from "./contents";
 import { currentStoreStore } from "@/stores";
 import { useQuery } from "@tanstack/react-query";
 import { cashSessionsService } from "@/services";
+import { cn } from "@/lib/utils";
 
 export function PosSettingsSetup() {
     const router = useRouter();
@@ -50,60 +51,61 @@ export function PosSettingsSetup() {
     };
 
     return (
-        <div>
-            <h1 className="text-2xl font-semibold">Definições do POS</h1>
-            <div className="hidden md:block">
-                <Tabs
-                    value={activeTab}
-                    className="flex-row w-full mt-5"
-                    onValueChange={handleTabChange}
-                >
-                    <div className="h-screen bg-sidebar rounded-md w-64 shrink-0">
-                        <TabsList className="sticky top-0 flex-col gap-1 px-1 font-normal bg-transparent rounded-none w-full text-foreground items-stretch">
-                            <div className="p-4 space-y-2">
-                                {tabs.map((tab) => (
-                                    <TabsTrigger
-                                        key={tab.id}
-                                        value={tab.id}
-                                        className="hover:bg-accent hover:text-foreground data-[state=active]:bg-accent relative w-full justify-start"
-                                    >
-                                        <Icon name={tab.icon as any} className="mr-2 h-4 w-4" />
-                                        {tab.label}
-                                    </TabsTrigger>
-                                ))}
-                            </div>
+        <div className="space-y-6">
+            <div className="flex flex-col gap-1 px-4 md:px-0">
+                <h1 className="text-2xl font-black font-outfit tracking-tight">Definições</h1>
+                <p className="text-sm text-muted-foreground">Gerencie as configurações do seu ponto de venda</p>
+            </div>
+
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                {/* Mobile Navigation (Horizontal Tabs) */}
+                <div className="flex md:hidden flex-col gap-4">
+                    <div className="overflow-x-auto no-scrollbar px-4">
+                        <TabsList className="h-11 w-full justify-start inline-flex bg-muted/50 p-1 rounded-xl border border-border/50">
+                            {tabs.map((tab) => (
+                                <TabsTrigger 
+                                    key={tab.id} 
+                                    value={tab.id} 
+                                    className="whitespace-nowrap rounded-lg px-4 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all text-sm font-medium"
+                                >
+                                    <Icon name={tab.icon as any} className="mr-2 h-4 w-4" />
+                                    {tab.label}
+                                </TabsTrigger>
+                            ))}
                         </TabsList>
                     </div>
+                </div>
 
-                    <div className="border rounded-md grow text-start ml-6">
-                        {tabs.map((tab) => (
-                            <TabsContent key={tab.id} value={tab.id} className="p-6">
-                                {tab.component(currentSession, isLoading)}
-                            </TabsContent>
-                        ))}
-                    </div>
-                </Tabs>
-            </div>
-
-            {/* Mobile View */}
-            <div className="block mt-6 md:hidden">
-                <Tabs value={activeTab} className="w-full" onValueChange={handleTabChange}>
-                    <TabsList className="w-full justify-start overflow-x-auto">
-                        {tabs.map((tab) => (
-                            <TabsTrigger key={tab.id} value={tab.id}>
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* Desktop Navigation (Mini Sidebar) */}
+                    <aside className="hidden md:flex flex-col w-64 shrink-0 gap-1 p-1 bg-muted/30 rounded-2xl border border-border/50 self-start">
+                         {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => handleTabChange(tab.id)}
+                                className={cn(
+                                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium",
+                                    activeTab === tab.id 
+                                        ? "bg-background text-primary shadow-sm border border-border/50" 
+                                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                )}
+                            >
+                                <Icon name={tab.icon as any} size={18} />
                                 {tab.label}
-                            </TabsTrigger>
+                            </button>
                         ))}
-                    </TabsList>
-                    <div className="mt-4">
+                    </aside>
+
+                    {/* Content Area */}
+                    <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-2 duration-300">
                         {tabs.map((tab) => (
-                            <TabsContent key={tab.id} value={tab.id}>
+                            <TabsContent key={tab.id} value={tab.id} className="outline-none m-0">
                                 {tab.component(currentSession, isLoading)}
                             </TabsContent>
                         ))}
                     </div>
-                </Tabs>
-            </div>
+                </div>
+            </Tabs>
         </div>
     );
 }

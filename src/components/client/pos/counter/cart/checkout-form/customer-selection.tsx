@@ -70,7 +70,7 @@ export function CustomerSelection({
                             <Input
                                 startIcon="Phone"
                                 type="text"
-                                inputMode="numeric"
+                                inputMode="none"
                                 data-layout="numeric"
                                 placeholder="Digite o número de telefone..."
                                 value={newCustomerPhone}
