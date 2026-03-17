@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 
-import printJS from "print-js";
+
 
 interface DocumentSuccessModalData {
     id: string;
@@ -46,7 +46,7 @@ export function DocumentSuccessModal() {
                 }
             }
         }
-
+        
         fetchDocument();
 
         return () => {
@@ -57,14 +57,20 @@ export function DocumentSuccessModal() {
         };
     }, [isOpen, data?.id, data?.type, format]);
 
-    const handlePrint = () => {
+    const handlePrint = async () => {
         if (blobUrl) {
-            printJS({
-                printable: blobUrl,
-                type: "pdf",
-                onPrintDialogClose: () => console.log("The print dialog was closed"),
-                onError: (err) => console.error("Print error:", err)
-            });
+            try {
+                // Dynamically import print-js only on the client
+                const printJS = (await import("print-js")).default;
+                printJS({
+                    printable: blobUrl,
+                    type: "pdf",
+                    onPrintDialogClose: () => console.log("The print dialog was closed"),
+                    onError: (err: any) => console.error("Print error:", err)
+                });
+            } catch (err) {
+                console.error("Failed to load print-js:", err);
+            }
         }
     };
 
