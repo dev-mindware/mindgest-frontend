@@ -51,3 +51,12 @@ export interface CashSessionRequestFilters {
   status?: "PENDING" | "APPROVED" | "REJECTED" | null;
   userId?: string;
 }
+
+export interface AuthorizeOpeningPayload {
+  initialCapital: string;
+  workTime: string;
+  storeId: string;
+  fundType: "COIN" | string;
+  cashierIds: string[];
+  managerBarcode: string;
+}

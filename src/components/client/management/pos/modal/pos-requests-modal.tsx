@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   GlobalModal,
   Button,
@@ -10,12 +10,19 @@ import {
 } from "@/components";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { formatDateTime } from "@/utils";
-import { useGetOpeningRequests } from "@/hooks/cash-session/use-cash-sessions";
+import {
+  useGetOpeningRequests,
+  useAuthorizeOpening,
+  useRejectOpeningRequest,
+} from "@/hooks/cash-session/use-cash-sessions";
 import { CashSessionRequest } from "@/types/cash-session";
 
 export function PosRequestsModal() {
   const { closeModal, open } = useModal();
   const isOpen = open["pos-requests"];
+
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
 
   const {
     data: openingRequests,
@@ -23,6 +30,34 @@ export function PosRequestsModal() {
     isError,
     refetch,
   } = useGetOpeningRequests({ status: "PENDING" });
+
+  const { mutateAsync: authorizeOpening } = useAuthorizeOpening();
+  const { mutateAsync: rejectOpening } = useRejectOpeningRequest();
+
+  const handleApprove = async (request: CashSessionRequest) => {
+    setApprovingId(request.id);
+    try {
+      await authorizeOpening({
+        storeId: request.storeId,
+        cashierIds: [request.userId],
+        initialCapital: "0",
+        workTime: "08:00",
+        fundType: "COIN",
+        managerBarcode: "",
+      });
+    } finally {
+      setApprovingId(null);
+    }
+  };
+
+  const handleReject = async (request: CashSessionRequest) => {
+    setRejectingId(request.id);
+    try {
+      await rejectOpening(request.id);
+    } finally {
+      setRejectingId(null);
+    }
+  };
 
   const handleClose = () => {
     closeModal("pos-requests");
@@ -48,39 +83,70 @@ export function PosRequestsModal() {
         ) : (
           <>
             <div className="space-y-3">
-              {openingRequests?.map((request: CashSessionRequest) => (
-                <div
-                  key={request.id}
-                  className={`p-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer rounded-xl border border-muted-foreground/10`}
-                >
-                  <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-lg bg-primary/10 border-primary/5">
-                    <Icon name="LayoutGrid" className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">
-                          {request.userName}
-                        </h4>
-                        <p className="text-[12px] font-medium leading-tight text-muted-foreground line-clamp-2">
-                          {request.message}
-                        </p>
+              {openingRequests?.map((request: CashSessionRequest) => {
+                const isApproving = approvingId === request.id;
+                const isRejecting = rejectingId === request.id;
+                const isBusy = isApproving || isRejecting;
+
+                return (
+                  <div
+                    key={request.id}
+                    className={`p-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer rounded-xl border border-muted-foreground/10`}
+                  >
+                    <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-lg bg-primary/10 border-primary/5">
+                      <Icon name="LayoutGrid" className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h4 className="text-sm font-semibold text-foreground">
+                            {request.userName}
+                          </h4>
+                          <p className="text-[12px] font-medium leading-tight text-muted-foreground line-clamp-2">
+                            {request.message}
+                          </p>
+                        </div>
+                        <span className="text-[10px] font-bold text-muted-foreground whitespace-nowrap pt-0.5">
+                          {formatDateTime(request.createdAt)}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-bold text-muted-foreground whitespace-nowrap pt-0.5">
-                        {formatDateTime(request.createdAt)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" className="text-xs">
-                        Aprovar
-                      </Button>
-                      <Button size="sm" variant="ghost" className="text-xs">
-                        Recusar
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="text-xs"
+                          disabled={isBusy}
+                          onClick={() => handleApprove(request)}
+                        >
+                          {isApproving ? (
+                            <Icon
+                              name="LoaderCircle"
+                              className="w-3 h-3 animate-spin"
+                            />
+                          ) : (
+                            "Aprovar"
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-xs"
+                          disabled={isBusy}
+                          onClick={() => handleReject(request)}
+                        >
+                          {isRejecting ? (
+                            <Icon
+                              name="LoaderCircle"
+                              className="w-3 h-3 animate-spin"
+                            />
+                          ) : (
+                            "Recusar"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {(!openingRequests || openingRequests.length === 0) && (
