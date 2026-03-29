@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { Icon, ScrollArea } from "@/components";
 import { formatCurrency } from "@/utils";
 import { useInvoiceTotals } from "@/hooks";
@@ -37,10 +37,16 @@ export function MobileScannerView({
 
   const { isScanning, start, stop } = useCameraScanner(SCANNER_REGION_ID);
 
-  useEffect(() => {
-    start(onScan);
-    return () => { stop(); };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const scannerDivRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node) {
+        start(onScan);
+      } else {
+        stop();
+      }
+    },
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   return (
     <div className="flex flex-col h-full bg-black relative text-white">
@@ -60,7 +66,7 @@ export function MobileScannerView({
       </div>
 
       <div className="flex-1 relative overflow-hidden bg-muted/10">
-        <div id={SCANNER_REGION_ID} className="w-full h-full object-cover" />
+        <div ref={scannerDivRef} id={SCANNER_REGION_ID} className="w-full h-full object-cover" />
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-64 h-64 border-2 border-white/50 rounded-3xl relative">

@@ -197,15 +197,16 @@ type MobileCameraScannerProps = {
 function MobileCameraScanner({ isActive, isLoading, onScan }: MobileCameraScannerProps) {
   const { hasCameraPermission, error, start, stop } = useCameraScanner(CAMERA_PREVIEW_ID);
 
-  useEffect(() => {
-    if (isActive && !isLoading) {
-      start(onScan);
-    } else {
-      stop();
-    }
-
-    return () => { stop(); };
-  }, [isActive, isLoading]);  // eslint-disable-line react-hooks/exhaustive-deps
+  const cameraRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node && isActive && !isLoading) {
+        start(onScan);
+      } else if (!node) {
+        stop();
+      }
+    },
+    [isActive, isLoading], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   return (
     <div className="flex flex-col items-center gap-5 text-center">
@@ -221,6 +222,7 @@ function MobileCameraScanner({ isActive, isLoading, onScan }: MobileCameraScanne
       <div className="relative w-full rounded-xl overflow-hidden bg-black/5 border border-border">
         <div
           id={CAMERA_PREVIEW_ID}
+          ref={cameraRef}
           className="w-full min-h-[200px]"
           aria-label="Preview da câmara para leitura de código de barras"
         />
