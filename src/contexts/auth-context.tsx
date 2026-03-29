@@ -9,7 +9,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const AUTH_PATHS = ["/auth", "/login", "/register"];
+const AUTH_PATHS = ["/auth", "/auth/login", "/auth/register"];
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const pathname = usePathname();

@@ -8,7 +8,6 @@ export function useUpdateUser() {
     mutationFn: (data: UpdateUserProfilePayload) =>
       userService.updateProfile(data),
     onSuccess: () => {
-      // Invalidate the user/auth queries to refresh UI
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["auth"] });
     },

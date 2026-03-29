@@ -1,5 +1,6 @@
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/constants";
+import { Role } from "@/types";
 import { cookies } from "next/headers";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE_KEY } from "@/constants";
 
 const fallbackSecret =
   process.env.NODE_ENV !== "production"
@@ -7,7 +8,6 @@ const fallbackSecret =
     : "";
 
 if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
-  // Em produção, exigimos que SESSION_SECRET esteja definido via ambiente
   throw new Error(
     "SESSION_SECRET não definido em produção. Configure a variável de ambiente SESSION_SECRET.",
   );
@@ -20,6 +20,7 @@ export const encodedKey = new TextEncoder().encode(secretKey);
 export interface SessionPayload {
   accessToken: string;
   refreshToken: string;
+  role: Role;
 }
 
 export async function createSession(payload: SessionPayload) {
@@ -27,6 +28,7 @@ export async function createSession(payload: SessionPayload) {
   const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   const authCookies = await cookies();
+
   authCookies.set(ACCESS_TOKEN_KEY, payload.accessToken, {
     httpOnly: true,
     secure: true,
@@ -42,20 +44,20 @@ export async function createSession(payload: SessionPayload) {
     sameSite: "lax",
     path: "/",
   });
+
+   authCookies.set(ROLE_KEY, payload.role, {
+    httpOnly: true,
+    secure: true,
+    expires: refreshExpiresAt,
+    sameSite: "lax",
+    path: "/",
+  });
 }
 
 export async function destroySession() {
   const authCookies = await cookies();
 
-  // Explicitly set to expired with same options used during creation
-  const options = {
-    path: "/",
-    maxAge: 0,
-    expires: new Date(0),
-    httpOnly: true,
-    secure: true,
-  };
-
-  authCookies.set(ACCESS_TOKEN_KEY, "", options);
-  authCookies.set(REFRESH_TOKEN_KEY, "", options);
+  authCookies.delete(ACCESS_TOKEN_KEY);
+  authCookies.delete(REFRESH_TOKEN_KEY);
+  authCookies.delete(ROLE_KEY);
 }

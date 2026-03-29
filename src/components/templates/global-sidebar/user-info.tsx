@@ -16,22 +16,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components";
-import { useAuth } from "@/hooks/auth";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useAuth, useLogout } from "@/hooks/auth";
 import Link from "next/link";
 
 export function UserInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
-  const logout = useAuthStore((s) => s.logout);
+  const { handleLogout } = useLogout();
 
   if (!user) return null;
-
-  async function onLogout() {
-    try {
-      await logout();
-    } catch (error) {}
-  }
 
   return (
     <SidebarMenu className="group-data-[collapsible=icon]:items-center">
@@ -94,7 +87,7 @@ export function UserInfo() {
               </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500" onClick={onLogout}>
+            <DropdownMenuItem className="text-red-500" onClick={handleLogout}>
               <Icon name="LogOut" className="text-red-500" />
               Sair
             </DropdownMenuItem>

@@ -10,10 +10,13 @@ import { LoginFormData, loginSchema } from "@/schemas";
 import { ButtonSubmit, Input } from "@/components";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function LoginForm() {
   const router = useRouter();
-  const { setUser } = useAuthStore();
+  const queryClient = useQueryClient();
+  const { setUser, user, setIsAuthenticating } = useAuthStore();
+
   const {
     register,
     handleSubmit,
@@ -32,13 +35,40 @@ export function LoginForm() {
         return;
       }
 
+      // 1. Bloqueia RouteProtectors
+      setIsAuthenticating(true);
+
+      // 2. Limpa o cache do user anterior — sem isto o React Query
+      //    devolve dados stale do owner quando o cashier navega para /pos/counter
+      //  queryClient.clear();
+
+      // 3. Define o novo user e navega
+      setUser(res.user);
+      router.replace(res.redirectPath || "/");
+    } catch (error) {
+      setIsAuthenticating(false);
+      ErrorMessage("Ocorreu um erro inesperado. Tente novamente.");
+    }
+  }
+
+  /*  async function handleLogin({ email, password }: LoginFormData) {
+    try {
+      const res = await loginAction({ email, password });
+
+      if (!res.user) {
+        ErrorMessage(res.message || "Erro ao tentar fazer login.");
+        return;
+      }
+
       setUser(res.user);
       router.replace(res.redirectPath || "/");
     } catch (error) {
       console.error(error);
       ErrorMessage("Ocorreu um erro inesperado. Tente novamente.");
     }
-  }
+  } */
+
+    console.log(user)
 
   return (
     <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-6">

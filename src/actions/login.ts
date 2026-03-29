@@ -31,13 +31,13 @@ export async function loginAction({
     await createSession({
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
+      role: user.role,
     });
 
     const redirectPath = getRedirectPath(user.role);
 
     return { message, user, redirectPath };
   } catch (error: any) {
-
     let messageError = "Ocorreu um erro desconhecido!";
 
     if (error?.response?.data?.message) {
@@ -58,7 +58,7 @@ function getRedirectPath(role: Role): string {
   return roleRedirects[role as keyof typeof roleRedirects] || "/";
 }
 
-export async function logoutAction() {
+/* export async function logoutAction() {
   try {
     const session = await getSession();
     await api.post("/auth/logout", { refresh_token: session?.refreshToken });
@@ -72,5 +72,23 @@ export async function logoutAction() {
     resetAccessTokenCache();
 
     redirect("/auth/login");
+  }
+}
+ */
+
+// actions/login.ts — logoutAction limpa o cache
+export async function logoutAction() {
+  try {
+    const session = await getSession();
+    await api.post("/auth/logout", { refresh_token: session?.refreshToken });
+  } catch (error) {
+    console.error("🚨 Erro ao fazer logout remoto:", error);
+  } finally {
+    const { destroySession } = await import("@/lib/session");
+    await destroySession();
+    const { resetAccessTokenCache } = await import("@/services/api");
+    resetAccessTokenCache();
+
+    // redirect("/auth/login");
   }
 }

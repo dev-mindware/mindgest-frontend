@@ -1,6 +1,6 @@
 export function Loader() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background relative selection:bg-transparent">
+    <div className="flex flex-col w-screen items-center justify-center min-h-screen bg-background relative selection:bg-transparent">
       <div className="relative flex flex-col items-center justify-center">
         <div className="relative flex items-center justify-center w-32 h-32">
           <div className="absolute inset-0 rounded-full border border-purple-500/10 dark:border-purple-400/10"></div>

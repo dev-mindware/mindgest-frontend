@@ -9,7 +9,6 @@ export function useChangePassword() {
       authService.changePassword(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
-      queryClient.invalidateQueries({ queryKey: ["auth"] });
     },
   });
 }

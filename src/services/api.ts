@@ -142,6 +142,7 @@ api.interceptors.response.use(
     // Ignora refresh loops ou rotas que não levam token
     if (
       original.url.includes("/auth/login") ||
+      original.url.includes("/auth/logout") ||
       original.url.includes("/api/auth/refresh") ||
       original._retry
     ) {

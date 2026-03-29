@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { User } from "@/types";
 import { logoutAction } from "@/actions/login";
-import { currentStoreStore } from "@/stores/store/current-store-store";
+// import { currentStoreStore } from "@/stores/store/current-store-store";
 
 interface AuthState {
   user: User | null;
@@ -20,25 +20,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user }),
   setIsAuthenticating: (isAuthenticating) => set({ isAuthenticating }),
 
+  // ✅ O que devia estar
   logout: async () => {
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.removeItem("current-store");
-      } catch {
-        // ignore storage errors
-      }
-    }
-
-    // Limpa também o estado em memória da loja atual,
-    // evitando que o persist grave novamente o valor antigo.
-    try {
-      currentStoreStore.getState().setCurrentStore(undefined);
-    } catch {
-      // ignore caso o store ainda não esteja inicializado no cliente
-    }
-
-    set({ isLoggingOut: true });
+    set({ isLoggingOut: true, isAuthenticating: true, user: null }); // bloqueia tudo antes
     await logoutAction();
-    set({ user: null });
+    set({ isLoggingOut: false }); // isAuthenticating mantém-se true
+    // window.location.href = "/auth/login";
   },
 }));

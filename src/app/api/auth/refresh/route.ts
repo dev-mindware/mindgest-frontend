@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
     await createSession({
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
+      role: data.user.role,
     });
 
     return NextResponse.json({

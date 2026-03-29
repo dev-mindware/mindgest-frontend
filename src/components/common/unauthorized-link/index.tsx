@@ -4,13 +4,11 @@ import { Role } from "@/types";
 import Link from "next/link";
 import { useAuthStore } from "@/stores";
 import { getRouteByRole } from "@/utils";
+import { useLogout } from "@/hooks/auth";
 
 export function UnauthorizedLink() {
-  const { logout, user } = useAuthStore();
-
-  async function handlerLogout() {
-    await logout();
-  }
+  const { user } = useAuthStore();
+  const { handleLogout } = useLogout();
 
   return (
     <div>
@@ -23,7 +21,7 @@ export function UnauthorizedLink() {
         </Link>
         <Button
           className="w-max mt-6 px-4 py-2 bg-primary text-white  font-medium rounded-md shadow-md hover:bg-primary transition-all"
-          onClick={handlerLogout}
+          onClick={handleLogout}
         >
           Sair
         </Button>

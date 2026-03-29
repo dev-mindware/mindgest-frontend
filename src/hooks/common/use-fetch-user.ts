@@ -1,4 +1,58 @@
+// hooks/common/use-fetch-user.ts
 "use client";
+import { useEffect } from "react";
+import { useAuthStore } from "@/stores";
+import { api } from "@/services/api";
+import { User } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+
+interface UseFetchUserOptions {
+  enabled?: boolean;
+}
+
+export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
+  const { setUser, setIsAuthenticating } = useAuthStore();
+
+  const { data, isLoading, isError, error, isSuccess } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await api.get<User>("/auth/profile");
+      return response.data;
+    },
+    enabled,
+    retry: false,
+    refetchOnWindowFocus: false,
+    // Nunca usar dados stale de sessões anteriores
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    // Quando disabled (páginas de auth), NÃO tocamos no isAuthenticating.
+    // O fluxo de login/logout é responsável por gerir esse estado.
+    if (!enabled) return;
+
+    if (isLoading) {
+      setIsAuthenticating(true);
+      return;
+    }
+
+    if (isSuccess && data) {
+      setUser(data);
+      setIsAuthenticating(false);
+    } else if (isError) {
+      const err = error as any;
+      if (err.response?.status !== 401) {
+        console.error("Erro ao buscar usuário:", err);
+      }
+      setUser(null);
+      setIsAuthenticating(false);
+    }
+  }, [enabled, isLoading, isSuccess, isError, data, error, setUser, setIsAuthenticating]);
+
+  return { user: data || null };
+}
+
+/* "use client";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores";
 import { api } from "@/services/api";
@@ -59,3 +113,4 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
 
   return { user: data || null };
 }
+ */

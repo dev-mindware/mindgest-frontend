@@ -1,3 +1,4 @@
+// middleware.ts — usa a role do cookie para redirect correcto
 import { NextRequest, NextResponse } from "next/server";
 import {
   API_AUTH_PREFIX,
@@ -5,8 +6,11 @@ import {
   PRIVATE_ROUTE_PREFIXES,
   PUBLIC_ROUTES,
   REFRESH_TOKEN_KEY,
+  ROLE_KEY
 } from "./constants";
-import { roleRedirects } from "./utils";
+import { roleRedirects, getRouteByRole } from "./utils";
+import { Role } from "@/types";
+
 
 function isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.includes(pathname)) return true;
@@ -40,12 +44,16 @@ export function proxy(req: NextRequest) {
   const hasRefreshToken = req.cookies.has(REFRESH_TOKEN_KEY);
   const isAuthenticated = Boolean(hasRefreshToken);
 
+  // Lê a role do cookie — só para redirect, não para autorização
+  const role = req.cookies.get(ROLE_KEY)?.value as Role | undefined;
+
   const isPublic = isPublicRoute(pathname);
   const isPrivate = PRIVATE_ROUTE_PREFIXES.some((p) => pathname.startsWith(p));
 
   if (isPublic) {
     if (isAuthenticated && isAuthPage(pathname)) {
-      return NextResponse.redirect(new URL(roleRedirects["OWNER"], req.url));
+      const redirectTo = getRouteByRole(role as Role);
+      return NextResponse.redirect(new URL(redirectTo, req.url));
     }
 
     return NextResponse.next();
