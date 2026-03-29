@@ -8,8 +8,6 @@ import {
 } from "./modals";
 import { currentStoreStore } from "@/stores";
 import { useGetCategories, useGetItems, useGetCurrentSession } from "@/hooks";
-import { useModal } from "@/stores/modal/use-modal-store";
-import { MODAL_BARCODE_PRODUCT_ID } from "./modals/barcode-product-scanner";
 import { useQueryState } from "nuqs";
 import {
   PosCategorySkeleton,
@@ -58,14 +56,6 @@ export function CounterContent() {
     handleManualScan,
   } = useCounterState({ apiProducts, activeCart });
 
-  const { openModal } = useModal();
-
-  useEffect(() => {
-    if (scannedProduct) {
-      openModal(MODAL_BARCODE_PRODUCT_ID);
-    }
-  }, [scannedProduct, openModal]);
-
   const handleCategorySelect = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
   }, []);
@@ -111,28 +101,23 @@ export function CounterContent() {
 
   if (isMobile) {
     return (
-      <>
-        <BarcodeProductScanner
-          scannedProduct={scannedProduct}
-          onConfirm={onConfirmScan}
-        />
-        <MobilePosLayout
-          products={products}
-          categories={categories}
-          cartItems={getCartItemsArray(activeCart)}
-          onAddToCart={handleAddToCart}
-          onUpdateQty={(item: TypeCartItem, delta: number) => handleUpdateQuantity(item.id, item.qty + delta)}
-          onRemove={handleRemoveFromCart}
-          onProcessTransaction={() => {
-              // Logic to open checkout drawer/modal for mobile
-          }}
-          onScan={handleManualScan}
-          activeCategory={selectedCategory}
-          onCategoryChange={handleCategorySelect}
-          isLoading={isLoadingProducts}
-          cashSessionId={currentSession?.id || ""}
-        />
-      </>
+      <MobilePosLayout
+        products={products}
+        categories={categories}
+        cartItems={getCartItemsArray(activeCart)}
+        onAddToCart={handleAddToCart}
+        onUpdateQty={(item: TypeCartItem, delta: number) => handleUpdateQuantity(item.id, item.qty + delta)}
+        onRemove={handleRemoveFromCart}
+        onProcessTransaction={() => {
+            // Logic to open checkout drawer/modal for mobile
+            // For now, we can use the existing CartList logic but in a mobile way
+        }}
+        onScan={handleManualScan}
+        activeCategory={selectedCategory}
+        onCategoryChange={handleCategorySelect}
+        isLoading={isLoadingProducts}
+        cashSessionId={currentSession?.id || ""}
+      />
     );
   }
 

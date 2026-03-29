@@ -37,7 +37,7 @@ export function MobileScannerView({
     discount: 0,
   });
 
-  const { isScanning, start, stop } = useCameraScanner(SCANNER_REGION_ID);
+  const { isScanning, isPaused, start, stop } = useCameraScanner(SCANNER_REGION_ID);
 
   const scannerDivRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -66,7 +66,12 @@ export function MobileScannerView({
         
         <div className="flex flex-col items-center">
           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Scanner</span>
-          <span className="text-xs font-medium text-foreground">Captura Activa</span>
+          <span className={cn(
+            "text-xs font-medium transition-colors",
+            isPaused ? "text-primary" : "text-foreground"
+          )}>
+            {isPaused ? "Processado" : "Captura Activa"}
+          </span>
         </div>
 
         <button
@@ -83,27 +88,44 @@ export function MobileScannerView({
         <div 
           ref={scannerDivRef} 
           id={SCANNER_REGION_ID} 
-          className="w-full h-full object-cover" 
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-300",
+            isPaused ? "opacity-60" : "opacity-100"
+          )} 
         />
 
         {/* Rectângulo de Guia (Foco) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-64 h-40 border-2 border-white/30 rounded-2xl relative">
+          <div className={cn(
+            "w-64 h-40 border-2 rounded-2xl relative transition-all duration-300",
+            isPaused ? "border-primary scale-105" : "border-white/30 scale-100"
+          )}>
             {/* Cantos realçados */}
-            <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-primary rounded-tl-lg" />
-            <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-primary rounded-tr-lg" />
-            <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-primary rounded-bl-lg" />
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-primary rounded-br-lg" />
+            <div className={cn("absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 rounded-tl-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            <div className={cn("absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 rounded-tr-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            <div className={cn("absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 rounded-bl-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            <div className={cn("absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 rounded-br-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
             
-            {/* Linha de scan minimalista */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-primary/40 shadow-[0_0_8px_rgba(var(--primary),0.5)] animate-[scan-move_3s_ease-in-out_infinite]" />
+            {/* Linha de scan minimalista - Só anima se NÃO estiver em pausa */}
+            {!isPaused && (
+              <div className="absolute top-0 left-0 right-0 h-px bg-primary/40 shadow-[0_0_8px_rgba(var(--primary),0.5)] animate-[scan-move_3s_ease-in-out_infinite]" />
+            )}
+            
+            {/* Icone de confirmação no centro se em pausa */}
+            {isPaused && (
+              <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in duration-300">
+                <div className="bg-primary/20 p-3 rounded-full backdrop-blur-sm">
+                  <Icon name="Check" size={32} className="text-primary" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Instrução Minimalista */}
         <div className="absolute bottom-6 inset-x-0 flex justify-center pointer-events-none">
-          <p className="text-[11px] font-medium text-white/70 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
-            Posicione o código no centro
+          <p className="text-[11px] font-medium text-white/70 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm transition-opacity">
+            {isPaused ? "Aguardando próximo..." : "Posicione o código no centro"}
           </p>
         </div>
       </div>

@@ -7,6 +7,7 @@ type UseCameraScannerResult = {
   hasCameraPermission: boolean | null;
   error: string | null;
   isScanning: boolean;
+  isPaused: boolean;
   start: (onScan: (code: string) => void) => Promise<void>;
   stop: () => Promise<void>;
 };
@@ -21,8 +22,10 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export function useCameraScanner(elementId: string): UseCameraScannerResult {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5QrcodeType | null>(null);
+  const isLockedRef = useRef(false);
 
   const stop = useCallback(async () => {
     const scanner = scannerRef.current;
@@ -33,11 +36,15 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
     } catch {}
     scannerRef.current = null;
     setIsScanning(false);
+    setIsPaused(false);
+    isLockedRef.current = false;
   }, []);
 
   const start = useCallback(
     async (onScan: (code: string) => void) => {
       await stop();
+
+      const COOLDOWN_MS = 2000; // 2 seconds between scans
 
       try {
         const { Html5Qrcode } = await import("html5-qrcode");
@@ -45,11 +52,33 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
         const tryStart = async (constraints: MediaTrackConstraints | string) => {
           const scanner = new Html5Qrcode(elementId);
           try {
-            await scanner.start(constraints as string, SCANNER_CONFIG, onScan, () => {});
+            await scanner.start(
+              constraints as string,
+              SCANNER_CONFIG,
+              (code) => {
+                // If we are currently in lockout, ignore
+                if (isLockedRef.current) return;
+                
+                isLockedRef.current = true;
+                setIsPaused(true);
+                
+                onScan(code);
+                
+                // Keep it paused and locked to prevent rapid duplicates
+                // as requested: "scanneou uma vez e para"
+                setTimeout(() => {
+                  isLockedRef.current = false;
+                  setIsPaused(false);
+                }, COOLDOWN_MS);
+              },
+              () => {},
+            );
             scannerRef.current = scanner;
             return true;
           } catch {
-            try { scanner.clear(); } catch {}
+            try {
+              scanner.clear();
+            } catch {}
             return false;
           }
         };
@@ -82,5 +111,5 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
     [elementId, stop],
   );
 
-  return { hasCameraPermission, error, isScanning, start, stop };
+  return { hasCameraPermission, error, isScanning, isPaused, start, stop };
 }
