@@ -7,6 +7,9 @@ import { useInvoiceTotals } from "@/hooks";
 import { CartItem } from "@/types";
 import { cn } from "@/lib/utils";
 import { useCameraScanner } from "@/hooks/items";
+import { ChevronLeft, ShoppingCart, Zap } from "lucide-react";
+
+import { playScannerBeep } from "@/utils/audio";
 
 const SCANNER_REGION_ID = "mobile-scanner-region";
 
@@ -40,7 +43,10 @@ export function MobileScannerView({
   const scannerDivRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (node) {
-        start(onScan);
+        start((code) => {
+          playScannerBeep();
+          onScan(code);
+        });
       } else {
         stop();
       }
@@ -49,98 +55,121 @@ export function MobileScannerView({
   );
 
   return (
-    <div className="flex flex-col h-full bg-black relative text-white">
-      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-20 bg-gradient-to-b from-black/50 to-transparent">
+    <div className="flex flex-col h-full bg-black relative text-white transition-all duration-300">
+      {/* Top Header */}
+      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-30 bg-gradient-to-b from-black/80 to-transparent">
         <button
           onClick={onOpenMenu}
-          className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center"
+          className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center active:scale-90 transition-transform"
         >
-          <Icon name="Menu" size={20} />
+          <ChevronLeft className="w-6 h-6 text-white" />
         </button>
-        <button
-          onClick={onPay}
-          className="h-10 px-6 rounded-xl bg-primary text-primary-foreground font-bold flex items-center justify-center"
-        >
-          Pagar
-        </button>
-      </div>
-
-      <div className="flex-1 relative overflow-hidden bg-muted/10">
-        <div ref={scannerDivRef} id={SCANNER_REGION_ID} className="w-full h-full object-cover" />
-
-        <div className="absolute inset-x-0 top-1/4 flex flex-col items-center gap-4 pointer-events-none z-10">
-          <p className="text-sm font-medium bg-black/40 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/10">
-            Aponte para o código em qualquer lugar do visor
-          </p>
-        </div>
-
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-64 h-64 border-2 border-white/20 rounded-3xl relative">
-            <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-white/40 rounded-tl-xl" />
-            <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-white/40 rounded-tr-xl" />
-            <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-white/40 rounded-bl-xl" />
-            <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-white/40 rounded-br-xl" />
-            <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/50 shadow-[0_0_15px_rgba(153,86,246,0.8)] animate-[scan-line_2s_ease-in-out_infinite]" />
+        
+        <div className="flex flex-col items-center">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">Modo de Scan</span>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs font-bold">Câmara Activa</span>
           </div>
         </div>
 
-        <div className="absolute bottom-4 right-4 p-3 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 space-y-0.5">
-          <p className="text-xs text-white/70">Itens : {totalItems < 10 ? `0${totalItems}` : totalItems}</p>
-          <p className="text-sm font-bold">Total : {formatCurrency(totals.total)}</p>
-        </div>
+        <button
+          onClick={onPay}
+          className="h-12 px-6 rounded-2xl bg-primary text-primary-foreground font-bold flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+        >
+          <ShoppingCart className="w-4 h-4" />
+          <span>Pagar</span>
+        </button>
       </div>
 
-      <div className="bg-card rounded-t-[32px] p-6 text-card-foreground h-[40%] flex flex-col">
-        <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground mb-4 px-2">
-          <span className="w-1/3">SKU</span>
-          <span className="w-1/4 text-center">Quantidade</span>
-          <span className="w-1/6 text-center">$</span>
-          <span className="w-1/6 text-right">Total</span>
+      {/* Camera Fullscreen Viewport */}
+      <div className="flex-1 relative overflow-hidden">
+        <div 
+          ref={scannerDivRef} 
+          id={SCANNER_REGION_ID} 
+          className="w-full h-full object-cover grayscale-[0.2] brightness-110" 
+        />
+
+        {/* Floating Instruction */}
+        <div className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-4 pointer-events-none z-20">
+          <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-2xl">
+            <Zap className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+            <span className="text-sm font-semibold tracking-wide">Lê em qualquer lugar do ecrã</span>
+          </div>
         </div>
 
-        <ScrollArea className="flex-1">
-          <div className="space-y-4">
+        {/* Subtle Edge Glow for Active Scan Area */}
+        <div className="absolute inset-0 border-[20px] border-transparent shadow-[inset_0_0_100px_rgba(0,0,0,0.4)] pointer-events-none" />
+      </div>
+
+      {/* Cart Items List */}
+      <div className="bg-zinc-900 rounded-t-[40px] p-8 text-white h-[45%] flex flex-col shadow-2xl border-t border-white/5 relative z-20">
+        <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8" />
+        
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold flex items-center gap-2">
+            Lista de Artigos 
+            <span className="text-primary text-sm font-medium bg-primary/10 px-2 py-0.5 rounded-lg">
+              {totalItems}
+            </span>
+          </h3>
+          <div className="text-right">
+            <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Total Geral</p>
+            <p className="text-xl font-black text-primary">{formatCurrency(totals.total)}</p>
+          </div>
+        </div>
+
+        <ScrollArea className="flex-1 -mx-2 px-2">
+          <div className="space-y-3 pb-4">
             {cartItems.length > 0 ? (
               cartItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between text-xs px-2">
-                  <div className="w-1/3 overflow-hidden">
-                    <p className="font-bold truncate">{item.sku || "N/A"}</p>
-                    <p className="text-[10px] text-muted-foreground truncate">{item.name}</p>
+                <div 
+                  key={item.id} 
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <div className="flex-1 min-w-0 pr-4">
+                    <p className="font-bold text-sm truncate">{item.name}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] text-white/40 font-mono bg-white/5 px-1.5 py-0.5 rounded uppercase">{item.sku || "Sem SKU"}</span>
+                      <span className="text-[10px] text-primary font-bold">x{item.qty}</span>
+                    </div>
                   </div>
-                  <span className="w-1/4 text-center">{item.qty}</span>
-                  <span className="w-1/6 text-center">{formatCurrency(item.price || 0)}</span>
-                  <span className="w-1/6 text-right font-bold">{formatCurrency((item.price || 0) * item.qty)}</span>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-bold">{formatCurrency((item.price || 0) * item.qty)}</p>
+                    <p className="text-[10px] text-white/40 leading-none">{formatCurrency(item.price || 0)} p/un</p>
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="h-20 flex items-center justify-center text-muted-foreground text-sm italic">
-                Nenhum item digitalizado ainda
+              <div className="h-32 flex flex-col items-center justify-center text-white/20 gap-3 border-2 border-dashed border-white/5 rounded-3xl">
+                <Icon name="Barcode" size={40} />
+                <p className="text-sm italic font-medium">Capture um código para começar</p>
               </div>
             )}
           </div>
         </ScrollArea>
 
-        <div className="flex justify-center pt-4">
+        {/* Control Button */}
+        <div className="flex justify-center pt-6">
           <button
             onClick={isScanning ? stop : () => start(onScan)}
             className={cn(
-              "w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-xl",
-              isScanning ? "bg-destructive text-white" : "bg-primary text-white"
+              "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl active:scale-95 group relative",
+              isScanning ? "bg-red-500/10 border-2 border-red-500 text-red-500" : "bg-primary text-primary-foreground"
             )}
           >
-            {isScanning ? <Icon name="Square" size={24} /> : <Icon name="ScanLine" size={28} />}
+            {isScanning ? (
+              <Icon name="Square" size={32} className="fill-current" />
+            ) : (
+              <Zap size={36} className="fill-current animate-pulse" />
+            )}
+            
+            {!isScanning && (
+              <div className="absolute inset-0 rounded-full bg-primary animate-ping opacity-20 -z-10" />
+            )}
           </button>
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes scan-line {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 }
