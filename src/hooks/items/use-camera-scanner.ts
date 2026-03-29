@@ -11,6 +11,11 @@ type UseCameraScannerResult = {
   stop: () => Promise<void>;
 };
 
+const SCANNER_CONFIG = {
+  fps: 15,
+  qrbox: { width: 300, height: 120 },
+};
+
 export function useCameraScanner(elementId: string): UseCameraScannerResult {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -37,18 +42,7 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
         const scanner = new Html5Qrcode(elementId);
         scannerRef.current = scanner;
 
-        await scanner.start(
-          {
-            facingMode: { exact: "environment" },
-            advanced: [{ focusMode: "continuous" } as MediaTrackConstraintSet],
-          },
-          {
-            fps: 15,
-            qrbox: { width: 300, height: 120 },
-          },
-          onScan,
-          () => {},
-        );
+        await startWithFallback(scanner, onScan);
 
         setIsScanning(true);
         setHasCameraPermission(true);
@@ -57,8 +51,7 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
         setHasCameraPermission(false);
         scannerRef.current = null;
 
-        const msg =
-          err instanceof Error ? err.message.toLowerCase() : "";
+        const msg = err instanceof Error ? err.message.toLowerCase() : "";
 
         if (msg.includes("permission") || msg.includes("notallowed")) {
           setError("Acesso à câmara negado. Active as permissões nas definições do navegador.");
@@ -73,4 +66,41 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
   );
 
   return { hasCameraPermission, error, isScanning, start, stop };
+}
+
+async function startWithFallback(
+  scanner: Html5QrcodeType,
+  onScan: (code: string) => void,
+): Promise<void> {
+  const noop = () => {};
+
+  // 1ª tentativa: preferência pela câmara traseira sem constraint rígida
+  // (compatível com iOS Safari — "ideal" nunca lança OverconstrainedError)
+  try {
+    await scanner.start(
+      { facingMode: { ideal: "environment" } },
+      SCANNER_CONFIG,
+      onScan,
+      noop,
+    );
+    return;
+  } catch {}
+
+  // 2ª tentativa: enumerar câmaras e seleccionar a traseira pelo label
+  try {
+    const { Html5Qrcode } = await import("html5-qrcode");
+    const cameras = await Html5Qrcode.getCameras();
+    const backCamera = cameras.find((c) =>
+      /back|rear|environment|traseira/i.test(c.label),
+    );
+    const cameraId = backCamera?.id ?? cameras[cameras.length - 1]?.id;
+
+    if (cameraId) {
+      await scanner.start(cameraId, SCANNER_CONFIG, onScan, noop);
+      return;
+    }
+  } catch {}
+
+  // 3ª tentativa: deixar o browser escolher qualquer câmara disponível
+  await scanner.start({ facingMode: "environment" }, SCANNER_CONFIG, onScan, noop);
 }
