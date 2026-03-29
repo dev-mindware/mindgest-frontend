@@ -84,7 +84,7 @@ export function useCounterState({
       }
 
       if (product) {
-        handleAddToCart(product, 1);
+        setScannedProduct(product);
       }
     },
     [apiProducts, handleAddToCart],
