@@ -16,6 +16,7 @@ import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { useRouter } from "next/navigation";
+import { CloneInvoiceModal } from "../modals/clone-invoice-modal";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { useState } from "react";
 import {
@@ -30,7 +31,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search_invoice-receipt");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
-  const { handlerDetailsInvoice } = useInvoiceActions();
+  const { handlerDetailsInvoice, handlerCloneInvoice } = useInvoiceActions();
   const { openModal } = useModal();
 
   const [pendingRoute, setPendingRoute] = useState<string | null>(null);
@@ -99,6 +100,14 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
                 }
               },
             },
+            ...(item.status === "PAID"
+              ? [
+                {
+                  label: "Clonar Factura",
+                  onClick: handlerCloneInvoice,
+                },
+              ]
+              : []),
           ]}
         />
       ),
@@ -150,6 +159,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
         </div>
       )}
       <InvoicePreviewDrawer type="invoice-receipt" />
+      <CloneInvoiceModal />
       <ManagerAuthModal
         onAuthenticated={() => {
           if (pendingRoute) router.push(pendingRoute);

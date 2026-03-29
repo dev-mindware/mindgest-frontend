@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
+import { useCallback } from "react";
 import { Icon, ScrollArea } from "@/components";
-import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils";
 import { useInvoiceTotals } from "@/hooks";
 import { CartItem } from "@/types";
 import { cn } from "@/lib/utils";
+import { useCameraScanner } from "@/hooks/items";
+import { ChevronLeft, ShoppingCart } from "lucide-react";
+import { playScannerBeep } from "@/utils/audio";
+
+const SCANNER_REGION_ID = "mobile-scanner-region";
 
 interface MobileScannerViewProps {
   onScan: (barcode: string) => void;
@@ -20,14 +23,10 @@ export function MobileScannerView({
   onScan,
   onPay,
   cartItems,
-  onOpenMenu
+  onOpenMenu,
 }: MobileScannerViewProps) {
-  const [isScanning, setIsScanning] = useState(false);
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-  const qrCodeRegionId = "mobile-scanner-region";
-
   const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0);
-  
+
   const totals = useInvoiceTotals({
     items: cartItems.map((item) => ({
       unitPrice: item.price || 0,
@@ -38,151 +37,162 @@ export function MobileScannerView({
     discount: 0,
   });
 
-  const totalPrice = totals.total;
+  const { isScanning, isPaused, start, stop } = useCameraScanner(SCANNER_REGION_ID);
 
-  useEffect(() => {
-    // Initialize scanner only on client side
-    if (!scannerRef.current) {
-        scannerRef.current = new Html5Qrcode(qrCodeRegionId);
-    }
-
-    return () => {
-      if (scannerRef.current?.isScanning) {
-        scannerRef.current.stop().catch(console.error);
+  const scannerDivRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node) {
+        start((code) => {
+          playScannerBeep();
+          onScan(code);
+        });
+      } else {
+        stop();
       }
-    };
-  }, []);
-
-  const startScanner = async () => {
-    if (scannerRef.current && !isScanning) {
-      try {
-        setIsScanning(true);
-        await scannerRef.current.start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
-          (decodedText) => {
-            onScan(decodedText);
-            // Optional: stop or pause after scan
-          },
-          (errorMessage) => {
-            // ignore error
-          }
-        );
-      } catch (err) {
-        console.error("Error starting scanner:", err);
-        setIsScanning(false);
-      }
-    }
-  };
-
-  const stopScanner = async () => {
-    if (scannerRef.current?.isScanning) {
-      await scannerRef.current.stop();
-      setIsScanning(false);
-    }
-  };
+    },
+    [onScan, start, stop]
+  );
 
   return (
-    <div className="flex flex-col h-full bg-black relative text-white">
-      {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-20 bg-gradient-to-b from-black/50 to-transparent">
-        <button onClick={onOpenMenu} className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-          <Icon name="Menu" size={20} />
-        </button>
-        <button 
-            onClick={onPay}
-            className="h-10 px-6 rounded-xl bg-primary text-primary-foreground font-bold flex items-center justify-center"
+    <div className="flex flex-col h-full bg-background relative text-foreground font-sans">
+      {/* Header Minimalista */}
+      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-30 bg-background/60 backdrop-blur-md border-b border-border/40">
+        <button
+          onClick={onOpenMenu}
+          className="p-2 rounded-lg bg-secondary/50 flex items-center justify-center active:scale-95 transition-transform"
         >
-          Pagar
+          <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+        </button>
+        
+        <div className="flex flex-col items-center">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Scanner</span>
+          <span className={cn(
+            "text-xs font-medium transition-colors",
+            isPaused ? "text-primary" : "text-foreground"
+          )}>
+            {isPaused ? "Processado" : "Captura Activa"}
+          </span>
+        </div>
+
+        <button
+          onClick={onPay}
+          className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-xs font-bold flex items-center gap-2 active:scale-95 transition-transform"
+        >
+          <ShoppingCart className="w-3.5 h-3.5" />
+          <span>Pagar</span>
         </button>
       </div>
 
-      {/* Camera Feed */}
-      <div className="flex-1 relative overflow-hidden bg-muted/10">
-        <div id={qrCodeRegionId} className="w-full h-full object-cover"></div>
-        
-        {/* Bracket Overlay */}
+      {/* Camera Viewport */}
+      <div className="flex-1 relative overflow-hidden bg-black">
+        <div 
+          ref={scannerDivRef} 
+          id={SCANNER_REGION_ID} 
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-300",
+            isPaused ? "opacity-60" : "opacity-100"
+          )} 
+        />
+
+        {/* Rectângulo de Guia (Foco) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-           <div className="w-64 h-64 border-2 border-white/50 rounded-3xl relative">
-              <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl" />
-              <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl" />
-              <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl" />
-              <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl" />
-              
-              {/* Scan line animation */}
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/50 shadow-[0_0_15px_rgba(153,86,246,0.8)] animate-scan-line" />
-           </div>
+          <div className={cn(
+            "w-64 h-40 border-2 rounded-2xl relative transition-all duration-300",
+            isPaused ? "border-primary scale-105" : "border-white/30 scale-100"
+          )}>
+            {/* Cantos realçados */}
+            <div className={cn("absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 rounded-tl-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            <div className={cn("absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 rounded-tr-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            <div className={cn("absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 rounded-bl-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            <div className={cn("absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 rounded-br-lg transition-colors", isPaused ? "border-primary" : "border-primary/60")} />
+            
+            {/* Linha de scan minimalista - Só anima se NÃO estiver em pausa */}
+            {!isPaused && (
+              <div className="absolute top-0 left-0 right-0 h-px bg-primary/40 shadow-[0_0_8px_rgba(var(--primary),0.5)] animate-[scan-move_3s_ease-in-out_infinite]" />
+            )}
+            
+            {/* Icone de confirmação no centro se em pausa */}
+            {isPaused && (
+              <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in duration-300">
+                <div className="bg-primary/20 p-3 rounded-full backdrop-blur-sm">
+                  <Icon name="Check" size={32} className="text-primary" />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Floating Stats */}
-        <div className="absolute bottom-4 right-4 p-3 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 space-y-0.5">
-           <p className="text-xs text-white/70">Itens : {totalItems < 10 ? `0${totalItems}` : totalItems}</p>
-           <p className="text-sm font-bold">Total : {formatCurrency(totalPrice)}</p>
+        {/* Instrução Minimalista */}
+        <div className="absolute bottom-6 inset-x-0 flex justify-center pointer-events-none">
+          <p className="text-[11px] font-medium text-white/70 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm transition-opacity">
+            {isPaused ? "Aguardando próximo..." : "Posicione o código no centro"}
+          </p>
         </div>
       </div>
 
-      {/* Scanned Items Drawer-like list */}
-      <div className="bg-card rounded-t-[32px] p-6 text-card-foreground h-[40%] flex flex-col">
-        <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground mb-4 px-2">
-            <span className="w-1/3">SKU</span>
-            <span className="w-1/4 text-center">Quantidade</span>
-            <span className="w-1/6 text-center">$</span>
-            <span className="w-1/6 text-right">Total</span>
+      {/* Listagem de Itens Minimalista */}
+      <div className="bg-background p-6 h-[40%] flex flex-col border-t border-border shadow-2xl z-20 overflow-hidden">
+        <div className="flex items-center justify-between mb-4 border-b border-border/50 pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Artigos</h3>
+            <p className="text-[10px] text-muted-foreground">{totalItems} itens no carrinho</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] uppercase font-bold tracking-tighter text-muted-foreground leading-none mb-1">Total</p>
+            <p className="text-lg font-black text-primary leading-none">{formatCurrency(totals.total)}</p>
+          </div>
         </div>
-        
-        <ScrollArea className="flex-1">
-          <div className="space-y-4">
+
+        <ScrollArea className="flex-1 -mx-2 px-2">
+          <div className="space-y-2">
             {cartItems.length > 0 ? (
               cartItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between text-xs px-2">
-                  <div className="w-1/3 overflow-hidden">
-                    <p className="font-bold truncate">{item.sku || "N/A"}</p>
-                    <p className="text-[10px] text-muted-foreground truncate">{item.name}</p>
+                <div 
+                  key={item.id} 
+                  className="flex items-center justify-between p-3 rounded-xl bg-secondary/20 border border-border/40"
+                >
+                  <div className="flex-1 min-w-0 pr-2">
+                    <p className="font-bold text-xs truncate text-foreground">{item.name}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{item.sku || "Sem SKU"} • x{item.qty}</p>
                   </div>
-                  <span className="w-1/4 text-center">{item.qty}</span>
-                  <span className="w-1/6 text-center">{formatCurrency(item.price || 0)}</span>
-                  <span className="w-1/6 text-right font-bold">{formatCurrency((item.price || 0) * item.qty)}</span>
+                  <div className="text-right underline decoration-primary/30 decoration-2 underline-offset-4">
+                    <p className="text-xs font-bold text-foreground">{formatCurrency((item.price || 0) * item.qty)}</p>
+                  </div>
                 </div>
               ))
             ) : (
-                <div className="h-20 flex items-center justify-center text-muted-foreground text-sm italic">
-                    Nenhum item digitalizado ainda
-                </div>
+              <div className="h-24 flex flex-col items-center justify-center text-muted-foreground/30 gap-2 border border-dashed border-border rounded-xl">
+                <Icon name="Barcode" size={24} />
+                <p className="text-[10px] font-medium uppercase tracking-widest">Aguardando leitura</p>
+              </div>
             )}
           </div>
         </ScrollArea>
 
-        {/* Large Scan Button */}
+        {/* Botão de Controlo Pequeno e Minimalista */}
         <div className="flex justify-center pt-4">
-          <button 
-             onClick={isScanning ? stopScanner : startScanner}
-             className={cn(
-               "w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-xl",
-               isScanning ? "bg-destructive text-white" : "bg-primary text-white"
-             )}
+          <button
+            onClick={isScanning ? stop : () => start(onScan)}
+            className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center transition-all border shadow-sm active:scale-90",
+              isScanning 
+                ? "bg-destructive/10 border-destructive/20 text-destructive" 
+                : "bg-secondary border-border text-foreground hover:bg-secondary/80"
+            )}
           >
-            {isScanning ? <Icon name="Square" size={24} /> : <Icon name="ScanLine" size={28} />}
+            {isScanning ? (
+              <Icon name="Square" size={16} />
+            ) : (
+              <Icon name="ScanLine" size={18} />
+            )}
           </button>
         </div>
       </div>
 
       <style jsx global>{`
-        @keyframes scan-line {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-        .animate-scan-line {
-          animation: scan-line 2s ease-in-out infinite;
-        }
-        #mobile-scanner-region video {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
+        @keyframes scan-move {
+          0%, 100% { top: 5%; }
+          50% { top: 95%; }
         }
       `}</style>
     </div>

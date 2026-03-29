@@ -17,6 +17,7 @@ import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
+import { CloneInvoiceModal } from "../modals/clone-invoice-modal";
 import { useRouter } from "next/navigation";
 import { useURLSearchParams } from "@/hooks/common";
 
@@ -29,6 +30,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
     handlerGenerateReceipt,
     handlerCancelInvoice,
     handlerDetailsInvoice,
+    handlerCloneInvoice,
   } = useInvoiceActions();
   const {
     data: invoices,
@@ -114,6 +116,10 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
                     router.push(`/documents/notes/${item.id}`);
                   },
                 },
+                {
+                  label: "Clonar Factura",
+                  onClick: handlerCloneInvoice,
+                },
               ]
               : []),
           ]}
@@ -168,6 +174,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
         <>
           <GenerateReceiptModal />
           <CancelInvoiceModal />
+          <CloneInvoiceModal />
           <InvoicePreviewDrawer type="invoice" />
         </>
       )}

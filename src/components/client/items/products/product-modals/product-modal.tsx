@@ -92,7 +92,7 @@ function AddProductFormContent() {
     resolver: zodResolver(itemSchema),
     defaultValues: {
       barcode: initialBarcode,
-      price: 0,
+      price: undefined,
       cost: undefined,
       companyId: String(user?.company?.id),
       type: "PRODUCT",
@@ -188,6 +188,7 @@ function AddProductFormContent() {
                 <InputCurrency
                   ref={field.ref}
                   label="Preço Unitário"
+                  placeholder="0,00"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                   decimalScale={2}
