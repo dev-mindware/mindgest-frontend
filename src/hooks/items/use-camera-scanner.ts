@@ -38,8 +38,14 @@ export function useCameraScanner(elementId: string): UseCameraScannerResult {
         scannerRef.current = scanner;
 
         await scanner.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 260, height: 140 } },
+          {
+            facingMode: { exact: "environment" },
+            advanced: [{ focusMode: "continuous" } as MediaTrackConstraintSet],
+          },
+          {
+            fps: 15,
+            qrbox: { width: 300, height: 120 },
+          },
           onScan,
           () => {},
         );
