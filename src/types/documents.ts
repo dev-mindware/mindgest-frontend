@@ -89,6 +89,10 @@ export type InvoicePayload = {
   total: number;
   taxAmount: number;
   discountAmount: number;
+  subtotal?: number;
+  retentionAmount?: number;
+  currencyCode?: string;
+  notes?: string;
   storeId?: string;
 };
 

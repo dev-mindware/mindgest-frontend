@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
+import { useEffect } from "react";
 import { Icon, ScrollArea } from "@/components";
-import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils";
 import { useInvoiceTotals } from "@/hooks";
 import { CartItem } from "@/types";
 import { cn } from "@/lib/utils";
+import { useCameraScanner } from "@/hooks/items";
+
+const SCANNER_REGION_ID = "mobile-scanner-region";
 
 interface MobileScannerViewProps {
   onScan: (barcode: string) => void;
@@ -20,14 +21,10 @@ export function MobileScannerView({
   onScan,
   onPay,
   cartItems,
-  onOpenMenu
+  onOpenMenu,
 }: MobileScannerViewProps) {
-  const [isScanning, setIsScanning] = useState(false);
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-  const qrCodeRegionId = "mobile-scanner-region";
-
   const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0);
-  
+
   const totals = useInvoiceTotals({
     items: cartItems.map((item) => ({
       unitPrice: item.price || 0,
@@ -38,101 +35,57 @@ export function MobileScannerView({
     discount: 0,
   });
 
-  const totalPrice = totals.total;
+  const { isScanning, start, stop } = useCameraScanner(SCANNER_REGION_ID);
 
   useEffect(() => {
-    // Initialize scanner only on client side
-    if (!scannerRef.current) {
-        scannerRef.current = new Html5Qrcode(qrCodeRegionId);
-    }
-
-    return () => {
-      if (scannerRef.current?.isScanning) {
-        scannerRef.current.stop().catch(console.error);
-      }
-    };
-  }, []);
-
-  const startScanner = async () => {
-    if (scannerRef.current && !isScanning) {
-      try {
-        setIsScanning(true);
-        await scannerRef.current.start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
-          (decodedText) => {
-            onScan(decodedText);
-            // Optional: stop or pause after scan
-          },
-          (errorMessage) => {
-            // ignore error
-          }
-        );
-      } catch (err) {
-        console.error("Error starting scanner:", err);
-        setIsScanning(false);
-      }
-    }
-  };
-
-  const stopScanner = async () => {
-    if (scannerRef.current?.isScanning) {
-      await scannerRef.current.stop();
-      setIsScanning(false);
-    }
-  };
+    start(onScan);
+    return () => { stop(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col h-full bg-black relative text-white">
-      {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-20 bg-gradient-to-b from-black/50 to-transparent">
-        <button onClick={onOpenMenu} className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+        <button
+          onClick={onOpenMenu}
+          className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center"
+        >
           <Icon name="Menu" size={20} />
         </button>
-        <button 
-            onClick={onPay}
-            className="h-10 px-6 rounded-xl bg-primary text-primary-foreground font-bold flex items-center justify-center"
+        <button
+          onClick={onPay}
+          className="h-10 px-6 rounded-xl bg-primary text-primary-foreground font-bold flex items-center justify-center"
         >
           Pagar
         </button>
       </div>
 
-      {/* Camera Feed */}
       <div className="flex-1 relative overflow-hidden bg-muted/10">
-        <div id={qrCodeRegionId} className="w-full h-full object-cover"></div>
-        
-        {/* Bracket Overlay */}
+        <div id={SCANNER_REGION_ID} className="w-full h-full object-cover" />
+
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-           <div className="w-64 h-64 border-2 border-white/50 rounded-3xl relative">
-              <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl" />
-              <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl" />
-              <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl" />
-              <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl" />
-              
-              {/* Scan line animation */}
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/50 shadow-[0_0_15px_rgba(153,86,246,0.8)] animate-scan-line" />
-           </div>
+          <div className="w-64 h-64 border-2 border-white/50 rounded-3xl relative">
+            <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl" />
+            <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl" />
+            <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl" />
+            <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl" />
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/50 shadow-[0_0_15px_rgba(153,86,246,0.8)] animate-[scan-line_2s_ease-in-out_infinite]" />
+          </div>
         </div>
 
-        {/* Floating Stats */}
         <div className="absolute bottom-4 right-4 p-3 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 space-y-0.5">
-           <p className="text-xs text-white/70">Itens : {totalItems < 10 ? `0${totalItems}` : totalItems}</p>
-           <p className="text-sm font-bold">Total : {formatCurrency(totalPrice)}</p>
+          <p className="text-xs text-white/70">Itens : {totalItems < 10 ? `0${totalItems}` : totalItems}</p>
+          <p className="text-sm font-bold">Total : {formatCurrency(totals.total)}</p>
         </div>
       </div>
 
-      {/* Scanned Items Drawer-like list */}
       <div className="bg-card rounded-t-[32px] p-6 text-card-foreground h-[40%] flex flex-col">
         <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground mb-4 px-2">
-            <span className="w-1/3">SKU</span>
-            <span className="w-1/4 text-center">Quantidade</span>
-            <span className="w-1/6 text-center">$</span>
-            <span className="w-1/6 text-right">Total</span>
+          <span className="w-1/3">SKU</span>
+          <span className="w-1/4 text-center">Quantidade</span>
+          <span className="w-1/6 text-center">$</span>
+          <span className="w-1/6 text-right">Total</span>
         </div>
-        
+
         <ScrollArea className="flex-1">
           <div className="space-y-4">
             {cartItems.length > 0 ? (
@@ -148,43 +101,25 @@ export function MobileScannerView({
                 </div>
               ))
             ) : (
-                <div className="h-20 flex items-center justify-center text-muted-foreground text-sm italic">
-                    Nenhum item digitalizado ainda
-                </div>
+              <div className="h-20 flex items-center justify-center text-muted-foreground text-sm italic">
+                Nenhum item digitalizado ainda
+              </div>
             )}
           </div>
         </ScrollArea>
 
-        {/* Large Scan Button */}
         <div className="flex justify-center pt-4">
-          <button 
-             onClick={isScanning ? stopScanner : startScanner}
-             className={cn(
-               "w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-xl",
-               isScanning ? "bg-destructive text-white" : "bg-primary text-white"
-             )}
+          <button
+            onClick={isScanning ? stop : () => start(onScan)}
+            className={cn(
+              "w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-xl",
+              isScanning ? "bg-destructive text-white" : "bg-primary text-white",
+            )}
           >
             {isScanning ? <Icon name="Square" size={24} /> : <Icon name="ScanLine" size={28} />}
           </button>
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes scan-line {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-        .animate-scan-line {
-          animation: scan-line 2s ease-in-out infinite;
-        }
-        #mobile-scanner-region video {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-        }
-      `}</style>
     </div>
   );
 }
