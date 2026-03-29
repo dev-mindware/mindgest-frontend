@@ -11,14 +11,10 @@ type UseCameraScannerResult = {
   stop: () => Promise<void>;
 };
 
-function qrboxFn(viewfinderWidth: number, viewfinderHeight: number) {
-  const size = Math.min(viewfinderWidth, viewfinderHeight);
-  const width = Math.floor(size * 0.85);
-  const height = Math.floor(width * 0.4);
-  return { width, height };
-}
-
-const SCANNER_CONFIG = { fps: 15, qrbox: qrboxFn };
+const SCANNER_CONFIG = { 
+  fps: 15,
+  aspectRatio: 1.0
+};
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

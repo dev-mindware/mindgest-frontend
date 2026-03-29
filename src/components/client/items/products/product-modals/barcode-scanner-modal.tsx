@@ -215,7 +215,7 @@ function MobileCameraScanner({ isActive, isLoading, onScan }: MobileCameraScanne
           {isLoading ? "Verificando..." : "Aponte a câmara"}
         </h2>
         <p className="text-xs text-muted-foreground leading-relaxed px-2">
-          Enquadre o código de barras no rectângulo para fazer a leitura.
+          Aponte a câmara para o código de barras. A leitura será feita em todo o visor.
         </p>
       </div>
 

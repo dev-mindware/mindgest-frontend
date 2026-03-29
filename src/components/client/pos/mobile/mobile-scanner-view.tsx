@@ -45,7 +45,7 @@ export function MobileScannerView({
         stop();
       }
     },
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    [onScan, start, stop]
   );
 
   return (
@@ -68,12 +68,18 @@ export function MobileScannerView({
       <div className="flex-1 relative overflow-hidden bg-muted/10">
         <div ref={scannerDivRef} id={SCANNER_REGION_ID} className="w-full h-full object-cover" />
 
+        <div className="absolute inset-x-0 top-1/4 flex flex-col items-center gap-4 pointer-events-none z-10">
+          <p className="text-sm font-medium bg-black/40 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/10">
+            Aponte para o código em qualquer lugar do visor
+          </p>
+        </div>
+
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-64 h-64 border-2 border-white/50 rounded-3xl relative">
-            <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl" />
-            <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl" />
-            <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl" />
-            <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl" />
+          <div className="w-64 h-64 border-2 border-white/20 rounded-3xl relative">
+            <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-white/40 rounded-tl-xl" />
+            <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-white/40 rounded-tr-xl" />
+            <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-white/40 rounded-bl-xl" />
+            <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-white/40 rounded-br-xl" />
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary/50 shadow-[0_0_15px_rgba(153,86,246,0.8)] animate-[scan-line_2s_ease-in-out_infinite]" />
           </div>
         </div>
@@ -119,13 +125,22 @@ export function MobileScannerView({
             onClick={isScanning ? stop : () => start(onScan)}
             className={cn(
               "w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-xl",
-              isScanning ? "bg-destructive text-white" : "bg-primary text-white",
+              isScanning ? "bg-destructive text-white" : "bg-primary text-white"
             )}
           >
             {isScanning ? <Icon name="Square" size={24} /> : <Icon name="ScanLine" size={28} />}
           </button>
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes scan-line {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 }
