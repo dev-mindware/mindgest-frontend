@@ -5,26 +5,27 @@ import { useRouter } from "next/navigation";
 
 export function useLogout() {
   const { logout } = useAuthStore();
-  const queryClient = useQueryClient();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   async function handleLogout() {
-    // 1. Executa o logout no Zustand e na API PRIMEIRO.
-    // Aguardamos que o cookie de sessão seja destruído no servidor.
+    console.log('1. Iniciando logout');
     await logout();
 
-    // 2. Só DEPOIS removemos os queries.
-    // Se fizéssemos isto antes, o React Query iria refazer os fetches pendentes
-    // enquanto a sessão ainda era válida, recolocando o "user" em cache!
-    queryClient.removeQueries();
-    queryClient.clear();
+    console.log('2. Após logout - token no store:', useAuthStore.getState().user);
 
-    // 3. Apagar os dados locais
+    await queryClient.cancelQueries({ queryKey: ['user'] });
+    console.log('3. Queries canceladas');
+
+    queryClient.setQueryData(['user'], null);
+    console.log('4. QueryData setado como null');
+    console.log('5. Estado atual da query:', queryClient.getQueryData(['user']));
+
     localStorage.removeItem("current-store");
     localStorage.removeItem("MGEST-AUTH-STORE");
 
-    // 4. Navegar via Next.js router para um redirecionamento suave sem "hard reload"
     router.replace("/auth/login");
+    console.log('6. Navegou para login');
   }
 
   return { handleLogout };

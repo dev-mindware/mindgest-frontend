@@ -10,7 +10,7 @@ interface UseFetchUserOptions {
   enabled?: boolean;
 }
 
-export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
+export function useFetchUser({ enabled }: UseFetchUserOptions) {
   const { setUser, setIsAuthenticating } = useAuthStore();
 
   const { data, isLoading, isError, error, isSuccess } = useQuery({
@@ -22,13 +22,10 @@ export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
     enabled,
     retry: false,
     refetchOnWindowFocus: false,
-    // Nunca usar dados stale de sessões anteriores
     staleTime: 0,
   });
 
   useEffect(() => {
-    // Quando disabled (páginas de auth), NÃO tocamos no isAuthenticating.
-    // O fluxo de login/logout é responsável por gerir esse estado.
     if (!enabled) return;
 
     if (isLoading) {

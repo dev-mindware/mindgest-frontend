@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { User } from "@/types";
 import { logoutAction } from "@/actions/login";
-// import { currentStoreStore } from "@/stores/store/current-store-store";
 
 interface AuthState {
   user: User | null;
@@ -25,6 +24,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoggingOut: true, isAuthenticating: true, user: null }); // bloqueia tudo antes
     await logoutAction();
     set({ isLoggingOut: false }); // isAuthenticating mantém-se true
-    // window.location.href = "/auth/login";
+    //  window.location.href = "/auth/login";
   },
 }));

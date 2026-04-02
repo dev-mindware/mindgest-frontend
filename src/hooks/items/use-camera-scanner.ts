@@ -12,6 +12,7 @@ type UseCameraScannerResult = {
   stop: () => Promise<void>;
 };
 
+
 const SCANNER_CONFIG = { 
   fps: 15,
   aspectRatio: 1.0

@@ -15,7 +15,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const pathname = usePathname();
   const isAuthRoute = AUTH_PATHS.some((path) => pathname.startsWith(path));
   const { isAuthenticating } = useAuthStore();
-  useFetchUser({ enabled: !isAuthRoute });
+  useFetchUser({ enabled: !isAuthRoute  });
 
   if (isAuthRoute) return <>{children}</>;
 

@@ -13,6 +13,9 @@ export function UnauthorizedLink() {
   return (
     <div>
       <div className="flex justify-center items-center space-x-4">
+        <code>
+          {JSON.stringify(user, null, 2)}
+        </code>
         <Link
           href={`${getRouteByRole(user?.role as Role)}`}
           className="w-max mt-6 px-4 py-2 bg-primary text-white  font-medium rounded-md shadow-md hover:bg-primary transition-all"
