@@ -46,9 +46,24 @@ export function ClientsList() {
     {
       key: "email",
       header: "Email",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.email ?? "------------"}</div>
+      ),
     },
-    { key: "phone", header: "Telefone" },
-    { key: "address", header: "Endereço" },
+    {
+      key: "phone",
+      header: "Telefone",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.phone ?? "------------"}</div>
+      ),
+    },
+    {
+      key: "address",
+      header: "Endereço",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.address ?? "------------"}</div>
+      ),
+    },
     {
       key: "createdAt",
       header: "Criado em",

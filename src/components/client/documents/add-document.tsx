@@ -14,7 +14,7 @@ export function AddDocuments() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current_Tab = useSearchParams().get("tab");
-  const [currentTab, setCurrentTab] = useState<TabsAloweds>(() => {
+  const [currentTab] = useState<TabsAloweds>(() => {
     if (current_Tab) {
       return current_Tab as TabsAloweds;
     }
