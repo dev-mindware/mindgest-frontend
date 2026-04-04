@@ -32,7 +32,7 @@ export const menuItems: MenuStructure = {
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
-  /*   {
+    /*   {
       name: "GestIA",
       url: "/gestia",
       icon: <Icon name="Sparkles" className="w-5 h-5" />,
@@ -67,6 +67,13 @@ export const menuItems: MenuStructure = {
       icon: <Icon name="ShoppingBasket" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
+    },
+    {
+      name: "Fornecedores",
+      url: "/suppliers",
+      icon: <Icon name="Truck" className="w-5 h-5" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Smart",
     },
     {
       name: "Gestão",

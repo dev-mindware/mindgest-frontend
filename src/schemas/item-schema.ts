@@ -25,6 +25,7 @@ export const itemSchema = z
     companyId: z.string().trim().optional(),
     storeId: z.string().trim().optional(),
     categoryId: z.string().trim().min(1, "Campo obrigatório"),
+    supplierId: z.string().trim().nullable().optional(),
 
     hasExpiry: z.boolean().optional(),
     expiryDate: z.string().trim().optional(),

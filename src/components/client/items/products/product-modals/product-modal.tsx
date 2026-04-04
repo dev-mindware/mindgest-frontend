@@ -25,6 +25,7 @@ import {
   useAuth,
 } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
+import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
 
 export function AddProductModal() {
   const { open, openModal, closeModal, modalData } = useModal();
@@ -80,6 +81,15 @@ function AddProductFormContent() {
     setPage: setTaxPage,
   } = useTaxesSelect();
 
+  const {
+    supplierOptions,
+    isLoading: isLoadingSuppliers,
+    isError: isErrorSuppliers,
+    refetch: refetchSuppliers,
+    pagination: paginationSuppliers,
+    setPage: setPageSuppliers,
+  } = useGetSuppliersSelect();
+
   const initialBarcode = modalData["add-product"]?.barcode || "";
 
   const {
@@ -97,6 +107,7 @@ function AddProductFormContent() {
       companyId: String(user?.company?.id),
       type: "PRODUCT",
       categoryId: "",
+      supplierId: null,
     },
   });
 
@@ -109,6 +120,7 @@ function AddProductFormContent() {
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
+      supplierId: data.supplierId || null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   };
@@ -136,12 +148,15 @@ function AddProductFormContent() {
     closeModal("add-product");
   };
 
-  if (isLoadingCategories || isTaxesLoading) return <ProductModalSkeleton />;
-  if (isError) {
+  if (isLoadingCategories || isTaxesLoading || isLoadingSuppliers) return <ProductModalSkeleton />;
+  if (isError || isErrorSuppliers) {
     return (
       <RequestError
-        refetch={refetch}
-        message="Ocorreu um erro ao carregar as categorias"
+        refetch={() => {
+          refetch();
+          refetchSuppliers();
+        }}
+        message="Ocorreu um erro ao carregar os dados"
       />
     );
   }
@@ -300,25 +315,47 @@ function AddProductFormContent() {
               />
             </FeatureGate>
           </div>
+          <div className="grid grid-cols-1">
+            <FeatureGate minPlan="Smart" fallback="hidden">
+              <Controller
+                control={control}
+                name="supplierId"
+                render={({ field: { onChange, value } }) => (
+                  <PaginatedSelect
+                    label="Fornecedor (Opcional)"
+                    value={value}
+                    options={supplierOptions}
+                    onChange={onChange}
+                    isLoading={isLoadingSuppliers}
+                    pagination={paginationSuppliers}
+                    onPageChange={setPageSuppliers}
+                    className="w-full"
+                    placeholder="Selecione um aopção"
+                  />
+                )}
+              />
+            </FeatureGate>
+          </div>
 
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
-             <Input
+              <Input
                 type="text"
                 inputMode="decimal"
                 startIcon="Weight"
                 label="Peso (Kg) (opcional)"
                 {...register("weight", {
-                    setValueAs: (v) => {
-                    if (v === "" || v === null || v === undefined) return undefined;
+                  setValueAs: (v) => {
+                    if (v === "" || v === null || v === undefined)
+                      return undefined;
                     const normalized = String(v).replace(",", ".");
                     const parsed = parseFloat(normalized);
                     return isNaN(parsed) ? undefined : parsed;
-                },
+                  },
                 })}
                 error={errors.weight?.message}
                 placeholder="Ex: 0.24"
-                />
+              />
               <Input
                 label="Dimensões (opcional)"
                 placeholder="Ex: 10x20x30 cm"

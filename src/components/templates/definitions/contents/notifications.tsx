@@ -1,5 +1,4 @@
 "use client";
-import { useNotificationSettingsStore } from "@/stores/notifications";
 import {
   Select,
   SelectContent,
@@ -12,9 +11,6 @@ import {
 } from "@/components";
 
 export function Notification() {
-  const { soundEnabled, soundType, setSoundEnabled, setSoundType } =
-    useNotificationSettingsStore();
-
   return (
     <div>
       <section className="space-y-4">
@@ -91,62 +87,10 @@ export function Notification() {
           <Separator />
         </div>
       </section>
-
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Sons</h2>
-          <p className="text-sm text-muted-foreground">
-            Personalize o som das notificações MindGest.
-          </p>
-        </div>
-        <Separator />
-
-        <div className="space-y-6 md:p-8">
-          <SettingRow
-            label="Ativar som nas notificações"
-            control={
-              <Switch
-                checked={soundEnabled}
-                onCheckedChange={setSoundEnabled}
-              />
-            }
-          />
-
-          <Separator />
-
-          <SettingRow
-            label="Som padrão"
-            control={
-              <Select value={soundType} onValueChange={setSoundType}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Escolha o som" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="/sound-effects/notification-1.mp3">
-                    Paradise
-                  </SelectItem>
-                  <SelectItem value="/sound-effects/notification-2.mp3">
-                    Ding
-                  </SelectItem>
-                  <SelectItem value="/sound-effects/notification-3.mp3">
-                    Beep
-                  </SelectItem>
-                  <SelectItem value="/sound-effects/notification-error.mp3">
-                    Alert
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            }
-          />
-
-          <Separator />
-        </div>
-      </section>
     </div>
   );
 }
 
-// Componente reutilizável para linha de configuração
 function SettingRow({
   label,
   description,

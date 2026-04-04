@@ -21,3 +21,4 @@ export * from "./items-filters-skeleton";
 export * from "./clients-filters-skeleton";
 export * from "./stock-summary-skeleton";
 export * from "./reset-password-skeleton";
+export * from "./supplier-details-skeleton";

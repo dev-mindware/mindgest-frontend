@@ -1,5 +1,6 @@
 "use client";
 import { usePagination, useURLSearchParams } from "@/hooks/common";
+import { useRouter } from "next/navigation";
 import {
   Column,
   RequestError,
@@ -11,22 +12,24 @@ import {
 import { useDebounce } from "use-debounce";
 import { SupplierFiltersTSX } from "./common";
 import {
-  SupplierModal,
   DeleteSupplierModal,
-  DetailsSupplierModal,
+  RestockSupplierModal,
+  EditSupplierModal,
 } from "./suppliers-modals";
 import { useSupplierActions } from "@/hooks/entities/use-supplier-actions";
 import { useSuppliersFilters } from "@/hooks/entities/suppliers-filters";
 import { SupplierResponse } from "@/types";
+import { formatDateTime } from "@/utils";
 
 export function SuppliersList() {
+  const router = useRouter();
   const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useSuppliersFilters();
   const {
     handlerDeleteSupplier,
-    handlerDetailsSupplier,
     handlerEditSupplier,
+    handlerRestockSupplier,
   } = useSupplierActions();
 
   const {
@@ -54,6 +57,16 @@ export function SuppliersList() {
     { key: "email", header: "Email" },
     { key: "phone", header: "Telefone" },
     {
+      key: "createdAt",
+      header: "Criado em",
+      render: (_, item) => formatDateTime(item.createdAt),
+    },
+    {
+      key: "updatedAt",
+      header: "Atualizado em",
+      render: (_, item) => formatDateTime(item.updatedAt),
+    },
+    {
       key: "action",
       header: "Ação",
       render: (_, item) => (
@@ -62,7 +75,15 @@ export function SuppliersList() {
           actions={[
             {
               label: "Ver detalhes",
-              onClick: () => handlerDetailsSupplier(item),
+              onClick: () => router.push(`/suppliers/${item.id}`),
+            },
+            {
+              label: "Ver histórico de stock",
+              onClick: () => router.push(`/suppliers/${item.id}/history`),
+            },
+            {
+              label: "Nova Entrada de stock",
+              onClick: () => handlerRestockSupplier(item),
             },
             { label: "Editar", onClick: () => handlerEditSupplier(item) },
             {
@@ -86,45 +107,33 @@ export function SuppliersList() {
     );
   }
 
-  if (allSuppliers.length === 0)
-    return (
-      <div className="justify-start mt-6 space-y-8">
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-            <SupplierFiltersTSX />
-          </div>
-        </div>
+  return (
+    <div className="mt-6 space-y-8">
+      <SupplierFiltersTSX />
+
+      {allSuppliers.length > 0 ? (
+        <GenericTable<SupplierResponse>
+          page={page}
+          total={total}
+          columns={columns}
+          setPage={setPage}
+          data={allSuppliers}
+          totalPages={totalPages}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhum fornecedor encontrado"
+        />
+      ) : (
         <EmptyState
           description="Adicione novos fornecedores"
           title="Sem Fornecedores"
           icon="Truck"
         />
-      </div>
-    );
+      )}
 
-  return (
-    <div className="justify-start mt-6 space-y-8">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <div className="flex flex-col w-full gap-3 sm:flex-row sm:justify-between sm:gap-4">
-          <SupplierFiltersTSX />
-        </div>
-      </div>
-
-      <GenericTable<SupplierResponse>
-        page={page}
-        data={allSuppliers}
-        columns={columns}
-        total={total}
-        totalPages={totalPages}
-        setPage={setPage}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhum fornecedor encontrado"
-      />
-
-      <DetailsSupplierModal />
       <DeleteSupplierModal />
-      <SupplierModal action="edit" />
+      <RestockSupplierModal />
+      <EditSupplierModal />
     </div>
   );
 }

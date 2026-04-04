@@ -4,3 +4,7 @@
 4. mostrar o nivel de senha 
 ao aprovar abrir o modal abertura de caixa e definir capital inicial e tempo de expediante.
 na listagem do pos tem q ter filtro por usuario
+
+
+ver bem as importações no layout
+<NotificationDetail /> e o <SubscriptionModal />

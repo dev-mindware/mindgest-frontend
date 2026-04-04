@@ -1,28 +1,32 @@
 "use client";
 
-import { Button, GlobalModal, Input, Label, RHFSelect } from "@/components";
-import InnerTagsInput from "@/components/custom/inner-tags-input";
-import { useForm, Controller } from "react-hook-form";
+import { Button, GlobalModal, Input } from "@/components";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SupplierFormData, supplierSchema } from "@/schemas";
-import { supplierOptions } from "../../common/constant-data";
+import { useAddSupplier } from "@/hooks/entities/use-suppliers";
+import { useModal } from "@/stores";
+
 
 export function AddSupplierModal() {
+  const { closeModal } = useModal();
+  const { mutateAsync: addSupplier, isPending } = useAddSupplier();
+
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors },
   } = useForm<SupplierFormData>({
     resolver: zodResolver(supplierSchema),
-    defaultValues: {
-      products: [],
-    },
   });
 
-  function onSubmit(data: SupplierFormData) {
-    console.log("✅ Supplier:", data);
-    alert(JSON.stringify(data, null, 2));
+  async function onSubmit(data: SupplierFormData) {
+    try {
+      await addSupplier(data);
+      closeModal("add-supplier");
+    } catch (error) {
+      console.error("Erro ao adicionar fornecedor:", error);
+    }
   }
 
   return (
@@ -40,13 +44,6 @@ export function AddSupplierModal() {
             placeholder="Ex: Ceara Coveney"
             {...register("name")}
             error={errors.name?.message}
-          />
-
-          <RHFSelect
-            name="type"
-            control={control}
-            options={supplierOptions}
-            label="Tipo de Fornecedor"
           />
 
           <Input
@@ -69,8 +66,8 @@ export function AddSupplierModal() {
             label="NIF"
             placeholder="Ex: 546829403"
             className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("nif")}
-            error={errors.nif?.message}
+            {...register("taxNumber")}
+            error={errors.taxNumber?.message}
           />
 
           <Input
@@ -79,38 +76,10 @@ export function AddSupplierModal() {
             {...register("address")}
             error={errors.address?.message}
           />
-
-          <RHFSelect
-            name="type"
-            control={control}
-            options={supplierOptions}
-            label="Tipo de Fornecimento"
-          />
-
-          <Input
-            label="Prazo de Entrega"
-            placeholder="Ex: 2 dias"
-            {...register("deliveryTime")}
-            error={errors.deliveryTime?.message}
-          />
-
-          <div className="*:not-first:mt-2">
-            <Label>Produtos ou Categorias</Label>
-            {/* <Controller
-            name="products"
-            control={control}
-            render={({ field }) => (
-              <InnerTagsInput value={field.value as any[]} onChange={field.onChange} />
-            )}
-          /> */}
-            {errors.products && (
-              <p className="text-sm text-red-500">{errors.products.message}</p>
-            )}
-          </div>
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit">Salvar Fornecedor</Button>
+          <Button type="submit" loading={isPending} disabled={isPending}>Salvar Fornecedor</Button>
         </div>
       </form>
     </GlobalModal>

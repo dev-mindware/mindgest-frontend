@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { TitleList } from "@/components/common";
 import { ButtonAddClient, ClientModal, ClientsList } from "@/components";
 

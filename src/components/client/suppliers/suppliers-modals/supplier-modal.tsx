@@ -1,26 +1,16 @@
 "use client";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ErrorMessage } from "@/utils/messages";
 import { useModal } from "@/stores";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@/utils/messages";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SupplierFormData, supplierSchema } from "@/schemas";
 import { Button, Input, GlobalModal, ButtonSubmit } from "@/components";
-import { currentSupplierStore } from "@/stores/entities";
-import { useAddSupplier, useUpdateSupplier } from "@/hooks/entities/use-suppliers";
+import { useAddSupplier } from "@/hooks/entities/use-suppliers";
 
-type SupplierModalProps = {
-  action: "add" | "edit";
-};
-
-export function SupplierModal({ action }: SupplierModalProps) {
+export function SupplierModal() {
   const { closeModal, open } = useModal();
-  const isOpen = open["add-supplier"] || open["edit-supplier"];
-  const { currentSupplier } = currentSupplierStore();
-
+  const isOpen = open["add-supplier"];
   const { mutateAsync: addSupplier, isPending: isAdding } = useAddSupplier();
-  const { mutateAsync: editSupplier, isPending: isEditing } =
-    useUpdateSupplier();
 
   const {
     reset,
@@ -32,50 +22,31 @@ export function SupplierModal({ action }: SupplierModalProps) {
     mode: "onChange",
   });
 
-  useEffect(() => {
-    if (action === "edit" && currentSupplier) {
-      reset({
-        name: currentSupplier.name,
-        email: currentSupplier.email,
-        phone: currentSupplier.phone,
-        address: currentSupplier.address,
-   /*      taxNumber: currentSupplier.taxNumber, */
-     /*    iban: currentSupplier.taxNumber, */
-      });
-    }
-  }, [action, currentSupplier, reset]);
-
   async function onSubmit(data: SupplierFormData) {
     try {
-      const { /* iban */ ...finalData } = data;
-
-      /* if (action === "add") {
-        await addSupplier(finalData);
-      } else if (action === "edit" && currentSupplier) {
-        await editSupplier({ id: currentSupplier.id, data: finalData });
-      } */
+      await addSupplier(data);
 
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-          "Ocorreu um erro ao salvar o fornecedor."
+          "Ocorreu um erro ao salvar o fornecedor.",
       );
     }
   }
 
   const handleCancel = () => {
     reset();
-    closeModal(action === "add" ? "add-supplier" : "edit-supplier");
+    closeModal("add-supplier");
   };
 
-  if ((action === "edit" && !currentSupplier) || !isOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <GlobalModal
       canClose
-      id={action === "add" ? "add-supplier" : "edit-supplier"}
-      title={action === "add" ? "Adicionar Fornecedor" : "Editar Fornecedor"}
+      id="add-supplier"
+      title="Adicionar Fornecedor"
       className="!max-h-[85vh] !w-max"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -93,8 +64,8 @@ export function SupplierModal({ action }: SupplierModalProps) {
             startIcon="IdCard"
             placeholder="Ex: 546829403"
             className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-           /*  {...register("taxNumber")}
-            error={errors.taxNumber?.message} */
+            {...register("taxNumber")}
+            error={errors.taxNumber?.message}
           />
 
           <Input
@@ -110,25 +81,16 @@ export function SupplierModal({ action }: SupplierModalProps) {
             type="email"
             label="Email"
             startIcon="Mail"
-            placeholder="Ex: contact@techsolutions.com"
             {...register("email")}
+            placeholder="Ex: contact@techsolutions.com"
             error={errors.email?.message}
           />
 
           <Input
-            label="IBAN"
-            startIcon="FileDigit"
-            placeholder="Ex: AO06004000005603309410251"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-           /*  {...register("iban")}
-            error={errors.iban?.message} */
-          />
-
-          <Input
             label="Endereço"
-            placeholder="Ex: Av. da Liberdade, 456"
             startIcon="MapPin"
             {...register("address")}
+            placeholder="Ex: Av. da Liberdade, 456"
             error={errors.address?.message}
           />
         </div>
@@ -137,11 +99,8 @@ export function SupplierModal({ action }: SupplierModalProps) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit
-            className="w-max"
-            isLoading={isSubmitting || isAdding || isEditing}
-          >
-            {action === "add" ? "Adicionar" : "Salvar Alterações"}
+          <ButtonSubmit className="w-max" isLoading={isSubmitting || isAdding}>
+            Adicionar
           </ButtonSubmit>
         </div>
       </form>

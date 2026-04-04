@@ -44,6 +44,17 @@ export function usePagination<T>({
 
       const raw = response.data;
 
+      // Handle direct array response
+      if (Array.isArray(raw)) {
+        return {
+          data: raw as T[],
+          total: raw.length,
+          page: page,
+          limit: queryParams.limit ?? Math.max(raw.length, 10),
+          totalPages: 1,
+        } satisfies PaginationResponse<T>;
+      }
+
       // 🔹 Normaliza para sempre devolver o mesmo shape
       const dataKey = Object.keys(raw).find(
         (key) => Array.isArray(raw[key])

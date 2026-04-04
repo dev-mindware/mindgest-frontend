@@ -8,7 +8,6 @@ import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async
 import { PaginatedSelect } from "@/components/shared";
 import { useGetTaxes } from "@/hooks/taxes/use-taxes";
 
-
 export interface ProductOption {
   value: string | number;
   label: string;
@@ -34,20 +33,32 @@ interface AddItemFormProps {
   existingItemIds?: Set<string | number>;
 }
 
-
 export const AddItemForm = React.memo<AddItemFormProps>(
   ({ onAdd, globalDiscount, existingItemIds = new Set() }) => {
-    const { taxOptions, pagination: taxPagination, setPage: setTaxPage } = useGetTaxes();
+    const {
+      taxOptions,
+      pagination: taxPagination,
+      setPage: setTaxPage,
+    } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
 
-    const { control, handleSubmit, setValue, getValues, resetField, watch, reset, formState: { errors } } = useForm({
+    const {
+      control,
+      handleSubmit,
+      setValue,
+      getValues,
+      resetField,
+      watch,
+      reset,
+      formState: { errors },
+    } = useForm({
       defaultValues: {
         quantity: 1,
         price: 0,
         type: "PRODUCT" as "PRODUCT" | "SERVICE",
         taxId: "",
-      }
+      },
     });
 
     const watchedPrice = watch("price");
@@ -55,37 +66,39 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     const watchedType = watch("type");
     const watchedTaxId = watch("taxId");
 
+    const handleProductChange = useCallback(
+      (option: ProductOption | null) => {
+        setSelectedProduct(option);
 
-    const handleProductChange = useCallback((option: ProductOption | null) => {
-      setSelectedProduct(option);
-
-      if (!option) {
-        setValue("price", 0);
-        setValue("type", "PRODUCT");
-        setValue("taxId", "");
-        return;
-      }
-
-      if (option.__isNew__) {
-        setValue("price", 0);
-        setValue("type", "PRODUCT");
-        setValue("taxId", "");
-      } else if (option.data) {
-        setValue("price", Number(option.data.price));
-        setValue("type", option.data.type);
-        // Ensure quantity is at least 1, but capped by stock if product
-        if (option.data.type === "PRODUCT") {
-          const available = option.data.quantity ?? 0;
-          if (available > 0) {
-            setValue("quantity", 1);
-          } else {
-            setValue("quantity", 0);
-          }
+        if (!option) {
+          setValue("price", 0);
+          setValue("type", "PRODUCT");
+          setValue("taxId", "");
+          return;
         }
 
-        setValue("taxId", String(option.data.taxId ?? ""));
-      }
-    }, [setValue]);
+        if (option.__isNew__) {
+          setValue("price", 0);
+          setValue("type", "PRODUCT");
+          setValue("taxId", "");
+        } else if (option.data) {
+          setValue("price", Number(option.data.price));
+          setValue("type", option.data.type);
+          // Ensure quantity is at least 1, but capped by stock if product
+          if (option.data.type === "PRODUCT") {
+            const available = option.data.quantity ?? 0;
+            if (available > 0) {
+              setValue("quantity", 1);
+            } else {
+              setValue("quantity", 0);
+            }
+          }
+
+          setValue("taxId", String(option.data.taxId ?? ""));
+        }
+      },
+      [setValue],
+    );
 
     const handleAddClick = useCallback(() => {
       const values = getValues();
@@ -94,7 +107,10 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       }
 
       // Final stock check for products
-      if (!selectedProduct.__isNew__ && selectedProduct.data?.type === "PRODUCT") {
+      if (
+        !selectedProduct.__isNew__ &&
+        selectedProduct.data?.type === "PRODUCT"
+      ) {
         const available = selectedProduct.data.quantity ?? 0;
         if (values.quantity > available) {
           return;
@@ -116,7 +132,9 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         total: values.price * values.quantity,
         type: values.type,
         isFromAPI: !selectedProduct.__isNew__,
-        apiId: selectedProduct.__isNew__ ? undefined : selectedProduct.value.toString(),
+        apiId: selectedProduct.__isNew__
+          ? undefined
+          : selectedProduct.value.toString(),
       };
 
       onAdd(newItem);
@@ -128,15 +146,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         type: "PRODUCT",
         taxId: "",
       });
-    }, [
-      selectedProduct,
-      getValues,
-      taxOptions,
-      globalDiscount,
-      onAdd,
-      reset,
-    ]);
-
+    }, [selectedProduct, getValues, taxOptions, globalDiscount, onAdd, reset]);
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
@@ -145,23 +155,31 @@ export const AddItemForm = React.memo<AddItemFormProps>(
           handleAddClick();
         }
       },
-      [handleAddClick]
+      [handleAddClick],
     );
 
     const isNewProduct = selectedProduct?.__isNew__ ?? false;
 
     // Stock validation
-    const availableStock = !isNewProduct && selectedProduct?.data?.type === "PRODUCT"
-      ? (selectedProduct.data.quantity ?? 0)
-      : Infinity;
+    const availableStock =
+      !isNewProduct && selectedProduct?.data?.type === "PRODUCT"
+        ? (selectedProduct.data.quantity ?? 0)
+        : Infinity;
 
-    const isOverStock = watchedType === "PRODUCT" && watchedQuantity > availableStock;
-    const isAlreadyAdded = !isNewProduct && selectedProduct
-      ? existingItemIds.has(selectedProduct.value)
-      : false;
+    const isOverStock =
+      watchedType === "PRODUCT" && watchedQuantity > availableStock;
+    const isAlreadyAdded =
+      !isNewProduct && selectedProduct
+        ? existingItemIds.has(selectedProduct.value)
+        : false;
     // Price is locked for catalogue items — edit from the items page if needed
     const isPriceLocked = !isNewProduct && selectedProduct !== null;
-    const canAdd = selectedProduct && watchedQuantity > 0 && watchedPrice > 0 && !isOverStock && !isAlreadyAdded;
+    const canAdd =
+      selectedProduct &&
+      watchedQuantity > 0 &&
+      watchedPrice > 0 &&
+      !isOverStock &&
+      !isAlreadyAdded;
 
     // Lock quantity input for services (default is already 1)
     const isService = watchedType === "SERVICE";
@@ -197,17 +215,29 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   onChange={(e) => {
                     if (isService) return;
                     const val = Number(e.target.value);
-                    const cappedVal = watchedType === "PRODUCT" && availableStock !== Infinity
-                      ? Math.min(val, availableStock)
-                      : val;
-                    field.onChange(Math.max(watchedType === "PRODUCT" ? 0 : 1, cappedVal));
+                    const cappedVal =
+                      watchedType === "PRODUCT" && availableStock !== Infinity
+                        ? Math.min(val, availableStock)
+                        : val;
+                    field.onChange(
+                      Math.max(watchedType === "PRODUCT" ? 0 : 1, cappedVal),
+                    );
                   }}
                   error={isOverStock ? `Máximo: ${availableStock}` : undefined}
                   placeholder="1"
                 />
                 {!isNewProduct && selectedProduct?.data?.type === "PRODUCT" && (
                   <p className="text-[10px] text-muted-foreground font-medium px-1">
-                    Disponível: <span className={availableStock <= 0 ? "text-destructive" : "text-primary"}>{availableStock}</span>
+                    Disponível:{" "}
+                    <span
+                      className={
+                        availableStock <= 0
+                          ? "text-destructive"
+                          : "text-primary"
+                      }
+                    >
+                      {availableStock}
+                    </span>
                   </p>
                 )}
               </div>
@@ -229,8 +259,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                 disabled={isPriceLocked}
               />
             )}
-          />
-
+          /> 
         </div>
 
         {isNewProduct && (
@@ -286,7 +315,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 AddItemForm.displayName = "AddItemForm";

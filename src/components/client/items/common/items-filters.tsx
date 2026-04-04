@@ -11,39 +11,53 @@ import { Icon, SearchHandlerWrapper } from "@/components/common";
 import { FilterPopover } from "@/components/shared";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { useURLSearchParams } from "@/hooks/common";
+import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
 
-export function ItemsFiltersTSX({
-  prefix,
-}: {
-  prefix: string;
-}) {
+export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
   const { categoryOptions, isLoading, isError, refetch, pagination, setPage } =
     useGetCategories();
+  const {
+    supplierOptions,
+    isLoading: isLoadingSuppliers,
+    isError: isErrorSuppliers,
+    refetch: refetchSuppliers,
+    pagination: paginationSuppliers,
+    setPage: setPageSuppliers,
+  } = useGetSuppliersSelect();
 
   const hasFilter =
     filters.status ||
     filters.categoryId ||
+    filters.supplierId ||
     filters.sortBy ||
     filters.sortOrder ||
     filters.minPrice ||
     filters.maxPrice ||
     search.length > 0;
 
-  if (isError)
+  if (isError || isErrorSuppliers)
     return (
       <div className="flex items-center gap-2">
-        <span className="text-destructive text-sm">Erro ao carregar as categorias</span>
-        <Button variant="outline" onClick={() => refetch()}>Tentar novamente</Button>
+        <span className="text-destructive text-sm">
+          Erro ao carregar as categorias ou fornecedores
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => {
+            refetchSuppliers();
+            refetch();
+          }}
+        >
+          Tentar novamente
+        </Button>
       </div>
     );
 
   return (
     <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-baseline">
-
-        {/* Search Input */}
         <SearchHandlerWrapper
           search={search}
           setSearch={setSearch}
@@ -58,11 +72,18 @@ export function ItemsFiltersTSX({
           onPageChange={setPage}
           placeholder="Categoria"
         />
+        <PaginatedSelect
+          options={supplierOptions}
+          value={filters.supplierId}
+          onChange={(supplierId) => setFilters({ supplierId })}
+          isLoading={isLoadingSuppliers}
+          pagination={paginationSuppliers}
+          onPageChange={setPageSuppliers}
+          placeholder="Fornecedor"
+        />
       </div>
 
-      {/* Filters - Grid layout for better responsiveness */}
       <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
-
         <FilterPopover
           icon="Tag"
           label="Status"
@@ -102,7 +123,6 @@ export function ItemsFiltersTSX({
         />
       </div>
 
-      {/* Clear Button */}
       {hasFilter && (
         <div className="flex justify-center sm:justify-start">
           <Button

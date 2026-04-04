@@ -56,7 +56,6 @@ export function DetailsSupplierModal() {
           <DetailRow label="Endereço" value={currentSupplier.address} />
         </section>
 
-        {/* Empresa e Identificação */}
         {(currentSupplier.companyId || currentSupplier.taxNumber) && (
           <section className="space-y-2">
             <h3 className="font-semibold text-foreground">

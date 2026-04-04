@@ -114,15 +114,14 @@ export function ProductList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsProduct, icon: "Eye" },
-            { label: "Editar", onClick: handlerEditProduct, icon: "Pencil" },
+            { label: "Ver detalhes", onClick: handlerDetailsProduct, },
+            { label: "Editar", onClick: handlerEditProduct, },
             { type: "separator" },
             {
               label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
               onClick: toggleStatusProduct,
-              icon: item.status === "ACTIVE" ? "Eye" : "EyeOff",
             },
-            { label: "Deletar", onClick: handlerDeleteProduct, variant: "destructive", icon: "Trash" },
+            { label: "Deletar", onClick: handlerDeleteProduct, variant: "destructive" },
           ]}
         />
       ),

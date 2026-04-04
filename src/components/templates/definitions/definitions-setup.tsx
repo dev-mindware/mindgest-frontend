@@ -7,7 +7,7 @@ import { CategoriesPageContent, Icon } from "@/components";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CollaboratorsPageContent,
-  EntitiesPageContent,
+  StoresPageContent,
   SubscriptionInfo,
 } from "./contents";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -43,6 +43,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   };
 
   const allTabs: Tabs[] = [
+     {
+      id: "profile",
+      label: "Perfil",
+      icon: "User",
+      component: <Profile />,
+      category: "general",
+      isVisible: true,
+    },
     {
       id: "appearance",
       label: "Aparência",
@@ -50,14 +58,6 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       component: <Appearance />,
       category: "general",
       isVisible: isActive && hasPlanAccess(currentPlan, "Smart") && isOwner,
-    },
-    {
-      id: "profile",
-      label: "Perfil",
-      icon: "User",
-      component: <Profile />,
-      category: "general",
-      isVisible: true,
     },
     {
       id: "security",
@@ -102,8 +102,8 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     {
       id: "entities",
       label: "Entidades",
-      icon: "Warehouse",
-      component: <EntitiesPageContent />,
+      icon: "Store",
+      component: <StoresPageContent />,
       category: "workplace",
       isVisible: isActive && hasPlanAccess(currentPlan, "Smart") && isOwner,
     },

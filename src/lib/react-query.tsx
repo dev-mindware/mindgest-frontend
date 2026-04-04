@@ -24,13 +24,3 @@ export function ReactQueryProvider({ children }: ReactQueryProviderProps) {
 }
 
 
-// TypeScript only:
-declare global {
-  interface Window {
-    __TANSTACK_QUERY_CLIENT__:
-      import('@tanstack/react-query')
-        .QueryClient
-  }
-}
-
-window.__TANSTACK_QUERY_CLIENT__ = queryClient

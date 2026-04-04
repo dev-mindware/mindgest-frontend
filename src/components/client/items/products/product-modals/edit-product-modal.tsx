@@ -17,10 +17,16 @@ import {
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useUpdateItem, useCategoriesSelect, useTaxesSelect, useAuth } from "@/hooks";
+import {
+  useUpdateItem,
+  useCategoriesSelect,
+  useTaxesSelect,
+  useAuth,
+} from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
 import { useMemo } from "react";
 import { ItemResponse } from "@/types";
+import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
 
 interface EditProductModalProps {
   product: ItemResponse;
@@ -62,7 +68,8 @@ export function EditProductModal({ product }: EditProductModalProps) {
 function EditProductFormContent({ product }: EditProductModalProps) {
   const { user } = useAuth();
   const { closeModal } = useModal();
-  const { mutateAsync: updateItemMutate, isPending: isUpdating } = useUpdateItem();
+  const { mutateAsync: updateItemMutate, isPending: isUpdating } =
+    useUpdateItem();
 
   const {
     categoryOptions,
@@ -72,13 +79,30 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     pagination,
     setPage,
   } = useCategoriesSelect();
-  const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useTaxesSelect();
+  const {
+    supplierOptions,
+    isLoading: isLoadingSuppliers,
+    isError: isErrorSuppliers,
+    refetch: refetchSuppliers,
+    pagination: paginationSuppliers,
+    setPage: setPageSuppliers,
+  } = useGetSuppliersSelect();
+  const {
+    taxOptions,
+    isLoading: isTaxesLoading,
+    pagination: taxPagination,
+    setPage: setTaxPage,
+  } = useTaxesSelect();
 
   const finalCategoryOptions = useMemo(() => {
     const currentId = product.categoryId || (product as any).category_id;
     const currentName = product.category;
 
-    if (currentId && currentName && !categoryOptions.find((o) => o.value === currentId)) {
+    if (
+      currentId &&
+      currentName &&
+      !categoryOptions.find((o) => o.value === currentId)
+    ) {
       return [{ label: currentName, value: currentId }, ...categoryOptions];
     }
     return categoryOptions;
@@ -86,13 +110,33 @@ function EditProductFormContent({ product }: EditProductModalProps) {
 
   const finalTaxOptions = useMemo(() => {
     const currentId = product.taxId || product.tax?.id;
-    const currentName = product.tax?.name ? `${product.tax.name} (${product.tax.rate}%)` : null;
+    const currentName = product.tax?.name
+      ? `${product.tax.name} (${product.tax.rate}%)`
+      : null;
 
-    if (currentId && currentName && !taxOptions.find((o) => o.value === currentId)) {
+    if (
+      currentId &&
+      currentName &&
+      !taxOptions.find((o) => o.value === currentId)
+    ) {
       return [{ label: currentName, value: currentId }, ...taxOptions];
     }
     return taxOptions;
   }, [product, taxOptions]);
+
+  const finalSupplierOptions = useMemo(() => {
+    const currentId = product.supplierId || (product as any).supplier_id;
+    const currentName = product.supplierName;
+
+    if (
+      currentId &&
+      currentName &&
+      !supplierOptions.find((o) => o.value === currentId)
+    ) {
+      return [{ label: currentName, value: currentId }, ...supplierOptions];
+    }
+    return supplierOptions;
+  }, [product, supplierOptions]);
 
   const {
     reset,
@@ -114,11 +158,12 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       unit: product.unit || "",
       weight: product.weight != null ? Number(product.weight) : undefined,
       dimensions: product.dimensions || "",
+      supplierId: product.supplierId || null,
       type: "PRODUCT",
       companyId: String(user?.company?.id),
       categoryId: product.categoryId || (product as any).category_id || "",
       taxId: product.taxId || product.tax?.id || "",
-      expiryDate: product.expiryDate ? product.expiryDate.split('T')[0] : "",
+      expiryDate: product.expiryDate ? product.expiryDate.split("T")[0] : "",
     },
   });
 
@@ -131,6 +176,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
+      supplierId: data.supplierId || null,
     } as any;
   };
 
@@ -146,7 +192,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao atualizar o item"
+        error?.response?.data?.message || "Ocorreu um erro ao atualizar o item",
       );
     }
   }
@@ -157,11 +203,14 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   };
 
   if (isLoadingCategories || isTaxesLoading) return <ProductModalSkeleton />;
-  if (isError) {
+  if (isError || isErrorSuppliers) {
     return (
       <RequestError
-        refetch={refetch}
-        message="Ocorreu um erro ao carregar as categorias"
+        refetch={() => {
+          refetch();
+          refetchSuppliers();
+        }}
+        message="Ocorreu um erro ao carregar os dados"
       />
     );
   }
@@ -321,6 +370,27 @@ function EditProductFormContent({ product }: EditProductModalProps) {
               />
             </FeatureGate>
           </div>
+          <div className="grid grid-cols-1">
+            <FeatureGate minPlan="Smart" fallback="hidden">
+              <Controller
+                control={control}
+                name="supplierId"
+                render={({ field: { onChange, value } }) => (
+                  <PaginatedSelect
+                    label="Fornecedor (Opcional)"
+                    value={value}
+                    onChange={onChange}
+                    options={finalSupplierOptions}
+                    isLoading={isLoadingSuppliers}
+                    pagination={paginationSuppliers}
+                    onPageChange={setPageSuppliers}
+                    className="w-full"
+                    placeholder="Selecione um aopção"
+                  />
+                )}
+              />
+            </FeatureGate>
+          </div>
 
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
@@ -354,7 +424,10 @@ function EditProductFormContent({ product }: EditProductModalProps) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit className="w-max" isLoading={isUpdating || isSubmitting}>
+          <ButtonSubmit
+            className="w-max"
+            isLoading={isUpdating || isSubmitting}
+          >
             Atualizar
           </ButtonSubmit>
         </div>

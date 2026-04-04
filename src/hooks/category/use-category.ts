@@ -2,7 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePagination } from "../common/use-pagination";
 import { useLocalPagination } from "../common/use-local-pagination";
-import { Category, CategoryData, CategoryResponse } from "@/types/category";
+import { Category, CategoryData } from "@/types/category";
 import { currentStoreStore } from "@/stores";
 import { categoryService } from "@/services/category-service";
 import { SucessMessage } from "@/utils/messages";

@@ -1,4 +1,3 @@
-// hooks/common/use-fetch-user.ts
 "use client";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores";

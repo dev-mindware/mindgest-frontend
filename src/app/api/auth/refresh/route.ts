@@ -6,17 +6,16 @@ import axios from "axios";
 import { LoginResponse } from "@/types";
 import { REFRESH_TOKEN_KEY } from "@/constants/auth";
 
-// Pequena proteção CSRF: só aceita chamadas com Origin da própria app
 function isAllowedOrigin(req: NextRequest) {
   const origin = req.headers.get("origin");
   if (!origin) return false;
 
   const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : process.env.NEXT_PUBLIC_APP_URL;
 
   if (!appUrl) {
-    // Sem configuração explícita, caímos para um modo mais permissivo,
-    // assumindo que o frontend chama do mesmo host.
     return true;
   }
 
@@ -52,7 +51,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Faz a chamada à API backend para renovar o token.
     const response = await axios.post<LoginResponse>(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
       {
@@ -74,7 +72,6 @@ export async function POST(req: NextRequest) {
 
     const data = response.data;
 
-    // Suportar resposta direta ou aninhada conforme a interface
     const parsedTokens = data.tokens;
 
     const newAccessToken = parsedTokens.accessToken;

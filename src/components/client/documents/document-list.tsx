@@ -50,7 +50,6 @@ export function DocumentList() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Scrollable tabs on mobile */}
           <div className="overflow-x-auto">
             <TabsList className="w-full sm:w-auto inline-flex">
               <TabsTrigger value="invoice" className="whitespace-nowrap">

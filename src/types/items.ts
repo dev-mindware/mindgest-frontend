@@ -10,11 +10,17 @@ export enum Status {
 export type ItemsFilters = {
   sortBy: string | null;
   categoryId: string | null;
+  supplierId: string | null;
   status: ItemStatus | null;
   sortOrder: string | null;
   search?: string | null;
   minPrice: string | null;
   maxPrice: string | null;
+  minStock: string | null;
+  maxStock: string | null;
+  createdAfter?: string | null;
+  createdBefore?: string | null;
+  type?: ItemType | null;
 };
 
 export type ItemData = {
@@ -44,6 +50,8 @@ export type ItemData = {
   storeId: string;
   categoryId: string;
   taxId: string;
+  supplierName: string | null;
+  supplierId?: string;
 };
 
 export type CreateItemData = {

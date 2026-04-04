@@ -1,4 +1,3 @@
-// middleware.ts — usa a role do cookie para redirect correcto
 import { NextRequest, NextResponse } from "next/server";
 import {
   API_AUTH_PREFIX,
@@ -8,7 +7,7 @@ import {
   REFRESH_TOKEN_KEY,
   ROLE_KEY
 } from "./constants";
-import { roleRedirects, getRouteByRole } from "./utils";
+import { getRouteByRole } from "./utils";
 import { Role } from "@/types";
 
 
