@@ -10,7 +10,6 @@ Antes de emitir faturas a crédito (FT), é recomendável configurar os dados ba
 *   **Ação**: Adicionar novo banco.
 *   **Banco Padrão**: Defina um banco como "Padrão" para que o sistema o selecione automaticamente em novos documentos.
 *   **Validação**: O IBAN deve seguir o padrão `AO06` + 21 dígitos.
-
 ---
 
 ## 2. Fluxo de Clientes e Faturamento
