@@ -56,14 +56,23 @@ export function StoresList() {
       key: "gerente",
       header: "Gerente",
       render: (_, item) => (
-        <div className="font-medium">---</div> // Ajustar se tiver gerente no back
+        <div className="font-medium">{item?.name ?? "----------"}</div> // Ajustar se tiver gerente no back
       ),
     },
     {
       key: "email",
       header: "Email",
+      render: (_, item) => (
+        <div className="font-medium">{item?.email ?? "----------"}</div> // Ajustar se tiver gerente no back
+      ),
     },
-    { key: "phone", header: "Telefone" },
+    {
+      key: "phone",
+      header: "Telefone",
+      render: (_, item) => (
+        <div className="font-medium">{item?.phone ?? "----------"}</div> // Ajustar se tiver gerente no back
+      ),
+    },
     {
       key: "isActive",
       header: "Status",

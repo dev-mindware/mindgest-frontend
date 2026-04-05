@@ -101,7 +101,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
     },
     {
       id: "entities",
-      label: "Entidades",
+      label: "Lojas",
       icon: "Store",
       component: <StoresPageContent />,
       category: "workplace",

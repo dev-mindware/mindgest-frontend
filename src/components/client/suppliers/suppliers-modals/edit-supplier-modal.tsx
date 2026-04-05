@@ -16,6 +16,7 @@ import { ItemData } from "@/types";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useFetch } from "@/hooks/common/use-fetch";
+import { ErrorMessage } from "@/utils";
 
 export function EditSupplierModal() {
   const { closeModal, open } = useModal();
@@ -46,7 +47,7 @@ export function EditSupplierModal() {
     formState: { errors },
   } = useForm<EditSupplierFormData>({
     resolver: zodResolver(editSupplierSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
   useEffect(() => {
@@ -96,8 +97,10 @@ export function EditSupplierModal() {
       }
 
       closeModal("edit-supplier");
-    } catch (error) {
-      console.error("Erro ao atualizar fornecedor:", error);
+    } catch (error: any) {
+      ErrorMessage(
+        error?.response?.data?.message || "Erro ao atualizar fornecedor",
+      );
     }
   }
 
@@ -169,9 +172,9 @@ export function EditSupplierModal() {
           <h4 className="text-sm font-semibold mb-4">
             Produtos Fornecidos (Remova clicando no X)
           </h4>
-          
+
           {isLoadingItems ? (
-             <p className="text-sm text-muted-foreground">A carregar...</p>
+            <p className="text-sm text-muted-foreground">A carregar...</p>
           ) : initialItems.length === 0 ? (
             <EmptyState
               icon="PackageOpen"

@@ -1,33 +1,30 @@
 "use client";
-import { TitleList } from "@/components/common";
-import { Button, Separator } from "@/components/ui";
 import { useModal } from "@/stores";
+import { Button } from "@/components/ui";
+import { TitleList } from "@/components/common";
 import { StoresList, StoreModal } from ".";
 
 export function StoresPageContent() {
   const { openModal, open } = useModal();
 
   return (
-    <div className="!py-4 sm:p-6 space-y-6">
-      <TitleList
+    <div>
+     <div className="flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
+       <TitleList
         title="Lojas"
         suTitle="Crie lojas para o controlo das suas atividades"
       />
-      <Separator />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full">
-        <Button
-          onClick={() => openModal("add-store")}
-          variant="default"
-          className="w-full sm:w-auto text-sm sm:text-base"
-        >
-          Nova Loja
-        </Button>
-      </div>
+      <Button
+        onClick={() => openModal("add-store")}
+        variant="default"
+        className="w-full sm:w-auto text-sm sm:text-base mt-4 sm:mt-0"
+      >
+        Nova Loja
+      </Button>
+     </div>
 
-      <div className="mt-4">
-        <StoresList />
-      </div>
+      <StoresList />
 
       {open["add-store"] && <StoreModal action="add" />}
     </div>

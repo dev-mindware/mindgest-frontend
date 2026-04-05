@@ -45,12 +45,12 @@ export function BankList() {
   const columns: Column<Bank>[] = [
     {
       key: "bankName",
-      header: "Nome do Banco",
+      header: "Banco",
       render: (_, item) => item.bankName,
     },
     {
       key: "accountNumber",
-      header: "Número da Conta",
+      header: "Nº da Conta",
       render: (_, item) => item.accountNumber,
     },
     {
@@ -113,7 +113,7 @@ export function BankList() {
 
   return (
     <div className="justify-start mt-6 space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
         <BanksFilters />
 
         <Button
@@ -121,7 +121,7 @@ export function BankList() {
           variant="default"
           className="w-full sm:w-auto text-sm sm:text-base"
         >
-          Adicionar IBAN
+          Novo Banco
         </Button>
       </div>
 

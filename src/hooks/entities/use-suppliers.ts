@@ -131,6 +131,7 @@ export function useDeleteSupplierItemsBulk() {
       itemIds: string[];
     }) => suppliersService.deleteSupplierItemsBulk(supplierId, itemIds),
     onSuccess: () => {
+      SucessMessage("Produtos removidos com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["supplier-items"] });
     },
   });
