@@ -19,6 +19,7 @@ export function UnauthorizedLink() {
         >
           Voltar à página anterior
         </Link>
+
         <Button
           className="w-max mt-6 px-4 py-2 bg-primary text-white  font-medium rounded-md shadow-md hover:bg-primary transition-all"
           onClick={handleLogout}

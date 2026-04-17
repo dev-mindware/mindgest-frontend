@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { User } from "@/types";
 import { logoutAction } from "@/actions/login";
+import { queryClient } from "@/lib";
 
 interface AuthState {
   user: User | null;
@@ -19,11 +20,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user }),
   setIsAuthenticating: (isAuthenticating) => set({ isAuthenticating }),
 
-  // ✅ O que devia estar
+  // ✅ Limpa estado, React Query e redireciona
   logout: async () => {
     set({ isLoggingOut: true, isAuthenticating: true, user: null }); // bloqueia tudo antes
     await logoutAction();
-    set({ isLoggingOut: false }); // isAuthenticating mantém-se true
-    //  window.location.href = "/auth/login";
+    queryClient.clear(); // Limpa toda a cache antiga (incluindo o ["user"])
+    set({ isLoggingOut: false }); 
+    window.location.replace("/auth/login"); // Hard redirect para limpar a memória do browser
   },
 }));
