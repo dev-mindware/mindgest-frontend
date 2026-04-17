@@ -9,7 +9,7 @@ export function StoresPageContent() {
 
   return (
     <div>
-     <div className="flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
+     <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
        <TitleList
         title="Lojas"
         suTitle="Crie lojas para o controlo das suas atividades"

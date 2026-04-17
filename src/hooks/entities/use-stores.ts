@@ -12,7 +12,7 @@ export function useGetStores(role?: Role, enabled: boolean = true) {
   const route = role === "OWNER" ? "stores" : "stores/my-stores";
 
   const { data, error, isLoading, refetch } = useFetch<StoresResponse>(
-    `stores-${user?.id}`,
+    "stores",
     `${route}?page=1&limit=10`,
     { enabled },
   );

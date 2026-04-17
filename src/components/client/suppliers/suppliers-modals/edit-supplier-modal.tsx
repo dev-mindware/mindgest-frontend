@@ -16,7 +16,7 @@ import { ItemData } from "@/types";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useFetch } from "@/hooks/common/use-fetch";
-import { ErrorMessage } from "@/utils";
+import { ErrorMessage, SucessMessage } from "@/utils";
 
 export function EditSupplierModal() {
   const { closeModal, open } = useModal();
@@ -81,20 +81,28 @@ export function EditSupplierModal() {
     if (!currentSupplier) return;
 
     try {
-      await updateSupplier({ id: currentSupplier.id, data });
-
       const removedIds = initialItems
         .filter(
           (init) => !selectedItems.find((sel) => sel.value === init.value),
         )
         .map((item) => item.value);
 
+      const promises: Promise<any>[] = [
+        updateSupplier({ id: currentSupplier.id, data }),
+      ];
+
       if (removedIds.length > 0) {
-        await deleteItemsBulk({
-          supplierId: currentSupplier.id,
-          itemIds: removedIds,
-        });
+        promises.push(
+          deleteItemsBulk({
+            supplierId: currentSupplier.id,
+            itemIds: removedIds,
+          }),
+        );
       }
+
+      await Promise.all(promises);
+
+      SucessMessage("Fornecedor actualizado com sucesso!");
 
       closeModal("edit-supplier");
     } catch (error: any) {

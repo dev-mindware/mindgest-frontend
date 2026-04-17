@@ -80,7 +80,6 @@ export function useUpdateSupplier() {
     mutationFn: ({ id, data }: { id: string; data: Partial<SupplierData> }) =>
       suppliersService.updateSupplier(id, data),
     onSuccess: () => {
-      SucessMessage("Fornecedor atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
     },
   });
@@ -131,7 +130,6 @@ export function useDeleteSupplierItemsBulk() {
       itemIds: string[];
     }) => suppliersService.deleteSupplierItemsBulk(supplierId, itemIds),
     onSuccess: () => {
-      SucessMessage("Produtos removidos com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["supplier-items"] });
     },
   });

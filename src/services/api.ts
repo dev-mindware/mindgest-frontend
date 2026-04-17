@@ -81,6 +81,7 @@ api.interceptors.request.use(async (config) => {
     "/close",
     "global",
     "public",
+    "/suppliers",
   ];
 
   const currentMethod = config.method?.toLowerCase() || "";
