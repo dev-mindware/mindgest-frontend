@@ -17,6 +17,7 @@ import { PlanType } from "@/types";
 import { BankPageContent } from "./contents/banks";
 import { icons } from "lucide-react";
 import { Security } from "./contents/security";
+import { Agt } from "./contents/agt";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -114,6 +115,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       component: <BankPageContent />,
       category: "workplace",
       isVisible: isActive,
+    },
+    {
+      id: "agt",
+      label: "AGT",
+      icon: "ShieldCheck",
+      component: <Agt />,
+      category: "workplace",
+      isVisible: isActive && isOwner,
     },
   ];
 
