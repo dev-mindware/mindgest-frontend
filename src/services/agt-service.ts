@@ -20,4 +20,31 @@ export const agtService = {
     const response = await api.post("/agt/series/solicitar", data);
     return response.data;
   },
+
+  listInvoices: async (params: { 
+    queryStartDate: string; 
+    queryEndDate: string; 
+    documentType?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const response = await api.get("/agt/invoices", { params });
+    return response.data;
+  },
+
+  consultInvoice: async (documentNo: string) => {
+    const encodedDocNo = encodeURIComponent(documentNo);
+    const response = await api.get(`/agt/invoice/${encodedDocNo}`);
+    return response.data;
+  },
+
+  validateDocument: async (data: { 
+    documentNo: string; 
+    action: "CONFIRMAR" | "REJEITAR";
+    deductibleVATPercentage?: number;
+    nonDeductibleAmount?: number;
+  }) => {
+    const response = await api.post("/agt/invoice/validate", data);
+    return response.data;
+  },
 };
