@@ -27,6 +27,7 @@ import { ErrorMessage } from "@/utils/messages";
 import { useMemo } from "react";
 import { ItemResponse } from "@/types";
 import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
+import { PLAN_HIERARCHY, PlanType } from "@/types/subscription";
 
 interface EditProductModalProps {
   product: ItemResponse;
@@ -79,6 +80,10 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     pagination,
     setPage,
   } = useCategoriesSelect();
+  const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+  const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
+  const isProPlan = planLevel >= PLAN_HIERARCHY.Pro;
+
   const {
     supplierOptions,
     isLoading: isLoadingSuppliers,
@@ -86,7 +91,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     refetch: refetchSuppliers,
     pagination: paginationSuppliers,
     setPage: setPageSuppliers,
-  } = useGetSuppliersSelect();
+  } = useGetSuppliersSelect(isProPlan);
   const {
     taxOptions,
     isLoading: isTaxesLoading,
@@ -125,6 +130,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   }, [product, taxOptions]);
 
   const finalSupplierOptions = useMemo(() => {
+    if (!isProPlan) return [];
     const currentId = product.supplierId || (product as any).supplier_id;
     const currentName = product.supplierName;
 
@@ -136,7 +142,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       return [{ label: currentName, value: currentId }, ...supplierOptions];
     }
     return supplierOptions;
-  }, [product, supplierOptions]);
+  }, [product, supplierOptions, isProPlan]);
 
   const {
     reset,
@@ -202,13 +208,14 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     closeModal("edit-product");
   };
 
-  if (isLoadingCategories || isTaxesLoading) return <ProductModalSkeleton />;
-  if (isError || isErrorSuppliers) {
+  if (isLoadingCategories || isTaxesLoading || (isProPlan && isLoadingSuppliers))
+    return <ProductModalSkeleton />;
+  if (isError || (isProPlan && isErrorSuppliers)) {
     return (
       <RequestError
         refetch={() => {
           refetch();
-          refetchSuppliers();
+          if (isProPlan) refetchSuppliers();
         }}
         message="Ocorreu um erro ao carregar os dados"
       />
@@ -371,7 +378,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
             </FeatureGate>
           </div>
           <div className="grid grid-cols-1">
-            <FeatureGate minPlan="Smart" fallback="hidden">
+            <FeatureGate minPlan="Pro" fallback="hidden">
               <Controller
                 control={control}
                 name="supplierId"
@@ -395,12 +402,21 @@ function EditProductFormContent({ product }: EditProductModalProps) {
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
               <Input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 startIcon="Weight"
                 label="Peso (Kg) (opcional)"
-                {...register("weight", { valueAsNumber: true })}
+                {...register("weight", {
+                  setValueAs: (v) => {
+                    if (v === "" || v === null || v === undefined)
+                      return undefined;
+                    const normalized = String(v).replace(",", ".");
+                    const parsed = parseFloat(normalized);
+                    return isNaN(parsed) ? undefined : parsed;
+                  },
+                })}
                 error={errors.weight?.message}
-                placeholder="300Kg"
+                placeholder="Ex: 0.24"
               />
               <Input
                 label="Dimensões (opcional)"

@@ -24,8 +24,12 @@ export function ManagerList() {
   const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useManagerFilters();
-  const { handlerDeleteManager, handlerDetailsManager, handlerEditManager } =
-    useManagerActions();
+  const {
+    handlerDeleteManager,
+    handlerDetailsManager,
+    handlerEditManager,
+    handlerToggleStatusManager,
+  } = useManagerActions();
   const {
     data: managers,
     total,
@@ -77,9 +81,31 @@ export function ManagerList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsManager },
-            { label: "Editar", onClick: handlerEditManager },
-            { label: "Deletar", onClick: handlerDeleteManager },
+            {
+              label: "Ver detalhes",
+              onClick: handlerDetailsManager,
+              icon: "Eye",
+              variant: "default",
+            },
+            {
+              label: "Editar",
+              onClick: handlerEditManager,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.status === "ACTIVE" ? "Desativar" : "Ativar",
+              onClick: handlerToggleStatusManager,
+              icon: "CirclePower",
+              variant: "default",
+            },
+            { type: "separator" },
+            {
+              label: "Deletar",
+              onClick: handlerDeleteManager,
+              icon: "Trash2",
+              variant: "destructive",
+            },
           ]}
         />
       ),

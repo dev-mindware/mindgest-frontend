@@ -36,8 +36,8 @@ export function DeleteManagerModal() {
       canClose
       className="!w-max"
       id="delete-manager"
-      title={`Tem certeza que deseja apagar o gerente ${currentManager?.name}?`}
-      description="Lembre-se que esta ação não pode ser desfeita."
+      title={`Tem certeza que deseja apagar o gerente?`}
+      description={`Lembre-se que esta ação não pode ser desfeita.`}
     >
       <div className="flex justify-end gap-4">
         <Button onClick={() => closeModal("delete-manager")} variant="outline">
@@ -49,7 +49,7 @@ export function DeleteManagerModal() {
             variant="destructive"
             onClick={() => handleDelete(currentManager?.id!)}
           >
-            {isPending ? "Apagando..." : `Apagar ${currentManager?.name}`}
+            {isPending ? "Apagando..." : "Apagar"}
           </Button>
         </ProtectedAction>
       </div>

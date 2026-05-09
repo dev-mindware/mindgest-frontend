@@ -23,7 +23,7 @@ export function useItemsFilters(prefix: string) {
     createdBefore: query.get(getKey("createdBefore")) || null,
     minStock: query.get(getKey("minStock")) || null,
     maxStock: query.get(getKey("maxStock")) || null,
-    type: (query.get(getKey("type")) as ItemType) || "PRODUCT",
+    type: (query.get(getKey("type")) as ItemType) || null,
   };
 
   const page = Number(query.get(getKey("page"))) || 1;

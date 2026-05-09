@@ -1,6 +1,6 @@
 "use client";
 import { Button, Input } from "@/components/ui";
-import { useGetCategories, useItemsFilters } from "@/hooks";
+import { useAuth, useGetCategories, useItemsFilters } from "@/hooks";
 import { ItemStatus } from "@/types/items";
 import {
   itemsByOption,
@@ -12,12 +12,19 @@ import { FilterPopover } from "@/components/shared";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { useURLSearchParams } from "@/hooks/common";
 import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
+import { PLAN_HIERARCHY, PlanType } from "@/types/subscription";
 
 export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
+  const { user } = useAuth();
   const { filters, setFilters, clearAllFilters } = useItemsFilters(prefix);
   const { search, setSearch } = useURLSearchParams(`search_${prefix}`);
   const { categoryOptions, isLoading, isError, refetch, pagination, setPage } =
     useGetCategories();
+
+  const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+  const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
+  const isProPlan = planLevel >= PLAN_HIERARCHY.Pro;
+
   const {
     supplierOptions,
     isLoading: isLoadingSuppliers,
@@ -25,7 +32,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     refetch: refetchSuppliers,
     pagination: paginationSuppliers,
     setPage: setPageSuppliers,
-  } = useGetSuppliersSelect();
+  } = useGetSuppliersSelect(isProPlan);
 
   const hasFilter =
     filters.status ||
@@ -72,15 +79,17 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
           onPageChange={setPage}
           placeholder="Categoria"
         />
-        <PaginatedSelect
-          options={supplierOptions}
-          value={filters.supplierId}
-          onChange={(supplierId) => setFilters({ supplierId })}
-          isLoading={isLoadingSuppliers}
-          pagination={paginationSuppliers}
-          onPageChange={setPageSuppliers}
-          placeholder="Fornecedor"
-        />
+        {isProPlan && (
+          <PaginatedSelect
+            options={supplierOptions}
+            value={filters.supplierId}
+            onChange={(supplierId) => setFilters({ supplierId })}
+            isLoading={isLoadingSuppliers}
+            pagination={paginationSuppliers}
+            onPageChange={setPageSuppliers}
+            placeholder="Fornecedor"
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">

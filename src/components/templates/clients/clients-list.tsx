@@ -87,11 +87,23 @@ export function ClientsList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsClient },
-            { label: "Editar", onClick: handlerEditClient },
             {
-              label: `${item.isActive ? "Desativar" : "Ativar"}`,
-              onClick: () => handlerToggleStatusClient(item),
+              label: "Ver detalhes",
+              onClick: handlerDetailsClient,
+              icon: "Eye",
+              variant: "default",
+            },
+            {
+              label: "Editar",
+              onClick: handlerEditClient,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.isActive ? "Desativar" : "Ativar",
+              onClick: handlerToggleStatusClient,
+              icon: "CirclePower",
+              variant: "default",
             },
           ]}
         />

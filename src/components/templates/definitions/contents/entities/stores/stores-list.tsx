@@ -87,16 +87,27 @@ export function StoresList() {
           actions={[
             {
               label: "Ver detalhes",
-              onClick: () => handlerDetailsStore(item),
+              onClick: handlerDetailsStore,
+              icon: "Eye",
+              variant: "default",
             },
-            { label: "Editar", onClick: () => handlerEditStore(item) },
+            {
+              label: "Editar",
+              onClick: handlerEditStore,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.isActive ? "Desativar" : "Ativar",
+              onClick: toggleStatusStore,
+              icon: "CirclePower",
+              variant: "default",
+            },
             {
               label: "Deletar",
-              onClick: () => handlerDeleteStore(item),
-            },
-            {
-              label: `${item.isActive ? "Desativar" : "Ativar"}`,
-              onClick: () => toggleStatusStore(item),
+              onClick: handlerDeleteStore,
+              icon: "Trash2",
+              variant: "destructive",
             },
           ]}
         />

@@ -157,29 +157,33 @@ export function StockList() {
               label: "Ver Detalhes",
               onClick: handlerDetailsStock,
               icon: "Eye",
+              variant: "default",
             },
             {
               label: "Deletar",
               onClick: handlerDeleteStock,
               variant: "destructive",
-              icon: "Trash",
+              icon: "Trash2",
             },
             { type: "separator" },
             {
               label: "Ajustar Stock",
               onClick: handlerAdjustStock,
               icon: "SlidersHorizontal",
+              variant: "default",
             },
             { type: "separator" },
             {
               label: "Reservar",
               onClick: handlerReserveStock,
               icon: "CircleArrowUp",
+              variant: "default",
             },
             {
               label: "Liberar Reserva",
               onClick: handlerUnreserveStock,
               icon: "CircleArrowDown",
+              variant: "default",
             },
           ]}
         />

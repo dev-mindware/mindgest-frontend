@@ -39,3 +39,15 @@ export function useDeleteManager() {
     },
   });
 }
+
+export function useToggleStatusManager() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => managerService.toggleStatusManager(id),
+    onSuccess: () => {
+      SucessMessage("Status alterado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["managers"] });
+    },
+  });
+}

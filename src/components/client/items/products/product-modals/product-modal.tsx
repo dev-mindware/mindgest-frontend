@@ -26,6 +26,7 @@ import {
 } from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
 import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
+import { PLAN_HIERARCHY, PlanType } from "@/types/subscription";
 
 export function AddProductModal() {
   const { open, openModal, closeModal, modalData } = useModal();
@@ -81,6 +82,10 @@ function AddProductFormContent() {
     setPage: setTaxPage,
   } = useTaxesSelect();
 
+  const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+  const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
+  const isProPlan = planLevel >= PLAN_HIERARCHY.Pro;
+
   const {
     supplierOptions,
     isLoading: isLoadingSuppliers,
@@ -88,7 +93,7 @@ function AddProductFormContent() {
     refetch: refetchSuppliers,
     pagination: paginationSuppliers,
     setPage: setPageSuppliers,
-  } = useGetSuppliersSelect();
+  } = useGetSuppliersSelect(isProPlan);
 
   const initialBarcode = modalData["add-product"]?.barcode || "";
 
@@ -148,13 +153,14 @@ function AddProductFormContent() {
     closeModal("add-product");
   };
 
-  if (isLoadingCategories || isTaxesLoading || isLoadingSuppliers) return <ProductModalSkeleton />;
-  if (isError || isErrorSuppliers) {
+  if (isLoadingCategories || isTaxesLoading || (isProPlan && isLoadingSuppliers))
+    return <ProductModalSkeleton />;
+  if (isError || (isProPlan && isErrorSuppliers)) {
     return (
       <RequestError
         refetch={() => {
           refetch();
-          refetchSuppliers();
+          if (isProPlan) refetchSuppliers();
         }}
         message="Ocorreu um erro ao carregar os dados"
       />
@@ -316,7 +322,7 @@ function AddProductFormContent() {
             </FeatureGate>
           </div>
           <div className="grid grid-cols-1">
-            <FeatureGate minPlan="Smart" fallback="hidden">
+            <FeatureGate minPlan="Pro" fallback="hidden">
               <Controller
                 control={control}
                 name="supplierId"

@@ -18,7 +18,7 @@ import { formatCurrency, getPlanFeatures } from "@/utils";
 import { PlanInclusionFeatures } from "./plan-inclusion-features";
 
 export function AvailablePlans() {
-  const { user } = useAuth();
+  const { user, subscriptionStatus } = useAuth();
   const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
 
@@ -109,11 +109,13 @@ export function AvailablePlans() {
                       <Button
                         size="lg"
                         className="w-full"
-                        disabled={isCurrent}
+                        disabled={isCurrent && subscriptionStatus !== "TRIALING"}
                         variant={isPopular ? "default" : "outline"}
                         onClick={() => onHandlerChoosePlan(plan)}
                       >
-                        {isCurrent ? "Plano Atual" : `Escolher ${plan.name}`}
+                        {isCurrent && subscriptionStatus !== "TRIALING"
+                          ? "Plano Atual"
+                          : `Escolher ${plan.name}`}
                       </Button>
                     </CardFooter>
                   </Card>

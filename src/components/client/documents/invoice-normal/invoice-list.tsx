@@ -88,38 +88,45 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
             {
               label: "Ver Fatura",
               onClick: handlerDetailsInvoice,
+              icon: "Eye",
+              variant: "default",
             },
-
             ...(item.status === "DRAFT"
               ? [
                 {
                   label: "Cancelar Fatura",
                   onClick: handlerCancelInvoice,
-                },
+                  icon: "Ban",
+                  variant: "destructive",
+                } as const,
               ]
               : []),
-
             ...(item.status !== "PAID"
               ? [
                 {
                   label: "Gerar Recibo",
                   onClick: handlerGenerateReceipt,
-                },
+                  icon: "FileText",
+                  variant: "default",
+                } as const,
               ]
               : []),
-
             ...(item.status === "PAID"
               ? [
                 {
                   label: "Emitir Nota",
-                  onClick: () => {
+                  onClick: (item: InvoiceResponse) => {
                     router.push(`/documents/notes/${item.id}`);
                   },
-                },
+                  icon: "StickyNote",
+                  variant: "default",
+                } as const,
                 {
                   label: "Clonar Factura",
                   onClick: handlerCloneInvoice,
-                },
+                  icon: "Copy",
+                  variant: "default",
+                } as const,
               ]
               : []),
           ]}

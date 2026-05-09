@@ -78,10 +78,14 @@ export function BankList() {
             {
               label: "Ver Detalhes",
               onClick: handlerDetailsBank,
+              icon: "Eye",
+              variant: "default",
             },
             {
               label: "Editar",
               onClick: handlerEditBank,
+              icon: "Pencil",
+              variant: "default",
             },
             {
               type: "separator",
@@ -89,6 +93,7 @@ export function BankList() {
             {
               label: "Remover",
               onClick: handlerDeletebank,
+              icon: "Trash2",
               variant: "destructive",
             },
           ]}

@@ -14,12 +14,12 @@ export function useGetSupplierById(id: string) {
   return { supplier: data, error, isLoading, refetch };
 }
 
-export function useGetSuppliersSelect() {
+export function useGetSuppliersSelect(enabled = true) {
   const pagination = usePagination<SupplierResponse>({
     endpoint: "/suppliers",
     queryKey: "suppliers",
-    queryParams: {
-    },
+    queryParams: {},
+    enabled,
   });
 
   const supplierOptions = pagination.data.map((supplier) => ({

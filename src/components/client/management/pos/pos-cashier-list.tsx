@@ -43,6 +43,7 @@ export function PosCashierList({
     {
       label: "Editar",
       icon: "Pencil" as const,
+      variant: "default" as const,
       onClick: () => {
         setCurrentCashier(item);
         openModal("opening-cashier");

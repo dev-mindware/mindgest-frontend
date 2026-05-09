@@ -45,8 +45,8 @@ export function ServiceList() {
     endpoint: "/items",
     queryKey: ["items", "service"],
     queryParams: {
-      type: "SERVICE",
       ...filters,
+      type: "SERVICE",
       search: debounceSearch,
       page,
       ...(currentStore?.id && { storeId: currentStore.id }),
@@ -103,9 +103,24 @@ export function ServiceList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsService },
-            { label: "Editar", onClick: handlerEditService },
-            { label: "Deletar", onClick: handlerDeleteService },
+            {
+              label: "Ver detalhes",
+              onClick: handlerDetailsService,
+              icon: "Eye",
+              variant: "default",
+            },
+            {
+              label: "Editar",
+              onClick: handlerEditService,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: "Deletar",
+              onClick: handlerDeleteService,
+              icon: "Trash2",
+              variant: "destructive",
+            },
           ]}
         />
       ),

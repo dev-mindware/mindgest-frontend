@@ -5,9 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
 import { ManagerFormData, managerSchema } from "@/schemas";
 import { useModal, currentManagerStore, currentStoreStore } from "@/stores";
-import { Button, Input, GlobalModal, ButtonSubmit, Icon, MultiSelect } from "@/components";
+import { Button, Input, GlobalModal, ButtonSubmit, Icon, MultiSelect, Switch } from "@/components";
 import { useAddManager, useUpdateManager } from "@/hooks/collaborators";
 import { useGetStores } from "@/hooks/entities";
+import { Label } from "@/components/ui/label";
 
 type ManagerModalProps = {
   action: "add" | "edit";
@@ -41,11 +42,24 @@ export function ManagerModal({ action }: ManagerModalProps) {
     if (action === "edit" && currentManager) {
       reset({
         name: currentManager.name,
-        phone: currentManager.phone,
-        storeIds: [currentStore?.id],
+        phone: currentManager.phone || "",
+        storeIds: currentManager.stores?.map((s) => s.id) || [],
       });
+      setSelectedStores(
+        currentManager.stores?.map((s) => ({
+          label: s.name,
+          value: s.id,
+        })) || []
+      );
     } else {
       setSelectedStores([]);
+      reset({
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+        storeIds: [],
+      });
     }
   }, [action, currentManager, reset]);
 

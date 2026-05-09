@@ -94,17 +94,28 @@ export function CashierList() {
           actions={[
             {
               label: "Ver detalhes",
-              onClick: () => handlerDetailsCashier(item),
+              onClick: handlerDetailsCashier,
+              icon: "Eye",
+              variant: "default",
             },
-            { label: "Editar", onClick: () => handlerEditCashier(item) },
             {
-              label: "Deletar",
-              onClick: () => handlerDeleteCashier(item),
+              label: "Editar",
+              onClick: handlerEditCashier,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.status === "ACTIVE" ? "Desativar" : "Ativar",
+              onClick: toggleStatusCashier,
+              icon: "CirclePower",
+              variant: "default",
             },
             { type: "separator" },
             {
-              label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
-              onClick: toggleStatusCashier,
+              label: "Deletar",
+              onClick: handlerDeleteCashier,
+              icon: "Trash2",
+              variant: "destructive",
             },
           ]}
         />

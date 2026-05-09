@@ -50,8 +50,8 @@ export function ProductList() {
     endpoint: "/items",
     queryKey: ["items", "product"],
     queryParams: {
-      type: "PRODUCT",
       ...filters,
+      type: "PRODUCT",
       search: debounceSearch,
       page,
       ...(currentStore?.id && { storeId: currentStore.id }),
@@ -114,14 +114,31 @@ export function ProductList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsProduct, },
-            { label: "Editar", onClick: handlerEditProduct, },
+            {
+              label: "Ver detalhes",
+              onClick: handlerDetailsProduct,
+              icon: "Eye",
+              variant: "default",
+            },
+            {
+              label: "Editar",
+              onClick: handlerEditProduct,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.status === "ACTIVE" ? "Desativar" : "Ativar",
+              onClick: toggleStatusProduct,
+              icon: "CirclePower",
+              variant: "default",
+            },
             { type: "separator" },
             {
-              label: `${item.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
-              onClick: toggleStatusProduct,
+              label: "Deletar",
+              onClick: handlerDeleteProduct,
+              icon: "Trash2",
+              variant: "destructive",
             },
-            { label: "Deletar", onClick: handlerDeleteProduct, variant: "destructive" },
           ]}
         />
       ),

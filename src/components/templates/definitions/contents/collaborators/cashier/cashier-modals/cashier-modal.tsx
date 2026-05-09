@@ -11,7 +11,9 @@ import {
   ButtonSubmit,
   RequestError,
   PaginatedSelect,
+  Switch,
 } from "@/components";
+import { Label } from "@/components/ui/label";
 import { useGetStoresPaginated } from "@/hooks/entities";
 import {
   CashierFormData,
@@ -70,9 +72,18 @@ export function CashierModal({ action }: CashierModalProps) {
     if (action === "edit" && currentCashier) {
       reset({
         name: currentCashier.name,
-        phone: currentCashier.phone,
+        phone: currentCashier.phone || "",
         role: currentCashier.role as "CASHIER",
         storeId: currentCashier.storeId,
+      });
+    } else {
+      reset({
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+        role: "CASHIER",
+        storeId: "",
       });
     }
   }, [action, currentCashier, reset]);

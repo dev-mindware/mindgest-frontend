@@ -73,7 +73,14 @@ export function CreditNotesList({ storeId }: { storeId?: string }) {
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          actions={[{ label: "Ver Nota", onClick: handlerDetailsCreditNote }]}
+          actions={[
+            {
+              label: "Ver Nota",
+              onClick: handlerDetailsCreditNote,
+              icon: "Eye",
+              variant: "default",
+            },
+          ]}
         />
       ),
     },

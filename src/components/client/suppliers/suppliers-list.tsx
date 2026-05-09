@@ -75,20 +75,33 @@ export function SuppliersList() {
           actions={[
             {
               label: "Ver detalhes",
-              onClick: () => router.push(`/suppliers/${item.id}`),
+              onClick: (item) => router.push(`/suppliers/${item.id}`),
+              icon: "Eye",
+              variant: "default",
             },
             {
               label: "Ver histórico de stock",
-              onClick: () => router.push(`/suppliers/${item.id}/history`),
+              onClick: (item) => router.push(`/suppliers/${item.id}/history`),
+              icon: "History",
+              variant: "default",
             },
             {
               label: "Nova Entrada de stock",
-              onClick: () => handlerRestockSupplier(item),
+              onClick: handlerRestockSupplier,
+              icon: "BadgePlus",
+              variant: "default",
             },
-            { label: "Editar", onClick: () => handlerEditSupplier(item) },
+            {
+              label: "Editar",
+              onClick: handlerEditSupplier,
+              icon: "Pencil",
+              variant: "default",
+            },
             {
               label: "Deletar",
-              onClick: () => handlerDeleteSupplier(item),
+              onClick: handlerDeleteSupplier,
+              icon: "Trash2",
+              variant: "destructive",
             },
           ]}
         />

@@ -81,6 +81,32 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 - `pnpm start`: Inicia o servidor em modo de produção.
 - `pnpm lint`: Executa a verificação de linting do código.
 
+## Testes
+
+O projeto utiliza uma estratégia de testes em duas camadas para garantir a estabilidade e qualidade do código.
+
+### 1. Testes Unitários e de Componentes (Jest + React Testing Library)
+Focados na validação individual de componentes e funções utilitárias em um ambiente simulado (JSDOM).
+- **Abrangência**: Renderização correta de componentes UI, lógica de hooks, validação de schemas e funções de formatação.
+- **Como executar**: 
+  ```bash
+  pnpm test
+  ```
+- **Modo Watch**: `pnpm test:watch`
+
+### 2. Testes End-to-End (Playwright)
+Focados em simular a jornada real do utilizador em navegadores reais (Chromium, Firefox, WebKit).
+- **Abrangência**: Fluxos críticos como Login, navegação entre módulos, criação de faturas e operações de caixa (POS).
+- **Configuração inicial**: Antes de rodar os testes pela primeira vez, instale os navegadores:
+  ```bash
+  npx playwright install
+  ```
+- **Como executar**:
+  ```bash
+  pnpm test:e2e
+  ```
+- **Interface Visual**: `pnpm test:e2e:ui`
+
 ---
 
 ### Notas de Desenvolvimento
