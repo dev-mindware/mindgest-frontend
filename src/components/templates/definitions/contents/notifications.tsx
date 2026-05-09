@@ -9,8 +9,13 @@ import {
   Label,
   Switch,
 } from "@/components";
+import { cn } from "@/lib/utils";
+import { useNotificationSettingsStore } from "@/stores/notifications/notification-settings-store";
 
 export function Notification() {
+  const { pushEnabled, badgeEnabled, setPushEnabled, setBadgeEnabled } =
+    useNotificationSettingsStore();
+
   return (
     <div>
       <section className="space-y-4">
@@ -26,7 +31,9 @@ export function Notification() {
           <SettingRow
             label="Ativar notificações"
             description="Receber notificações de todas as mensagens, faturas, documentos..."
-            control={<Switch />}
+            control={
+              <Switch checked={pushEnabled} onCheckedChange={setPushEnabled} />
+            }
           />
 
           <Separator />
@@ -34,25 +41,13 @@ export function Notification() {
           <SettingRow
             label="Ativar selo de notificação não lida"
             description="Apresentar um emblema no ícone de notificação quando tem mensagens não lidas"
-            control={<Switch />}
-          />
-
-          <Separator />
-
-          <SettingRow
-            label="Desativar Notificações durante:"
+            disabled={!pushEnabled}
             control={
-              <Select defaultValue="10 minutos">
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Escolha o tempo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10 minutos">10 minutos</SelectItem>
-                  <SelectItem value="30 minutos">30 minutos</SelectItem>
-                  <SelectItem value="1 hora">1 hora</SelectItem>
-                  <SelectItem value="4 horas">4 horas</SelectItem>
-                </SelectContent>
-              </Select>
+              <Switch
+                checked={badgeEnabled}
+                onCheckedChange={setBadgeEnabled}
+                disabled={!pushEnabled}
+              />
             }
           />
 
@@ -95,13 +90,20 @@ function SettingRow({
   label,
   description,
   control,
+  disabled,
 }: {
   label: string;
   description?: string;
   control: React.ReactNode;
+  disabled?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      className={cn(
+        "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between transition-opacity",
+        disabled && "opacity-50 pointer-events-none",
+      )}
+    >
       <div className="max-w-md">
         <Label className="block">{label}</Label>
         {description && (

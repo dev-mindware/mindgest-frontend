@@ -4,20 +4,28 @@ import { persist } from "zustand/middleware";
 interface NotificationSettingsState {
   soundEnabled: boolean;
   soundType: string;
+  pushEnabled: boolean;
+  badgeEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
   setSoundType: (type: string) => void;
+  setPushEnabled: (enabled: boolean) => void;
+  setBadgeEnabled: (enabled: boolean) => void;
 }
 
 export const useNotificationSettingsStore = create<NotificationSettingsState>()(
   persist(
     (set) => ({
-      soundEnabled: true, // Auto-enabled by default as requested
-      soundType: "/sound-effects/notification-2.mp3", // Default sound
+      soundEnabled: true,
+      soundType: "/sound-effects/notification-2.mp3",
+      pushEnabled: true,
+      badgeEnabled: true,
       setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),
       setSoundType: (type) => set({ soundType: type }),
+      setPushEnabled: (enabled) => set({ pushEnabled: enabled }),
+      setBadgeEnabled: (enabled) => set({ badgeEnabled: enabled }),
     }),
     {
-      name: "notification-settings", // key in localStorage
+      name: "notification-settings",
     },
   ),
 );
