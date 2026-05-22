@@ -1,11 +1,56 @@
 "use client";
-import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Input, Button, Progress, Label } from "@/components";
+import { Input, Button } from "@/components";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
-import { Wand2, Check, X, ShieldAlert, ShieldCheck, Shield } from "lucide-react";
+import { Wand2 } from "lucide-react";
+
+type StrengthLevel = 0 | 1 | 2 | 3;
+
+interface StrengthConfig {
+  level: StrengthLevel;
+  label: string;
+  color: string;
+  textColor: string;
+}
+
+function getStrength(pass: string): StrengthConfig {
+  if (!pass) return { level: 0, label: "", color: "", textColor: "" };
+
+  let score = 0;
+  if (pass.length >= 8) score++;
+  if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
+  if (/\d/.test(pass)) score++;
+  if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+  if (score <= 1) return { level: 1, label: "Fraca",  color: "bg-red-500",    textColor: "text-red-500" };
+  if (score <= 2) return { level: 2, label: "Média",  color: "bg-yellow-400", textColor: "text-yellow-500" };
+  return             { level: 3, label: "Forte",  color: "bg-green-500",  textColor: "text-green-600" };
+}
+
+function PasswordStrengthBar({ password }: { password: string }) {
+  if (!password) return null;
+
+  const { level, label, color, textColor } = getStrength(password);
+
+  return (
+    <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+      <div className="flex gap-1.5">
+        {([1, 2, 3] as const).map((seg) => (
+          <div
+            key={seg}
+            className={cn(
+              "h-1 flex-1 rounded-full transition-all duration-300",
+              level >= seg ? color : "bg-muted"
+            )}
+          />
+        ))}
+      </div>
+      <p className={cn("text-xs font-medium", textColor)}>{label}</p>
+    </div>
+  );
+}
 
 export function FirstStep() {
   const {
@@ -16,24 +61,9 @@ export function FirstStep() {
   } = useFormContext<RegisterFormData>();
 
   const password = watch("step1.password") || "";
-  const [strength, setStrength] = useState(0);
-
-  const calculateStrength = (pass: string) => {
-    let score = 0;
-    if (!pass) return 0;
-    if (pass.length >= 8) score += 25;
-    if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score += 25;
-    if (/\d/.test(pass)) score += 25;
-    if (/[^A-Za-z0-9]/.test(pass)) score += 25;
-    return score;
-  };
-
-  useEffect(() => {
-    setStrength(calculateStrength(password));
-  }, [password]);
 
   const generateStrongPassword = () => {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
     let pass = "";
     for (let i = 0; i < 16; i++) {
       pass += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -42,23 +72,8 @@ export function FirstStep() {
     setValue("step1.passwordConfirmation", pass, { shouldValidate: true });
   };
 
-  const getStrengthColor = () => {
-    if (strength <= 25) return "bg-destructive";
-    if (strength <= 50) return "bg-orange-500";
-    if (strength <= 75) return "bg-yellow-500";
-    return "bg-green-500";
-  };
-
-  const getStrengthText = () => {
-    if (!password) return "";
-    if (strength <= 25) return "Fraca";
-    if (strength <= 50) return "Razoável";
-    if (strength <= 75) return "Boa";
-    return "Muito Forte";
-  };
-
   return (
-    <div className={cn("flex flex-col gap-6")}>
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 mt text-center">
         <StepsHeader title="Insira os dados do proprietário" />
       </div>
@@ -68,14 +83,14 @@ export function FirstStep() {
           startIcon="User"
           placeholder="Insira seu nome"
           {...register("step1.name")}
-          error={errors?.step1?.name && errors?.step1?.name?.message}
+          error={errors?.step1?.name?.message}
         />
         <Input
           label="Email"
           startIcon="Mail"
           placeholder="Insira seu email"
           {...register("step1.email")}
-          error={errors?.step1?.email && errors?.step1?.email?.message}
+          error={errors?.step1?.email?.message}
         />
         <Input
           label="Telefone"
@@ -83,10 +98,10 @@ export function FirstStep() {
           startIcon="Phone"
           placeholder="Insira seu telefone"
           {...register("step1.phone")}
-          error={errors?.step1?.phone && errors?.step1?.phone?.message}
+          error={errors?.step1?.phone?.message}
         />
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex items-end gap-2">
             <div className="flex-1">
               <Input
@@ -95,14 +110,14 @@ export function FirstStep() {
                 label="Palavra-passe"
                 placeholder="********"
                 {...register("step1.password")}
-                error={errors?.step1?.password && errors?.step1?.password?.message}
+                error={errors?.step1?.password?.message}
               />
             </div>
             <Button
               type="button"
               variant="outline"
               size="icon"
-              className="mb-1"
+              className="mb-1 shrink-0"
               title="Gerar senha forte"
               onClick={generateStrongPassword}
             >
@@ -110,41 +125,7 @@ export function FirstStep() {
             </Button>
           </div>
 
-          {password && (
-            <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  Força da senha: <b className={cn(
-                    strength <= 25 ? "text-destructive" :
-                    strength <= 50 ? "text-orange-500" :
-                    strength <= 75 ? "text-yellow-500" : "text-green-500"
-                  )}>{getStrengthText()}</b>
-                </span>
-                {strength === 100 && <ShieldCheck className="size-4 text-green-500" />}
-                {strength < 100 && strength > 50 && <Shield className="size-4 text-yellow-500" />}
-                {strength <= 50 && <ShieldAlert className="size-4 text-destructive" />}
-              </div>
-              <Progress value={strength} className="h-1" indicatorClassName={getStrengthColor()} />
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px] text-muted-foreground mt-2">
-                <li className="flex items-center gap-1">
-                  {password.length >= 8 ? <Check className="size-3 text-green-500" /> : <X className="size-3 text-destructive" />}
-                  Mínimo 8 caracteres
-                </li>
-                <li className="flex items-center gap-1">
-                  {/[A-Z]/.test(password) && /[a-z]/.test(password) ? <Check className="size-3 text-green-500" /> : <X className="size-3 text-destructive" />}
-                  Maiúsculas e minúsculas
-                </li>
-                <li className="flex items-center gap-1">
-                  {/\d/.test(password) ? <Check className="size-3 text-green-500" /> : <X className="size-3 text-destructive" />}
-                  Pelo menos um número
-                </li>
-                <li className="flex items-center gap-1">
-                  {/[^A-Za-z0-9]/.test(password) ? <Check className="size-3 text-green-500" /> : <X className="size-3 text-destructive" />}
-                  Caractere especial
-                </li>
-              </ul>
-            </div>
-          )}
+          <PasswordStrengthBar password={password} />
         </div>
 
         <Input
@@ -153,10 +134,7 @@ export function FirstStep() {
           placeholder="********"
           label="Confirmar palavra-passe"
           {...register("step1.passwordConfirmation")}
-          error={
-            errors?.step1?.passwordConfirmation &&
-            errors?.step1?.passwordConfirmation?.message
-          }
+          error={errors?.step1?.passwordConfirmation?.message}
         />
       </div>
     </div>

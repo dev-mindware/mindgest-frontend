@@ -13,8 +13,6 @@ import { CustomToaster } from "@/utils";
 import { SidebarProvider } from "@/components";
 import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { NotificationDetail } from "@/components/shared/notifications";
-import { SubscriptionModal } from "@/components/modal";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -82,8 +80,6 @@ export default function RootLayout({
               <NuqsAdapter>
                 <SidebarProvider>{children}</SidebarProvider>
                 <CustomToaster />
-                <NotificationDetail />
-                <SubscriptionModal />
               </NuqsAdapter>
             </AuthProvider>
           </ReactQueryProvider>

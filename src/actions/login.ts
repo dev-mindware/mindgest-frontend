@@ -15,7 +15,6 @@ export async function loginAction({
   user: User | null;
   redirectPath?: string;
   message?: string;
-  token?: string
 }> {
   try {
     const res = await api.post<LoginResponse>("/auth/login", {
@@ -37,7 +36,7 @@ export async function loginAction({
 
     const redirectPath = getRedirectPath(user.role);
 
-    return { message, user, redirectPath, token: tokens.accessToken };
+    return { message, user, redirectPath };
   } catch (error: any) {
     let messageError = "Ocorreu um erro desconhecido!";
 

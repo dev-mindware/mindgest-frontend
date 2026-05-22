@@ -2,9 +2,17 @@
 
 import * as React from "react";
 import { NumericFormat, NumericFormatProps } from "react-number-format";
+import {
+  Control,
+  FieldPath,
+  FieldValues,
+  useController,
+} from "react-hook-form";
 import { icons } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Icon, AlertError } from "../common";
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
 
 interface InputCurrencyProps
   extends Omit<NumericFormatProps, "onValueChange"> {
@@ -13,6 +21,8 @@ interface InputCurrencyProps
   startIcon?: keyof typeof icons;
   endIcon?: keyof typeof icons;
   containerClassName?: string;
+  /** Símbolo da moeda mostrado como prefixo. Usa false para desativar. Default: "Kz" */
+  currency?: string | false;
   onValueChange?: (value: number) => void;
 }
 
@@ -27,16 +37,20 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
       className,
       id,
       name,
+      currency = "Kz",
       onValueChange,
+      disabled,
       ...props
     },
     ref
   ) => {
+    const inputId = id || name;
+
     return (
       <div className={cn("w-full", containerClassName)}>
         {label && (
           <label
-            htmlFor={id || name}
+            htmlFor={inputId}
             className="block mb-1 text-sm font-medium text-foreground"
           >
             {label}
@@ -45,32 +59,40 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
 
         <div
           className={cn(
-            "flex items-center rounded-md border px-3 py-2 text-sm transition-colors duration-200 w-full",
+            "flex items-center rounded-md border text-sm transition-colors duration-200 w-full overflow-hidden",
             error
               ? "border-red-500 ring-1 ring-red-400"
-              : "border-input focus-within:border-primary-500 focus-within:ring-[3px] focus-within:ring-ring/50"
+              : "border-input focus-within:border-primary-500 focus-within:ring-[3px] focus-within:ring-ring/50",
+            disabled && "opacity-50 cursor-not-allowed bg-muted/30"
           )}
         >
-          {startIcon && (
+          {currency && (
+            <span className="flex items-center self-stretch px-3 bg-muted border-r border-border text-muted-foreground font-medium text-xs select-none shrink-0">
+              {currency}
+            </span>
+          )}
+
+          {!currency && startIcon && (
             <Icon
               name={startIcon}
               size={18}
-              className="mr-2 text-muted-foreground"
+              className="ml-3 text-muted-foreground shrink-0"
             />
           )}
 
           <NumericFormat
             getInputRef={ref}
-            id={id}
+            id={inputId}
             name={name}
             thousandSeparator="."
             decimalSeparator=","
             decimalScale={2}
             fixedDecimalScale
             allowNegative={false}
+            disabled={disabled}
             className={cn(
-              "flex-1 bg-transparent placeholder:text-muted-foreground text-foreground outline-none text-left",
-              "disabled:cursor-not-allowed disabled:opacity-50",
+              "flex-1 bg-transparent placeholder:text-muted-foreground text-foreground outline-none px-3 py-2 min-w-0",
+              "disabled:cursor-not-allowed",
               className
             )}
             onValueChange={(values) => {
@@ -83,7 +105,7 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
             <Icon
               name={endIcon}
               size={18}
-              className="ml-2 text-muted-foreground"
+              className="mr-3 text-muted-foreground shrink-0"
             />
           )}
         </div>
@@ -96,4 +118,38 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
 
 InputCurrency.displayName = "InputCurrency";
 
-export { InputCurrency };
+// ─── React Hook Form ───────────────────────────────────────────────────────────
+
+type RHFInputCurrencyProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = Omit<InputCurrencyProps, "value" | "onValueChange" | "name" | "error"> & {
+  control: Control<TFieldValues>;
+  name: TName;
+};
+
+function RHFInputCurrency<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>({ control, name, ...rest }: RHFInputCurrencyProps<TFieldValues, TName>) {
+  const {
+    field,
+    fieldState: { error },
+  } = useController({ control, name });
+
+  return (
+    <InputCurrency
+      {...rest}
+      ref={field.ref}
+      name={field.name}
+      value={field.value ?? ""}
+      onValueChange={field.onChange}
+      onBlur={field.onBlur}
+      disabled={field.disabled ?? rest.disabled}
+      error={error?.message}
+    />
+  );
+}
+
+export { InputCurrency, RHFInputCurrency };
+export type { InputCurrencyProps, RHFInputCurrencyProps };

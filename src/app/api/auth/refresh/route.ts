@@ -15,9 +15,8 @@ function isAllowedOrigin(req: NextRequest) {
       ? "http://localhost:3000"
       : process.env.NEXT_PUBLIC_APP_URL;
 
-  if (!appUrl) {
-    return true;
-  }
+  // Fail closed: se a URL da app não estiver configurada, bloqueia tudo
+  if (!appUrl) return false;
 
   try {
     const allowed = new URL(appUrl);
@@ -93,19 +92,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       accessToken: newAccessToken,
-      tokens: {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      },
     });
   } catch (error: any) {
     console.error("🚨 [API Route] Erro crítico renovando o token:", error);
     await clearLocalSession();
     return NextResponse.json(
-      {
-        message: "Erro de Servidor na Rota de Refresh",
-        details: error.message,
-      },
+      { message: "Erro ao renovar a sessão" },
       { status: 500 },
     );
   }
