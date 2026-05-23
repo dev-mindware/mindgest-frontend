@@ -17,12 +17,14 @@ import {
   useSidebar,
 } from "@/components";
 import { useAuth, useLogout } from "@/hooks/auth";
+import { usePwaInstallPrompt } from "@/hooks/common/use-pwa-install-prompt";
 import Link from "next/link";
 
 export function UserInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
   const { handleLogout } = useLogout();
+  const { canInstall, promptInstall } = usePwaInstallPrompt();
 
   if (!user) return null;
 
@@ -86,6 +88,15 @@ export function UserInfo() {
               </DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>
+            {canInstall && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={promptInstall}>
+                  <Icon name="Download" />
+                  Instalar MindGest
+                </DropdownMenuItem>
+              </>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-500" onClick={handleLogout}>
               <Icon name="LogOut" className="text-red-500" />

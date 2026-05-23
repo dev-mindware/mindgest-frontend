@@ -13,6 +13,11 @@ export function InvoicePreviewDrawer({ type }: { type: DocumentType }) {
 
   if (!currentInvoice) return null;
 
+  const changeValue =
+    type === "invoice-receipt"
+      ? Number(currentInvoice.change ?? currentInvoice.changeAmount ?? 0)
+      : undefined;
+
   return (
     <DynamicDrawer
       open={!!isOpen}
@@ -20,7 +25,11 @@ export function InvoicePreviewDrawer({ type }: { type: DocumentType }) {
       title="Pré-visualização da Fatura"
       description={`Detalhes da fatura ${currentInvoice.number}`}
     >
-      <InvoiceTemplate type={type} data={currentInvoice} />
+      <InvoiceTemplate
+        type={type}
+        data={currentInvoice}
+        changeValue={changeValue}
+      />
     </DynamicDrawer>
   );
 }
