@@ -1,5 +1,7 @@
-import { Icon, InputCurrency } from "@/components";
+import { useEffect, useState } from "react";
+import { Icon } from "@/components";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
@@ -13,7 +15,7 @@ interface PaymentMethodsProps {
   paymentMethod: PaymentMethod;
   onMethodChange: (method: PaymentMethod) => void;
   cashGiven: number | "";
-  onCashChange: (val: number) => void;
+  onCashChange: (val: number | "") => void;
   onQuickCash: (amount: number) => void;
   change: number;
 }
@@ -26,6 +28,26 @@ export function PaymentMethods({
   onQuickCash,
   change,
 }: PaymentMethodsProps) {
+  const [cashInput, setCashInput] = useState("");
+
+  useEffect(() => {
+    setCashInput(cashGiven === "" ? "" : String(cashGiven));
+  }, [cashGiven]);
+
+  const handleCashInputChange = (value: string) => {
+    const normalizedValue = value.replace(/[^\d,.]/g, "").replace(",", ".");
+    const [integerPart, decimalPart] = normalizedValue.split(".");
+    const nextValue =
+      decimalPart === undefined
+        ? integerPart
+        : `${integerPart}.${decimalPart.slice(0, 2)}`;
+
+    const numericValue = Number(nextValue);
+
+    setCashInput(nextValue);
+    onCashChange(nextValue && !Number.isNaN(numericValue) ? numericValue : "");
+  };
+
   return (
     <div className="mb-4">
       <div className="flex items-center gap-2 mb-3">
@@ -81,15 +103,16 @@ export function PaymentMethods({
             ))}
           </div>
           <div className="space-y-1">
-            <InputCurrency
-              label="Valor Entregue"
-              placeholder="0,00"
-              value={cashGiven}
-              onValueChange={(value) => onCashChange(value)}
-              decimalScale={2}
-              fixedDecimalScale
-              allowNegative={false}
+            <label className="block mb-1 text-sm font-medium text-foreground">
+              Valor Entregue
+            </label>
+            <Input
+              startIcon="Banknote"
+              placeholder="0"
+              value={cashInput}
+              onChange={(event) => handleCashInputChange(event.target.value)}
               inputMode="none"
+              data-layout="numeric"
             />
           </div>
           <div

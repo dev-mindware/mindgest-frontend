@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateInvoiceReceipt, useCreateProforma } from "@/hooks";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
-import { ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
+import { ErrorMessage } from "@/utils";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
 import { Product } from "@/types";
@@ -14,6 +14,8 @@ export interface CartItem extends Product {
 }
 
 export type PaymentMethod = "Credit Card" | "Cash";
+
+const posPhoneRegex = /^(92|99|91|95|93|94|97)\d{7}$/;
 
 interface UseCartCheckoutProps {
   cartItems: CartItem[];
@@ -70,8 +72,23 @@ export function useCartCheckout({
   });
 
   const { handleSubmit, setValue, watch, reset } = form;
-  const { handleClientChange, selectedClient, setSelectedClient } =
+  const {
+    handleClientChange: handleBaseClientChange,
+    selectedClient,
+    setSelectedClient,
+  } =
     useClientSelection(setValue);
+
+  const handleClientChange = (option: any) => {
+    handleBaseClientChange(option);
+
+    if (option?.__isNew__) {
+      setValue("client", undefined, {
+        shouldValidate: false,
+        shouldDirty: true,
+      });
+    }
+  };
 
   const watchedItems = watch("items") as any[];
   const totals = useInvoiceTotals({
@@ -157,6 +174,22 @@ export function useCartCheckout({
       return;
     }
 
+    const normalizedNewCustomerPhone = newCustomerPhone
+      .replace(/\D/g, "")
+      .slice(0, 9);
+    const isCreatingClient = !!selectedClient?.__isNew__;
+    const hasInvalidNewPhone =
+      normalizedNewCustomerPhone.length > 0 &&
+      !posPhoneRegex.test(normalizedNewCustomerPhone);
+
+    if (
+      hasInvalidNewPhone ||
+      (isCreatingClient && !posPhoneRegex.test(normalizedNewCustomerPhone))
+    ) {
+      ErrorMessage("Insira um nÃºmero de telemÃ³vel vÃ¡lido para o cliente.");
+      return;
+    }
+
     // Prepare payload
     const simplifiedItems = data.items.map((item: any) => ({
       id: item.id,
@@ -181,10 +214,18 @@ export function useCartCheckout({
     }
 
     // Custom adjustments for client
-    if (!selectedClient && newCustomerPhone) {
+    if (selectedClient?.__isNew__) {
+      payload.client = {
+        name: selectedClient.label,
+        phone: normalizedNewCustomerPhone,
+        email: "consumidor@final.com",
+        address: "Loja",
+        taxNumber: "999999999",
+      };
+    } else if (!selectedClient && normalizedNewCustomerPhone) {
       payload.client = {
         name: "Consumidor Final",
-        phone: newCustomerPhone,
+        phone: normalizedNewCustomerPhone,
         email: "consumidor@final.com",
         address: "Loja",
         taxNumber: "999999999",

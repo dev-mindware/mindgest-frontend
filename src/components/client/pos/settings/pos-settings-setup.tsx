@@ -51,8 +51,8 @@ export function PosSettingsSetup() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col gap-1 px-4 md:px-0">
+        <div className="space-y-6 p-4 md:px-0">
+            <div className="flex flex-col gap-1">
                 <h1 className="text-2xl font-black font-outfit tracking-tight">Definições</h1>
                 <p className="text-sm text-muted-foreground">Gerencie as configurações do seu ponto de venda</p>
             </div>
@@ -60,7 +60,7 @@ export function PosSettingsSetup() {
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 {/* Mobile Navigation (Horizontal Tabs) */}
                 <div className="flex md:hidden flex-col gap-4">
-                    <div className="overflow-x-auto no-scrollbar px-4">
+                    <div className="overflow-x-auto scrollbar-hide">
                         <TabsList className="h-11 w-full justify-start inline-flex bg-muted/50 p-1 rounded-xl border border-border/50">
                             {tabs.map((tab) => (
                                 <TabsTrigger 

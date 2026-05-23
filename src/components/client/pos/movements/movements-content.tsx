@@ -34,7 +34,7 @@ export function MovementsContent() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:px-0">
       <TitleList
         title="Movimentos"
         suTitle="Controle todos os movimentos realizados na sua empresa"
