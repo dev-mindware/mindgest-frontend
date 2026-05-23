@@ -54,7 +54,7 @@ export function useCounterState({
     [activeCart],
   );
 
-  const handleManualScan = useCallback(
+  const findProductByBarcode = useCallback(
     async (barcode: string) => {
       let product = apiProducts.find(
         (p) => String(p.barcode) === barcode || p.sku === barcode,
@@ -83,11 +83,20 @@ export function useCounterState({
         }
       }
 
+      return product || null;
+    },
+    [apiProducts],
+  );
+
+  const handleManualScan = useCallback(
+    async (barcode: string) => {
+      const product = await findProductByBarcode(barcode);
+
       if (product) {
         handleAddToCart(product, 1);
       }
     },
-    [apiProducts, handleAddToCart],
+    [findProductByBarcode, handleAddToCart],
   );
 
   useEffect(() => {
@@ -205,6 +214,7 @@ export function useCounterState({
     handleUpdateQuantity,
     handleClearCart,
     getCartItemsArray,
+    findProductByBarcode,
     handleManualScan,
   };
 }
