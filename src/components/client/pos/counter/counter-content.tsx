@@ -53,6 +53,7 @@ export function CounterContent() {
     handleUpdateQuantity,
     handleClearCart,
     getCartItemsArray,
+    findProductByBarcode,
     handleManualScan,
   } = useCounterState({ apiProducts, activeCart });
 
@@ -113,6 +114,7 @@ export function CounterContent() {
             // For now, we can use the existing CartList logic but in a mobile way
         }}
         onScan={handleManualScan}
+        onResolveScan={findProductByBarcode}
         activeCategory={selectedCategory}
         onCategoryChange={handleCategorySelect}
         isLoading={isLoadingProducts}

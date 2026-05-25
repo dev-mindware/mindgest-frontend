@@ -149,6 +149,8 @@ export type InvoiceData = {
   taxAmount: string;
   discountAmount: string;
   receivedValue: string;
+  change?: number | string | null;
+  changeAmount?: number | string | null;
   total: string;
   currencyCode: string;
   notes?: string;

@@ -90,14 +90,14 @@ export function MobileMenuView({
         </div>
 
         {/* Categories */}
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex gap-3 pb-2">
+        <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2 scrollbar-hide">
+          <div className="flex w-max gap-3">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => onCategoryChange(cat.id)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full transition-colors h-11",
+                  "flex h-11 shrink-0 items-center gap-2 rounded-full px-4 py-2 transition-colors",
                   activeCategory === cat.id
                     ? "bg-primary text-primary-foreground"
                     : "bg-card border border-border text-foreground",
@@ -112,7 +112,7 @@ export function MobileMenuView({
               </button>
             ))}
           </div>
-        </ScrollArea>
+        </div>
 
         <h2 className="text-lg font-bold mt-2">Menu</h2>
       </div>

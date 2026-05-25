@@ -18,7 +18,7 @@ export function HeroImageSide({
       <div className="absolute inset-0 z-0">
         <Image
           fill
-          src={"/login2.jpg"}
+          src={"/login.png"}
           alt="Hero Background"
           className="object-cover opacity-60"
           sizes="50vw"

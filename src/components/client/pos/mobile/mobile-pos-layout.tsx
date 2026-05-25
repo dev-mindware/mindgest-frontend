@@ -19,6 +19,7 @@ interface MobilePosLayoutProps {
   onRemove: (id: string) => void;
   onProcessTransaction: () => void;
   onScan: (barcode: string) => void;
+  onResolveScan: (barcode: string) => Promise<Product | null>;
   activeCategory: string;
   onCategoryChange: (id: string) => void;
   isLoading?: boolean;
@@ -34,6 +35,7 @@ export function MobilePosLayout({
   onRemove,
   onProcessTransaction,
   onScan,
+  onResolveScan,
   activeCategory,
   onCategoryChange,
   isLoading,
@@ -50,8 +52,11 @@ export function MobilePosLayout({
       <MobileScannerView 
         cartItems={cartItems}
         onScan={onScan}
+        onResolveScan={onResolveScan}
+        onAddToCart={onAddToCart}
         onPay={() => {
             setShowScanner(false);
+            setActiveTab("order");
             setIsCheckoutOpen(true);
         }}
         onOpenMenu={() => setShowScanner(false)}

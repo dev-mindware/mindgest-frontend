@@ -18,10 +18,11 @@ import { ProtectedAction } from "@/components/guards";
 import { ChatTab } from "./chat-tab";
 import { HistoryTab } from "./history-tab";
 
-// Constants & Data
+// Certifica-te de importar o arquivo CSS no teu entrypoint ou aqui:
+// import "./chatbot-button.css";
+
 const EXPIRATION_DAYS = 7;
 
-// Types
 export type LocalChatHistoryItem = ChatHistoryItem & { isTyping?: boolean };
 
 export interface LocalChatSession {
@@ -30,7 +31,6 @@ export interface LocalChatSession {
   messages: LocalChatHistoryItem[];
 }
 
-// ----- INDEXED DB WRAPPER ----- //
 const DB_NAME = "MindGestChatDB";
 const STORE_NAME = "chat_sessions";
 const DB_VERSION = 1;
@@ -82,27 +82,141 @@ const ChatDB = {
   },
 };
 
+const FRASES = [
+  "Fale com MIND",
+  "Como posso ajudar?",
+  "Tire as suas dúvidas",
+  "Estou disponível"
+];
+
 export function ChatbotSheet() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const [input, setInput] = useState("");
 
-  // State for current chat
   const activeSessionIdRef = useRef<string>("");
   const [messages, setMessages] = useState<LocalChatHistoryItem[]>([]);
-
-  // State for all history
   const [sessions, setSessions] = useState<LocalChatSession[]>([]);
+
+  // Estados para a animação de ciclo contínuo
+  const [fase, setFase] = useState(1);
+  const [fraseIndex, setFraseIndex] = useState(0);
+  const [liquidGlass, setLiquidGlass] = useState(true);
+  const [fxState, setFxState] = useState<"none" | "gota" | "ripple">("none");
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const isFirstCycleRef = useRef(true);
 
   const user = useAuthStore((state) => state.user);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Deteta de forma segura a preferência de acessibilidade "reduced motion" no client-side
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mediaQuery.matches);
+
+    const listener = (e: MediaQueryListEvent) => {
+      setReducedMotion(e.matches);
+      setFase(1);
+      setFraseIndex(0);
+      isFirstCycleRef.current = true;
+    };
+
+    mediaQuery.addEventListener("change", listener);
+    return () => mediaQuery.removeEventListener("change", listener);
+  }, []);
+
+  // Orquestrador de ciclo contínuo otimizado com limpeza estrita de timers
+  useEffect(() => {
+    if (reducedMotion) {
+      const timer = setInterval(() => {
+        setFraseIndex((prev) => (prev + 1) % FRASES.length);
+      }, 3000);
+      return () => clearInterval(timer);
+    }
+
+    const currentFrase = FRASES[fraseIndex];
+    const tempoEscrita = currentFrase.length * 60;
+
+    let timerId: NodeJS.Timeout;
+    let impactTimer: NodeJS.Timeout;
+
+    switch (fase) {
+      case 1:
+        setLiquidGlass(true);
+        setFxState("none");
+        if (isFirstCycleRef.current) {
+          timerId = setTimeout(() => {
+            isFirstCycleRef.current = false;
+            setFase(2);
+          }, tempoEscrita + 900);
+        } else {
+          // Nas voltas subsequentes após a gota pingar, o texto já está escrito. Fica parado por 2.5s antes de apagar.
+          timerId = setTimeout(() => {
+            setFase(2);
+          }, 2500);
+        }
+        break;
+
+      case 2:
+        setLiquidGlass(true);
+        timerId = setTimeout(() => {
+          setFase(3);
+        }, tempoEscrita + 350);
+        break;
+
+      case 3:
+        setLiquidGlass(true);
+        timerId = setTimeout(() => {
+          setFase(4);
+        }, 1200);
+        break;
+
+      case 4:
+        setLiquidGlass(false);
+        timerId = setTimeout(() => {
+          setFraseIndex((prev) => (prev + 1) % FRASES.length);
+          setFase(5);
+        }, 300);
+        break;
+
+      case 5:
+        setLiquidGlass(false);
+        timerId = setTimeout(() => {
+          setFase(6);
+        }, tempoEscrita + 900);
+        break;
+
+      case 6:
+        setFxState("gota");
+
+        // Física da gota d'água: no impacto (400ms) cria as ondas de ripple e micro-gotas
+        impactTimer = setTimeout(() => {
+          setFxState("ripple");
+          setLiquidGlass(true);
+        }, 400);
+
+        timerId = setTimeout(() => {
+          setFase(1);
+        }, 1150); // Ajuste fino para dar tempo de terminar o fadeout do splash hidráulico
+        break;
+
+      default:
+        break;
+    }
+
+    return () => {
+      clearTimeout(timerId);
+      clearTimeout(impactTimer);
+    };
+  }, [fase, fraseIndex, reducedMotion]);
 
   const sessionId = user
     ? `${user.company.name.replace(/\s+/g, "_").toLowerCase()}_${user.id}_${new Date().toISOString().split("T")[0]}`
     : "";
   const { mutate: sendMessage, isPending } = useSendChatMessage();
 
-  // Load from IndexedDB on mount
+  // Carregar dados do IndexedDB no Mount
   useEffect(() => {
     if (!user) return;
 
@@ -110,7 +224,6 @@ export function ChatbotSheet() {
       try {
         let parsedSessions = await ChatDB.getUserSessions(user.id);
 
-        // Migration Strategy: Load legacy localStorage if IDB is empty
         if (parsedSessions.length === 0) {
           const legacyStorage = localStorage.getItem(
             `mindgest-chat-history_${user.id}`,
@@ -143,7 +256,6 @@ export function ChatbotSheet() {
                   },
                 ];
               }
-              // Clean up legacy localStorage after migrating
               localStorage.removeItem(`mindgest-chat-history_${user.id}`);
             } catch (e) {
               console.error("Migration error", e);
@@ -153,7 +265,6 @@ export function ChatbotSheet() {
 
         const currentDate = new Date().getTime();
 
-        // Filter out sessions older than 7 days safely
         const validSessions = parsedSessions.filter((session) => {
           const sessionTime = new Date(
             session.updatedAt || new Date(),
@@ -164,7 +275,6 @@ export function ChatbotSheet() {
           return diffDays <= EXPIRATION_DAYS;
         });
 
-        // Sort by newest first
         validSessions.sort(
           (a, b) =>
             new Date(b.updatedAt || 0).getTime() -
@@ -184,7 +294,7 @@ export function ChatbotSheet() {
     loadHistory();
   }, [user]);
 
-  // Save to IndexedDB on Message Change
+  // Persistir mensagens no IndexedDB
   useEffect(() => {
     if (messages.length === 0 || !user) return;
 
@@ -198,7 +308,7 @@ export function ChatbotSheet() {
       const existingSessionIndex = prevSessions.findIndex(
         (s) => s.id === currentSessionId,
       );
-      let newSessions = [...prevSessions];
+      const newSessions = [...prevSessions];
 
       const cleanupMessagesForStorage = messages.map((msg) => ({
         ...msg,
@@ -222,7 +332,6 @@ export function ChatbotSheet() {
       ChatDB.saveUserSessions(user.id, newSessions);
       return newSessions;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, user]);
 
   useEffect(() => {
@@ -316,38 +425,54 @@ export function ChatbotSheet() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <ProtectedAction>
         <SheetTrigger asChild>
-          <Button
-            className="
-                        relative flex items-center justify-center gap-3
-                        bg-white/10 dark:bg-white/5
-                        backdrop-blur-xl
-                        rounded-full text-sm font-medium 
-                        text-foreground/90 
-                        shadow-[0_8px_32px_0_rgba(0,0,0,0.1)]
-                        transition-all duration-500 ease-in-out
-                        hover:bg-white/20 dark:hover:bg-white/10
-                        hover:shadow-[0_8px_32px_0_rgba(var(--primary-rgb),0.15)]
-                        hover:-translate-y-0.5
-                        active:scale-[0.98]
-                        group
-                        overflow-hidden
-                    "
+          <button
+            className={`
+              mind-button
+              ${liquidGlass ? "liquid-glass-base" : "transparente-borda-base"}
+              fase${fase}
+              ${(fase === 5 || (fase === 1 && isFirstCycleRef.current)) ? "typing" : ""}
+              relative flex items-center justify-center
+              active:scale-[0.98]
+              group
+              overflow-hidden
+            `}
+            style={{
+              "--num-chars": FRASES[fraseIndex].length,
+              "--tempo-escrita": `${FRASES[fraseIndex].length * 60}ms`,
+            } as React.CSSProperties}
+            aria-label={FRASES[fraseIndex]}
           >
-            {/* Glass highlight effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Efeitos Visuais Dinâmicos Otimizados */}
+            <div className="absolute inset-0 pointer-events-none z-10">
+              {fxState === "gota" && <span className="gota" />}
+              {fxState === "ripple" && (
+                <>
+                  <span className="ripple-primario" />
+                  <span className="ripple-secundario" />
+                  <span className="micro-gotas drop-1" />
+                  <span className="micro-gotas drop-2" />
+                  <span className="micro-gotas drop-3" />
+                  <span className="micro-gotas drop-4" />
+                </>
+              )}
+            </div>
 
-            {/* Subtle inner glow */}
-            <div className="absolute inset-[1px] rounded-full border border-white/5 pointer-events-none" />
+            {/* Ícone Sparkles */}
+            <span className="icone-container">
+              <svg className="mind-icon text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z" />
+                <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" />
+              </svg>
+            </span>
 
-            <Icon
-              name="Sparkles"
-              className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform duration-500"
-            />
-            <span className="relative z-10 tracking-tight">Fale com MIND</span>
-
-            {/* Bloom effect on hover */}
-            <div className="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" />
-          </Button>
+            {/* Texto Animado */}
+            <span className="texto-container">
+              <span className="texto-digitado tracking-tight font-medium text-sm">
+                {FRASES[fraseIndex]}
+              </span>
+            </span>
+          </button>
         </SheetTrigger>
       </ProtectedAction>
 
@@ -397,7 +522,6 @@ export function ChatbotSheet() {
             )}
           </SheetHeader>
 
-          {/* Extracted Chat Tab Component */}
           <ChatTab
             messages={messages}
             input={input}
@@ -410,7 +534,6 @@ export function ChatbotSheet() {
             totalMessagesUsed={totalMessagesUsed}
           />
 
-          {/* Extracted History Tab Component */}
           <HistoryTab sessions={sessions} openSession={openSession} />
         </Tabs>
       </SheetContent>

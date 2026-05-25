@@ -13,7 +13,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  background-color: var(--muted);
 }
 
 ::-webkit-scrollbar-track {
@@ -702,5 +703,338 @@ body {
   .fc-timegrid-now-indicator-line {
     border-color: var(--primary) !important;
     border-width: 2px !important;
+  }
+}
+
+/* ==========================================================================
+   ESTRUTURA BASE E LARGURA DINÂMICA DO BOTÃO
+   ========================================================================== */
+.mind-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 10;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: var(--foreground);
+  border: none;
+  outline: none;
+  
+  /* Evita saltos no PageWrapper */
+  min-width: 40px; 
+  max-width: 280px;
+  width: auto;
+  
+  transition: 
+    width 300ms cubic-bezier(0.25, 1, 0.5, 1), 
+    max-width 300ms cubic-bezier(0.25, 1, 0.5, 1),
+    padding 300ms ease-in-out,
+    background 300ms ease, 
+    border-color 300ms ease, 
+    backdrop-filter 300ms ease;
+}
+
+/* Cliques livres de obstruções das animações internas */
+.mind-button * {
+  pointer-events: none;
+}
+
+.icone-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  z-index: 2;
+}
+
+.mind-icon {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  transform-origin: center bottom; /* Pivot inferior para o squash/stretch */
+}
+
+.texto-container {
+  display: inline-flex;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 0px;
+  transition: max-width 300ms cubic-bezier(0.25, 1, 0.5, 1), margin-left 300ms ease-in-out;
+  z-index: 2;
+}
+
+.texto-digitado {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+}
+
+/* ==========================================================================
+   ESTADOS DE BACKGROUND (LIQUID GLASS VS TRANSPARENTE)
+   ========================================================================== */
+.liquid-glass-base {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  box-shadow: 0 4px 24px rgba(153, 86, 246, 0.12), inset 0 1px 0 color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.liquid-glass-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(color-mix(in srgb, var(--primary) 25%, transparent), transparent);
+  border-radius: 20px 20px 0 0;
+  opacity: 1;
+  transition: opacity 300ms ease;
+  z-index: 1;
+}
+
+@supports not (backdrop-filter: blur(20px)) {
+  .liquid-glass-base {
+    background: rgba(153, 86, 246, 0.15);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .liquid-glass-base::before {
+    background: linear-gradient(color-mix(in srgb, var(--primary) 15%, transparent), transparent);
+  }
+}
+
+.transparente-borda-base {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1.5px solid color-mix(in srgb, var(--primary) 40%, transparent);
+  box-shadow: none;
+}
+.transparente-borda-base::before {
+  opacity: 0;
+}
+
+/* ==========================================================================
+   CLASSES COMPORTAMENTAIS (FASES)
+   ========================================================================== */
+.fase1 .texto-container {
+  margin-left: 8px;
+  max-width: 200px;
+}
+.fase1.typing .texto-digitado {
+  animation: 
+    escrever var(--tempo-escrita) steps(var(--num-chars)) forwards,
+    cursorPisca 400ms step-end infinite alternate;
+}
+.fase1:not(.typing) .texto-digitado {
+  width: 100%;
+}
+
+.fase2 .texto-container {
+  margin-left: 0px;
+  max-width: 0px;
+}
+.fase2 .texto-digitado {
+  animation: 
+    apagar var(--tempo-escrita) steps(var(--num-chars)) forwards,
+    cursorPisca 400ms step-end infinite alternate;
+}
+
+.fase3 {
+  padding: 0;
+  width: 40px;
+  justify-content: center;
+}
+.fase3 .mind-icon {
+  animation: iconeSequenciaLiquida 1200ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.fase4 {
+  padding: 0;
+  width: 40px;
+  justify-content: center;
+}
+
+.fase5 .texto-container {
+  margin-left: 8px;
+  max-width: 200px;
+}
+.fase5.typing .texto-digitado {
+  animation: 
+    escrever var(--tempo-escrita) steps(var(--num-chars)) forwards,
+    cursorPisca 400ms step-end infinite alternate;
+}
+.fase5:not(.typing) .texto-digitado {
+  width: 100%;
+}
+
+.fase6 .texto-container {
+  margin-left: 8px;
+  max-width: 200px;
+}
+.fase6 .texto-digitado {
+  width: 100%;
+}
+
+/* ==========================================================================
+   ELEMENTOS FLUIDOS (FASE 6)
+   ========================================================================== */
+.gota {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 14px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 30%, #ffffff) 0%, var(--primary) 100%);
+  border-radius: 50% 50% 40% 40%;
+  animation: quedaGotaFisica 400ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  z-index: 5;
+}
+
+.ripple-primario, .ripple-secundario {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border-radius: 50%;
+  z-index: 4;
+}
+
+.ripple-primario {
+  width: 12px;
+  height: 12px;
+  border: 2px solid color-mix(in srgb, var(--primary) 70%, transparent);
+  animation: rippleOnda1 550ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+.ripple-secundario {
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  animation: rippleOnda2 700ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+.micro-gotas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.drop-1 { animation: splashOutWard1 450ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
+.drop-2 { animation: splashOutWard2 450ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
+.drop-3 { animation: splashOutWard3 450ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
+.drop-4 { animation: splashOutWard4 450ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+@keyframes escrever {
+  from { width: 0; border-right: 2px solid currentColor; }
+  to { width: 100%; border-right: 2px solid transparent; }
+}
+
+@keyframes apagar {
+  from { width: 100%; border-left: 2px solid currentColor; }
+  to { width: 0; border-left: 2px solid transparent; }
+}
+
+@keyframes cursorPisca {
+  from, to { border-color: transparent }
+  50% { border-color: currentColor }
+}
+
+@keyframes iconeSequenciaLiquida {
+  0% { transform: translateY(0) scale(1, 1); }
+  10% { transform: translateY(-12px) scale(0.8, 1.3); }
+  22% { transform: translateY(2px) scale(1.2, 0.7); }
+  32% { transform: translateY(-3px) scale(0.95, 1.05); }
+  40% { transform: translateY(0) scale(1, 1); }
+  48% { transform: rotate(-18deg) scale(1.05, 0.95); }
+  56% { transform: rotate(14deg) scale(0.95, 1.05); }
+  64% { transform: rotate(-8deg) scale(1.02, 0.98); }
+  72% { transform: rotate(0deg) scale(1, 1); }
+  84% { transform: scale(1.35); filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.65)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px transparent); }
+}
+
+@keyframes quedaGotaFisica {
+  0% { transform: translate(-50%, -30px) scaleY(1.8) scaleX(0.5); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate(-50%, 12px) scaleY(0.7) scaleX(1.4); opacity: 0; }
+}
+
+@keyframes rippleOnda1 {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(5.8); opacity: 0; }
+}
+
+@keyframes rippleOnda2 {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.8; }
+  15% { opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(4.5); opacity: 0; }
+}
+
+@keyframes splashOutWard1 {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-18px, -14px) scale(0.3); opacity: 0; }
+}
+@keyframes splashOutWard2 {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(18px, -14px) scale(0.3); opacity: 0; }
+}
+@keyframes splashOutWard3 {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-12px, 10px) scale(0.3); opacity: 0; }
+}
+@keyframes splashOutWard4 {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(12px, 10px) scale(0.3); opacity: 0; }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .mind-button {
+    transition: none !important;
+  }
+  .mind-button, .fase1, .fase2, .fase3, .fase4, .fase5, .fase6 {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    padding: 0 16px !important;
+    width: auto !important;
+  }
+  .texto-container {
+    max-width: none !important;
+    margin-left: 8px !important;
+  }
+  .texto-digitado {
+    width: 100% !important;
+    animation: none !important;
+    border: none !important;
+    transition: opacity 300ms ease-in-out;
+  }
+  .mind-icon, .gota, .ripple-primario, .ripple-secundario, .micro-gotas {
+    animation: none !important;
+    display: none !important;
   }
 }
