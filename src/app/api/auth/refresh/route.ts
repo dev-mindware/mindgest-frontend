@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
     const newRefreshToken = parsedTokens.refreshToken;
 
     if (!newAccessToken || !newRefreshToken) {
+      await clearLocalSession();
       return NextResponse.json(
         { message: "Tokens inválidos retornados pela API", data },
         { status: 500 },

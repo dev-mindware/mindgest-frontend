@@ -82,7 +82,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   } = useCategoriesSelect();
   const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
   const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
-  const isProPlan = planLevel >= PLAN_HIERARCHY.Pro;
+  const hasSuppliers = user?.company?.subscription?.plan?.features?.hasSuppliers ?? (planLevel >= PLAN_HIERARCHY.Smart);
 
   const {
     supplierOptions,
@@ -91,7 +91,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     refetch: refetchSuppliers,
     pagination: paginationSuppliers,
     setPage: setPageSuppliers,
-  } = useGetSuppliersSelect(isProPlan);
+  } = useGetSuppliersSelect(hasSuppliers);
   const {
     taxOptions,
     isLoading: isTaxesLoading,
@@ -130,7 +130,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   }, [product, taxOptions]);
 
   const finalSupplierOptions = useMemo(() => {
-    if (!isProPlan) return [];
+    if (!hasSuppliers) return [];
     const currentId = product.supplierId || (product as any).supplier_id;
     const currentName = product.supplierName;
 
@@ -142,7 +142,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       return [{ label: currentName, value: currentId }, ...supplierOptions];
     }
     return supplierOptions;
-  }, [product, supplierOptions, isProPlan]);
+  }, [product, supplierOptions, hasSuppliers]);
 
   const {
     reset,
@@ -208,14 +208,14 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     closeModal("edit-product");
   };
 
-  if (isLoadingCategories || isTaxesLoading || (isProPlan && isLoadingSuppliers))
+  if (isLoadingCategories || isTaxesLoading || (hasSuppliers && isLoadingSuppliers))
     return <ProductModalSkeleton />;
-  if (isError || (isProPlan && isErrorSuppliers)) {
+  if (isError || (hasSuppliers && isErrorSuppliers)) {
     return (
       <RequestError
         refetch={() => {
           refetch();
-          if (isProPlan) refetchSuppliers();
+          if (hasSuppliers) refetchSuppliers();
         }}
         message="Ocorreu um erro ao carregar os dados"
       />
@@ -378,7 +378,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
             </FeatureGate>
           </div>
           <div className="grid grid-cols-1">
-            <FeatureGate minPlan="Pro" fallback="hidden">
+            <FeatureGate minPlan="Smart" fallback="hidden">
               <Controller
                 control={control}
                 name="supplierId"

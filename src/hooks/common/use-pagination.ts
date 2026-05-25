@@ -33,13 +33,19 @@ export function usePagination<T>({
 
   const page = Number(searchParams.get("page")) || 1;
 
+  const cleanQueryParams = Object.fromEntries(
+    Object.entries(queryParams).filter(
+      ([_, value]) => value !== null && value !== undefined && value !== "",
+    ),
+  );
+
   const query = useQuery<PaginationResponse<T>>({
     queryKey: Array.isArray(queryKey)
-      ? [...queryKey, page, queryParams]
-      : [queryKey, page, queryParams],
+      ? [...queryKey, page, cleanQueryParams]
+      : [queryKey, page, cleanQueryParams],
     queryFn: async () => {
       const response = await api.get(endpoint, {
-        params: { page, ...queryParams },
+        params: { page, ...cleanQueryParams },
       });
 
       const raw = response.data;

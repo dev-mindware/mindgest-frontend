@@ -1,6 +1,6 @@
 "use client";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
 import { currentBankStore, useModal } from "@/stores";
@@ -12,7 +12,17 @@ import {
   Checkbox,
   ButtonSubmit,
   GlobalModal,
+  SelectField,
 } from "@/components";
+
+const ANGOLAN_BANKS = [
+  { name: "BAI", code: "0040" },
+  { name: "BIC", code: "0051" },
+  { name: "BCI", code: "0005" },
+  { name: "SOL", code: "0044" },
+  { name: "BFA", code: "0006" },
+  { name: "ATLANTICO", code: "0055" },
+];
 
 type BankModalProps = {
   action: "add" | "edit";
@@ -26,12 +36,25 @@ export function BankModal({ action }: BankModalProps) {
   const { mutateAsync: addBank, isPending: isAdding } = useAddBank();
   const { mutateAsync: editBank, isPending: isEditing } = useUpdateBank();
 
+  const bankOptions = useMemo(() => {
+    const list = ANGOLAN_BANKS.map((b) => ({ value: b.name, label: b.name }));
+    if (
+      action === "edit" &&
+      currentBank &&
+      !ANGOLAN_BANKS.some((b) => b.name === currentBank.bankName)
+    ) {
+      list.push({ value: currentBank.bankName, label: currentBank.bankName });
+    }
+    return list;
+  }, [action, currentBank]);
+
   const {
     reset,
     register,
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<BankFormData>({
     resolver: zodResolver(bankSchema),
@@ -91,12 +114,30 @@ export function BankModal({ action }: BankModalProps) {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 max-h-[80vh]"
       >
-        <Input
-          label="Nome do Banco"
-          placeholder="Ex: Banco BFA"
-          {...register("bankName")}
-          error={errors.bankName?.message}
+        <Controller
+          name="bankName"
+          control={control}
+          render={({ field }) => (
+            <SelectField
+              label="Nome do Banco"
+              value={field.value}
+              onValueChange={(val) => {
+                field.onChange(val);
+                if (action === "add") {
+                  const bank = ANGOLAN_BANKS.find((b) => b.name === val);
+                  if (bank) {
+                    setValue("iban", `AO06.${bank.code}.`);
+                  }
+                }
+              }}
+              options={bankOptions}
+              placeholder="Selecione o banco"
+            />
+          )}
         />
+        {errors.bankName && (
+          <p className="text-xs text-red-500 -mt-4">{errors.bankName.message}</p>
+        )}
 
         <Input
           label="Número da Conta"

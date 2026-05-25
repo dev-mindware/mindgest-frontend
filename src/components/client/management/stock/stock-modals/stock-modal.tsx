@@ -39,7 +39,7 @@ export function StockModal() {
     isError: itemsError,
     totalPages: itemTotalPages,
     refetch: refetchItems,
-  } = useGetItemsPaginated(itemPage, 10);
+  } = useGetItemsPaginated(itemPage, 10, { type: "PRODUCT" });
 
   const {
     reset,

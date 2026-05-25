@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { REFRESH_TOKEN_KEY, ROLE_KEY } from "./constants/auth";
 import {
   API_AUTH_PREFIX,
   DEFAULT_LOGIN_REDIRECT,
   PRIVATE_ROUTE_PREFIXES,
-  PUBLIC_ROUTES,
-  REFRESH_TOKEN_KEY,
-  ROLE_KEY
-} from "./constants";
-import { getRouteByRole } from "./utils";
+  PUBLIC_ROUTES
+} from "./constants/routes";
+import { getRouteByRole } from "./utils/role-redirects";
 import { Role } from "@/types";
 
 
@@ -52,7 +51,9 @@ export function proxy(req: NextRequest) {
   if (isPublic) {
     if (isAuthenticated && isAuthPage(pathname)) {
       const redirectTo = getRouteByRole(role as Role);
-      return NextResponse.redirect(new URL(redirectTo, req.url));
+      if (redirectTo !== pathname) {
+        return NextResponse.redirect(new URL(redirectTo, req.url));
+      }
     }
 
     return NextResponse.next();
