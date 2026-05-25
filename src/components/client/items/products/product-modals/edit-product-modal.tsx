@@ -329,35 +329,46 @@ function EditProductFormContent({ product }: EditProductModalProps) {
           </div>
 
           <FeatureGate minPlan="Smart" fallback="hidden">
-            <div className="grid grid-cols-2 gap-4">
-              <Controller
-                control={control}
-                name="minStock"
-                render={({ field }) => (
-                  <Input
-                    type="quantity"
-                    startIcon="Scale"
-                    label="Stock Mínimo"
-                    value={field.value ?? 0}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    error={errors.minStock?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="maxStock"
-                render={({ field }) => (
-                  <Input
-                    type="quantity"
-                    startIcon="Scale"
-                    label="Stock Máximo"
-                    value={field.value ?? 0}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    error={errors.maxStock?.message}
-                  />
-                )}
-              />
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Input
+                  label="Código de Barras (Opcional)"
+                  placeholder="Ex: 7891234567890"
+                  {...register("barcode")}
+                  error={errors.barcode?.message}
+                  startIcon="Barcode"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  control={control}
+                  name="minStock"
+                  render={({ field }) => (
+                    <Input
+                      type="quantity"
+                      startIcon="Scale"
+                      label="Stock Mínimo"
+                      value={field.value ?? 0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      error={errors.minStock?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="maxStock"
+                  render={({ field }) => (
+                    <Input
+                      type="quantity"
+                      startIcon="Scale"
+                      label="Stock Máximo"
+                      value={field.value ?? 0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      error={errors.maxStock?.message}
+                    />
+                  )}
+                />
+              </div>
             </div>
           </FeatureGate>
 
