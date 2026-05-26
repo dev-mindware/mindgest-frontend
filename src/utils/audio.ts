@@ -2,10 +2,12 @@
  * AudioBuffer cache to prevent repeated fetching of the sound file
  */
 let beepBuffer: AudioBuffer | null = null;
-const audioCtx =
+const AudioContextClass =
   typeof window !== "undefined"
-    ? new (window.AudioContext || (window as any).webkitAudioContext)()
+    ? window.AudioContext || (window as any).webkitAudioContext
     : null;
+
+const audioCtx = AudioContextClass ? new AudioContextClass() : null;
 
 /**
  * Preloads the scanner beep sound to ensure zero latency during operations.

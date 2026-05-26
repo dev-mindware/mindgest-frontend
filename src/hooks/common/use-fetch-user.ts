@@ -1,59 +1,16 @@
 "use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores";
 import { api } from "@/services/api";
 import { User } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { clearLocalSession } from "@/actions/auth";
 
-interface UseFetchUserOptions {
-  enabled?: boolean;
+async function fetchCurrentUser(): Promise<User> {
+  const { data } = await api.get<User>("/auth/me");
+  return data;
 }
-
-export function useFetchUser({ enabled }: UseFetchUserOptions) {
-  const { setUser, setIsAuthenticating } = useAuthStore();
-
-  const { data, isLoading, isError, error, isSuccess } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const response = await api.get<User>("/auth/profile");
-      return response.data;
-    },
-    enabled,
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 0,
-  });
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    if (isLoading) {
-      setIsAuthenticating(true);
-      return;
-    }
-
-    if (isSuccess && data) {
-      setUser(data);
-      setIsAuthenticating(false);
-    } else if (isError) {
-      const err = error as any;
-      if (err.response?.status !== 401) {
-        console.error("Erro ao buscar usuário:", err);
-      }
-      setUser(null);
-      setIsAuthenticating(false);
-    }
-  }, [enabled, isLoading, isSuccess, isError, data, error, setUser, setIsAuthenticating]);
-
-  return { user: data || null };
-}
-
-/* "use client";
-import { useEffect } from "react";
-import { useAuthStore } from "@/stores";
-import { api } from "@/services/api";
-import { User } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 
 interface UseFetchUserOptions {
   enabled?: boolean;
@@ -62,51 +19,60 @@ interface UseFetchUserOptions {
 export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
   const { setUser, setIsAuthenticating } = useAuthStore();
 
-  const { data, isLoading, isError, error, isSuccess } = useQuery({
+  const query = useQuery({
     queryKey: ["user"],
-    queryFn: async () => {
-      const response = await api.get<User>("/auth/profile");
-      return response.data;
-    },
+    queryFn: fetchCurrentUser,
     enabled,
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: false, // ✅ FIX: não retry para evitar múltiplos requests em loop
+    staleTime: 5 * 60 * 1000,
   });
 
+  // ✅ FIX: sempre fecha o loading, sucesso ou falha
   useEffect(() => {
     if (!enabled) {
       setIsAuthenticating(false);
       return;
     }
 
-    // Only set authenticating true if it's the initial loading (no cached data).
-    // This prevents the full-screen loader from flashing during background invalidation refetches.
-    if (isLoading) {
-      setIsAuthenticating(true);
-    } else {
+    if (query.isSuccess && query.data) {
+      setUser(query.data);
       setIsAuthenticating(false);
     }
 
-    if (isSuccess && data) {
-      setUser(data);
-    } else if (isError) {
-      const err = error as any;
-      if (err.response?.status !== 401) {
-        console.error("Erro ao buscar usuário:", err);
-      }
-      setUser(null);
+    if (query.isError) {
+      // Falha em buscar user → sessão inválida → limpa tudo
+      (async () => {
+        await clearLocalSession();
+        setUser(null);
+        setIsAuthenticating(false);
+      })();
     }
   }, [
     enabled,
-    isLoading,
-    isSuccess,
-    isError,
-    data,
-    error,
+    query.isSuccess,
+    query.isError,
+    query.data,
     setUser,
     setIsAuthenticating,
   ]);
 
-  return { user: data || null };
+  // Listener para evento de sessão expirada (vindo do interceptor axios)
+  useEffect(() => {
+    function handleSessionExpired() {
+      setUser(null);
+      setIsAuthenticating(false);
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/auth/login"
+      ) {
+        window.location.replace("/auth/login");
+      }
+    }
+
+    window.addEventListener("session:expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener("session:expired", handleSessionExpired);
+  }, [setUser, setIsAuthenticating]);
+
+  return query;
 }
- */
