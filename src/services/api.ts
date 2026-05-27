@@ -60,7 +60,6 @@ const NO_REFRESH_ROUTES = [
 // Rotas críticas de auth — 404 aqui = sessão morta
 const AUTH_CRITICAL_ROUTES = [
   "/auth/profile",
-  "/auth/me",
   "/api/auth/refresh",
 ] as const;
 

@@ -13,10 +13,16 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const pathname = usePathname();
+<<<<<<< Updated upstream
   const isAuthRoute = AUTH_PAGES.some((path) => {
     if (path === "/") return pathname === "/";
     return pathname.startsWith(path);
   });
+=======
+  const isAuthRoute = AUTH_PAGES.some((path) =>
+    path === "/" ? pathname === "/" : pathname.startsWith(path)
+  );
+>>>>>>> Stashed changes
   const { isAuthenticating } = useAuthStore();
 
   // Só busca user em rotas privadas
