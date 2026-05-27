@@ -13,16 +13,10 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const pathname = usePathname();
-<<<<<<< Updated upstream
   const isAuthRoute = AUTH_PAGES.some((path) => {
     if (path === "/") return pathname === "/";
     return pathname.startsWith(path);
   });
-=======
-  const isAuthRoute = AUTH_PAGES.some((path) =>
-    path === "/" ? pathname === "/" : pathname.startsWith(path)
-  );
->>>>>>> Stashed changes
   const { isAuthenticating } = useAuthStore();
 
   // Só busca user em rotas privadas
@@ -33,33 +27,3 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return <SubscriptionGuard>{children}</SubscriptionGuard>;
 }
-
-/* "use client";
-import { useFetchUser } from "@/hooks/common";
-import { useAuthStore } from "@/stores";
-import { Loader } from "./loader";
-import { usePathname } from "next/navigation";
-import { SubscriptionGuard } from "@/components/guards/subscription-guard";
-
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
-
-const AUTH_PATHS = ["/auth", "/auth/login", "/auth/register"];
-
-export function AuthProvider({ children }: AuthProviderProps) {
-  const pathname = usePathname();
-  const isAuthRoute = AUTH_PATHS.some((path) => pathname.startsWith(path));
-  const { isAuthenticating } = useAuthStore();
-  useFetchUser({ enabled: !isAuthRoute  });
-
-  if (isAuthRoute) return <>{children}</>;
-
-  if (isAuthenticating) return <Loader />;
-
-  return (
-    <SubscriptionGuard>
-      {children}
-    </SubscriptionGuard>
-  );
-} */
