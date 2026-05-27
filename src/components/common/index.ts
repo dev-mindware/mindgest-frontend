@@ -18,3 +18,5 @@ export * from "./unauthorized-link";
 export * from "./input-fetch/async-multi-select";
 export * from "./input-fetch/async-select";
 export * from "./feature-gate";
+export * from "./plan-upgrade-gate";
+export * from "./plan-gate";

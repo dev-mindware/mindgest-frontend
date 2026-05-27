@@ -10,16 +10,18 @@ interface RouteProtectorProps {
   allowed: Role[];
   children: React.ReactNode;
   fallback?: React.ReactNode;
+  checkPlan?: boolean;
 }
 
 export function RouteProtector({
   allowed,
   children,
   fallback,
+  checkPlan = true,
 }: RouteProtectorProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const access = useAccessControl(allowed);
+  const access = useAccessControl(allowed, checkPlan);
 
   useEffect(() => {
     switch (access.status) {

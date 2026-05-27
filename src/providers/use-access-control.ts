@@ -23,7 +23,7 @@ export type AccessResult =
   | { status: "plan_insufficient"; redirectTo: string }
   | { status: "allowed" };
 
-export function useAccessControl(allowed: Role[]): AccessResult {
+export function useAccessControl(allowed: Role[], checkPlan = true): AccessResult {
   const pathname = usePathname();
   const { user, isAuthenticating } = useAuth();
 
@@ -51,7 +51,7 @@ export function useAccessControl(allowed: Role[]): AccessResult {
     if (!allowed.includes(user.role)) return { status: "unauthorized" };
 
     // Cashiers bypass plan check
-    if (user.role !== "CASHIER" && matchingItem?.minPlan) {
+    if (checkPlan && user.role !== "CASHIER" && matchingItem?.minPlan) {
       const required = PLAN_HIERARCHY[matchingItem.minPlan] ?? 0;
       if (currentPlanLevel < required) {
         const fallbackRoute = getRouteByRole(user.role);
@@ -69,5 +69,58 @@ export function useAccessControl(allowed: Role[]): AccessResult {
     matchingItem,
     currentPlanLevel,
     pathname,
+    checkPlan,
   ]);
+}
+
+export interface PlanAccessResult {
+  hasAccess: boolean;
+  requiredPlan?: PlanType;
+  featureName?: string;
+  isLoading: boolean;
+}
+
+export function usePlanAccess(): PlanAccessResult {
+  const pathname = usePathname();
+  const { user, isAuthenticating } = useAuth();
+
+  const matchingItem = useMemo(
+    () =>
+      allMenuItems
+        .filter(
+          (item) =>
+            item.url !== "#" &&
+            item.url !== "/" &&
+            (pathname === item.url || pathname.startsWith(item.url + "/"))
+        )
+        .sort((a, b) => b.url.length - a.url.length)[0],
+    [pathname]
+  );
+
+  const currentPlanLevel = useMemo(() => {
+    const plan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+    return PLAN_HIERARCHY[plan] ?? 0;
+  }, [user]);
+
+  if (isAuthenticating) {
+    return { hasAccess: false, isLoading: true };
+  }
+
+  if (!user || user.role === "CASHIER") {
+    return { hasAccess: true, isLoading: false };
+  }
+
+  if (matchingItem?.minPlan) {
+    const required = PLAN_HIERARCHY[matchingItem.minPlan] ?? 0;
+    if (currentPlanLevel < required) {
+      return {
+        hasAccess: false,
+        requiredPlan: matchingItem.minPlan,
+        featureName: matchingItem.name,
+        isLoading: false,
+      };
+    }
+  }
+
+  return { hasAccess: true, isLoading: false };
 }
