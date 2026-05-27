@@ -43,8 +43,8 @@ export function MovementsContent() {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           {/* Scrollable tabs on mobile */}
-          <div className="overflow-x-auto">
-            <TabsList className="w-full sm:w-auto inline-flex">
+          <div className="w-full overflow-x-auto scrollbar-none pb-1">
+            <TabsList className="flex w-max min-w-full justify-start p-1">
               <TabsTrigger value="invoice-receipt" className="whitespace-nowrap" defaultChecked>
                 Factura Recibo
               </TabsTrigger>

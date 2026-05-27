@@ -16,7 +16,7 @@ export const useNotificationSettingsStore = create<NotificationSettingsState>()(
   persist(
     (set) => ({
       soundEnabled: true,
-      soundType: "/sound-effects/notification-2.mp3",
+      soundType: "/notification-1.mp3",
       pushEnabled: true,
       badgeEnabled: true,
       setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),

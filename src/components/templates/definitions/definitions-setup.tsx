@@ -212,7 +212,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
             </TabsList>
           </div>
 
-          <div className="border rounded-md grow text-start">
+          <div className="border rounded-md grow min-w-0 text-start">
             {enabledTabs.map((tab) => (
               <TabsContent key={tab.id} value={tab.id} className="!py-4 sm:p-6">
                 {tab.component}

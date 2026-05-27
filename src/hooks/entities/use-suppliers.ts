@@ -40,26 +40,7 @@ export function useGetSuppliersSelect(enabled = true) {
     },
   };
 }
-export function useGetSuppliers() {
-  const { data, error, isLoading, refetch } = useFetch<SupplierResponse[]>(
-    "suppliers",
-    "/suppliers?page=1&limit=100"
-  );
 
-  const suppliers =
-    data?.map((supplier: SupplierResponse) => ({
-      label: `${supplier.name}`,
-      value: supplier.id,
-    })) || [];
-
-  return {
-    suppliers,
-    suppliersData: data || [],
-    error,
-    isLoading,
-    refetch,
-  };
-}
 
 export function useAddSupplier() {
   const queryClient = useQueryClient();

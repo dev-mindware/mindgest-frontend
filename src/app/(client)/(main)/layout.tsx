@@ -1,5 +1,6 @@
 import { AppSidebar, BreadcrumbProvider, SidebarInset } from "@/components";
 import { TrialBanner } from "@/components/shared";
+import { NotificationDetail } from "@/components/shared/notifications";
 import { RouteProtector } from "@/contexts";
 import { FeatureGateProvider, StoreProvider } from "@/providers";
 
@@ -17,6 +18,7 @@ export default function ClientLayout({ children }: Props) {
             <TrialBanner />
             <BreadcrumbProvider>{children}</BreadcrumbProvider>
           </SidebarInset>
+          <NotificationDetail />
         </FeatureGateProvider>
       </StoreProvider>
     </RouteProtector>

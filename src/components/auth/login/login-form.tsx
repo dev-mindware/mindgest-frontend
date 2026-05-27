@@ -10,6 +10,7 @@ import { LoginFormData, loginSchema } from "@/schemas";
 import { ButtonSubmit, Input } from "@/components";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
+import { queryClient } from "@/lib";
 
 export function LoginForm() {
   const router = useRouter();
@@ -34,6 +35,9 @@ export function LoginForm() {
       }
 
       setIsAuthenticating(true);
+
+      // ✅ Popula o cache do React Query antes de redirecionar para evitar requisição redundante
+      queryClient.setQueryData(["user"], res.user);
 
       setUser(res.user);
       router.replace(res.redirectPath || "/");

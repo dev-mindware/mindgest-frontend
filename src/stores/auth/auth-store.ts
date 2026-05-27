@@ -74,10 +74,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   // ✅ Limpa estado, React Query e redireciona
   logout: async () => {
     set({ isLoggingOut: true, isAuthenticating: true, user: null }); // bloqueia tudo antes
-    await logoutAction();
-    queryClient.clear(); // Limpa toda a cache antiga (incluindo o ["user"])
-    set({ isLoggingOut: false }); 
-    window.location.replace("/auth/login"); // Hard redirect para limpar a memória do browser
+    try {
+      await logoutAction();
+    } catch (error) {
+      console.error("🚨 Erro ao fazer logout remoto:", error);
+    } finally {
+      queryClient.clear(); // Limpa toda a cache antiga (incluindo o ["user"])
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("current-store");
+        localStorage.removeItem("MGEST-AUTH-STORE");
+        window.location.replace("/auth/login"); // Hard redirect para limpar a memória do browser
+      }
+      set({ isLoggingOut: false });
+    }
   },
 }));
  */

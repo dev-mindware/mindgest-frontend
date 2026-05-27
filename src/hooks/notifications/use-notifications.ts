@@ -24,26 +24,26 @@ export function useNotifications(
   const { setCurrentNotification } = useCurrentNotificationStore();
   const { soundEnabled, soundType } = useNotificationSettingsStore();
 
-  // O áudio é carregado via ref para não causar montagens desnecessárias
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Ref para evitar stale closure dentro do handler do socket —
+  // sem isto, o toggle de som não teria efeito sem reconectar o socket.
+  const soundEnabledRef = useRef(soundEnabled);
 
   useEffect(() => {
-    // Inicializar o áudio no client-side com o som escolhido (soundType)
+    soundEnabledRef.current = soundEnabled;
+  }, [soundEnabled]);
+
+  useEffect(() => {
     audioRef.current = new Audio(soundType);
-    audioRef.current.volume = 0.5; // Ajustar o volume conforme necessário
+    audioRef.current.volume = 0.5;
   }, [soundType]);
 
   const playNotificationSound = () => {
-    if (audioRef.current && soundEnabled) {
-      // O play() retorna uma promessa que rejeita se o utilizador não interagiu com a página
-      audioRef.current.currentTime = 0; // Reiniciar o áudio se já estiver a tocar
-      audioRef.current.play().catch((error) => {
-        console.warn(
-          "Navegador bloqueou a reprodução automática do som da notificação:",
-          error,
-        );
-      });
-    }
+    if (!audioRef.current || !soundEnabledRef.current) return;
+    audioRef.current.currentTime = 0;
+    audioRef.current.play().catch((err) => {
+      console.warn("Navegador bloqueou a reprodução automática do som:", err);
+    });
   };
 
   const TAKE = 5;
@@ -91,16 +91,13 @@ export function useNotifications(
     });
 
     socket.on("new_notification", (newNotification: NotificationType) => {
-      // Optimistically update the cache
+      // Som tocado aqui — fora do updater do setQueryData que deve ser puro
+      playNotificationSound();
+
       queryClient.setQueryData<any>(
         ["notifications", initialFilters],
         (oldData: any) => {
           if (!oldData) return oldData;
-
-          // Tocar som de notificação quando chegar uma nova
-          playNotificationSound();
-
-          // Insert into the first page
           const newPages = [...oldData.pages];
           if (newPages.length > 0) {
             newPages[0] = {
@@ -108,11 +105,7 @@ export function useNotifications(
               data: [newNotification, ...newPages[0].data],
             };
           }
-
-          return {
-            ...oldData,
-            pages: newPages,
-          };
+          return { ...oldData, pages: newPages };
         },
       );
     });

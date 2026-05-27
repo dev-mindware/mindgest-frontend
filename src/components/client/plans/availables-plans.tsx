@@ -16,8 +16,10 @@ import { useAuth, usePlans } from "@/hooks";
 import { useCurrentPlanStore } from "@/stores";
 import { formatCurrency, getPlanFeatures } from "@/utils";
 import { PlanInclusionFeatures } from "./plan-inclusion-features";
+import { useRouter } from "next/navigation";
 
 export function AvailablePlans() {
+  const router = useRouter();
   const { user, subscriptionStatus } = useAuth();
   const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
@@ -27,7 +29,7 @@ export function AvailablePlans() {
 
   function onHandlerChoosePlan(plan: Plan) {
     setCurrentPlanSelected(plan);
-    window.open("/checkout", "_blank");
+    router.push("/checkout");
   }
 
   return (

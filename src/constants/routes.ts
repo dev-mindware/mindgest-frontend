@@ -9,13 +9,16 @@
   "/not-found",
 ];
 
-export const PRIVATE_ROUTE_PREFIXES = ["/admin", "/documents",
+export const PRIVATE_ROUTE_PREFIXES = [
+  "/admin",
+  "/documents",
   "/plans",
   "/dashboard",
   "/settings",
   "/items",
   "/management",
   "/pos-management",
+  "/pos",
   "/reports",
   "/stock",
 ];

@@ -23,7 +23,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
 
   const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
   const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
-  const isProPlan = planLevel >= PLAN_HIERARCHY.Pro;
+  const hasSuppliers = user?.company?.subscription?.plan?.features?.hasSuppliers ?? (planLevel >= PLAN_HIERARCHY.Smart);
 
   const {
     supplierOptions,
@@ -32,7 +32,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     refetch: refetchSuppliers,
     pagination: paginationSuppliers,
     setPage: setPageSuppliers,
-  } = useGetSuppliersSelect(isProPlan);
+  } = useGetSuppliersSelect(hasSuppliers);
 
   const hasFilter =
     filters.status ||
@@ -44,7 +44,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     filters.maxPrice ||
     search.length > 0;
 
-  if (isError || isErrorSuppliers)
+  if (isError || (hasSuppliers && isErrorSuppliers))
     return (
       <div className="flex items-center gap-2">
         <span className="text-destructive text-sm">
@@ -53,7 +53,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
         <Button
           variant="outline"
           onClick={() => {
-            refetchSuppliers();
+            if (hasSuppliers) refetchSuppliers();
             refetch();
           }}
         >
@@ -79,7 +79,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
           onPageChange={setPage}
           placeholder="Categoria"
         />
-        {isProPlan && (
+        {hasSuppliers && (
           <PaginatedSelect
             options={supplierOptions}
             value={filters.supplierId}
