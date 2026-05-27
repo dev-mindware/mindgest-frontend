@@ -8,7 +8,7 @@ import { User } from "@/types";
 import { clearLocalSession } from "@/actions/auth";
 
 async function fetchCurrentUser(): Promise<User> {
-  const { data } = await api.get<User>("/auth/me");
+  const { data } = await api.get<User>("/auth/profile");
   return data;
 }
 

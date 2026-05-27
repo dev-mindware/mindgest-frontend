@@ -15,6 +15,10 @@ jest.mock("@/lib/browser-redirect", () => ({
   hardRedirect: jest.fn(),
 }));
 
+jest.mock("@/actions/auth", () => ({
+  clearLocalSession: jest.fn().mockResolvedValue(undefined),
+}));
+
 jest.mock("@/actions/token", () => ({
   getAccessToken: jest.fn().mockResolvedValue("initial-token"),
   getRefreshToken: jest.fn().mockResolvedValue("refresh-token"),

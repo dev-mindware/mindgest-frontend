@@ -34,7 +34,9 @@ export const PUBLIC_ROUTES = [
   "/auth/register",
   "/auth/forgot-password",
   "/auth/reset-password",
+  "/checkout",
   "/unauthorized",
+  "/not-found",
 ] as const;
 
 // Páginas de autenticação — se logado, redireciona para dashboard
@@ -51,7 +53,14 @@ export const PRIVATE_ROUTE_PREFIXES = [
   "/dashboard",
   "/admin",
   "/pos",
+  "/pos-management",
   "/settings",
+  "/management",
+  "/documents",
+  "/items",
+  "/plans",
+  "/reports",
+  "/stock",
 ] as const;
 
 // Rota de login padrão

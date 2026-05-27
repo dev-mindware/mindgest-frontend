@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 import { createSession } from "@/lib/session";
 import { clearLocalSession } from "@/actions/auth";
 import { LoginResponse } from "@/types";
-import { REFRESH_TOKEN_KEY } from "@/constants/auth";
+import { REFRESH_TOKEN_KEY } from "@/constants/routes";
 import { isValidRole } from "@/utils/role-redirects";
 
 // ============================================================================

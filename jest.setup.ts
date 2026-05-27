@@ -1,11 +1,16 @@
 import "@testing-library/jest-dom";
 import { TextEncoder, TextDecoder } from "util";
+import crypto from "crypto";
 
 // ============================================================================
 // Polyfills
 // ============================================================================
 global.TextEncoder = TextEncoder as any;
 global.TextDecoder = TextDecoder as any;
+
+if (!global.crypto) {
+  global.crypto = crypto.webcrypto as any;
+}
 
 // ============================================================================
 // Mock do next/navigation

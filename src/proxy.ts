@@ -7,8 +7,10 @@ import {
   AUTH_PAGES,
   REFRESH_TOKEN_KEY,
   ROLE_KEY,
+  ACCESS_TOKEN_KEY,
 } from "@/constants/routes";
 import { getRouteByRole, isValidRole } from "@/utils/role-redirects";
+import { verifyRole } from "@/lib/session";
 
 function isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.includes(pathname as any)) return true;
@@ -29,7 +31,7 @@ function isPrivateRoute(pathname: string): boolean {
   return PRIVATE_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Ignora rotas de auth da API
@@ -38,10 +40,11 @@ export function proxy(req: NextRequest) {
   }
 
   const hasRefreshToken = req.cookies.has(REFRESH_TOKEN_KEY);
-  const rawRole = req.cookies.get(ROLE_KEY)?.value;
+  const roleCookie = req.cookies.get(ROLE_KEY)?.value;
 
-  // ✅ FIX: valida o role do cookie
-  const role = isValidRole(rawRole) ? rawRole : undefined;
+  // ✅ FIX: valida a assinatura do role do cookie localmente (sem chamada de API)
+  const verifiedRole = roleCookie ? await verifyRole(roleCookie) : null;
+  const role = isValidRole(verifiedRole) ? verifiedRole : undefined;
 
   // ✅ FIX: se tem refresh token mas role é inválido,
   // limpa cookies e força re-login (cookie foi manipulado)
@@ -51,7 +54,7 @@ export function proxy(req: NextRequest) {
     );
     response.cookies.delete(REFRESH_TOKEN_KEY);
     response.cookies.delete(ROLE_KEY);
-    response.cookies.delete("access_token");
+    response.cookies.delete(ACCESS_TOKEN_KEY);
     return response;
   }
 

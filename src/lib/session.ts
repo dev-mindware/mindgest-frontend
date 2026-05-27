@@ -19,6 +19,40 @@ const fallbackSecret =
 const secretKey = process.env.SESSION_SECRET || fallbackSecret;
 export const encodedKey = new TextEncoder().encode(secretKey);
 
+export async function signRole(role: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encodedKey,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(role)
+  );
+  const hashHex = Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  return `${role}.${hashHex}`;
+}
+
+export async function verifyRole(cookieValue: string): Promise<Role | null> {
+  if (!cookieValue) return null;
+  const [role, hash] = cookieValue.split(".");
+  if (!role || !hash) return null;
+
+  const expectedSigned = await signRole(role);
+  const [, expectedHash] = expectedSigned.split(".");
+
+  if (hash === expectedHash) {
+    return role as Role;
+  }
+  return null;
+}
+
 export interface SessionPayload {
   accessToken: string;
   refreshToken: string;
@@ -36,9 +70,9 @@ const baseCookieOptions = {
   path: "/",
 };
 
-// ✅ FIX: Access token com tempo mais razoável (15 min)
+// ✅ FIX: Access token com tempo mais razoável (24 horas)
 // Se quiseres manter 4min, IMPLEMENTA refresh transparente no axios
-const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutos
+const ACCESS_TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
 
 export async function createSession(payload: SessionPayload) {
@@ -46,6 +80,7 @@ export async function createSession(payload: SessionPayload) {
   const refreshExpiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
 
   const authCookies = await cookies();
+  const signedRole = await signRole(payload.role);
 
   authCookies.set(ACCESS_TOKEN_KEY, payload.accessToken, {
     ...baseCookieOptions,
@@ -57,7 +92,7 @@ export async function createSession(payload: SessionPayload) {
     expires: refreshExpiresAt,
   });
 
-  authCookies.set(ROLE_KEY, payload.role, {
+  authCookies.set(ROLE_KEY, signedRole, {
     ...baseCookieOptions,
     expires: refreshExpiresAt,
   });

@@ -4,6 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import { getAccessToken } from "@/actions/token";
+import { clearLocalSession } from "@/actions/auth";
 import { currentStoreStore } from "@/stores";
 import { redirectToLogin } from "@/lib/browser-redirect"; // ✅ NOVO
 
@@ -234,6 +235,11 @@ api.interceptors.response.use(
     if (status === 404 && isAuthCriticalRoute(original.url)) {
       console.warn("🚨 [API] 404 em rota crítica de auth. Forçando logout.");
       resetAccessTokenCache();
+      try {
+        await clearLocalSession();
+      } catch (clearErr) {
+        console.error("Erro ao limpar sessão local no interceptor (404):", clearErr);
+      }
       dispatchSessionExpired();
       redirectToLogin(); // ✅ Usa o helper testável
       return Promise.reject(err);
@@ -291,6 +297,11 @@ api.interceptors.response.use(
         console.error("🚨 [API] Erro ao renovar token:", refreshError);
         resetAccessTokenCache();
         processQueue(refreshError, null);
+        try {
+          await clearLocalSession();
+        } catch (clearErr) {
+          console.error("Erro ao limpar sessão local no interceptor (refresh):", clearErr);
+        }
         dispatchSessionExpired();
         redirectToLogin(); // ✅ Usa o helper testável
         return Promise.reject(refreshError);
