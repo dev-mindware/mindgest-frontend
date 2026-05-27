@@ -17,3 +17,4 @@ export * from "./agt-service";
 export * from "./chatbot-service";
 export * from "./auth-service";
 export * from "./stock-reservations-service";
+export * from "./audit-trail-service";

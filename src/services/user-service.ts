@@ -34,4 +34,7 @@ export const userService = {
   getUserById: async (id: string) => {
     return api.get<User>(`/users/${id}`);
   },
+  getUsers: async (params?: Record<string, any>) => {
+    return api.get<any>(`/users`, { params });
+  },
 };

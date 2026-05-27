@@ -73,7 +73,7 @@ export const menuItems: MenuStructure = {
       url: "/suppliers",
       icon: <Icon name="Truck" className="w-5 h-5" />,
       roles: ["MANAGER", "OWNER"],
-      minPlan: "Smart",
+      minPlan: "Pro",
     },
     {
       name: "Gestão",

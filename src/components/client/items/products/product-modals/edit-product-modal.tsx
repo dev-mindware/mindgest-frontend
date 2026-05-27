@@ -7,6 +7,7 @@ import {
   Button,
   Textarea,
   GlobalModal,
+  RHFSelect,
   RequestError,
   ButtonSubmit,
   CategoryModal,
@@ -28,6 +29,21 @@ import { useMemo } from "react";
 import { ItemResponse } from "@/types";
 import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
 import { PLAN_HIERARCHY, PlanType } from "@/types/subscription";
+
+const UNIT_OPTIONS = [
+  { label: "Nenhuma (Sem Unidade)", value: "none" },
+  { label: "Unidade (un)", value: "un" },
+  { label: "Quilograma (kg)", value: "kg" },
+  { label: "Grama (g)", value: "g" },
+  { label: "Litro (l)", value: "l" },
+  { label: "Mililitro (ml)", value: "ml" },
+  { label: "Metro (m)", value: "m" },
+  { label: "Metro Quadrado (m²)", value: "m2" },
+  { label: "Caixa (cx)", value: "cx" },
+  { label: "Pacote (pct)", value: "pct" },
+  { label: "Par (par)", value: "par" },
+  { label: "Dúzia (dz)", value: "dz" },
+];
 
 interface EditProductModalProps {
   product: ItemResponse;
@@ -152,6 +168,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     formState: { errors, isSubmitting },
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
+    mode: "onChange",
     defaultValues: {
       name: product.name || "",
       description: product.description || "",
@@ -183,6 +200,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
       supplierId: data.supplierId || null,
+      unit: data.unit === "none" || !data.unit ? undefined : data.unit,
     } as any;
   };
 
@@ -374,11 +392,12 @@ function EditProductFormContent({ product }: EditProductModalProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <FeatureGate minPlan="Pro" fallback="hidden">
-              <Input
-                startIcon="Scale"
-                {...register("unit")}
+              <RHFSelect
+                control={control}
+                name="unit"
                 label="Unidade de Medida (Opcional)"
-                error={errors.unit?.message}
+                options={UNIT_OPTIONS}
+                placeholder="Selecione uma unidade"
               />
               <Input
                 type="date"
@@ -418,12 +437,17 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                 startIcon="Weight"
                 label="Peso (Kg) (opcional)"
                 {...register("weight", {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9.,]/g, "");
+                  },
                   setValueAs: (v) => {
                     if (v === "" || v === null || v === undefined)
                       return undefined;
-                    const normalized = String(v).replace(",", ".");
-                    const parsed = parseFloat(normalized);
-                    return isNaN(parsed) ? undefined : parsed;
+                    const trimmed = String(v).trim();
+                    if (trimmed === "") return undefined;
+                    const normalized = trimmed.replace(",", ".");
+                    const parsed = Number(normalized);
+                    return isNaN(parsed) ? "invalid" : parsed;
                   },
                 })}
                 error={errors.weight?.message}
@@ -431,8 +455,12 @@ function EditProductFormContent({ product }: EditProductModalProps) {
               />
               <Input
                 label="Dimensões (opcional)"
-                placeholder="Ex: 10x20x30 cm"
-                {...register("dimensions")}
+                placeholder="Ex: 10x20x30"
+                {...register("dimensions", {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9xX\s.,]/g, "");
+                  }
+                })}
                 error={errors.dimensions?.message}
               />
             </div>

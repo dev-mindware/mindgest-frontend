@@ -12,7 +12,6 @@ import { icons } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Icon, AlertError } from "../common";
 
-// ─── Base ─────────────────────────────────────────────────────────────────────
 
 interface InputCurrencyProps
   extends Omit<NumericFormatProps, "onValueChange"> {
@@ -21,7 +20,6 @@ interface InputCurrencyProps
   startIcon?: keyof typeof icons;
   endIcon?: keyof typeof icons;
   containerClassName?: string;
-  /** Símbolo da moeda mostrado como prefixo. Usa false para desativar. Default: "Kz" */
   currency?: string | false;
   onValueChange?: (value: number) => void;
 }
@@ -95,6 +93,10 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
               "disabled:cursor-not-allowed",
               className
             )}
+            onFocus={(e) => {
+              e.target.select();
+              props.onFocus?.(e);
+            }}
             onValueChange={(values) => {
               onValueChange?.(values.floatValue ?? 0);
             }}
@@ -118,7 +120,6 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
 
 InputCurrency.displayName = "InputCurrency";
 
-// ─── React Hook Form ───────────────────────────────────────────────────────────
 
 type RHFInputCurrencyProps<
   TFieldValues extends FieldValues = FieldValues,

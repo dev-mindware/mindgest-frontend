@@ -121,7 +121,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
         reset({
           type: "SERVICE",
           name: "",
-          price: 0,
+          price: undefined,
           description: "",
           categoryId: "",
           taxId: "",

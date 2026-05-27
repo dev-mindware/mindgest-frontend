@@ -60,7 +60,14 @@ export const taxNumberSchema = z
 export const phoneNumberSchema = z
   .string({ invalid_type_error: "Insira um número de telefone válido" })
   .trim()
-  .max(9, "O número deve ter 9 dígitos")
+  .refine(
+    (value) => !value || /^\d*$/.test(value),
+    "O número de telefone deve conter apenas dígitos",
+  )
+  .refine(
+    (value) => !value || value.length === 9,
+    "O número deve ter 9 dígitos",
+  )
   .refine(
     (value) => !value || /^(92|99|91|95|93|94|97)\d{7}$/.test(value),
     "Insira número de telemovél válido",

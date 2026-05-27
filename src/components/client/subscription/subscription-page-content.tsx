@@ -7,10 +7,12 @@ import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
 import { useFileUpload } from "@/hooks/common/use-upload";
+import { usePlans } from "@/hooks";
 
 export function SubscriptionPageContent() {
   const { openModal } = useModal();
-  const { currentPlanSelected } = useCurrentPlanStore();
+  const { currentPlanSelected, setCurrentPlanSelected } = useCurrentPlanStore();
+  const { plans } = usePlans();
   const { mutateAsync: uploadFile, isPending } = useFileUpload(
     "/subscriptions",
     "subscriptions",
@@ -26,6 +28,13 @@ export function SubscriptionPageContent() {
       planId: currentPlanSelected?.id || "",
     },
   });
+
+  // Seleciona o primeiro plano por padrão se nenhum estiver selecionado
+  useEffect(() => {
+    if (!currentPlanSelected && plans && plans.length > 0) {
+      setCurrentPlanSelected(plans[0]);
+    }
+  }, [currentPlanSelected, plans, setCurrentPlanSelected]);
 
   useEffect(() => {
     if (currentPlanSelected?.id) {

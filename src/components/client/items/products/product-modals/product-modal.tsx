@@ -27,9 +27,11 @@ import {
 import { ErrorMessage } from "@/utils/messages";
 import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
 import { PLAN_HIERARCHY, PlanType } from "@/types/subscription";
+import { UNIT_OPTIONS } from "@/constants";
+
 
 export function AddProductModal() {
-  const { open, openModal, closeModal, modalData } = useModal();
+  const { open, openModal } = useModal();
   const isOpen = open["add-product"];
 
   if (!isOpen) return null;
@@ -105,6 +107,7 @@ function AddProductFormContent() {
     formState: { errors, isSubmitting },
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
+    mode: "onChange",
     defaultValues: {
       barcode: initialBarcode,
       price: undefined,
@@ -113,6 +116,9 @@ function AddProductFormContent() {
       type: "PRODUCT",
       categoryId: "",
       supplierId: null,
+      unit: "",
+      minStock: 0,
+      maxStock: 0,
     },
   });
 
@@ -126,6 +132,7 @@ function AddProductFormContent() {
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
       supplierId: data.supplierId || null,
+      unit: data.unit === "none" || !data.unit ? undefined : data.unit,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   };
@@ -143,7 +150,7 @@ function AddProductFormContent() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ErrorMessage(
         (error as any)?.response?.data?.message ||
-          "Ocorreu um erro ao adicionar o item",
+        "Ocorreu um erro ao adicionar o item",
       );
     }
   }
@@ -318,11 +325,12 @@ function AddProductFormContent() {
 
           <div className="grid grid-cols-2 gap-4">
             <FeatureGate minPlan="Pro" fallback="hidden">
-              <Input
-                startIcon="Scale"
-                {...register("unit")}
+              <RHFSelect
+                control={control}
+                name="unit"
                 label="Unidade de Medida (Opcional)"
-                error={errors.unit?.message}
+                options={UNIT_OPTIONS}
+                placeholder="Selecione uma unidade"
               />
               <Input
                 type="date"
@@ -365,9 +373,11 @@ function AddProductFormContent() {
                   setValueAs: (v) => {
                     if (v === "" || v === null || v === undefined)
                       return undefined;
-                    const normalized = String(v).replace(",", ".");
-                    const parsed = parseFloat(normalized);
-                    return isNaN(parsed) ? undefined : parsed;
+                    const trimmed = String(v).trim();
+                    if (trimmed === "") return undefined;
+                    const normalized = trimmed.replace(",", ".");
+                    const parsed = Number(normalized);
+                    return isNaN(parsed) ? "invalid" : parsed;
                   },
                 })}
                 error={errors.weight?.message}

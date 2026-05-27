@@ -69,10 +69,10 @@ export function PaginatedSelect({
   const selectedLabel = options.find((o) => o.value === value)?.label;
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5 w-full sm:w-auto">
       {label && <Label className="text-sm font-medium">{label}</Label>}
       <Select value={value || ""} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className={cn("w-[200px]", className)}>
+        <SelectTrigger className={cn("w-full sm:w-[200px]", className)}>
           {isLoading && !value ? (
             <Skeleton className="h-4 w-24" />
           ) : selectedLabel ? (
