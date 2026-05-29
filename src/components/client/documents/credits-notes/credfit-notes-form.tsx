@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,12 +11,78 @@ import { mapDocumentToCreditNoteDefaults } from "@/utils/credit-notes";
 import { formatCurrency, parseCurrency } from "@/utils";
 import { ButtonSubmit, Input, InputCurrency, RHFSelect, Textarea, Separator, Button } from "@/components";
 import { ErrorMessage } from "@/utils/messages";
+import { ClientSelectOption } from "@/types/clients";
 
 
 import { Trash2 } from "lucide-react";
 import { ReasonNotesSection } from "./sections/ReasonNotesSection";
 import { ClientDocumentSection } from "./sections/ClientDocumentSection";
 import { ItemsSummarySection } from "./sections/ItemsSummarySection";
+
+const getFriendlyErrorMessages = (errors: any): string[] => {
+  const messages: string[] = [];
+  
+  const fieldLabels: Record<string, string> = {
+    "reason": "Motivo",
+    "notes": "Notas",
+    "managerBarcode": "Código de Barras do Gerente",
+    "invoiceBody.client.id": "Cliente",
+    "invoiceBody.client.name": "Nome do Cliente",
+    "invoiceBody.client.taxNumber": "NIF do Cliente",
+    "invoiceBody.client.phone": "Telefone do Cliente",
+    "invoiceBody.client.address": "Endereço do Cliente",
+    "invoiceBody.issueDate": "Data de Emissão",
+    "invoiceBody.dueDate": "Data de Vencimento",
+    "invoiceBody.subtotal": "Subtotal da Fatura",
+    "invoiceBody.taxAmount": "Valor do Imposto",
+    "invoiceBody.discountAmount": "Valor do Desconto",
+    "invoiceBody.total": "Total da Fatura",
+    "creditNote.subtotal": "Subtotal da Nota de Crédito",
+    "creditNote.taxAmount": "Imposto da Nota de Crédito",
+    "creditNote.discountAmount": "Desconto da Nota de Crédito",
+    "creditNote.total": "Total da Nota de Crédito",
+  };
+
+  const walk = (obj: any, path: string = "") => {
+    if (!obj || typeof obj !== "object") return;
+    
+    if (typeof obj.message === "string") {
+      let displayPath = path;
+      if (path.startsWith("invoiceBody.items[")) {
+        const match = path.match(/invoiceBody\.items\[(\d+)\]\.(.*)/);
+        if (match) {
+          const index = parseInt(match[1]) + 1;
+          const field = match[2];
+          const fieldNameMap: Record<string, string> = {
+            name: "Nome",
+            quantity: "Quantidade",
+            price: "Preço Unitário",
+          };
+          displayPath = `Item ${index} (${fieldNameMap[field] || field})`;
+        }
+      } else {
+        displayPath = fieldLabels[path] || path;
+      }
+      messages.push(`${displayPath}: ${obj.message}`);
+      return;
+    }
+
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const nextPath = path 
+          ? isNaN(Number(key)) 
+            ? `${path}.${key}` 
+            : `${path}[${key}]`
+          : key;
+        
+        walk(obj[key], nextPath);
+      }
+    }
+  };
+
+  walk(errors);
+  return messages;
+};
 
 type Props = {
   invoice: InvoiceDetails | ReceiptDetails;
@@ -45,15 +111,51 @@ export function CreditNoteForm({ invoice, docType }: Props) {
   const reason = useWatch({ control, name: "reason" });
   const watchedItems = useWatch({ control, name: "invoiceBody.items" });
 
+  const [selectedClient, setSelectedClient] = useState<ClientSelectOption | null>(null);
+
+  const handleClientChange = useCallback(
+    (option: ClientSelectOption | null) => {
+      setSelectedClient(option);
+
+      if (!option) {
+        setValue("invoiceBody.client.id", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.name", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.taxNumber", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.address", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.phone", "", { shouldValidate: true, shouldDirty: true });
+        return;
+      }
+
+      if (option.__isNew__) {
+        setValue("invoiceBody.client.id", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.name", option.label, { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.taxNumber", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.address", "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.phone", "", { shouldValidate: true, shouldDirty: true });
+      } else if (option.data) {
+        setValue("invoiceBody.client.id", option.data.id, { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.name", option.data.name, { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.taxNumber", option.data.taxNumber || "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.address", option.data.address || "", { shouldValidate: true, shouldDirty: true });
+        setValue("invoiceBody.client.phone", option.data.phone || "", { shouldValidate: true, shouldDirty: true });
+      }
+    },
+    [setValue]
+  );
+
   // Inicializar cliente selecionado
   useEffect(() => {
     if (invoice.client) {
-      setValue("invoiceBody.client", {
-        id: invoice.client.id,
-        name: invoice.client.name,
-        taxNumber: (invoice.client as any).taxNumber || "",
-        address: (invoice.client as any).address || "",
-        phone: (invoice.client as any).phone || "",
+      setValue("invoiceBody.client.id", invoice.client.id);
+      setValue("invoiceBody.client.name", invoice.client.name);
+      setValue("invoiceBody.client.taxNumber", (invoice.client as any).taxNumber || "");
+      setValue("invoiceBody.client.address", (invoice.client as any).address || "");
+      setValue("invoiceBody.client.phone", (invoice.client as any).phone || "");
+
+      setSelectedClient({
+        value: invoice.client.id,
+        label: invoice.client.name,
+        data: invoice.client as any,
       });
     }
   }, [invoice, setValue]);
@@ -149,7 +251,15 @@ export function CreditNoteForm({ invoice, docType }: Props) {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.log("Validation errors in CreditNoteForm:", errors);
+        const errorList = getFriendlyErrorMessages(errors);
+        if (errorList.length > 0) {
+          ErrorMessage(`Erro de validação: ${errorList.join(" | ")}`);
+        } else {
+          ErrorMessage("Por favor, preencha todos os campos obrigatórios corretamente.");
+        }
+      })}
       className="p-8 space-y-8 border rounded-lg"
     >
       <ReasonNotesSection
@@ -167,6 +277,8 @@ export function CreditNoteForm({ invoice, docType }: Props) {
             isInvoiceDoc={isInvoiceDoc}
             docType={docType}
             client={invoice.client}
+            selectedClient={selectedClient}
+            onClientChange={handleClientChange}
           />
 
           <Separator />
@@ -174,6 +286,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
           <ItemsSummarySection
             control={control}
             register={register}
+            errors={errors}
             fields={fields}
             remove={remove}
           />

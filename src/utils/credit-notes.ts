@@ -22,7 +22,7 @@ export function mapDocumentToCreditNoteDefaults(
         type: "PRODUCT" as const, // default
       })),
       issueDate: new Date().toISOString().split("T")[0],
-      dueDate: doc.dueDate,
+      dueDate: doc.dueDate ? doc.dueDate.split("T")[0] : undefined,
       subtotal: doc.subtotal,
       taxAmount: doc.taxAmount,
       discountAmount: doc.discountAmount,

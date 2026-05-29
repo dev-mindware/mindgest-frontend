@@ -35,6 +35,7 @@ interface PaginatedSelectProps {
   label?: string;
   error?: string;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
 export function PaginatedSelect({
@@ -49,6 +50,7 @@ export function PaginatedSelect({
   label,
   error,
   disabled,
+  fullWidth,
 }: PaginatedSelectProps) {
   const handlePrevious = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -69,10 +71,10 @@ export function PaginatedSelect({
   const selectedLabel = options.find((o) => o.value === value)?.label;
 
   return (
-    <div className="flex flex-col gap-1.5 w-full sm:w-auto">
+    <div className={cn("flex flex-col gap-1.5", fullWidth ? "w-full" : "w-full sm:w-auto")}>
       {label && <Label className="text-sm font-medium">{label}</Label>}
       <Select value={value || ""} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className={cn("w-full sm:w-[200px]", className)}>
+        <SelectTrigger className={cn(fullWidth ? "w-full" : "w-full sm:w-[200px]", className)}>
           {isLoading && !value ? (
             <Skeleton className="h-4 w-24" />
           ) : selectedLabel ? (

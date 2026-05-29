@@ -13,6 +13,7 @@ import { formatCurrency, parseCurrency } from "@/utils";
 interface ItemsSummarySectionProps {
   control: Control<CreditNoteFormData>;
   register: UseFormRegister<CreditNoteFormData>;
+  errors: any;
   fields: any[];
   remove: (index: number) => void;
 }
@@ -20,6 +21,7 @@ interface ItemsSummarySectionProps {
 export function ItemsSummarySection({
   control,
   register,
+  errors,
   fields,
   remove,
 }: ItemsSummarySectionProps) {
@@ -70,18 +72,20 @@ export function ItemsSummarySection({
                     <Input
                       {...register(`invoiceBody.items.${index}.name`)}
                       className="h-9 text-sm"
+                      error={errors?.invoiceBody?.items?.[index]?.name?.message}
                     />
                   </td>
-                  <td className="px-4 py-3 text-right w-24">
+                  <td className="px-4 py-3 text-right w-36">
                     <Input
-                      type="number"
+                      type="quantity"
                       {...register(`invoiceBody.items.${index}.quantity`, {
                         valueAsNumber: true,
                       })}
                       className="h-9 text-sm text-right"
+                      error={errors?.invoiceBody?.items?.[index]?.quantity?.message}
                     />
                   </td>
-                  <td className="px-4 py-3 text-right w-40">
+                  <td className="px-4 py-3 text-right w-48">
                     <Controller
                       control={control}
                       name={`invoiceBody.items.${index}.price`}
@@ -97,7 +101,8 @@ export function ItemsSummarySection({
                           decimalScale={2}
                           fixedDecimalScale
                           allowNegative={false}
-                          className="h-9 text-sm text-right font-mono"
+                          className="h-9 text-sm text-left font-mono"
+                          error={fieldState.error?.message}
                         />
                       )}
                     />

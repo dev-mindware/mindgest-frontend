@@ -202,7 +202,7 @@ function AddProductFormContent() {
                   pagination={taxPagination}
                   onPageChange={setTaxPage}
                   placeholder="Selecione um imposto"
-                  className="w-full"
+                  fullWidth
                 />
               )}
             />
@@ -259,7 +259,7 @@ function AddProductFormContent() {
                   pagination={pagination}
                   onPageChange={setPage}
                   placeholder="Selecione uma opção"
-                  className="w-full"
+                  fullWidth
                 />
               )}
             />
@@ -354,8 +354,8 @@ function AddProductFormContent() {
                     isLoading={isLoadingSuppliers}
                     pagination={paginationSuppliers}
                     onPageChange={setPageSuppliers}
-                    className="w-full"
-                    placeholder="Selecione um aopção"
+                    placeholder="Selecione uma opção"
+                    fullWidth
                   />
                 )}
               />

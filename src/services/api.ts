@@ -68,7 +68,7 @@ const STORE_DEPENDENT_ROUTES: (
   | string
   | { path: string; methods: string[] }
 )[] = [
-    "invoice",
+    { path: "invoice", methods: ["get", "post"] },
     "items",
     { path: "stocks", methods: ["get"] },
     "cash-sessions",

@@ -14,6 +14,8 @@ import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
 
+const THIRTY_DAYS = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+
 export function InvoiceForm() {
   const { user } = useAuthStore();
   const { mutateAsync: createInvoiceNormal, isPending } = useCreateInvoice();
@@ -22,7 +24,7 @@ export function InvoiceForm() {
     mode: "onChange",
     defaultValues: {
       issueDate: new Date().toISOString().split("T")[0],
-      dueDate: "",
+      dueDate: THIRTY_DAYS,
       items: [],
       globalRetention: 0,
       globalDiscount: 0,

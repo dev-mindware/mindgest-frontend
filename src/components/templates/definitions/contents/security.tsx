@@ -2,7 +2,6 @@
 
 import { useAuth } from "@/hooks/auth";
 import { AccountSecurity } from "./profile/account-security";
-import { SupportAccess } from "./profile/support-access";
 
 export function Security() {
     const { user } = useAuth();
@@ -22,9 +21,9 @@ export function Security() {
                 <div className="bg-card rounded-xl border p-6 shadow-sm">
                     <AccountSecurity user={user} />
                 </div>
-                <div className="bg-card rounded-xl border p-6 shadow-sm">
+                {/*  <div className="bg-card rounded-xl border p-6 shadow-sm">
                     <SupportAccess />
-                </div>
+                </div> */}
             </div>
         </div>
     );

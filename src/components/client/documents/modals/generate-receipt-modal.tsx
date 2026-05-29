@@ -106,10 +106,10 @@ export function GenerateReceiptModal() {
             readOnly
             label="Total"
             startIcon="DollarSign"
-            {...register("total")}
+            value={formatCurrency(currentInvoice?.total || 0)}
             error={errors.total?.message}
-            value={formatCurrency(parseFloat(currentInvoice?.total as string))}
           />
+          <input type="hidden" {...register("total")} />
         </div>
 
         <Textarea

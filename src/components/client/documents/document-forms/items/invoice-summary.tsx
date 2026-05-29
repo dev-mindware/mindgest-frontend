@@ -48,6 +48,8 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
             decimalScale={2}
             fixedDecimalScale
             allowNegative={false}
+            currency={false}
+            suffix=" %"
             isAllowed={(values) => (values.floatValue ?? 0) <= 100}
           />
 

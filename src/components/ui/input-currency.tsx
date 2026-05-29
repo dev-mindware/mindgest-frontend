@@ -94,7 +94,13 @@ const InputCurrency = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
               className
             )}
             onFocus={(e) => {
-              e.target.select();
+              const target = e.target;
+              target.select();
+              setTimeout(() => {
+                try {
+                  target.select();
+                } catch (err) {}
+              }, 50);
               props.onFocus?.(e);
             }}
             onValueChange={(values) => {
@@ -145,7 +151,6 @@ function RHFInputCurrency<
       name={field.name}
       value={field.value ?? ""}
       onValueChange={field.onChange}
-      onBlur={field.onBlur}
       disabled={field.disabled ?? rest.disabled}
       error={error?.message}
     />

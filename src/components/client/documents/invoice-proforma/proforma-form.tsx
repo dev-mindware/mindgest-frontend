@@ -38,6 +38,19 @@ export function ProformaForm({
 
   const defaultValues = useMemo(() => {
     if (isEdit && initialData) {
+      const subtotal = Number(initialData.subtotal || 0) || initialData.items?.reduce((acc: number, item: any) => {
+        const price = Number(item.price || item.unitPrice || 0);
+        const qty = Number(item.quantity || 1);
+        return acc + price * qty;
+      }, 0) || 0;
+
+      const discountAmount = Number(initialData.discountAmount || 0);
+      const discountPercent = subtotal > 0 ? Math.round((discountAmount / subtotal) * 100 * 100) / 100 : 0;
+
+      const taxableBase = subtotal - discountAmount;
+      const retentionAmount = Number(initialData.retentionAmount || 0);
+      const retentionPercent = taxableBase > 0 ? Math.round((retentionAmount / taxableBase) * 100 * 10) / 10 : 0;
+
       return {
         issueDate:
           initialData.issueDate || new Date().toISOString().split("T")[0],
@@ -58,10 +71,12 @@ export function ProformaForm({
             unitPrice: Number(item.price || item.unitPrice || 0),
             quantity: Number(item.quantity || 1),
             type: item.item?.type || item.type || "PRODUCT",
+            tax: Number(item.tax || item.taxRate || item.item?.tax?.rate || 0),
+            taxId: item.taxId || item.item?.tax?.id || item.item?.taxId || "",
             isFromAPI: true,
           })) || [],
-        globalRetention: Number(initialData.retentionAmount || 0),
-        globalDiscount: Number(initialData.discountAmount || 0),
+        globalRetention: retentionPercent,
+        globalDiscount: discountPercent,
         currencyCode: (initialData.currencyCode as any) || "AOA",
         storeId: initialData.storeId || "",
       };
@@ -214,13 +229,14 @@ export function ProformaForm({
           retentionAmount: totals.retentionAmount,
           discountAmount: totals.discountAmount,
           subtotal: totals.subtotal,
-          currencyCode: data.currencyCode,
           notes: data.notes || undefined,
           proformaExpiresAt: data.proformaExpiresAt,
           paymentMethod: data.paymentMethod,
-          ...(user?.role === "OWNER" &&
-            !isEdit &&
-            currentStore?.id && { storeId: currentStore?.id }),
+          ...(!isEdit ? {
+            currencyCode: data.currencyCode,
+            ...(user?.role === "OWNER" &&
+              currentStore?.id && { storeId: currentStore?.id }),
+          } : {}),
         };
 
 
