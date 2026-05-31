@@ -64,7 +64,10 @@ export const ProductCard = React.memo<ProductCardProps>(
     };
 
     return (
-      <Card className="overflow-hidden flex flex-col py-0 relative group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 bg-card/50 backdrop-blur-sm">
+      <Card
+        className="overflow-hidden flex flex-col py-0 relative group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 bg-card/50 backdrop-blur-sm"
+        data-tour="pos-product-card"
+      >
         <CardContent className="p-3 sm:p-4 flex-1 flex flex-col gap-3">
           {/* Top Content: Image & Title */}
           <div className="flex gap-3 sm:gap-3.5">
@@ -172,6 +175,7 @@ export const ProductCard = React.memo<ProductCardProps>(
                           handleDoubleClick();
                         }
                       }}
+                      data-tour="pos-product-add"
                     >
                       {product.quantity <= 0 ? (
                         <Icon name="X" className="h-5 w-5" />
@@ -219,6 +223,7 @@ export const ProductCard = React.memo<ProductCardProps>(
                           e.preventDefault();
                           handleDoubleClick();
                         }}
+                        data-tour="pos-product-add"
                       >
                         <Icon name="Plus" className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>

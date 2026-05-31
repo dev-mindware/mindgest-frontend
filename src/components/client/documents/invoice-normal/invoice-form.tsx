@@ -176,8 +176,12 @@ export function InvoiceForm() {
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Fatura:", errors))}
       className="p-8 mt-4 space-y-8 border rounded-lg"
+      data-tour="normal-invoice-form"
     >
-      <div className="grid gap-6 md:grid-cols-3">
+      <div
+        className="grid gap-6 md:grid-cols-3"
+        data-tour="normal-invoice-main-fields"
+      >
         <Input
           type="date"
           label="Data de Emissão"
@@ -204,23 +208,28 @@ export function InvoiceForm() {
           ]}
         />
 
-        <AsyncCreatableSelectField
-          minChars={2}
-          endpoint="/clients"
-          label="Cliente"
-          placeholder="Digite o nome do cliente..."
-          value={selectedClient}
-          onChange={handleClientChange}
-          displayFields={clientDisplayFields}
-          formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
-          error={errors.client?.name?.message}
-        />
+        <div data-tour="normal-invoice-client">
+          <AsyncCreatableSelectField
+            minChars={2}
+            endpoint="/clients"
+            label="Cliente"
+            placeholder="Digite o nome do cliente..."
+            value={selectedClient}
+            onChange={handleClientChange}
+            displayFields={clientDisplayFields}
+            formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
+            error={errors.client?.name?.message}
+          />
+        </div>
         <input type="hidden" {...register("clientId")} />
         <input type="hidden" {...register("client.name")} />
       </div>
 
       {clientState.hasClient && (
-        <div className="grid gap-6 md:grid-cols-3 animate-in fade-in duration-300">
+        <div
+          className="grid gap-6 md:grid-cols-3 animate-in fade-in duration-300"
+          data-tour="normal-invoice-client-details"
+        >
           <Input
             label="NIF"
             {...register("client.taxNumber")}
@@ -255,13 +264,15 @@ export function InvoiceForm() {
       />
 
 
-      <Textarea
-        {...register("notes")}
-        placeholder="Adicione observações sobre esta fatura (opcional)"
-        label="Observações"
-        error={errors.notes?.message}
-        rows={4}
-      />
+      <div data-tour="normal-invoice-notes">
+        <Textarea
+          {...register("notes")}
+          placeholder="Adicione observações sobre esta fatura (opcional)"
+          label="Observações"
+          error={errors.notes?.message}
+          rows={4}
+        />
+      </div>
 
       <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
         <Button
@@ -279,6 +290,7 @@ export function InvoiceForm() {
           type="submit"
           disabled={isSubmitting || isPending}
           className="min-w-[150px]"
+          data-tour="normal-invoice-submit"
         >
           {isPending || isSubmitting ? "Processando..." : "Criar Fatura"}
         </Button>

@@ -1,90 +1,124 @@
-# Guia de Entidades e Planos Mindgest
+# Entidades, Itens e Planos MindGest
 
-Este documento mapeia os campos de cadastro para Clientes, Produtos e Serviços, destacando as funcionalidades restritas por plano de subscrição.
+Este documento mapeia os principais recursos de clientes, produtos, serviços, fornecedores, stock e POS por plano de subscrição.
 
----
+## Planos oficiais
 
-## 1. Cadastro de Clientes
-O cadastro de clientes é essencial para a emissão de documentos nominais e gestão de contactos.
+O frontend trabalha com três planos oficiais:
 
-**Caminho de Acesso**:
-1.  No menu lateral (sidebar), aceda a **Clientes** (ícone de utilizadores).
-2.  No canto superior direito da listagem, clique no botão **Novo Cliente**.
-3.  Será aberto o modal **Adicionar Cliente**, onde deverá preencher os dados obrigatórios.
+- **Base**
+- **Smart**
+- **Pro**
 
-*   **Campos Principais**:
-    *   **Nome**: Identificação do cliente (mínimo 3 caracteres).
-    *   **NIF**: Número de Identificação Fiscal (validado para 9 ou 10 dígitos).
-    *   **Telefone**: Validado para operadores de Angola.
-    *   **Endereço e Email**: Informações de contacto e faturação.
+O plano **Pro** inclui todos os recursos do Base e do Smart.
 
----
+## Base
 
-## 2. Cadastro de Itens (Produtos vs. Serviços)
-A gestão de itens é centralizada no menu **Items**, dividida por abas para organizar o seu inventário.
+O Base cobre a operação essencial de uma empresa que precisa emitir documentos e organizar clientes, produtos e serviços.
 
-**Caminho de Acesso Geral**:
-*   No menu lateral (sidebar), aceda a **Items** (ícone de cesto de compras).
+### Recursos
 
-### 2.1 Produtos
-1.  Na aba **Produtos**, localize o botão **Novo Produto** no topo.
-2.  Clique no botão e selecione a opção **Manual**.
-3.  O modal **Adicionar Produto** será exibido para preenchimento técnica do item (preços, stocks, etc).
+- Cadastro de clientes.
+- Cadastro de produtos.
+- Cadastro de serviços.
+- Categorias de itens.
+- Impostos associados a itens.
+- Notas de crédito.
+- Bancos e configurações fiscais.
+- Relatórios básicos de vendas.
+- Notificações do sistema.
+- Assistente MIND com 10 mensagens.
+- Acesso web multiplataforma.
+- Documentos ilimitados quando a faturação está ativa no plano.
 
-### 2.2 Serviços
-1.  Mude para a aba **Serviços** na página de Items.
-2.  Clique no botão **Novo Serviço**.
-3.  O modal **Adicionar Serviço** será aberto, focado em campos de venda e descrição de mão-de-obra.
+## Smart
 
-### 2.3 Campos Comuns nos Modais
-*   **Nome**: Designação comercial do item.
-*   **Preço de Venda**: Valor base para faturação.
-*   **Categoria**: Agrupamento para relatórios (ex: Consultoria, Hardware).
-*   **Imposto (IVA)**: Taxa configurada para o item.
+O Smart adiciona operação em balcão e controlo de stock. Ele é o plano indicado para empresas que vendem no POS e precisam acompanhar quantidades.
 
----
+### Recursos
 
-## 3. Gestão Avançada (Planos Smart e Pro)
-Para funcionalidades de controlo rigoroso e logística, o Mindgest disponibiliza o menu **Gestão** na sidebar e campos adicionais nos modais de itens:
+- Tudo do plano Base.
+- POS operacional para operadores de caixa.
+- Movimentos de caixa.
+- Configurações POS do operador.
+- Gestão de stock.
+- Stock mínimo e máximo.
+- Código de barras manual.
+- Relatórios de clientes.
+- Personalização de aparência.
+- Assistente MIND com 15 mensagens.
 
-### 3.1 Módulos de Gestão
-*   **Estoque**: Consulta detalhada de movimentos, saldos e histórico de entradas e saídas.
-*   **Reservas**: (Plano Pro) Gestão de itens reservados para clientes antes da faturação.
-*   **POS**: (Plano Pro) Configurações específicas para o Ponto de Venda.
+### Nota sobre POS
 
-### 3.2 Campos Técnicos de Produto (Gestão Logística)
-*   **Custo de Compra**: Essencial para cálculo de margem de lucro.
-*   **Quantidade Inicial**: Saldo do inventário no momento do cadastro.
-*   **Código de Barras**: Permite a venda rápida via scanner.
-*   **Informação de Stock**: Stock Mínimo e Máximo (Smart/Pro) para alertas automáticos.
+O Smart dá acesso ao POS operacional. Isso significa vender no balcão, gerir carrinho, consultar produtos, emitir documentos e acompanhar movimentos básicos do caixa.
 
-### 3.3 Detalhes de Serviço
-*   **Duração/Quantidade**: Unidades de consultoria ou tempo de execução.
-*   **Descrição**: Detalhamento técnico do serviço no modal.
+O Smart não inclui Gestão avançada de POS. A área administrativa de gestão de POS pertence ao plano Pro.
 
----
+## Pro
 
-## 4. Matriz de Funcionalidades por Plano
-O acesso a determinados campos e módulos é controlado via `FeatureGate` e depende da subscrição ativa.
+O Pro adiciona gestão avançada, fornecedores, reservas, auditoria e campos logísticos completos para produtos.
 
-| Funcionalidade / Campo | Plano Grátis | Plano Smart | Plano Pro |
-| :--- | :---: | :---: | :---: |
-| Faturamento Básico (FT, FR) | ✅ | ✅ | ✅ |
-| Cadastro de Clientes/Itens | ✅ | ✅ | ✅ |
-| **Stock Mínimo / Máximo** | ❌ | ✅ | ✅ |
-| **Alertas de Rutura** | ❌ | ✅ | ✅ |
-| **Unidades de Medida** | ❌ | ❌ | ✅ |
-| **Peso e Dimensões** | ❌ | ❌ | ✅ |
-| **Data de Validade/Lote** | ❌ | ❌ | ✅ |
-| **Exportação SAFT** | ❌ | Opcional | ✅ |
-| **Gestão Multi-Loja** | ❌ | ❌ | ✅ |
+### Recursos
 
----
+- Tudo do plano Smart.
+- Gestão de fornecedores.
+- Fornecedor associado ao produto.
+- Reservas de stock.
+- Gestão avançada de POS.
+- Scanner de código de barras por câmara.
+- Unidade de medida.
+- Data de validade.
+- Peso e dimensões.
+- Relatórios avançados.
+- Relatórios de acesso e auditoria.
+- Gestão multi-loja avançada.
+- Assistente MIND com 20 mensagens.
+- Exportação SAF-T quando suportada pelo plano.
+- Impressão em A4 e talão quando suportada pelo plano.
 
-## 5. Lógica de Bloqueio e Proteção
-*   **Subscription PENDING**: O sistema permite navegação mas bloqueia ações de escrita (botões de salvar) exibindo um modal de "Pagamento Pendente".
-*   **Expired/Inactive**: Bloqueia o acesso a módulos operacionais, exigindo a renovação da subscrição.
-*   **FeatureGate**: Esconde automaticamente campos avançados na interface caso o plano atual não os suporte, garantindo uma UI limpa e focada no que o utilizador contratou.
+## Campos de produto por plano
 
----
-*Gerado por Antigravity - Março 2026*
+| Campo/Recurso | Base | Smart | Pro |
+| --- | :---: | :---: | :---: |
+| Nome | Sim | Sim | Sim |
+| Descrição | Sim | Sim | Sim |
+| Categoria | Sim | Sim | Sim |
+| Preço de venda | Sim | Sim | Sim |
+| Custo | Sim | Sim | Sim |
+| Quantidade inicial | Sim | Sim | Sim |
+| Imposto | Sim | Sim | Sim |
+| Código de barras manual | Não | Sim | Sim |
+| Stock mínimo/máximo | Não | Sim | Sim |
+| Fornecedor | Não | Não | Sim |
+| Unidade de medida | Não | Não | Sim |
+| Data de validade | Não | Não | Sim |
+| Peso | Não | Não | Sim |
+| Dimensões | Não | Não | Sim |
+| Scanner por câmara | Não | Não | Sim |
+
+## Módulos por plano
+
+| Módulo | Base | Smart | Pro |
+| --- | :---: | :---: | :---: |
+| Gestão de cliente | Sim | Incluído no Base | Incluído no Smart |
+| Documentos | Sim | Sim | Sim |
+| Items | Sim | Sim | Sim |
+| Notificações | Sim | Sim | Sim |
+| Definições gerais | Sim | Sim | Sim |
+| POS operacional | Não | Sim | Sim |
+| Movimentos de caixa | Não | Sim | Sim |
+| Gestão de stock | Não | Sim | Sim |
+| Relatórios de clientes | Não | Sim | Sim |
+| Aparência | Não | Sim | Sim |
+| Fornecedores | Não | Não | Sim |
+| Reservas | Não | Não | Sim |
+| Gestão avançada de POS | Não | Não | Sim |
+| Relatórios de auditoria | Não | Não | Sim |
+| Limite de mensagens MIND | 10 | 15 | 20 |
+
+## Regras de bloqueio
+
+- Utilizadores sem subscrição ativa ficam limitados por `ProtectedAction`.
+- Recursos por plano são controlados por `FeatureGate`, `PlanGate`, menu com `minPlan` e validação de rota.
+- Operadores de caixa também devem respeitar o plano da empresa para aceder ao POS.
+- Fornecedores são exclusivos do Pro, incluindo listagem, filtros e associação ao produto.

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { currentStoreStore } from "@/stores";
 import { useLogout } from "@/hooks/auth";
+import { OnboardingTourButton } from "@/components/common/onboarding-tour-button";
 
 interface MobileMenuViewProps {
   products: Product[];
@@ -57,9 +58,14 @@ export function MobileMenuView({
             </h1>
           </div>
           <div className="flex items-center gap-2">
+            <OnboardingTourButton
+              tourId="pos-invoice"
+              className="h-10 w-10 rounded-full px-0 sm:w-auto sm:px-3"
+            />
             <button
               onClick={onViewOrder}
               className="w-10 h-10 rounded-full bg-muted flex items-center justify-center relative"
+              data-tour="pos-cart"
             >
               <Icon name="ShoppingBag" size={20} />
             </button>
@@ -86,11 +92,15 @@ export function MobileMenuView({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             inputMode="none"
+            data-tour="pos-product-search"
           />
         </div>
 
         {/* Categories */}
-        <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2 scrollbar-hide">
+        <div
+          className="-mx-4 overflow-x-auto overscroll-x-contain px-4 pb-2 scrollbar-hide"
+          data-tour="pos-categories"
+        >
           <div className="flex w-max gap-3">
             {categories.map((cat) => (
               <button
@@ -118,7 +128,7 @@ export function MobileMenuView({
       </div>
 
       <ScrollArea className="flex-1 px-4">
-        <div className="grid grid-cols-2 gap-4 pb-6">
+        <div className="grid grid-cols-2 gap-4 pb-6" data-tour="pos-products">
           {filteredProducts.map((product) => {
             const cartItem = cartItems?.find((item) => item.id === product.id);
             const isInCart = !!cartItem;
@@ -133,6 +143,7 @@ export function MobileMenuView({
                     : "border-border",
                 )}
                 onClick={() => onAddToCart(product)}
+                data-tour="pos-product-add"
               >
                 <div className="relative aspect-square bg-muted">
                   {product.image ? (

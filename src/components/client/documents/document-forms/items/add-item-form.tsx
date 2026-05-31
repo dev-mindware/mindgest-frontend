@@ -185,9 +185,13 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     const isService = watchedType === "SERVICE";
 
     return (
-      <div className="space-y-4" onKeyDown={handleKeyDown}>
+      <div
+        className="space-y-4"
+        onKeyDown={handleKeyDown}
+        data-tour="normal-invoice-item-form"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2" data-tour="normal-invoice-item-select">
             <AsyncCreatableSelectField
               endpoint="/items"
               label="Produto/Serviço"
@@ -204,7 +208,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             control={control}
             name="quantity"
             render={({ field }) => (
-              <div className="space-y-1">
+              <div className="space-y-1" data-tour="normal-invoice-item-quantity">
                 <Input
                   {...field}
                   min={1}
@@ -248,22 +252,27 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             control={control}
             name="price"
             render={({ field }) => (
-              <InputCurrency
-                ref={field.ref}
-                label="Preço Unitário"
-                value={field.value}
-                onValueChange={(value) => field.onChange(value)}
-                decimalScale={2}
-                fixedDecimalScale
-                allowNegative={false}
-                disabled={isPriceLocked}
-              />
+              <div data-tour="normal-invoice-item-price">
+                <InputCurrency
+                  ref={field.ref}
+                  label="Preço Unitário"
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value)}
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
+                  disabled={isPriceLocked}
+                />
+              </div>
             )}
           /> 
         </div>
 
         {isNewProduct && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+            data-tour="normal-invoice-new-item-fields"
+          >
             <RHFSelect
               name="type"
               label="Tipo de Item"

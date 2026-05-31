@@ -1,4 +1,5 @@
 import { Icon } from "@/components";
+import { includedInAllPlans } from "@/constants/plan-features";
 
 interface FeatureItemProps {
   icon: string;
@@ -24,27 +25,6 @@ function FeatureItem({ icon, title, description }: FeatureItemProps) {
 }
 
 export function PlanInclusionFeatures() {
-  const features = [
-    {
-      icon: "Shield",
-      title: "Segurança Garantida",
-      description:
-        "Seus dados protegidos com criptografia de ponta a ponta e backups diários.",
-    },
-    {
-      icon: "Headphones",
-      title: "Suporte Dedicado",
-      description:
-        "Equipe especializada pronta para ajudar seu negócio a crescer em qualquer canal.",
-    },
-    {
-      icon: "RefreshCw",
-      title: "Atualizações Contínuas",
-      description:
-        "Novos recursos e melhorias de performance constantes inclusos em seu plano.",
-    },
-  ];
-
   return (
     <div className="mt-20 py-16 border-t border-border/50">
       <div className="text-center mb-12">
@@ -54,8 +34,8 @@ export function PlanInclusionFeatures() {
         <div className="h-1.5 w-16 bg-primary-500 rounded-full mx-auto" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto px-4">
-        {features.map((feature) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto px-4">
+        {includedInAllPlans.map((feature) => (
           <FeatureItem key={feature.title} {...feature} />
         ))}
       </div>

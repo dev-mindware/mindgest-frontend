@@ -86,7 +86,9 @@ function AddProductFormContent() {
 
   const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
   const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
-  const hasSuppliers = user?.company?.subscription?.plan?.features?.hasSuppliers ?? (planLevel >= PLAN_HIERARCHY.Smart);
+  const hasSuppliers =
+    user?.company?.subscription?.plan?.features?.hasSuppliers ??
+    (planLevel >= PLAN_HIERARCHY.Pro);
 
   const {
     supplierOptions,
@@ -341,7 +343,7 @@ function AddProductFormContent() {
             </FeatureGate>
           </div>
           <div className="grid grid-cols-1">
-            <FeatureGate minPlan="Smart" fallback="hidden">
+            <FeatureGate minPlan="Pro" fallback="hidden">
               <Controller
                 control={control}
                 name="supplierId"

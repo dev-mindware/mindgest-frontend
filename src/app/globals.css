@@ -1038,3 +1038,98 @@ body {
     display: none !important;
   }
 }
+
+/* Onboarding tours */
+.driver-popover.mindgest-tour-popover {
+  max-width: min(360px, calc(100vw - 32px));
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+  border-radius: 12px;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.18),
+    0 0 0 1px color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-title {
+  color: var(--foreground);
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-description {
+  color: var(--muted-foreground);
+  font-family: var(--font-family);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-footer {
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-progress-text {
+  color: var(--muted-foreground);
+  font-family: var(--font-family);
+  font-size: 12px;
+}
+
+.driver-popover.mindgest-tour-popover button {
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-next-btn {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-prev-btn {
+  border-color: var(--border);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.driver-popover.mindgest-tour-popover .driver-popover-close-btn {
+  color: var(--muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driver-overlay,
+  .driver-stage,
+  .driver-popover {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Premium highlight box glow and pulse */
+.driver-stage {
+  box-shadow: 
+    0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent), 
+    0 8px 30px rgba(0, 0, 0, 0.15) !important;
+  animation: driver-pulse 2.5s infinite ease-in-out !important;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+@keyframes driver-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent), 
+      0 8px 30px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 8px color-mix(in srgb, var(--primary) 30%, transparent), 
+      0 12px 45px rgba(0, 0, 0, 0.22);
+  }
+}

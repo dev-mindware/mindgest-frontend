@@ -28,7 +28,7 @@ export function CustomerSelection({
             : "";
 
     return (
-        <div className="mb-6 space-y-3">
+        <div className="mb-6 space-y-3" data-tour="pos-customer">
             <button
                 onClick={onToggleExpand}
                 className="flex items-center justify-between w-full py-2 group hover:text-primary transition-colors"
@@ -72,7 +72,10 @@ export function CustomerSelection({
 
                     {/* If no selected customer or it's a new one, show phone field */}
                     {(!selectedClient || selectedClient.__isNew__) && (
-                        <div className="space-y-2 pt-2 border-t border-dashed">
+                        <div
+                            className="space-y-2 pt-2 border-t border-dashed"
+                            data-tour="pos-new-customer-phone"
+                        >
                             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                 Telefone do Cliente (Novo)
                             </label>

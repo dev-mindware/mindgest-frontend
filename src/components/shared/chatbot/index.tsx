@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button, Icon } from "@/components";
+import { mindMessageLimitByPlan } from "@/constants/plan-features";
 import { useAuthStore } from "@/stores";
 import { useSendChatMessage } from "@/hooks";
-import { ChatHistoryItem } from "@/types";
+import { ChatHistoryItem, PlanType } from "@/types";
 import { ProtectedAction } from "@/components/guards";
+import { ErrorMessage } from "@/utils/messages";
 
 import { ChatTab } from "./chat-tab";
 import { HistoryTab } from "./history-tab";
@@ -215,6 +217,9 @@ export function ChatbotSheet() {
     ? `${user.company.name.replace(/\s+/g, "_").toLowerCase()}_${user.id}_${new Date().toISOString().split("T")[0]}`
     : "";
   const { mutate: sendMessage, isPending } = useSendChatMessage();
+  const currentPlan =
+    (user?.company?.subscription?.plan?.name as PlanType) || "Base";
+  const mindMessageLimit = mindMessageLimitByPlan[currentPlan] ?? 10;
 
   // Carregar dados do IndexedDB no Mount
   useEffect(() => {
@@ -340,6 +345,13 @@ export function ChatbotSheet() {
 
   const handleSend = () => {
     if (!input.trim() || !user || isPending) return;
+
+    if (totalMessagesUsed >= mindMessageLimit) {
+      ErrorMessage(
+        `Limite de ${mindMessageLimit} mensagens do MIND atingido no plano ${currentPlan}.`,
+      );
+      return;
+    }
 
     const userMsg = input.trim();
     setInput("");
@@ -532,6 +544,7 @@ export function ChatbotSheet() {
             handleTypingComplete={handleTypingComplete}
             messagesEndRef={messagesEndRef}
             totalMessagesUsed={totalMessagesUsed}
+            messageLimit={mindMessageLimit}
           />
 
           <HistoryTab sessions={sessions} openSession={openSession} />

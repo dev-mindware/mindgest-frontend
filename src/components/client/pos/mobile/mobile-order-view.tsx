@@ -35,12 +35,13 @@ export function MobileOrderView({
   const { subtotal, taxAmount, total } = totals;
 
   return (
-    <div className="flex flex-col h-full bg-background pb-16">
+    <div className="flex flex-col h-full bg-background pb-16" data-tour="pos-cart">
       {/* Header */}
       <div className="p-4 flex items-center gap-4 border-b border-border">
         <button 
           onClick={onBack}
           className="w-10 h-10 rounded-full border border-border flex items-center justify-center active:bg-muted"
+          data-tour="pos-back-to-menu"
         >
           <Icon name="ArrowLeft" size={20} />
         </button>
@@ -92,7 +93,10 @@ export function MobileOrderView({
         </div>
 
         {/* Order Summary */}
-        <div className="mt-8 p-4 rounded-2xl bg-muted/30 space-y-3">
+        <div
+          className="mt-8 p-4 rounded-2xl bg-muted/30 space-y-3"
+          data-tour="pos-payment-summary"
+        >
           <h2 className="text-sm font-bold">Resumo do Pedido</h2>
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>Subtotal</span>
@@ -112,6 +116,7 @@ export function MobileOrderView({
           className="w-full mt-2"
           onClick={onProcessTransaction}
           disabled={cartItems.length === 0}
+          data-tour="pos-submit"
         >
           Processar Transação
         </Button>

@@ -20,3 +20,4 @@ export * from "./input-fetch/async-select";
 export * from "./feature-gate";
 export * from "./plan-upgrade-gate";
 export * from "./plan-gate";
+export * from "./onboarding-tour-button";

@@ -50,7 +50,7 @@ export function DocumentList() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="w-full overflow-x-auto scrollbar-none pb-1">
+          <div className="overflow-x-auto scrollbar-none pb-1">
             <TabsList className="flex w-max min-w-full justify-start p-1">
               <TabsTrigger value="invoice" className="whitespace-nowrap">
                 Factura

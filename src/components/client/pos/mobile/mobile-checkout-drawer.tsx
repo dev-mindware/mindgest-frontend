@@ -67,7 +67,7 @@ export function MobileCheckoutDrawer({
             <DrawerTitle>Finalizar Transação</DrawerTitle>
           </DrawerHeader>
           
-          <div className="px-4 overflow-y-auto pb-4 space-y-6">
+          <div className="px-4 overflow-y-auto pb-4 space-y-6" data-tour="pos-checkout">
             <PaymentSummary
                 subtotal={totals.subtotal}
                 taxAmount={totals.taxAmount}
@@ -104,6 +104,7 @@ export function MobileCheckoutDrawer({
                     ErrorMessage("Verifique os campos obrigatórios");
                 })}
                 disabled={isPending}
+                data-tour="pos-submit"
             >
                 {isPending ? "Processando..." : "Confirmar Pagamento"}
             </Button>

@@ -10,30 +10,33 @@ interface PlanUpgradeGateProps {
   featureName?: string;
 }
 
-export function PlanUpgradeGate({ requiredPlan, featureName }: PlanUpgradeGateProps) {
+export function PlanUpgradeGate({
+  requiredPlan,
+  featureName,
+}: PlanUpgradeGateProps) {
   const router = useRouter();
 
   const getPlanBenefits = (plan: PlanType) => {
     switch (plan) {
       case "Pro":
         return [
-          "Acesso ao Ponto de Venda (POS) Avançado",
-          "Gestão de Fornecedores e Encomendas",
-          "Reservas de Estoque e Alertas Críticos",
-          "Relatórios Financeiros e Auditorias Completas",
+          "Gestão de fornecedores",
+          "Reservas de stock",
+          "Gestão avançada de POS",
+          "Relatórios de acesso e auditoria",
         ];
       case "Smart":
         return [
-          "Gestão de Estoque Avançada",
-          "Relatórios Detalhados de Clientes",
-          "Múltiplos Operadores de Caixa",
-          "Suporte Prioritário",
+          "POS operacional para vendas em balcão",
+          "Movimentos e configurações do caixa",
+          "Gestão de stock",
+          "Relatórios de clientes",
         ];
       default:
         return [
-          "Gestão de Clientes e Vendas",
-          "Faturação e Emissão de Documentos",
-          "Relatórios Básicos de Faturação",
+          "Gestão de clientes e vendas",
+          "Faturação e emissão de documentos",
+          "Relatórios básicos de faturação",
         ];
     }
   };
@@ -53,11 +56,16 @@ export function PlanUpgradeGate({ requiredPlan, featureName }: PlanUpgradeGatePr
         <h2 className="text-2xl font-bold tracking-tight text-foreground">
           Recurso Exclusivo do Plano {requiredPlan}
         </h2>
-        
+
         <p className="text-sm text-muted-foreground leading-relaxed">
           {featureName ? (
             <>
-              O recurso <span className="font-semibold text-foreground">{featureName}</span> não está disponível no seu plano atual. Atualize a sua subscrição para desbloquear esta funcionalidade.
+              O recurso{" "}
+              <span className="font-semibold text-foreground">
+                {featureName}
+              </span>{" "}
+              não está disponível no seu plano atual. Atualize a sua subscrição
+              para desbloquear esta funcionalidade.
             </>
           ) : (
             "Esta página exige um plano de subscrição superior para ser acedida."
@@ -71,9 +79,16 @@ export function PlanUpgradeGate({ requiredPlan, featureName }: PlanUpgradeGatePr
             O que está incluído no plano {requiredPlan}:
           </h4>
           <ul className="space-y-2.5">
-            {benefits.map((benefit, index) => (
-              <li key={index} className="flex items-start gap-2.5 text-sm text-foreground/95">
-                <Icon name="Check" className="w-4 h-4 text-green-600 mt-0.5 shrink-0" strokeWidth={3} />
+            {benefits.map((benefit) => (
+              <li
+                key={benefit}
+                className="flex items-start gap-2.5 text-sm text-foreground/95"
+              >
+                <Icon
+                  name="Check"
+                  className="w-4 h-4 text-green-600 mt-0.5 shrink-0"
+                  strokeWidth={3}
+                />
                 <span>{benefit}</span>
               </li>
             ))}

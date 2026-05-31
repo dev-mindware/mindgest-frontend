@@ -50,8 +50,10 @@ export function useAccessControl(allowed: Role[], checkPlan = true): AccessResul
     if (!user) return { status: "unauthenticated" };
     if (!allowed.includes(user.role)) return { status: "unauthorized" };
 
-    // Cashiers bypass plan check
-    if (checkPlan && user.role !== "CASHIER" && matchingItem?.minPlan) {
+    const PLAN_BYPASS_ROLES: Role[] = ["CASHIER"];
+    const shouldCheckPlan = checkPlan && !PLAN_BYPASS_ROLES.includes(user.role);
+
+    if (shouldCheckPlan && matchingItem?.minPlan) {
       const required = PLAN_HIERARCHY[matchingItem.minPlan] ?? 0;
       if (currentPlanLevel < required) {
         const fallbackRoute = getRouteByRole(user.role);
@@ -106,7 +108,7 @@ export function usePlanAccess(): PlanAccessResult {
     return { hasAccess: false, isLoading: true };
   }
 
-  if (!user || user.role === "CASHIER") {
+  if (!user) {
     return { hasAccess: true, isLoading: false };
   }
 

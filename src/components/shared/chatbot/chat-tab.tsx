@@ -69,6 +69,7 @@ interface ChatTabProps {
     handleTypingComplete: (idx: number) => void;
     messagesEndRef: React.RefObject<HTMLDivElement | null>;
     totalMessagesUsed: number;
+    messageLimit: number;
 }
 
 export function ChatTab({
@@ -80,9 +81,10 @@ export function ChatTab({
     handleKeyDown,
     handleTypingComplete,
     messagesEndRef,
-    totalMessagesUsed
+    totalMessagesUsed,
+    messageLimit
 }: ChatTabProps) {
-    const limitReached = totalMessagesUsed >= 10;
+    const limitReached = totalMessagesUsed >= messageLimit;
 
     return (
         <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 outline-none data-[state=inactive]:hidden">
@@ -164,7 +166,7 @@ export function ChatTab({
                     <div className="absolute left-4 bottom-3 flex gap-3 text-[10px] text-muted-foreground/60 font-medium">
                         <span>{input.length}/150</span>
                         <span className={limitReached ? "text-destructive font-semibold" : ""}>
-                            Mensagens: {totalMessagesUsed}/10
+                            Mensagens: {totalMessagesUsed}/{messageLimit}
                         </span>
                     </div>
                     <button

@@ -226,7 +226,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                     pagination={taxPagination}
                     onPageChange={setTaxPage}
                     placeholder="Selecione um imposto"
-                    className="w-full"
+                    className="!w-full"
                   />
                 )}
               />
@@ -263,7 +263,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                     pagination={categoryPagination}
                     onPageChange={setCategoryPage}
                     placeholder="Selecione uma categoria"
-                    className="w-full"
+                    className="!w-full"
                   />
                 )}
               />

@@ -23,7 +23,9 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
 
   const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
   const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
-  const hasSuppliers = user?.company?.subscription?.plan?.features?.hasSuppliers ?? (planLevel >= PLAN_HIERARCHY.Smart);
+  const hasSuppliers =
+    user?.company?.subscription?.plan?.features?.hasSuppliers ??
+    (planLevel >= PLAN_HIERARCHY.Pro);
 
   const {
     supplierOptions,

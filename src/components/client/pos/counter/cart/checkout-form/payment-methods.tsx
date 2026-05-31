@@ -49,7 +49,7 @@ export function PaymentMethods({
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-4" data-tour="pos-payment-methods">
       <div className="flex items-center gap-2 mb-3">
         <div className="flex-1 flex p-1 gap-2 bg-muted/50 rounded-md">
           {(["Credit Card", "Cash"] as PaymentMethod[]).map((method) => (

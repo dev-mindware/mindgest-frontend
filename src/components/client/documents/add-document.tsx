@@ -42,7 +42,10 @@ export function AddDocuments() {
         defaultValue={currentTab}
         onValueChange={handleTabChange}
       >
-        <TabsList className="flex justify-center md:justify-start">
+        <TabsList
+          className="flex justify-center md:justify-start"
+          data-tour="normal-invoice-document-type"
+        >
           <TabsTrigger value="invoice">Factura</TabsTrigger>
           <TabsTrigger value="invoice-receipt">Factura Recibo</TabsTrigger>
           <TabsTrigger value="proforma">Proforma</TabsTrigger>
