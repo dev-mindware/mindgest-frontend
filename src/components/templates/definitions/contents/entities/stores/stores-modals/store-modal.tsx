@@ -34,10 +34,11 @@ export function StoreModal({ action }: StoreModalProps) {
   useEffect(() => {
     if (action === "edit" && currentStore) {
       reset({
-        name: currentStore.name,
-        email: currentStore.email,
-        phone: currentStore.phone,
-        address: currentStore.address,
+        name: currentStore.name || "",
+        code: currentStore.code || "",
+        email: currentStore.email || "",
+        phone: currentStore.phone || "",
+        address: currentStore.address || "",
       });
     }
   }, [action, currentStore, reset]);
@@ -84,6 +85,14 @@ export function StoreModal({ action }: StoreModalProps) {
             placeholder="Ex: Loja Central"
             {...register("name")}
             error={errors.name?.message}
+          />
+
+          <Input
+            label="Código do Estabelecimento"
+            startIcon="Code"
+            placeholder="Ex: 001, SEDE, LU"
+            {...register("code")}
+            error={errors.code?.message}
           />
 
           <Input

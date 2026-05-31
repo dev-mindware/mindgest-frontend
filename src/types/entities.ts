@@ -31,6 +31,7 @@ export interface Stores {
   email: string;
   phone: string;
   address: string;
+  code?: string | null;
   isActive: boolean;
   companyId: string;
   createdAt: string;
