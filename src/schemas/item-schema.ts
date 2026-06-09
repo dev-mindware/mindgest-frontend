@@ -14,8 +14,21 @@ export const itemSchema = z
     maxStock: z.number().nullable().optional(),
 
     unit: z.string().trim().optional(),
-    weight: z.number().nullable().optional(),
-    dimensions: z.string().trim().optional(),
+    weight: z.number({ invalid_type_error: "O peso deve ser um número válido" }).positive("O peso deve ser positivo").optional(),
+    dimensions: z
+      .string()
+      .trim()
+      .optional()
+      .refine(
+        (val) => {
+          if (!val) return true;
+          const regex = /^\d+([.,]\d+)?\s*[xX]\s*\d+([.,]\d+)?(\s*[xX]\s*\d+([.,]\d+)?)?$/;
+          return regex.test(val);
+        },
+        {
+          message: "Formato inválido. Use: 10x20 ou 10x20x30",
+        }
+      ),
     image: z.string().trim().url("URL inválida").optional(),
 
     type: z.enum(["SERVICE", "PRODUCT"], {
@@ -25,11 +38,12 @@ export const itemSchema = z
     companyId: z.string().trim().optional(),
     storeId: z.string().trim().optional(),
     categoryId: z.string().trim().min(1, "Campo obrigatório"),
+    supplierId: z.string().trim().nullable().optional(),
 
     hasExpiry: z.boolean().optional(),
     expiryDate: z.string().trim().optional(),
     daysToExpiry: z.coerce.string().optional(),
-    taxId: z.string().trim().optional().nullable(),
+    taxId: z.string().trim(),
   })
 
   .refine(

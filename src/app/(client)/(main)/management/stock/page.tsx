@@ -3,7 +3,7 @@ import { StockManagementContent } from "@/components/client/management";
 
 export default function StockPage() {
   return (
-    <PageWrapper subRoute="Gestão de Estoque">
+    <PageWrapper subRoute="Gestão de Estoque" onboardingTourId="stock">
       <StockManagementContent />
     </PageWrapper>
   );

@@ -16,6 +16,7 @@ import { useDebounce } from "use-debounce";
 import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { useRouter } from "next/navigation";
+import { CloneInvoiceModal } from "../modals/clone-invoice-modal";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { useState } from "react";
 import {
@@ -30,7 +31,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search_invoice-receipt");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
-  const { handlerDetailsInvoice } = useInvoiceActions();
+  const { handlerDetailsInvoice, handlerCloneInvoice } = useInvoiceActions();
   const { openModal } = useModal();
 
   const [pendingRoute, setPendingRoute] = useState<string | null>(null);
@@ -82,10 +83,12 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
             {
               label: "Ver Factura",
               onClick: handlerDetailsInvoice,
+              icon: "Eye",
+              variant: "default",
             },
             {
               label: "Emitir Nota",
-              onClick: () => {
+              onClick: (item) => {
                 const isCashier = user?.role === "CASHIER";
                 const route = isCashier
                   ? `/pos/movements/notes/${item.id}`
@@ -98,7 +101,19 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
                   router.push(route);
                 }
               },
+              icon: "StickyNote",
+              variant: "default",
             },
+            ...(item.status === "PAID"
+              ? [
+                {
+                  label: "Clonar Factura",
+                  onClick: handlerCloneInvoice,
+                  icon: "Copy",
+                  variant: "default",
+                } as const,
+              ]
+              : []),
           ]}
         />
       ),
@@ -150,6 +165,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
         </div>
       )}
       <InvoicePreviewDrawer type="invoice-receipt" />
+      <CloneInvoiceModal />
       <ManagerAuthModal
         onAuthenticated={() => {
           if (pendingRoute) router.push(pendingRoute);

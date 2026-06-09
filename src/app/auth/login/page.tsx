@@ -1,10 +1,10 @@
-import { HeroImageSide, LoginForm } from "@/components";
+import { LoginForm, HeroImageSide } from "@/components";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2">
       <div className="hidden lg:block">
-        <HeroImageSide source="/login.svg" />
+        <HeroImageSide source="/login.png" />
       </div>
 
       <div className="flex items-center justify-center bg-background p-6 md:p-10">

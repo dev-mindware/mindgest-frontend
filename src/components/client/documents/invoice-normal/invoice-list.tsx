@@ -17,6 +17,7 @@ import { DocumentStatusBadge, InvoiceFiltersTSX } from "../common";
 import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { GenerateReceiptModal } from "../modals/generate-receipt-modal";
 import { CancelInvoiceModal } from "../modals/cancel-invoice-modal";
+import { CloneInvoiceModal } from "../modals/clone-invoice-modal";
 import { useRouter } from "next/navigation";
 import { useURLSearchParams } from "@/hooks/common";
 
@@ -29,6 +30,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
     handlerGenerateReceipt,
     handlerCancelInvoice,
     handlerDetailsInvoice,
+    handlerCloneInvoice,
   } = useInvoiceActions();
   const {
     data: invoices,
@@ -86,34 +88,45 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
             {
               label: "Ver Fatura",
               onClick: handlerDetailsInvoice,
+              icon: "Eye",
+              variant: "default",
             },
-
             ...(item.status === "DRAFT"
               ? [
                 {
                   label: "Cancelar Fatura",
                   onClick: handlerCancelInvoice,
-                },
+                  icon: "Ban",
+                  variant: "destructive",
+                } as const,
               ]
               : []),
-
             ...(item.status !== "PAID"
               ? [
                 {
                   label: "Gerar Recibo",
                   onClick: handlerGenerateReceipt,
-                },
+                  icon: "FileText",
+                  variant: "default",
+                } as const,
               ]
               : []),
-
             ...(item.status === "PAID"
               ? [
                 {
                   label: "Emitir Nota",
-                  onClick: () => {
+                  onClick: (item: InvoiceResponse) => {
                     router.push(`/documents/notes/${item.id}`);
                   },
-                },
+                  icon: "StickyNote",
+                  variant: "default",
+                } as const,
+                {
+                  label: "Clonar Factura",
+                  onClick: handlerCloneInvoice,
+                  icon: "Copy",
+                  variant: "default",
+                } as const,
               ]
               : []),
           ]}
@@ -168,6 +181,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
         <>
           <GenerateReceiptModal />
           <CancelInvoiceModal />
+          <CloneInvoiceModal />
           <InvoicePreviewDrawer type="invoice" />
         </>
       )}

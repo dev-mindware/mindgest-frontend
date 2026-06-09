@@ -60,7 +60,10 @@ export const CartList = React.memo<CartSectionProps>(
         cashSessionId,
     }) => {
         return (
-            <div className="flex flex-col bg-sidebar rounded-md shadow-sm p-4 m-4 mt-2 border border-border/50 h-auto">
+            <div
+                className="flex flex-col bg-sidebar rounded-md shadow-sm p-4 m-4 mt-2 border border-border/50 h-auto"
+                data-tour="pos-cart"
+            >
                 <h2 className="text-xl font-bold mb-4">
                     {type === "invoice" ? "Faturação" : "Proforma"}
                 </h2>

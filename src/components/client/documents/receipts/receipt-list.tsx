@@ -84,7 +84,14 @@ export function ReceiptList({ storeId }: { storeId?: string }) {
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
-          actions={[{ label: "Ver Recibo", onClick: handleViewReceipt }]}
+          actions={[
+            {
+              label: "Ver Recibo",
+              onClick: handlerDetailsReceipt,
+              icon: "Eye",
+              variant: "default",
+            },
+          ]}
         />
       ),
     },

@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import {
   Select,
   SelectContent,
@@ -9,12 +8,16 @@ import {
   Separator,
   Label,
   Switch,
-} from "@/components"
+} from "@/components";
+import { cn } from "@/lib/utils";
+import { useNotificationSettingsStore } from "@/stores/notifications/notification-settings-store";
 
 export function Notification() {
+  const { pushEnabled, badgeEnabled, setPushEnabled, setBadgeEnabled } =
+    useNotificationSettingsStore();
+
   return (
     <div>
-      {/* Notificações */}
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-semibold">Notificações</h2>
@@ -28,7 +31,9 @@ export function Notification() {
           <SettingRow
             label="Ativar notificações"
             description="Receber notificações de todas as mensagens, faturas, documentos..."
-            control={<Switch />}
+            control={
+              <Switch checked={pushEnabled} onCheckedChange={setPushEnabled} />
+            }
           />
 
           <Separator />
@@ -36,25 +41,13 @@ export function Notification() {
           <SettingRow
             label="Ativar selo de notificação não lida"
             description="Apresentar um emblema no ícone de notificação quando tem mensagens não lidas"
-            control={<Switch />}
-          />
-
-          <Separator />
-
-          <SettingRow
-            label="Desativar Notificações durante:"
+            disabled={!pushEnabled}
             control={
-              <Select defaultValue="10 minutos">
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Escolha o tempo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10 minutos">10 minutos</SelectItem>
-                  <SelectItem value="30 minutos">30 minutos</SelectItem>
-                  <SelectItem value="1 hora">1 hora</SelectItem>
-                  <SelectItem value="4 horas">4 horas</SelectItem>
-                </SelectContent>
-              </Select>
+              <Switch
+                checked={badgeEnabled}
+                onCheckedChange={setBadgeEnabled}
+                disabled={!pushEnabled}
+              />
             }
           />
 
@@ -89,60 +82,28 @@ export function Notification() {
           <Separator />
         </div>
       </section>
-
-    
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Sons</h2>
-          <p className="text-sm text-muted-foreground">
-            Personalize o som das notificações MindGest.
-          </p>
-        </div>
-        <Separator />
-
-        <div className="space-y-6 md:p-8">
-          <SettingRow
-            label="Desativar o som nas notificações"
-            control={<Switch />}
-          />
-
-          <Separator />
-
-          <SettingRow
-            label="Som padrão"
-            control={
-              <Select defaultValue="Paradise">
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Escolha o som" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Paradise">Paradise</SelectItem>
-                  <SelectItem value="Beep">Beep</SelectItem>
-                  <SelectItem value="Wave">Wave</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-          />
-
-          <Separator />
-        </div>
-      </section>
     </div>
-  )
+  );
 }
 
-// Componente reutilizável para linha de configuração
 function SettingRow({
   label,
   description,
   control,
+  disabled,
 }: {
-  label: string
-  description?: string
-  control: React.ReactNode
+  label: string;
+  description?: string;
+  control: React.ReactNode;
+  disabled?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      className={cn(
+        "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between transition-opacity",
+        disabled && "opacity-50 pointer-events-none",
+      )}
+    >
       <div className="max-w-md">
         <Label className="block">{label}</Label>
         {description && (
@@ -151,5 +112,5 @@ function SettingRow({
       </div>
       <div className="mt-2 sm:mt-0">{control}</div>
     </div>
-  )
+  );
 }

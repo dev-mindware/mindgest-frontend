@@ -35,7 +35,7 @@ export function NotificationItem({
   return (
     <div
       className={cn(
-        "group flex items-start gap-3 p-4 hover:bg-card transition-colors duration-150 relative cursor-pointer",
+        "group flex items-start gap-3 p-4 transition-colors duration-150 relative cursor-pointer",
         !notification.isRead ? "bg-primary/2" : ""
       )}
       onClick={onClick}
@@ -46,7 +46,7 @@ export function NotificationItem({
           style.colorClass
         )}
       >
-        <Icon name={style.icon} className="w-5 h-5" />
+        <Icon name={style.icon} className="w-5 h-5 text-primary" />
       </div>
 
       <div className="flex-1 min-w-0 text-left">

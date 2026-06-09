@@ -7,6 +7,7 @@ import {
   Button,
   Textarea,
   GlobalModal,
+  RHFSelect,
   RequestError,
   ButtonSubmit,
   CategoryModal,
@@ -17,10 +18,32 @@ import {
 import { PaginatedSelect } from "@/components/shared";
 import { useModal } from "@/stores";
 import { ItemFormData, itemSchema } from "@/schemas";
-import { useUpdateItem, useCategoriesSelect, useTaxesSelect, useAuth } from "@/hooks";
+import {
+  useUpdateItem,
+  useCategoriesSelect,
+  useTaxesSelect,
+  useAuth,
+} from "@/hooks";
 import { ErrorMessage } from "@/utils/messages";
 import { useMemo } from "react";
 import { ItemResponse } from "@/types";
+import { useGetSuppliersSelect } from "@/hooks/entities/use-suppliers";
+import { PLAN_HIERARCHY, PlanType } from "@/types/subscription";
+
+const UNIT_OPTIONS = [
+  { label: "Nenhuma (Sem Unidade)", value: "none" },
+  { label: "Unidade (un)", value: "un" },
+  { label: "Quilograma (kg)", value: "kg" },
+  { label: "Grama (g)", value: "g" },
+  { label: "Litro (l)", value: "l" },
+  { label: "Mililitro (ml)", value: "ml" },
+  { label: "Metro (m)", value: "m" },
+  { label: "Metro Quadrado (m²)", value: "m2" },
+  { label: "Caixa (cx)", value: "cx" },
+  { label: "Pacote (pct)", value: "pct" },
+  { label: "Par (par)", value: "par" },
+  { label: "Dúzia (dz)", value: "dz" },
+];
 
 interface EditProductModalProps {
   product: ItemResponse;
@@ -62,7 +85,8 @@ export function EditProductModal({ product }: EditProductModalProps) {
 function EditProductFormContent({ product }: EditProductModalProps) {
   const { user } = useAuth();
   const { closeModal } = useModal();
-  const { mutateAsync: updateItemMutate, isPending: isUpdating } = useUpdateItem();
+  const { mutateAsync: updateItemMutate, isPending: isUpdating } =
+    useUpdateItem();
 
   const {
     categoryOptions,
@@ -72,13 +96,36 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     pagination,
     setPage,
   } = useCategoriesSelect();
-  const { taxOptions, isLoading: isTaxesLoading, pagination: taxPagination, setPage: setTaxPage } = useTaxesSelect();
+  const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+  const planLevel = PLAN_HIERARCHY[currentPlan] || 0;
+  const hasSuppliers =
+    user?.company?.subscription?.plan?.features?.hasSuppliers ??
+    (planLevel >= PLAN_HIERARCHY.Pro);
+
+  const {
+    supplierOptions,
+    isLoading: isLoadingSuppliers,
+    isError: isErrorSuppliers,
+    refetch: refetchSuppliers,
+    pagination: paginationSuppliers,
+    setPage: setPageSuppliers,
+  } = useGetSuppliersSelect(hasSuppliers);
+  const {
+    taxOptions,
+    isLoading: isTaxesLoading,
+    pagination: taxPagination,
+    setPage: setTaxPage,
+  } = useTaxesSelect();
 
   const finalCategoryOptions = useMemo(() => {
     const currentId = product.categoryId || (product as any).category_id;
     const currentName = product.category;
 
-    if (currentId && currentName && !categoryOptions.find((o) => o.value === currentId)) {
+    if (
+      currentId &&
+      currentName &&
+      !categoryOptions.find((o) => o.value === currentId)
+    ) {
       return [{ label: currentName, value: currentId }, ...categoryOptions];
     }
     return categoryOptions;
@@ -86,13 +133,34 @@ function EditProductFormContent({ product }: EditProductModalProps) {
 
   const finalTaxOptions = useMemo(() => {
     const currentId = product.taxId || product.tax?.id;
-    const currentName = product.tax?.name ? `${product.tax.name} (${product.tax.rate}%)` : null;
+    const currentName = product.tax?.name
+      ? `${product.tax.name} (${product.tax.rate}%)`
+      : null;
 
-    if (currentId && currentName && !taxOptions.find((o) => o.value === currentId)) {
+    if (
+      currentId &&
+      currentName &&
+      !taxOptions.find((o) => o.value === currentId)
+    ) {
       return [{ label: currentName, value: currentId }, ...taxOptions];
     }
     return taxOptions;
   }, [product, taxOptions]);
+
+  const finalSupplierOptions = useMemo(() => {
+    if (!hasSuppliers) return [];
+    const currentId = product.supplierId || (product as any).supplier_id;
+    const currentName = product.supplierName;
+
+    if (
+      currentId &&
+      currentName &&
+      !supplierOptions.find((o) => o.value === currentId)
+    ) {
+      return [{ label: currentName, value: currentId }, ...supplierOptions];
+    }
+    return supplierOptions;
+  }, [product, supplierOptions, hasSuppliers]);
 
   const {
     reset,
@@ -102,6 +170,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     formState: { errors, isSubmitting },
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
+    mode: "onChange",
     defaultValues: {
       name: product.name || "",
       description: product.description || "",
@@ -114,11 +183,12 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       unit: product.unit || "",
       weight: product.weight != null ? Number(product.weight) : undefined,
       dimensions: product.dimensions || "",
+      supplierId: product.supplierId || null,
       type: "PRODUCT",
       companyId: String(user?.company?.id),
       categoryId: product.categoryId || (product as any).category_id || "",
       taxId: product.taxId || product.tax?.id || "",
-      expiryDate: product.expiryDate ? product.expiryDate.split('T')[0] : "",
+      expiryDate: product.expiryDate ? product.expiryDate.split("T")[0] : "",
     },
   });
 
@@ -131,6 +201,8 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
+      supplierId: data.supplierId || null,
+      unit: data.unit === "none" || !data.unit ? undefined : data.unit,
     } as any;
   };
 
@@ -146,7 +218,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao atualizar o item"
+        error?.response?.data?.message || "Ocorreu um erro ao atualizar o item",
       );
     }
   }
@@ -156,12 +228,16 @@ function EditProductFormContent({ product }: EditProductModalProps) {
     closeModal("edit-product");
   };
 
-  if (isLoadingCategories || isTaxesLoading) return <ProductModalSkeleton />;
-  if (isError) {
+  if (isLoadingCategories || isTaxesLoading || (hasSuppliers && isLoadingSuppliers))
+    return <ProductModalSkeleton />;
+  if (isError || (hasSuppliers && isErrorSuppliers)) {
     return (
       <RequestError
-        refetch={refetch}
-        message="Ocorreu um erro ao carregar as categorias"
+        refetch={() => {
+          refetch();
+          if (hasSuppliers) refetchSuppliers();
+        }}
+        message="Ocorreu um erro ao carregar os dados"
       />
     );
   }
@@ -272,46 +348,58 @@ function EditProductFormContent({ product }: EditProductModalProps) {
             />
           </div>
 
-          <FeatureGate minPlan="Pro" fallback="hidden">
-            <div className="grid grid-cols-2 gap-4">
-              <Controller
-                control={control}
-                name="minStock"
-                render={({ field }) => (
-                  <Input
-                    type="quantity"
-                    startIcon="Scale"
-                    label="Stock Mínimo"
-                    value={field.value ?? 0}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    error={errors.minStock?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="maxStock"
-                render={({ field }) => (
-                  <Input
-                    type="quantity"
-                    startIcon="Scale"
-                    label="Stock Máximo"
-                    value={field.value ?? 0}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    error={errors.maxStock?.message}
-                  />
-                )}
-              />
+          <FeatureGate minPlan="Smart" fallback="hidden">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Input
+                  label="Código de Barras (Opcional)"
+                  placeholder="Ex: 7891234567890"
+                  {...register("barcode")}
+                  error={errors.barcode?.message}
+                  startIcon="Barcode"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  control={control}
+                  name="minStock"
+                  render={({ field }) => (
+                    <Input
+                      type="quantity"
+                      startIcon="Scale"
+                      label="Stock Mínimo"
+                      value={field.value ?? 0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      error={errors.minStock?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="maxStock"
+                  render={({ field }) => (
+                    <Input
+                      type="quantity"
+                      startIcon="Scale"
+                      label="Stock Máximo"
+                      value={field.value ?? 0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      error={errors.maxStock?.message}
+                    />
+                  )}
+                />
+              </div>
             </div>
           </FeatureGate>
 
           <div className="grid grid-cols-2 gap-4">
             <FeatureGate minPlan="Pro" fallback="hidden">
-              <Input
-                startIcon="Scale"
-                {...register("unit")}
+              <RHFSelect
+                control={control}
+                name="unit"
                 label="Unidade de Medida (Opcional)"
-                error={errors.unit?.message}
+                options={UNIT_OPTIONS}
+                placeholder="Selecione uma unidade"
               />
               <Input
                 type="date"
@@ -321,21 +409,60 @@ function EditProductFormContent({ product }: EditProductModalProps) {
               />
             </FeatureGate>
           </div>
+          <div className="grid grid-cols-1">
+            <FeatureGate minPlan="Pro" fallback="hidden">
+              <Controller
+                control={control}
+                name="supplierId"
+                render={({ field: { onChange, value } }) => (
+                  <PaginatedSelect
+                    label="Fornecedor (Opcional)"
+                    value={value}
+                    onChange={onChange}
+                    options={finalSupplierOptions}
+                    isLoading={isLoadingSuppliers}
+                    pagination={paginationSuppliers}
+                    onPageChange={setPageSuppliers}
+                    className="w-full"
+                    placeholder="Selecione um aopção"
+                  />
+                )}
+              />
+            </FeatureGate>
+          </div>
 
           <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-2 gap-4">
               <Input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 startIcon="Weight"
                 label="Peso (Kg) (opcional)"
-                {...register("weight", { valueAsNumber: true })}
+                {...register("weight", {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9.,]/g, "");
+                  },
+                  setValueAs: (v) => {
+                    if (v === "" || v === null || v === undefined)
+                      return undefined;
+                    const trimmed = String(v).trim();
+                    if (trimmed === "") return undefined;
+                    const normalized = trimmed.replace(",", ".");
+                    const parsed = Number(normalized);
+                    return isNaN(parsed) ? "invalid" : parsed;
+                  },
+                })}
                 error={errors.weight?.message}
-                placeholder="300Kg"
+                placeholder="Ex: 0.24"
               />
               <Input
                 label="Dimensões (opcional)"
-                placeholder="Ex: 10x20x30 cm"
-                {...register("dimensions")}
+                placeholder="Ex: 10x20x30"
+                {...register("dimensions", {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9xX\s.,]/g, "");
+                  }
+                })}
                 error={errors.dimensions?.message}
               />
             </div>
@@ -354,7 +481,10 @@ function EditProductFormContent({ product }: EditProductModalProps) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit className="w-max" isLoading={isUpdating || isSubmitting}>
+          <ButtonSubmit
+            className="w-max"
+            isLoading={isUpdating || isSubmitting}
+          >
             Atualizar
           </ButtonSubmit>
         </div>

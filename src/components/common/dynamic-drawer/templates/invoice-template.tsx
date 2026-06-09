@@ -51,10 +51,6 @@ export function InvoiceTemplate({ type, data, hideDueDate, hideActions, changeVa
           <h3 className="font-semibold mb-1 text-muted-foreground">Cliente</h3>
           <p className="font-medium text-lg">{data.client.name}</p>
         </div>
-        <div className="text-right">
-          <h3 className="font-semibold mb-1 text-muted-foreground">Estado</h3>
-          <DocumentStatusBadge status={data.status} />
-        </div>
       </div>
 
       <div className="border rounded-lg overflow-hidden">

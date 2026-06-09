@@ -1,29 +1,56 @@
 import type { Metadata } from "next";
+import "driver.js/dist/driver.css";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib";
-import { Inter, Outfit, } from "next/font/google";
+import {
+  Inter,
+  Outfit,
+  Roboto,
+  Poppins,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import { ThemeProvider } from "@/providers";
 import { CustomToaster } from "@/utils";
 import { SidebarProvider } from "@/components";
 import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { NotificationDetail } from "@/components/shared/notifications";
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { PwaServiceWorkerRegister } from "@/components/shared/pwa-service-worker-register";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-outfit",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jakarta",
 });
 
 export const metadata: Metadata = {
   title: "MindGest",
   description: "Software de Gestão e Faturação",
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: "/mindware.png",
+    apple: "/logo.png",
   },
 };
 
@@ -36,7 +63,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable}  ${outfit.variable}`}
+      className={`${inter.variable} ${outfit.variable} ${roboto.variable} ${poppins.variable} ${plusJakartaSans.variable}`}
     >
       <body
         className="antialiased"
@@ -55,9 +82,9 @@ export default function RootLayout({
           <ReactQueryProvider>
             <AuthProvider>
               <NuqsAdapter>
+                <PwaServiceWorkerRegister />
                 <SidebarProvider>{children}</SidebarProvider>
                 <CustomToaster />
-                <NotificationDetail />
               </NuqsAdapter>
             </AuthProvider>
           </ReactQueryProvider>

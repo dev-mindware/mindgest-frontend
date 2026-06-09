@@ -21,6 +21,7 @@ import { api } from "@/services/api";
 import { ErrorMessage, SucessMessage } from "@/utils/messages";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { ProtectedAction } from "@/components/guards";
 
 export function SaftExportCard() {
   const currentYear = new Date().getFullYear();
@@ -133,23 +134,25 @@ export function SaftExportCard() {
           </div>
         </div>
 
-        <Button
-          onClick={handleExport}
-          disabled={isExporting}
-          className="w-full"
-        >
-          {isExporting ? (
-            <>
-              <Download className="mr-2 h-4 w-4 animate-pulse" />
-              Exportando...
-            </>
-          ) : (
-            <>
-              <Download className="mr-2 h-4 w-4" />
-              Exportar SAFT
-            </>
-          )}
-        </Button>
+        <ProtectedAction>
+          <Button
+            onClick={handleExport}
+            disabled={isExporting}
+            className="w-full"
+          >
+            {isExporting ? (
+              <>
+                <Download className="mr-2 h-4 w-4 animate-pulse" />
+                Exportando...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                Exportar SAFT
+              </>
+            )}
+          </Button>
+        </ProtectedAction>
       </CardContent>
     </Card>
   );

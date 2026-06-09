@@ -45,8 +45,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const propagateChange = (newValue: number) => {
       if (onChange) {
         const event = {
-          target: { name: name || "", value: String(newValue) },
-          currentTarget: { name: name || "", value: String(newValue) },
+          target: { name: name || "", value: String(newValue), type: "number", valueAsNumber: newValue },
+          currentTarget: { name: name || "", value: String(newValue), type: "number", valueAsNumber: newValue },
         } as unknown as React.ChangeEvent<HTMLInputElement>;
         onChange(event);
       }
@@ -63,7 +63,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = Number(e.target.value);
+      let rawValue = e.target.value;
+      if (rawValue.length > 1 && rawValue.startsWith("0")) {
+        rawValue = rawValue.replace(/^0+/, "");
+        if (rawValue === "") rawValue = "0";
+      }
+      e.target.value = rawValue;
+
+      const newValue = Number(rawValue);
       propagateChange(isNaN(newValue) ? 0 : newValue);
     };
 

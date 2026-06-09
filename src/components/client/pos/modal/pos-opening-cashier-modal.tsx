@@ -87,15 +87,17 @@ export function PosOpeningCashierModal({ onSuccess }: PosOpeningCashierModalProp
 
         try {
             const payload = {
-                ...pendingData,
-                storeId: currentStore?.id,
+                initialCapital: pendingData.initialCapital || "0",
+                workTime: pendingData.workTime || "08:00",
+                storeId: currentStore?.id || pendingData.storeId || "",
+                fundType: (pendingData.fundType || "COIN").toUpperCase(),
+                cashierIds: pendingData.cashierIds?.length ? pendingData.cashierIds : (user?.id ? [user.id] : []),
                 managerBarcode: barcode,
-                cashierIds: user?.id ? [user.id] : []
             };
 
             console.log("Enviando payload para abertura de caixa:", payload);
 
-            await cashSessionsService.openSession(payload);
+            await cashSessionsService.authorizeOpening(payload as any);
             SucessMessage("Sessão de caixa aberta com sucesso!");
             if (onSuccess) onSuccess();
             handleClose();
@@ -197,8 +199,8 @@ export function PosOpeningCashierModal({ onSuccess }: PosOpeningCashierModalProp
                                     label="Tipo de Fundo"
                                     placeholder="Selecione"
                                     options={[
-                                        { label: "Moeda", value: "Coin" },
-                                        { label: "Nota", value: "Note" },
+                                        { label: "Moeda", value: "COIN" },
+                                        { label: "Nota", value: "NOTE" },
                                     ]}
                                 />
 

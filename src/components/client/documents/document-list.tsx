@@ -17,6 +17,7 @@ import { ReceiptList } from "./receipts";
 import { CreditNotesList } from "./credits-notes";
 import { cn } from "@/lib";
 import { currentStoreStore } from "@/stores";
+import { ProtectedAction } from "@/components/guards";
 
 type DocumentTab =
   | "invoice"
@@ -42,16 +43,17 @@ export function DocumentList() {
 
   return (
     <div className="space-y-6">
-      <TitleList
-        title="Documentos"
-        suTitle="Crie documentos que ajudaram no controlo das suas atividades"
-      />
+      <div data-tour="documents-header">
+        <TitleList
+          title="Documentos"
+          suTitle="Crie documentos que ajudaram no controlo das suas atividades"
+        />
+      </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Scrollable tabs on mobile */}
-          <div className="overflow-x-auto">
-            <TabsList className="w-full sm:w-auto inline-flex">
+          <div className="overflow-x-auto scrollbar-none pb-1" data-tour="documents-tabs">
+            <TabsList className="flex w-max min-w-full justify-start p-1">
               <TabsTrigger value="invoice" className="whitespace-nowrap">
                 Factura
               </TabsTrigger>
@@ -70,39 +72,42 @@ export function DocumentList() {
             </TabsList>
           </div>
 
-          {/* Button stacks below on mobile, inline on larger screens */}
-          <Link
-            className={cn("w-full sm:w-auto", {
-              "pointer-events-none cursor-not-allowed": activeTab === "credit-notes",
-            })}
-            href={`/documents/new-doc?tab=${activeTab}`}
-          >
-            <Button
-              className="w-full sm:w-auto disabled:cursor-not-allowed"
-              disabled={activeTab === "credit-notes"}
-            >
-              Criar Documento
-            </Button>
-          </Link>
+          <div data-tour="documents-create">
+            <ProtectedAction>
+              <Link
+                className={cn("w-full sm:w-auto", {
+                  "pointer-events-none cursor-not-allowed": activeTab === "credit-notes",
+                })}
+                href={`/documents/new-doc?tab=${activeTab}`}
+              >
+                <Button
+                  className="w-full sm:w-auto disabled:cursor-not-allowed"
+                  disabled={activeTab === "credit-notes"}
+                >
+                  Criar Documento
+                </Button>
+              </Link>
+            </ProtectedAction>
+          </div>
         </div>
 
-        <TabsContent value="invoice">
+        <TabsContent value="invoice" data-tour="documents-list">
           <InvoiceList storeId={currentStore?.id} />
         </TabsContent>
 
-        <TabsContent value="proforma">
+        <TabsContent value="proforma" data-tour="documents-list">
           <ProformaList storeId={currentStore?.id} />
         </TabsContent>
 
-        <TabsContent value="invoice-receipt">
+        <TabsContent value="invoice-receipt" data-tour="documents-list">
           <InvoiceReceiptList storeId={currentStore?.id} />
         </TabsContent>
 
-        <TabsContent value="receipt">
+        <TabsContent value="receipt" data-tour="documents-list">
           <ReceiptList storeId={currentStore?.id} />
         </TabsContent>
 
-        <TabsContent value="credit-notes">
+        <TabsContent value="credit-notes" data-tour="documents-list">
           <CreditNotesList storeId={currentStore?.id} />
         </TabsContent>
       </Tabs>

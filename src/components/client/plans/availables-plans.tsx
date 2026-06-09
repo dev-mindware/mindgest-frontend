@@ -16,27 +16,26 @@ import { useAuth, usePlans } from "@/hooks";
 import { useCurrentPlanStore } from "@/stores";
 import { formatCurrency, getPlanFeatures } from "@/utils";
 import { PlanInclusionFeatures } from "./plan-inclusion-features";
+import { useRouter } from "next/navigation";
 
 export function AvailablePlans() {
+  const router = useRouter();
   const { user, subscriptionStatus } = useAuth();
   const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
 
   const currentPlan = user?.company?.subscription.plan;
   const isCurrentPlan = (plan: Plan) => plan.id === currentPlan?.id;
-  const isPending = subscriptionStatus === "PENDING";
 
   function onHandlerChoosePlan(plan: Plan) {
     setCurrentPlanSelected(plan);
-    window.open("/checkout", "_blank");
+    router.push("/checkout");
   }
-
-
 
   return (
     <div>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16" data-tour="plans-header">
           <h1 className="text-4xl font-bold text-foreground mb-4">
             Escolha o Plano Ideal para o Seu Negócio
           </h1>
@@ -50,7 +49,7 @@ export function AvailablePlans() {
           <PlansPageSkeleton />
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-tour="plans-grid">
               {plans.map((plan, index) => {
                 const isPopular = index === 1;
                 const isCurrent = isCurrentPlan(plan);
@@ -112,11 +111,13 @@ export function AvailablePlans() {
                       <Button
                         size="lg"
                         className="w-full"
-                        disabled={isCurrent || isPending}
+                        disabled={isCurrent && subscriptionStatus !== "TRIALING"}
                         variant={isPopular ? "default" : "outline"}
                         onClick={() => onHandlerChoosePlan(plan)}
                       >
-                        {isCurrent ? "Plano Atual" : `Escolher ${plan.name}`}
+                        {isCurrent && subscriptionStatus !== "TRIALING"
+                          ? "Plano Atual"
+                          : `Escolher ${plan.name}`}
                       </Button>
                     </CardFooter>
                   </Card>

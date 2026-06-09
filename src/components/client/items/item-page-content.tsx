@@ -24,6 +24,7 @@ import { currentProductStore, useModal } from "@/stores";
 import { ChevronDown, Plus, Barcode, Keyboard } from "lucide-react";
 import { BarcodeScannerModal, BARCODE_SCANNER_MODAL_ID } from "./products/product-modals/barcode-scanner-modal";
 import { FeatureGate } from "@/components";
+import { ProtectedAction } from "@/components/guards";
 
 type ItemTab = "product" | "service";
 
@@ -55,15 +56,17 @@ export function ItemsPageContent() {
 
   return (
     <div className="space-y-6">
+      <div data-tour="items-header">
       <TitleList
         title={activeTab === "product" ? "Produtos" : "Serviços"}
         suTitle={`Faça a gestão dos seus ${activeTab === "product" ? "produtos" : "serviços"
           } listados.`}
       />
+      </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <TabsList className="w-full sm:w-auto">
+          <TabsList className="w-full sm:w-auto" data-tour="items-tabs">
             <TabsTrigger value="product" className="flex-1 sm:flex-none">
               Produtos
             </TabsTrigger>
@@ -73,48 +76,63 @@ export function ItemsPageContent() {
           </TabsList>
 
           {activeTab === "product" ? (
+            <div data-tour="items-create">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="flex items-center gap-2 w-full sm:w-auto">
-                  <Plus className="h-4 w-4" />
-                  Novo Produto
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
+              <ProtectedAction>
+                <DropdownMenuTrigger asChild>
+                  <Button className="flex items-center gap-2 w-full sm:w-auto">
+                    <Plus className="h-4 w-4" />
+                    Novo Produto
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+              </ProtectedAction>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={() => openModal("add-product")}
-                  className="flex items-center gap-2"
-                >
-                  <Keyboard className="h-4 w-4" />
-                  Manual
-                </DropdownMenuItem>
-                <FeatureGate minPlan="Pro" fallback="disabled">
+                <ProtectedAction>
                   <DropdownMenuItem
-                    onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
+                    data-tour="items-create-manual"
+                    onClick={() => openModal("add-product")}
                     className="flex items-center gap-2"
                   >
-                    <Barcode className="h-4 w-4" />
-                    Código de Barra
+                    <Keyboard className="h-4 w-4" />
+                    Manual
                   </DropdownMenuItem>
+                </ProtectedAction>
+                
+                <FeatureGate minPlan="Pro" fallback="disabled">
+                  <ProtectedAction>
+                    <DropdownMenuItem
+                      data-tour="items-create-barcode"
+                      onClick={() => openModal(BARCODE_SCANNER_MODAL_ID)}
+                      className="flex items-center gap-2"
+                    >
+                      <Barcode className="h-4 w-4" />
+                      Código de Barra
+                    </DropdownMenuItem>
+                  </ProtectedAction>
                 </FeatureGate>
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           ) : (
-            <Button
-              onClick={() => openModal(TAB_MODALS[activeTab])}
-              className="w-full sm:w-auto"
-            >
-              {`Novo ${TAB_LABELS[activeTab]}`}
-            </Button>
+            <div data-tour="items-create">
+              <ProtectedAction>
+                <Button
+                  onClick={() => openModal(TAB_MODALS[activeTab])}
+                  className="w-full sm:w-auto"
+                >
+                  {`Novo ${TAB_LABELS[activeTab]}`}
+                </Button>
+              </ProtectedAction>
+            </div>
           )}
         </div>
 
-        <TabsContent value="product">
+        <TabsContent value="product" data-tour="items-list">
           <ProductList />
         </TabsContent>
 
-        <TabsContent value="service">
+        <TabsContent value="service" data-tour="items-list">
           <ServiceList />
         </TabsContent>
       </Tabs>

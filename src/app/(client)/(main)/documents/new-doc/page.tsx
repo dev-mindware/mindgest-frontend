@@ -8,6 +8,7 @@ export default function AddDocsPage() {
       routeLabel="Documentos"
       subRoute="Novo Documento"
       showSeparator={true}
+      onboardingTourId="normal-invoice"
     >
       <AddDocuments />
     </PageWrapper>

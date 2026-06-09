@@ -6,8 +6,12 @@ import { StockSummaryCharts } from "./stock-summary-charts";
 export function StockManagementContent() {
     return (
         <div>
-            <StockSummaryCharts />
-            <StockList />
+            <div data-tour="stock-summary">
+                <StockSummaryCharts />
+            </div>
+            <div data-tour="stock-table">
+                <StockList />
+            </div>
         </div>
     );
 }

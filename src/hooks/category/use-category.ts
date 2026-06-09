@@ -2,7 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePagination } from "../common/use-pagination";
 import { useLocalPagination } from "../common/use-local-pagination";
-import { Category, CategoryData, CategoryResponse } from "@/types/category";
+import { Category, CategoryData } from "@/types/category";
 import { currentStoreStore } from "@/stores";
 import { categoryService } from "@/services/category-service";
 import { SucessMessage } from "@/utils/messages";
@@ -15,6 +15,7 @@ export function useAddCategory() {
     onSuccess: () => {
       SucessMessage("Categoria adicionada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }
@@ -28,6 +29,7 @@ export function useUpdateCategory() {
     onSuccess: () => {
       SucessMessage("Categoria atualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }
@@ -40,6 +42,7 @@ export function useDeleteCategory() {
     onSuccess: () => {
       SucessMessage("Categoria removida com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }
@@ -52,6 +55,7 @@ export function useToggleStatusCategory() {
     onSuccess: () => {
       SucessMessage("Status da categoria alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },
   });
 }

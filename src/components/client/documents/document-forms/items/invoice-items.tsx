@@ -56,7 +56,7 @@ export function InvoiceItems({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-tour="normal-invoice-items">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">
           Itens da Fatura
@@ -78,7 +78,10 @@ export function InvoiceItems({
 
 
       {fields.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-6 bg-card rounded-lg border-2 border-dashed">
+        <div
+          className="flex flex-col items-center justify-center py-6 bg-card rounded-lg border-2 border-dashed"
+          data-tour="normal-invoice-summary"
+        >
           <Package className="h-16 w-16 text-gray-300 mb-4" />
           <p className="text-sm font-medium text-foreground mb-1">
             Nenhum item adicionado
@@ -90,7 +93,10 @@ export function InvoiceItems({
       ) : (
         <>
           <ItemList items={fields} onRemove={handleRemoveItem} />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div
+            className="grid grid-cols-1 gap-6 md:grid-cols-2"
+            data-tour="normal-invoice-summary"
+          >
             <DefaultBankCard />
             <div className="w-full">
               <InvoiceSummary

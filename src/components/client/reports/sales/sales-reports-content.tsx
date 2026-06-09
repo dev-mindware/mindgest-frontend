@@ -29,49 +29,57 @@ export function SalesReportsContent() {
 
   return (
     <div className="space-y-6">
-      <TitleList
-        title="Relatórios de Vendas"
-        suTitle="Analise receitas, volume e evolução por período de forma clara."
-      />
+      <div data-tour="reports-sales-header">
+        <TitleList
+          title="Relatórios de Vendas"
+          suTitle="Analise receitas, volume e evolução por período de forma clara."
+        />
+      </div>
 
-      <ReportFilters
-        filters={[
-          {
-            type: "select",
-            label: "Período",
-            value: period,
-            onChange: (value) => setPeriod(value as SalesPeriod),
-            options: [
-              { value: "daily", label: "Diário" },
-              { value: "weekly", label: "Semanal" },
-              { value: "monthly", label: "Mensal" },
-              { value: "quarterly", label: "Trimestral" },
-              { value: "yearly", label: "Anual" },
-            ],
-            placeholder: "Selecione o período",
-          },
-          {
-            type: "date",
-            label: "Data Início",
-            value: startDate,
-            onChange: setStartDate,
-          },
-          {
-            type: "date",
-            label: "Data Fim",
-            value: endDate,
-            onChange: setEndDate,
-            disabledDates: (date) => (startDate ? date < startDate : false),
-          },
-        ]}
-      />
+      <div data-tour="reports-sales-filters">
+        <ReportFilters
+          filters={[
+            {
+              type: "select",
+              label: "Período",
+              value: period,
+              onChange: (value) => setPeriod(value as SalesPeriod),
+              options: [
+                { value: "daily", label: "Diário" },
+                { value: "weekly", label: "Semanal" },
+                { value: "monthly", label: "Mensal" },
+                { value: "quarterly", label: "Trimestral" },
+                { value: "yearly", label: "Anual" },
+              ],
+              placeholder: "Selecione o período",
+            },
+            {
+              type: "date",
+              label: "Data Início",
+              value: startDate,
+              onChange: setStartDate,
+            },
+            {
+              type: "date",
+              label: "Data Fim",
+              value: endDate,
+              onChange: setEndDate,
+              disabledDates: (date) => (startDate ? date < startDate : false),
+            },
+          ]}
+        />
+      </div>
 
       <div className="grid gap-4 md:grid-cols-4">
         <div className="space-y-6 md:col-span-3">
-          <SalesSummaryCards summary={data.summary} />
+          <div data-tour="reports-sales-summary">
+            <SalesSummaryCards summary={data.summary} />
+          </div>
           <SalesAreaChart data={data.data} period={period} />
         </div>
-        <SaftExportCard />
+        <div data-tour="reports-sales-export">
+          <SaftExportCard />
+        </div>
       </div>
     </div>
   );

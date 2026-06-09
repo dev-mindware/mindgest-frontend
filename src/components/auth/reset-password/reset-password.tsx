@@ -1,15 +1,16 @@
 "use client";
 import Logo from "@/assets/brand.png";
 import Image from "next/image";
-import { ButtonSubmit, Input, ResetPasswordSkeleton } from "@/components";
+import { ButtonSubmit, Input, ResetPasswordSkeleton, Button, PasswordStrengthBar, AlertError } from "@/components";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChangePasswordFormData, changePasswordSchema } from "@/schemas";
+import { ResetPasswordFormData, resetPasswordSchema } from "@/schemas";
 import { ErrorMessage } from "@/utils/messages";
 import { useSearchParams } from "next/navigation";
 import { useResetPassword } from "@/hooks/auth";
 import { AuthHeader, BackToLogin } from "../_components";
 import { Suspense } from "react";
+import { Wand2 } from "lucide-react";
 import { useModal } from "@/stores";
 import { SuccessResetModal } from "./success-reset-modal";
 
@@ -21,15 +22,29 @@ function ResetPasswordForm() {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
-  } = useForm<ChangePasswordFormData>({
-    resolver: zodResolver(changePasswordSchema),
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
     mode: "onChange",
   });
 
+  const newPassword = watch("newPassword") || "";
+
+  const generateStrongPassword = () => {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let pass = "";
+    for (let i = 0; i < 16; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setValue("newPassword", pass, { shouldValidate: true });
+    setValue("confirmPassword", pass, { shouldValidate: true });
+  };
+
   const { mutateAsync: resetPassword, isPending } = useResetPassword();
 
-  async function onChangePassword(data: ChangePasswordFormData) {
+  async function onChangePassword(data: ResetPasswordFormData) {
     if (!token) {
       ErrorMessage(
         "Token de recuperação de senha não encontrado ou inválido. Por favor, solicite a recuperação novamente.",
@@ -65,13 +80,39 @@ function ResetPasswordForm() {
         </div>
 
         <form onSubmit={handleSubmit(onChangePassword)} className="grid gap-6">
-          <Input
-            type="password"
-            label="Nova Senha"
-            {...register("newPassword")}
-            placeholder="Digite sua nova senha"
-            error={errors.newPassword && errors.newPassword?.message}
-          />
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-foreground">
+                Nova Senha
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <Input
+                    type="password"
+                    placeholder="Digite sua nova senha"
+                    {...register("newPassword")}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0"
+                  title="Gerar senha forte"
+                  onClick={generateStrongPassword}
+                >
+                  <Wand2 className="size-4" />
+                </Button>
+              </div>
+            </div>
+
+            <PasswordStrengthBar password={newPassword} />
+
+            {errors.newPassword?.message && (
+              <AlertError errorMessage={errors.newPassword.message} />
+            )}
+          </div>
+
           <Input
             type="password"
             label="Confirmar Nova Senha"

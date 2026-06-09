@@ -8,9 +8,11 @@ export const companySchema = z.object({
     .trim()
     .nonempty("Campo obrigatorio")
     .min(3, "No minimo 3 caracters"),
-  address: z.string().trim().nonempty("Campo obrigatorio"),
+  address: z.string().min(3, "No minimo 3 caracters").trim().nonempty("Campo obrigatorio"),
   phone: phoneNumberSchema,
   email: z.string().trim().email("Email invalido"),
   website: z.string().trim().optional().nullable(),
   logo: z.string().trim().optional(),
 });
+
+export type CompanyFormData = z.infer<typeof companySchema>;

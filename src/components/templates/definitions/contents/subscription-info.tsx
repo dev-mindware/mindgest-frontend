@@ -102,14 +102,9 @@ export function SubscriptionInfo() {
             <Link href="/plans" className={`${isPending && "pointer-events-none"}`}>
               <Button className="gap-2" disabled={isPending}>
                 <Icon name="ArrowUpToLine" size={16} />
-                Upgrade de Plano
+                Atualizar Plano
               </Button>
             </Link>
-
-            <Button variant="outline" className="gap-2">
-              <Icon name="ReceiptText" size={16} />
-              Ver Faturas
-            </Button>
           </div>
         </CardContent>
       </Card>

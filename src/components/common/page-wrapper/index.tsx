@@ -5,6 +5,8 @@ import { Separator, SidebarTrigger } from "@/components/ui";
 import { useQueryState } from "nuqs";
 import { Icon, Input, Avatar, AvatarFallback, AvatarImage } from "@/components";
 import { useAuth } from "@/hooks/auth";
+import { OnboardingTourButton } from "@/components/common/onboarding-tour-button";
+import type { OnboardingTourId } from "@/constants/onboarding-tours";
 
 type Props = {
   routePath?: string;
@@ -13,6 +15,7 @@ type Props = {
   showSeparator?: boolean;
   children: React.ReactNode;
   variant?: "default" | "counter";
+  onboardingTourId?: OnboardingTourId;
 };
 
 export function PageWrapper({
@@ -22,6 +25,7 @@ export function PageWrapper({
   showSeparator = true,
   children,
   variant = "default",
+  onboardingTourId,
 }: Props) {
   const { user } = useAuth();
   const [search, setSearch] = useQueryState("search", {
@@ -59,12 +63,14 @@ export function PageWrapper({
                 className="pl-8 bg-muted/50 border-0"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                data-tour="pos-product-search"
               />
             </div>
           </div>
         )}
 
         <div className="flex items-center mr-4 space-x-2 md:space-x-4">
+          {onboardingTourId && <OnboardingTourButton tourId={onboardingTourId} />}
           <ChatbotSheet />
           <NotificationDropdown />
           {variant === "counter" && (

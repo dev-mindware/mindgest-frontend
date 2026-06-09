@@ -73,16 +73,25 @@ export function ProformaList({ storeId }: { storeId?: string }) {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver Proforma", onClick: handlerDetailsProforma },
+            {
+              label: "Ver Proforma",
+              onClick: handlerDetailsProforma,
+              icon: "Eye",
+              variant: "default",
+            },
             {
               label: "Converter em Fatura",
               onClick: handlerConvertProforma,
+              icon: "FileCheck",
+              variant: "default",
             },
             {
               label: "Editar",
-              onClick: () => {
+              onClick: (item) => {
                 router.push(`/documents/${item.id}/edit`);
               },
+              icon: "Pencil",
+              variant: "default",
             },
           ]}
         />

@@ -9,7 +9,7 @@ export const CorrectionSchema = BaseCreditNoteSchema.extend({
   reason: z.literal("CORRECTION"),
   invoiceBody: z.object({
     client: z.object({
-      id: z.string().trim().nonempty("Campo obrigatório"),
+      id: z.string().trim().nonempty("Selecione um cliente cadastrado"),
       name: z.string().trim().optional().or(z.literal("")),
       phone: z.string().trim().optional().or(z.literal("")),
       address: z.string().trim().optional().or(z.literal("")),

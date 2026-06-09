@@ -6,3 +6,4 @@ export * from "./categories";
 export * from "./reports";
 export * from "./entities";
 export * from "./pos";
+export * from "./suppliers";

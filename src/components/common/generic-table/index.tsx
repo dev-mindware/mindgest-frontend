@@ -86,7 +86,7 @@ export function GenericTable<T extends { id: string }>({
                       column.className
                     )}
                   >
-                    {column.header}
+                    {column.header || "----------"}
                   </TableHead>
                 ))}
               </TableRow>

@@ -157,29 +157,33 @@ export function StockList() {
               label: "Ver Detalhes",
               onClick: handlerDetailsStock,
               icon: "Eye",
+              variant: "default",
             },
             {
               label: "Deletar",
               onClick: handlerDeleteStock,
               variant: "destructive",
-              icon: "Trash",
+              icon: "Trash2",
             },
             { type: "separator" },
             {
               label: "Ajustar Stock",
               onClick: handlerAdjustStock,
               icon: "SlidersHorizontal",
+              variant: "default",
             },
             { type: "separator" },
             {
               label: "Reservar",
               onClick: handlerReserveStock,
               icon: "CircleArrowUp",
+              variant: "default",
             },
             {
               label: "Liberar Reserva",
               onClick: handlerUnreserveStock,
               icon: "CircleArrowDown",
+              variant: "default",
             },
           ]}
         />
@@ -192,7 +196,7 @@ export function StockList() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <div className="rounded-lg border p-6">
+        <div className="rounded-lg border p-6" data-tour="stock-filters">
           <h3 className="text-lg font-semibold mb-4">Filtros</h3>
           <StockFilters />
         </div>
@@ -204,7 +208,7 @@ export function StockList() {
   if (stock?.length === 0)
     return (
       <div className="space-y-6">
-        <div className="rounded-lg border p-6">
+        <div className="rounded-lg border p-6" data-tour="stock-filters">
           <h3 className="text-lg font-semibold mb-4">Filtros</h3>
           <StockFilters />
         </div>
@@ -219,14 +223,14 @@ export function StockList() {
   return (
     <>
       <div className="space-y-6">
-        <div className="rounded-lg border p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="rounded-lg border p-6" data-tour="stock-filters">
+         {/*  <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Filtros</h3>
             <Button onClick={() => openModal("add-stock")} size="sm">
               <Icon name="Plus" className="w-4 h-4 mr-2" />
               Adicionar Stock
             </Button>
-          </div>
+          </div> */}
           <StockFilters />
         </div>
 

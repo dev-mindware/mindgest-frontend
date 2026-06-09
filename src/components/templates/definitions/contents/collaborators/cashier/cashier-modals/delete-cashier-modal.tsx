@@ -1,4 +1,4 @@
-import { Button, GlobalModal } from "@/components";
+import { Button, GlobalModal, ProtectedAction } from "@/components";
 import { useDeleteCashier } from "@/hooks/collaborators";
 import { currentCashierStore } from "@/stores/collaborators";
 import { useModal } from "@/stores/modal/use-modal-store";
@@ -46,13 +46,15 @@ export function DeleteCashierModal() {
         >
           Cancelar
         </Button>
-        <Button
-          disabled={isPending}
-          variant="destructive"
-          onClick={() => handleDelete(currentCashier?.id!)}
-        >
-          {isPending ? "Apagando..." : `Apagar ${currentCashier?.name}`}
-        </Button>
+        <ProtectedAction>
+          <Button
+            disabled={isPending}
+            variant="destructive"
+            onClick={() => handleDelete(currentCashier?.id!)}
+          >
+            {isPending ? "Apagando..." : `Apagar ${currentCashier?.name}`}
+          </Button>
+        </ProtectedAction>
       </div>
     </GlobalModal>
   );

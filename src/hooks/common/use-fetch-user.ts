@@ -1,65 +1,78 @@
 "use client";
-import { useEffect, useRef } from "react";
+
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useAuthStore } from "@/stores";
 import { api } from "@/services/api";
 import { User } from "@/types";
+import { clearLocalSession } from "@/actions/auth";
+
+async function fetchCurrentUser(): Promise<User> {
+  const { data } = await api.get<User>("/auth/profile");
+  return data;
+}
 
 interface UseFetchUserOptions {
   enabled?: boolean;
 }
 
 export function useFetchUser({ enabled = true }: UseFetchUserOptions = {}) {
-  const { setUser, user, setIsAuthenticating } = useAuthStore();
-  const hasFetched = useRef(false);
+  const { setUser, setIsAuthenticating } = useAuthStore();
 
+  const query = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchCurrentUser,
+    enabled,
+    retry: false, // ✅ FIX: não retry para evitar múltiplos requests em loop
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // ✅ FIX: sempre fecha o loading, sucesso ou falha
   useEffect(() => {
     if (!enabled) {
       setIsAuthenticating(false);
       return;
     }
 
-    if (user !== null) {
+    if (query.isSuccess && query.data) {
+      setUser(query.data);
       setIsAuthenticating(false);
-      return;
     }
 
-    if (hasFetched.current) {
-      setIsAuthenticating(false); // Clear loading if we already fetched/avoiding refetch
-      return;
-    }
-
-    let isMounted = true;
-    hasFetched.current = true;
-    // Ensure we start in a loading state if we are going to fetch
-    setIsAuthenticating(true);
-
-    const fetchUser = async () => {
-      try {
-        const response = await api.get<User>("/auth/profile");
-
-        if (!isMounted) return;
-
-        setUser(response.data);
-      } catch (error: any) {
-        if (!isMounted) return;
-
-        if (error.response?.status !== 401) {
-          console.error("Erro ao buscar usuário:", error);
-        }
+    if (query.isError) {
+      // Falha em buscar user → sessão inválida → limpa tudo
+      (async () => {
+        await clearLocalSession();
         setUser(null);
-      } finally {
-        if (isMounted) {
-          setIsAuthenticating(false);
-        }
+        setIsAuthenticating(false);
+      })();
+    }
+  }, [
+    enabled,
+    query.isSuccess,
+    query.isError,
+    query.data,
+    setUser,
+    setIsAuthenticating,
+  ]);
+
+  // Listener para evento de sessão expirada (vindo do interceptor axios)
+  useEffect(() => {
+    function handleSessionExpired() {
+      setUser(null);
+      setIsAuthenticating(false);
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/auth/login"
+      ) {
+        window.location.replace("/auth/login");
       }
-    };
+    }
 
-    fetchUser();
+    window.addEventListener("session:expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener("session:expired", handleSessionExpired);
+  }, [setUser, setIsAuthenticating]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return { user };
+  return query;
 }

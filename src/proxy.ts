@@ -4,55 +4,81 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   PRIVATE_ROUTE_PREFIXES,
   PUBLIC_ROUTES,
+  AUTH_PAGES,
   REFRESH_TOKEN_KEY,
-} from "./constants";
-import { roleRedirects } from "./utils";
+  ROLE_KEY,
+  ACCESS_TOKEN_KEY,
+} from "@/constants/routes";
+import { getRouteByRole, isValidRole } from "@/utils/role-redirects";
+import { verifyRole } from "@/lib/session";
 
 function isPublicRoute(pathname: string): boolean {
-  if (PUBLIC_ROUTES.includes(pathname)) return true;
+  if (PUBLIC_ROUTES.includes(pathname as any)) return true;
 
   return PUBLIC_ROUTES.some((route) => {
     if (route === "/") return false;
     if (!pathname.startsWith(route)) return false;
-
     const nextChar = pathname[route.length];
     return !nextChar || nextChar === "/" || nextChar === "?";
   });
 }
 
 function isAuthPage(pathname: string): boolean {
-  return [
-    "/",
-    "/auth/login",
-    "/auth/register",
-    "/auth/forgot-password",
-    "/auth/reset-password",
-  ].includes(pathname);
+  return AUTH_PAGES.includes(pathname as any);
 }
 
-export function proxy(req: NextRequest) {
+function isPrivateRoute(pathname: string): boolean {
+  return PRIVATE_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Ignora rotas de auth da API
   if (pathname.startsWith(API_AUTH_PREFIX)) {
     return NextResponse.next();
   }
 
   const hasRefreshToken = req.cookies.has(REFRESH_TOKEN_KEY);
-  const isAuthenticated = Boolean(hasRefreshToken);
+  const roleCookie = req.cookies.get(ROLE_KEY)?.value;
 
-  const isPublic = isPublicRoute(pathname);
-  const isPrivate = PRIVATE_ROUTE_PREFIXES.some((p) => pathname.startsWith(p));
+  // ✅ FIX: valida a assinatura do role do cookie localmente (sem chamada de API)
+  const verifiedRole = roleCookie ? await verifyRole(roleCookie) : null;
+  const role = isValidRole(verifiedRole) ? verifiedRole : undefined;
 
-  if (isPublic) {
-    if (isAuthenticated && isAuthPage(pathname)) {
-      return NextResponse.redirect(new URL(roleRedirects["OWNER"], req.url));
+  // ✅ FIX: se tem refresh token mas role é inválido,
+  // limpa cookies e força re-login (cookie foi manipulado)
+  if (hasRefreshToken && !role) {
+    const response = NextResponse.redirect(
+      new URL(DEFAULT_LOGIN_REDIRECT, req.url)
+    );
+    response.cookies.delete(REFRESH_TOKEN_KEY);
+    response.cookies.delete(ROLE_KEY);
+    response.cookies.delete(ACCESS_TOKEN_KEY);
+    return response;
+  }
+
+  const isAuthenticated = Boolean(hasRefreshToken && role);
+  const publicRoute = isPublicRoute(pathname);
+  const authPage = isAuthPage(pathname);
+  const privateRoute = isPrivateRoute(pathname);
+
+  // Caso 1: rota pública
+  if (publicRoute) {
+    // Se autenticado em página de auth (login/register), redireciona
+    if (isAuthenticated && authPage) {
+      const redirectTo = getRouteByRole(role);
+      return NextResponse.redirect(new URL(redirectTo, req.url));
     }
-
     return NextResponse.next();
   }
 
-  if (!isAuthenticated && isPrivate) {
-    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));
+  // Caso 2: rota privada sem autenticação
+  if (privateRoute && !isAuthenticated) {
+    const loginUrl = new URL(DEFAULT_LOGIN_REDIRECT, req.url);
+    // Opcional: guardar para onde queria ir
+    loginUrl.searchParams.set("from", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
@@ -60,6 +86,6 @@ export function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|svg|jpg|jpeg|gif|json)|\\.well-known|unauthorized).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|svg|jpg|jpeg|gif|json)|\\.well-known).*)",
   ],
 };

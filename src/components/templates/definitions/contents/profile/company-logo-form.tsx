@@ -1,0 +1,142 @@
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components";
+import type { User, File as MyFile } from "@/types";
+import { PhotoUpload } from "@/components/common/photo-upload";
+import { useFileUpload } from "@/hooks/common/use-upload";
+import { ErrorMessage, SucessMessage } from "@/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import { Camera, RefreshCw, X } from "lucide-react";
+
+export function CompanyLogoForm({ user }: { user: User | null }) {
+  const [isEditingLogo, setIsEditingLogo] = useState(false);
+  const [logoTimestamp, setLogoTimestamp] = useState(Date.now());
+  const queryClient = useQueryClient();
+
+  const { control, watch, setValue } = useForm<{ companyLogo?: MyFile | null }>();
+  const companyLogo = watch("companyLogo");
+
+  const { mutateAsync: uploadLogo, isPending: isUploading } = useFileUpload(
+    `/companies/logo`,
+    "companies",
+    "PUT",
+  );
+
+  const handleUpload = async () => {
+    if (!companyLogo) return ErrorMessage("Selecione um arquivo antes de atualizar.");
+
+    await uploadLogo(
+      { files: { file: companyLogo as MyFile } },
+      {
+        onSuccess: () => {
+          SucessMessage("Logo da empresa atualizada com sucesso!");
+          setValue("companyLogo", null);
+          setIsEditingLogo(false);
+          setLogoTimestamp(Date.now());
+          // ✅ Força a atualização em tempo real do perfil do usuário em toda a aplicação
+          queryClient.invalidateQueries({ queryKey: ["user"] });
+        },
+        onError: (error: any) =>
+          ErrorMessage(
+            error?.response?.data?.message || "Erro ao atualizar logo da empresa",
+          ),
+      },
+    );
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="bg-card rounded-xl border border-border p-6 shadow-sm transition-all duration-300">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h3 className="font-semibold text-lg text-foreground">Logo da Empresa</h3>
+          <p className="text-xs text-muted-foreground">
+            Exibido em documentos, faturas e recibos do sistema.
+          </p>
+        </div>
+        {user?.company?.logo && (
+          <Button
+            variant={isEditingLogo ? "ghost" : "outline"}
+            size="sm"
+            onClick={() => {
+              setIsEditingLogo(!isEditingLogo);
+              if (isEditingLogo) setValue("companyLogo", null);
+            }}
+            className="transition-all duration-200"
+          >
+            {isEditingLogo ? (
+              <>
+                <X className="w-4 h-4 mr-1.5" /> Cancelar
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-1.5" /> Trocar Logo
+              </>
+            )}
+          </Button>
+        )}
+      </div>
+
+      {!user?.company?.logo || isEditingLogo ? (
+        <div className="flex flex-col gap-4 w-full sm:max-w-md animate-in fade-in duration-200">
+          <div className="rounded-xl border border-dashed border-border p-1 bg-muted/5">
+            <PhotoUpload
+              name="companyLogo"
+              control={control}
+              info="Suporta PNG, JPG. Máximo 2MB"
+              label={user?.company?.logo ? "Arraste ou escolha a nova logo" : "Arraste ou escolha a logo"}
+              accept="image"
+              maxSize={1024 * 1024 * 2}
+              className="w-full"
+              disabled={isUploading}
+            />
+          </div>
+
+          {companyLogo && (
+            <Button
+              type="button"
+              onClick={handleUpload}
+              disabled={isUploading}
+              className="w-full shadow-md transition-all"
+            >
+              {isUploading ? "A enviar..." : "Salvar Nova Logo"}
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div 
+          onClick={() => setIsEditingLogo(true)}
+          className="group relative h-48 w-full sm:w-80 rounded-xl border border-border bg-zinc-50 dark:bg-zinc-950/20 overflow-hidden cursor-pointer shadow-inner flex items-center justify-center p-6 transition-all duration-300 hover:border-primary/40 hover:shadow-md"
+          title="Clique para trocar a logo"
+        >
+          {/* Fundo quadriculado sutil para destacar logos com transparência */}
+          <div 
+            className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
+            style={{
+              backgroundImage: "radial-gradient(#000 20%, transparent 20%), radial-gradient(#000 20%, transparent 20%)",
+              backgroundSize: "20px 20px",
+              backgroundPosition: "0 0, 10px 10px"
+            }}
+          />
+
+          <img
+            src={user.company.logo ? `${user.company.logo}?t=${logoTimestamp}` : ""}
+            alt="Logo da empresa"
+            className="h-full w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105"
+          />
+
+          {/* Overlay de edição com desfoque e animação premium */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-white z-20">
+            <div className="bg-white/10 p-2 rounded-full border border-white/20 backdrop-blur-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+              <Camera className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold tracking-wide">Trocar Logo</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

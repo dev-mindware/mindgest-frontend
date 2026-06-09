@@ -115,9 +115,16 @@ export function PosOpeningModal() {
   const onSubmit = async (data: PosOpeningFormData) => {
     try {
       if (isEdit && currentCashier) {
-        await updateSession({ id: currentCashier.id.toString(), data });
+        const payload = {
+          openingCash: parseFloat(data.initialCapital),
+        };
+        await updateSession({ id: currentCashier.id.toString(), data: payload });
       } else {
-        await openSession(data);
+        const payload = {
+          ...data,
+          fundType: data.fundType?.toUpperCase(),
+        };
+        await openSession(payload);
       }
       handleClose();
     } catch (error: any) {
@@ -192,6 +199,7 @@ export function PosOpeningModal() {
                     aria-label="Tempo de Expediente"
                     hourCycle={24}
                     className="w-full"
+                    isDisabled={isEdit}
                     value={safeParseTime(field.value)}
                     onChange={(time) => {
                       if (time) field.onChange(time.toString().slice(0, 5));
@@ -218,6 +226,7 @@ export function PosOpeningModal() {
               control={control}
               label="Tipo de Fundo"
               placeholder="Selecione o tipo"
+              disabled={isEdit}
               options={[
                 { label: "Moeda", value: "Coin" },
                 { label: "Nota", value: "Note" },
@@ -237,6 +246,7 @@ export function PosOpeningModal() {
                   value={field.value}
                   onChange={field.onChange}
                   isLoading={isLoadingStores}
+                  disabled={isEdit}
                   pagination={{ page: storePage, totalPages: storeTotalPages }}
                   onPageChange={setStorePage}
                   className="w-full"
@@ -262,6 +272,7 @@ export function PosOpeningModal() {
                     label: `${c.name} (${c.email})`,
                     value: c.id,
                   }))}
+                  isDisabled={isEdit}
                   value={allCashiers
                     .filter((c) => field.value?.includes(c.id))
                     .map((c) => ({ label: c.name, value: c.id }))}

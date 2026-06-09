@@ -47,7 +47,10 @@ export function CartCheckoutForm({
 
     return (
         <>
-            <div className="mt-4 p-4 border border-dashed rounded-md bg-muted/30">
+            <div
+                className="mt-4 p-4 border border-dashed rounded-md bg-muted/30"
+                data-tour="pos-checkout"
+            >
                 <PaymentSummary
                     subtotal={totals.subtotal}
                     taxAmount={totals.taxAmount}
@@ -77,11 +80,12 @@ export function CartCheckoutForm({
 
                 <Button
                     className="w-full"
-                    onClick={handleSubmit(handlePreview, (errors) => {
+                    onClick={handleSubmit((data) => handlePreview(data), (errors) => {
                         console.error("Form Validation Errors:", errors);
                         ErrorMessage("Verifique os campos obrigatórios");
                     })}
                     disabled={isPending}
+                    data-tour="pos-submit"
                 >
                     {isPending ? "Processando..." : "Confirmar Pagamento"}
                 </Button>

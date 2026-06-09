@@ -33,16 +33,33 @@ export function usePagination<T>({
 
   const page = Number(searchParams.get("page")) || 1;
 
+  const cleanQueryParams = Object.fromEntries(
+    Object.entries(queryParams).filter(
+      ([_, value]) => value !== null && value !== undefined && value !== "",
+    ),
+  );
+
   const query = useQuery<PaginationResponse<T>>({
     queryKey: Array.isArray(queryKey)
-      ? [...queryKey, page, queryParams]
-      : [queryKey, page, queryParams],
+      ? [...queryKey, page, cleanQueryParams]
+      : [queryKey, page, cleanQueryParams],
     queryFn: async () => {
       const response = await api.get(endpoint, {
-        params: { page, ...queryParams },
+        params: { page, ...cleanQueryParams },
       });
 
       const raw = response.data;
+
+      // Handle direct array response
+      if (Array.isArray(raw)) {
+        return {
+          data: raw as T[],
+          total: raw.length,
+          page: page,
+          limit: queryParams.limit ?? Math.max(raw.length, 10),
+          totalPages: 1,
+        } satisfies PaginationResponse<T>;
+      }
 
       // 🔹 Normaliza para sempre devolver o mesmo shape
       const dataKey = Object.keys(raw).find(

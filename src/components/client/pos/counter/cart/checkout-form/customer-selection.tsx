@@ -2,6 +2,8 @@ import { Icon } from "@/components";
 import { Input } from "@/components/ui/input";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 
+const phoneRegex = /^(92|99|91|95|93|94|97)\d{7}$/;
+
 interface CustomerSelectionProps {
     isExpanded: boolean;
     onToggleExpand: () => void;
@@ -19,8 +21,14 @@ export function CustomerSelection({
     newCustomerPhone,
     onPhoneChange,
 }: CustomerSelectionProps) {
+    const normalizedPhone = newCustomerPhone.replace(/\D/g, "").slice(0, 9);
+    const phoneError =
+        normalizedPhone.length > 0 && !phoneRegex.test(normalizedPhone)
+            ? "Insira um número de telemóvel válido"
+            : "";
+
     return (
-        <div className="mb-6 space-y-3">
+        <div className="mb-6 space-y-3" data-tour="pos-customer">
             <button
                 onClick={onToggleExpand}
                 className="flex items-center justify-between w-full py-2 group hover:text-primary transition-colors"
@@ -58,25 +66,36 @@ export function CustomerSelection({
                             displayFields={["name", "phone"]}
                             minChars={2}
                             formatCreateLabel={(val) => `➕ Criar "${val}"`}
+                            virtualKeyboardLayout="default"
                         />
                     </div>
 
                     {/* If no selected customer or it's a new one, show phone field */}
                     {(!selectedClient || selectedClient.__isNew__) && (
-                        <div className="space-y-2 pt-2 border-t border-dashed">
+                        <div
+                            className="space-y-2 pt-2 border-t border-dashed"
+                            data-tour="pos-new-customer-phone"
+                        >
                             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                 Telefone do Cliente (Novo)
                             </label>
                             <Input
                                 startIcon="Phone"
                                 type="text"
-                                inputMode="numeric"
+                                inputMode="none"
                                 data-layout="numeric"
                                 placeholder="Digite o número de telefone..."
-                                value={newCustomerPhone}
-                                onChange={(e) => onPhoneChange(e.target.value)}
-                                className="bg-muted/30"
+                                value={normalizedPhone}
+                                onChange={(e) =>
+                                    onPhoneChange(e.target.value.replace(/\D/g, "").slice(0, 9))
+                                }
+                                maxLength={9}
+                                aria-invalid={!!phoneError}
+                                className={phoneError ? "bg-muted/30 border-destructive" : "bg-muted/30"}
                             />
+                            {phoneError && (
+                                <p className="text-xs text-destructive">{phoneError}</p>
+                            )}
                         </div>
                     )}
                 </div>

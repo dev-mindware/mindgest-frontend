@@ -32,7 +32,7 @@ export const menuItems: MenuStructure = {
       roles: ["MANAGER", "OWNER"],
       minPlan: "Base",
     },
-  /*   {
+    /*   {
       name: "GestIA",
       url: "/gestia",
       icon: <Icon name="Sparkles" className="w-5 h-5" />,
@@ -69,6 +69,13 @@ export const menuItems: MenuStructure = {
       minPlan: "Base",
     },
     {
+      name: "Fornecedores",
+      url: "/suppliers",
+      icon: <Icon name="Truck" className="w-5 h-5" />,
+      roles: ["MANAGER", "OWNER"],
+      minPlan: "Pro",
+    },
+    {
       name: "Gestão",
       url: "#",
       icon: <Icon name="Boxes" className="w-5 h-5" />,
@@ -80,9 +87,14 @@ export const menuItems: MenuStructure = {
           url: "/management/stock",
         },
         {
+          name: "Reservas",
+          url: "/management/reservation",
+          minPlan: "Pro",
+        },
+        {
           name: "POS",
           url: "/management/pos",
-          minPlan: "Smart",
+          minPlan: "Pro",
         },
       ],
     },
@@ -105,7 +117,7 @@ export const menuItems: MenuStructure = {
         {
           name: "Acesso e Auditoria",
           url: "/reports/access-control",
-          minPlan: "Smart",
+          minPlan: "Pro",
         },
       ],
     },
@@ -135,7 +147,7 @@ export const menuItems: MenuStructure = {
       url: "/pos/movements",
       icon: <Icon name="Wallet" className="w-5 h-5" />,
       roles: ["CASHIER"],
-      minPlan: "Pro",
+      minPlan: "Smart",
     },
     {
       name: "Configurações",

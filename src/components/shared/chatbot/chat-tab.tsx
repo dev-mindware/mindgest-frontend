@@ -4,12 +4,12 @@ import { TabsContent } from "@/components/ui/tabs";
 import { LocalChatHistoryItem } from "./index";
 
 export const QUICK_ACTIONS = [
-    { label: "Visão Geral de Vendas" },
-    { label: "Consultar Stock de Produtos" },
-    { label: "Relatórios de Hoje" },
-    { label: "Desempenho da Equipa" },
+    { label: "Como emitir uma Factura Recibo (FR)?" },
+    { label: "Como converter Proforma em Factura?" },
+    { label: "Como fazer uma reserva de estoque?" },
+    { label: "Como configurar os dados do banco?" },
 ];
-export const SUGGESTION_CHIPS = ["Vendas", "Stock", "Clientes", "Documentos", "Definições"];
+export const SUGGESTION_CHIPS = ["Faturamento", "Estoque", "Relatórios", "Clientes", "Definições"];
 
 export const RenderAIMessage = ({ content, isTyping }: { content: string, isTyping?: boolean }) => {
     const paragraphs = content.split('\n');
@@ -69,6 +69,7 @@ interface ChatTabProps {
     handleTypingComplete: (idx: number) => void;
     messagesEndRef: React.RefObject<HTMLDivElement | null>;
     totalMessagesUsed: number;
+    messageLimit: number;
 }
 
 export function ChatTab({
@@ -80,9 +81,10 @@ export function ChatTab({
     handleKeyDown,
     handleTypingComplete,
     messagesEndRef,
-    totalMessagesUsed
+    totalMessagesUsed,
+    messageLimit
 }: ChatTabProps) {
-    const limitReached = totalMessagesUsed >= 10;
+    const limitReached = totalMessagesUsed >= messageLimit;
 
     return (
         <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 outline-none data-[state=inactive]:hidden">
@@ -164,7 +166,7 @@ export function ChatTab({
                     <div className="absolute left-4 bottom-3 flex gap-3 text-[10px] text-muted-foreground/60 font-medium">
                         <span>{input.length}/150</span>
                         <span className={limitReached ? "text-destructive font-semibold" : ""}>
-                            Mensagens: {totalMessagesUsed}/10
+                            Mensagens: {totalMessagesUsed}/{messageLimit}
                         </span>
                     </div>
                     <button

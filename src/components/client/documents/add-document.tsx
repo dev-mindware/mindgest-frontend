@@ -14,7 +14,7 @@ export function AddDocuments() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current_Tab = useSearchParams().get("tab");
-  const [currentTab, setCurrentTab] = useState<TabsAloweds>(() => {
+  const [currentTab] = useState<TabsAloweds>(() => {
     if (current_Tab) {
       return current_Tab as TabsAloweds;
     }
@@ -42,7 +42,10 @@ export function AddDocuments() {
         defaultValue={currentTab}
         onValueChange={handleTabChange}
       >
-        <TabsList className="flex justify-center md:justify-start">
+        <TabsList
+          className="flex justify-center md:justify-start"
+          data-tour="normal-invoice-document-type"
+        >
           <TabsTrigger value="invoice">Factura</TabsTrigger>
           <TabsTrigger value="invoice-receipt">Factura Recibo</TabsTrigger>
           <TabsTrigger value="proforma">Proforma</TabsTrigger>

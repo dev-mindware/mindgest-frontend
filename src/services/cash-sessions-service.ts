@@ -2,6 +2,7 @@ import {
   CashSession,
   CashSessionRequestFilters,
   CashSessionRequest,
+  AuthorizeOpeningPayload,
 } from "@/types";
 import { api } from "./api";
 
@@ -19,8 +20,15 @@ export const cashSessionsService = {
     return data;
   },
 
-  openSession: async (data: any) => {
+  authorizeOpening: async (data: AuthorizeOpeningPayload) => {
     const response = await api.post("/cash-sessions/opening-sessions", data);
+    return response.data;
+  },
+
+  rejectOpeningRequest: async (requestId: string) => {
+    const response = await api.patch(
+      `/cash-sessions/opening-requests/${requestId}/reject`,
+    );
     return response.data;
   },
 

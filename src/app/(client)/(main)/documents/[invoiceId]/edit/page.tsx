@@ -9,7 +9,7 @@ export default async function InvoiceDetailsPage({ params }: PageProps) {
 
   return (
     <PageWrapper
-      routePath="/client/documents"
+      routePath="/documents"
       routeLabel="Documentos"
       subRoute="Editar Proforma"
       showSeparator={true}

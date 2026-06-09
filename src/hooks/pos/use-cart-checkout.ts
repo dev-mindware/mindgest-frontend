@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateInvoiceReceipt, useCreateProforma } from "@/hooks";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
-import { ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
+import { ErrorMessage } from "@/utils";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
 import { Product } from "@/types";
@@ -14,6 +14,8 @@ export interface CartItem extends Product {
 }
 
 export type PaymentMethod = "Credit Card" | "Cash";
+
+const posPhoneRegex = /^(92|99|91|95|93|94|97)\d{7}$/;
 
 interface UseCartCheckoutProps {
   cartItems: CartItem[];
@@ -70,8 +72,23 @@ export function useCartCheckout({
   });
 
   const { handleSubmit, setValue, watch, reset } = form;
-  const { handleClientChange, selectedClient, setSelectedClient } =
+  const {
+    handleClientChange: handleBaseClientChange,
+    selectedClient,
+    setSelectedClient,
+  } =
     useClientSelection(setValue);
+
+  const handleClientChange = (option: any) => {
+    handleBaseClientChange(option);
+
+    if (option?.__isNew__) {
+      setValue("client", undefined, {
+        shouldValidate: false,
+        shouldDirty: true,
+      });
+    }
+  };
 
   const watchedItems = watch("items") as any[];
   const totals = useInvoiceTotals({
@@ -144,7 +161,7 @@ export function useCartCheckout({
     setCashGiven(amount);
   };
 
-  const handlePreview = async (data: any) => {
+  const handlePreview = async (data: any, skipPreview = false) => {
     if (cartItems.length === 0) {
       ErrorMessage("O carrinho está vazio!");
       return;
@@ -154,6 +171,22 @@ export function useCartCheckout({
     if (!cashSessionId) {
       ErrorMessage("Sessão de caixa não identificada. Recarregue a página.");
       console.error("cashSessionId is missing:", cashSessionId);
+      return;
+    }
+
+    const normalizedNewCustomerPhone = newCustomerPhone
+      .replace(/\D/g, "")
+      .slice(0, 9);
+    const isCreatingClient = !!selectedClient?.__isNew__;
+    const hasInvalidNewPhone =
+      normalizedNewCustomerPhone.length > 0 &&
+      !posPhoneRegex.test(normalizedNewCustomerPhone);
+
+    if (
+      hasInvalidNewPhone ||
+      (isCreatingClient && !posPhoneRegex.test(normalizedNewCustomerPhone))
+    ) {
+      ErrorMessage("Insira um nÃºmero de telemÃ³vel vÃ¡lido para o cliente.");
       return;
     }
 
@@ -181,10 +214,18 @@ export function useCartCheckout({
     }
 
     // Custom adjustments for client
-    if (!selectedClient && newCustomerPhone) {
+    if (selectedClient?.__isNew__) {
+      payload.client = {
+        name: selectedClient.label,
+        phone: normalizedNewCustomerPhone,
+        email: "consumidor@final.com",
+        address: "Loja",
+        taxNumber: "999999999",
+      };
+    } else if (!selectedClient && normalizedNewCustomerPhone) {
       payload.client = {
         name: "Consumidor Final",
-        phone: newCustomerPhone,
+        phone: normalizedNewCustomerPhone,
         email: "consumidor@final.com",
         address: "Loja",
         taxNumber: "999999999",
@@ -192,16 +233,24 @@ export function useCartCheckout({
     }
 
     setPendingPayload(payload);
-    setIsPreviewOpen(true);
+    
+    if (skipPreview) {
+      await performSubmit(payload);
+    } else {
+      setIsPreviewOpen(true);
+    }
   };
 
   const handleFinalSubmit = async () => {
     if (!pendingPayload) return;
+    await performSubmit(pendingPayload);
+  };
 
+  const performSubmit = async (payload: PosSalesFormData) => {
     try {
-      console.log("FINAL PAYLOAD:", JSON.stringify(pendingPayload, null, 2));
+      console.log("SUBMITTING PAYLOAD:", JSON.stringify(payload, null, 2));
       if (type === "invoice") {
-        const response = await createInvoiceReceipt(pendingPayload as any);
+        const response = await createInvoiceReceipt(payload as any);
         const invoiceId = response?.data?.id;
 
         if (invoiceId) {
@@ -213,8 +262,7 @@ export function useCartCheckout({
         }
       } else {
         // Remove payment-specific fields for proforma
-        const { cashSessionId, change, receivedValue, ...proformaData } =
-          pendingPayload;
+        const { cashSessionId, change, receivedValue, ...proformaData } = payload;
 
         const proformaPayload = {
           ...proformaData,

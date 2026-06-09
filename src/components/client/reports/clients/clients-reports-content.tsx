@@ -78,60 +78,64 @@ export function ClientsReportsContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <TitleList
-        title="Relatórios de Clientes"
-        suTitle="Acompanhe compras, frequência e valor médio para identificar quem gera mais receita."
-      />
+      <div data-tour="reports-clients-header">
+        <TitleList
+          title="Relatórios de Clientes"
+          suTitle="Acompanhe compras, frequência e valor médio para identificar quem gera mais receita."
+        />
+      </div>
 
-      <ReportFilters
-        filters={[
-          {
-            type: "date",
-            label: "Data Início",
-            value: startDate,
-            onChange: setStartDate,
-          },
-          {
-            type: "date",
-            label: "Data Fim",
-            value: endDate,
-            onChange: setEndDate,
-            disabledDates: (date) => (startDate ? date < startDate : false),
-          },
-          {
-            type: "select",
-            label: "Tipo de Cliente",
-            value: reportType,
-            onChange: setReportType,
-            options: [
-              { value: "top", label: "Top Clientes" },
-              { value: "recent", label: "Recentes" },
-              { value: "inactive", label: "Inativos" },
-            ],
-            placeholder: "Selecione o tipo",
-          },
-          {
-            type: "select",
-            label: "Limite",
-            value: limit,
-            onChange: setLimit,
-            options: [
-              { value: "5", label: "5" },
-              { value: "10", label: "10" },
-              { value: "20", label: "20" },
-            ],
-            placeholder: "Selecione o limite",
-          },
-        ]}
-      />
+      <div data-tour="reports-clients-filters">
+        <ReportFilters
+          filters={[
+            {
+              type: "date",
+              label: "Data Início",
+              value: startDate,
+              onChange: setStartDate,
+            },
+            {
+              type: "date",
+              label: "Data Fim",
+              value: endDate,
+              onChange: setEndDate,
+              disabledDates: (date) => (startDate ? date < startDate : false),
+            },
+            {
+              type: "select",
+              label: "Tipo de Cliente",
+              value: reportType,
+              onChange: setReportType,
+              options: [
+                { value: "top", label: "Top Clientes" },
+                { value: "recent", label: "Recentes" },
+                { value: "inactive", label: "Inativos" },
+              ],
+              placeholder: "Selecione o tipo",
+            },
+            {
+              type: "select",
+              label: "Limite",
+              value: limit,
+              onChange: setLimit,
+              options: [
+                { value: "5", label: "5" },
+                { value: "10", label: "10" },
+                { value: "20", label: "20" },
+              ],
+              placeholder: "Selecione o limite",
+            },
+          ]}
+        />
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="reports-clients-summary">
         {summaryMetrics.map((metric, i) => (
           <DynamicMetricCard key={i} {...(metric as any)} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" data-tour="reports-clients-details">
         <div className="lg:col-span-2">
           <MetricsPieChart summary={data.summary} />
         </div>

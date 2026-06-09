@@ -85,11 +85,23 @@ export function CategoriesList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Editar", onClick: handlerEditCategory },
-            { label: "Ver detalhes", onClick: handlerDetailsCategory },
+            {
+              label: "Ver detalhes",
+              onClick: handlerDetailsCategory,
+              icon: "Eye",
+              variant: "default",
+            },
+            {
+              label: "Editar",
+              onClick: handlerEditCategory,
+              icon: "Pencil",
+              variant: "default",
+            },
             {
               label: item.isActive ? "Desativar" : "Ativar",
               onClick: toggleStatusCategory,
+              icon: "CirclePower",
+              variant: "default",
             },
           ]}
         />

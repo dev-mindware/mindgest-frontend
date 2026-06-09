@@ -10,10 +10,12 @@ import { LoginFormData, loginSchema } from "@/schemas";
 import { ButtonSubmit, Input } from "@/components";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
+import { queryClient } from "@/lib";
 
 export function LoginForm() {
   const router = useRouter();
-  const { setUser } = useAuthStore();
+  const { setUser, setIsAuthenticating } = useAuthStore();
+
   const {
     register,
     handleSubmit,
@@ -32,10 +34,15 @@ export function LoginForm() {
         return;
       }
 
+      setIsAuthenticating(true);
+
+      // ✅ Popula o cache do React Query antes de redirecionar para evitar requisição redundante
+      queryClient.setQueryData(["user"], res.user);
+
       setUser(res.user);
       router.replace(res.redirectPath || "/");
     } catch (error) {
-      console.error(error);
+      setIsAuthenticating(false);
       ErrorMessage("Ocorreu um erro inesperado. Tente novamente.");
     }
   }
@@ -78,8 +85,6 @@ export function LoginForm() {
           {isSubmitting ? "" : "Entrar"}
         </ButtonSubmit>
 
-        {/* <OrLine />
-        <GoogleButton /> */}
       </div>
       <div className="text-sm text-center">
         Não tem uma conta?{" "}

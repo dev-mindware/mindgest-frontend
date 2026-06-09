@@ -1,4 +1,4 @@
-import { Button, GlobalModal } from "@/components";
+import { Button, GlobalModal, ProtectedAction } from "@/components";
 import { useDeleteStore } from "@/hooks/entities";
 import { currentStoreStore } from "@/stores/entities/current-store-store";
 import { useModal } from "@/stores/modal/use-modal-store";
@@ -41,13 +41,15 @@ export function DeleteStoreModal() {
         <Button onClick={() => closeModal("delete-store")} variant="outline">
           Cancelar
         </Button>
-        <Button
-          disabled={isPending}
-          variant="destructive"
-          onClick={() => handleDelete(currentStore?.id!)}
-        >
-          {isPending ? "Apagando..." : `Apagar ${currentStore?.name}`}
-        </Button>
+        <ProtectedAction>
+          <Button
+            disabled={isPending}
+            variant="destructive"
+            onClick={() => handleDelete(currentStore?.id!)}
+          >
+            {isPending ? "Apagando..." : `Apagar ${currentStore?.name}`}
+          </Button>
+        </ProtectedAction>
       </div>
     </GlobalModal>
   );

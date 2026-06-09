@@ -56,14 +56,23 @@ export function StoresList() {
       key: "gerente",
       header: "Gerente",
       render: (_, item) => (
-        <div className="font-medium">---</div> // Ajustar se tiver gerente no back
+        <div className="font-medium">{item?.name ?? "----------"}</div> // Ajustar se tiver gerente no back
       ),
     },
     {
       key: "email",
       header: "Email",
+      render: (_, item) => (
+        <div className="font-medium">{item?.email ?? "----------"}</div> // Ajustar se tiver gerente no back
+      ),
     },
-    { key: "phone", header: "Telefone" },
+    {
+      key: "phone",
+      header: "Telefone",
+      render: (_, item) => (
+        <div className="font-medium">{item?.phone ?? "----------"}</div> // Ajustar se tiver gerente no back
+      ),
+    },
     {
       key: "isActive",
       header: "Status",
@@ -78,16 +87,27 @@ export function StoresList() {
           actions={[
             {
               label: "Ver detalhes",
-              onClick: () => handlerDetailsStore(item),
+              onClick: handlerDetailsStore,
+              icon: "Eye",
+              variant: "default",
             },
-            { label: "Editar", onClick: () => handlerEditStore(item) },
+            {
+              label: "Editar",
+              onClick: handlerEditStore,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.isActive ? "Desativar" : "Ativar",
+              onClick: toggleStatusStore,
+              icon: "CirclePower",
+              variant: "default",
+            },
             {
               label: "Deletar",
-              onClick: () => handlerDeleteStore(item),
-            },
-            {
-              label: `${item.isActive ? "Desativar" : "Ativar"}`,
-              onClick: () => toggleStatusStore(item),
+              onClick: handlerDeleteStore,
+              icon: "Trash2",
+              variant: "destructive",
             },
           ]}
         />

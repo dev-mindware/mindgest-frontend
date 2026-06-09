@@ -11,7 +11,6 @@ import {
   DeleteClientModal,
   DetailsClientModal,
   ClientModal,
-  Button,
   ClientsFiltersSkeleton,
 } from "@/components";
 import { ClientResponse } from "@/types";
@@ -47,9 +46,24 @@ export function ClientsList() {
     {
       key: "email",
       header: "Email",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.email ?? "------------"}</div>
+      ),
     },
-    { key: "phone", header: "Telefone" },
-    { key: "address", header: "Endereço" },
+    {
+      key: "phone",
+      header: "Telefone",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.phone ?? "------------"}</div>
+      ),
+    },
+    {
+      key: "address",
+      header: "Endereço",
+      render: (_, item) => (
+        <div className="text-sm text-foreground">{item.address ?? "------------"}</div>
+      ),
+    },
     {
       key: "createdAt",
       header: "Criado em",
@@ -73,11 +87,23 @@ export function ClientsList() {
         <ButtonOnlyAction
           data={item}
           actions={[
-            { label: "Ver detalhes", onClick: handlerDetailsClient },
-            { label: "Editar", onClick: handlerEditClient },
             {
-              label: `${item.isActive ? "Desativar" : "Ativar"}`,
-              onClick: () => handlerToggleStatusClient(item),
+              label: "Ver detalhes",
+              onClick: handlerDetailsClient,
+              icon: "Eye",
+              variant: "default",
+            },
+            {
+              label: "Editar",
+              onClick: handlerEditClient,
+              icon: "Pencil",
+              variant: "default",
+            },
+            {
+              label: item.isActive ? "Desativar" : "Ativar",
+              onClick: handlerToggleStatusClient,
+              icon: "CirclePower",
+              variant: "default",
             },
           ]}
         />
@@ -102,11 +128,7 @@ export function ClientsList() {
 
   return (
     <div className="mt-6 space-y-8">
-      <div className="flex justify-end">
-
-      </div>
-      <ClientsFiltersTSX >
-      </ClientsFiltersTSX>
+      <ClientsFiltersTSX />
 
       {clients.length > 0 ? (
         <GenericTable<ClientResponse>

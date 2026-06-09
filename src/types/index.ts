@@ -22,3 +22,5 @@ export * from "./cash-session";
 export * from "./bank";
 export * from "./transaction";
 export * from "./chatbot";
+export * from "./stock-entries";
+export * from "./audit-trail";
