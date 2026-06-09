@@ -5,3 +5,4 @@ export * from "./or-line";
 export * from "./separator-line";
 export * from "./auth-header";
 export * from "./login-hero-composition";
+export * from "./password-strength-bar";

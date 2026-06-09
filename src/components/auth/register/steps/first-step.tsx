@@ -1,56 +1,10 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Input, Button } from "@/components";
+import { Input, Button, PasswordStrengthBar, AlertError } from "@/components";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
 import { Wand2 } from "lucide-react";
-
-type StrengthLevel = 0 | 1 | 2 | 3;
-
-interface StrengthConfig {
-  level: StrengthLevel;
-  label: string;
-  color: string;
-  textColor: string;
-}
-
-function getStrength(pass: string): StrengthConfig {
-  if (!pass) return { level: 0, label: "", color: "", textColor: "" };
-
-  let score = 0;
-  if (pass.length >= 8) score++;
-  if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
-  if (/\d/.test(pass)) score++;
-  if (/[^A-Za-z0-9]/.test(pass)) score++;
-
-  if (score <= 1) return { level: 1, label: "Fraca",  color: "bg-red-500",    textColor: "text-red-500" };
-  if (score <= 2) return { level: 2, label: "Média",  color: "bg-yellow-400", textColor: "text-yellow-500" };
-  return             { level: 3, label: "Forte",  color: "bg-green-500",  textColor: "text-green-600" };
-}
-
-function PasswordStrengthBar({ password }: { password: string }) {
-  if (!password) return null;
-
-  const { level, label, color, textColor } = getStrength(password);
-
-  return (
-    <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-      <div className="flex gap-1.5">
-        {([1, 2, 3] as const).map((seg) => (
-          <div
-            key={seg}
-            className={cn(
-              "h-1 flex-1 rounded-full transition-all duration-300",
-              level >= seg ? color : "bg-muted"
-            )}
-          />
-        ))}
-      </div>
-      <p className={cn("text-xs font-medium", textColor)}>{label}</p>
-    </div>
-  );
-}
 
 export function FirstStep() {
   const {
@@ -102,30 +56,37 @@ export function FirstStep() {
         />
 
         <div className="space-y-2">
-          <div className="flex items-end gap-2">
-            <div className="flex-1">
-              <Input
-                type="password"
-                startIcon="Lock"
-                label="Palavra-passe"
-                placeholder="********"
-                {...register("step1.password")}
-                error={errors?.step1?.password?.message}
-              />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-foreground">
+              Palavra-passe
+            </label>
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <Input
+                  type="password"
+                  startIcon="Lock"
+                  placeholder="********"
+                  {...register("step1.password")}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                title="Gerar senha forte"
+                onClick={generateStrongPassword}
+              >
+                <Wand2 className="size-4" />
+              </Button>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="mb-1 shrink-0"
-              title="Gerar senha forte"
-              onClick={generateStrongPassword}
-            >
-              <Wand2 className="size-4" />
-            </Button>
           </div>
 
           <PasswordStrengthBar password={password} />
+
+          {errors?.step1?.password?.message && (
+            <AlertError errorMessage={errors.step1.password.message} />
+          )}
         </div>
 
         <Input
