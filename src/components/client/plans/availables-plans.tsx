@@ -35,7 +35,7 @@ export function AvailablePlans() {
   return (
     <div>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16" data-tour="plans-header">
           <h1 className="text-4xl font-bold text-foreground mb-4">
             Escolha o Plano Ideal para o Seu Negócio
           </h1>
@@ -49,7 +49,7 @@ export function AvailablePlans() {
           <PlansPageSkeleton />
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-tour="plans-grid">
               {plans.map((plan, index) => {
                 const isPopular = index === 1;
                 const isCurrent = isCurrentPlan(plan);

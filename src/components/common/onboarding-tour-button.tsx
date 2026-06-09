@@ -18,9 +18,12 @@ export function OnboardingTourButton({
   autoStart = true,
   className,
 }: OnboardingTourButtonProps) {
-  const { startTour } = useOnboardingTour(tourId);
+  const { startTour, canAccessTour, tourButtonEnabled } =
+    useOnboardingTour(tourId);
 
   useAutoOnboardingTour(tourId, autoStart);
+
+  if (!canAccessTour || !tourButtonEnabled) return null;
 
   return (
     <Tooltip>

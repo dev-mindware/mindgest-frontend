@@ -30,11 +30,14 @@ export function PosFilters({
             )}
         >
             <div className="flex flex-col lg:flex-row gap-4 items-baseline">
-                <SearchHandlerWrapper
-                    search={search || ""}
-                    setSearch={setSearch}
-                    className="w-full lg:max-w-[400px]"
-                />
+                <div data-tour="pos-management-filter-search" className="w-full lg:max-w-[400px]">
+                    <SearchHandlerWrapper
+                        search={search || ""}
+                        setSearch={setSearch}
+                        className="w-full"
+                    />
+                </div>
+                <div data-tour="pos-management-filter-status">
                     <FilterPopover
                         icon="Tag"
                         label="Estado"
@@ -45,7 +48,9 @@ export function PosFilters({
                         value={filters.isOpen === null || filters.isOpen === undefined ? undefined : filters.isOpen.toString()}
                         onChange={(isOpen) => setFilters({ isOpen: isOpen as string })}
                     />
+                </div>
 
+                <div data-tour="pos-management-filter-sort-by">
                     <FilterPopover
                         icon="List"
                         label="Ordenar por"
@@ -57,7 +62,9 @@ export function PosFilters({
                         ]}
                         onChange={(sortBy) => setFilters({ sortBy })}
                     />
+                </div>
 
+                <div data-tour="pos-management-filter-sort-order">
                     <FilterPopover
                         label="Ordem"
                         icon="ArrowDownUp"
@@ -68,7 +75,9 @@ export function PosFilters({
                         value={filters.sortOrder || undefined}
                         onChange={(sortOrder) => setFilters({ sortOrder })}
                     />
+                </div>
 
+                <div data-tour="pos-management-filter-opened-after">
                     <DatePicker
                     value={
                         filters.openedAfter
@@ -80,7 +89,9 @@ export function PosFilters({
                     }
                     placeholder="Aberto depois de.."
                 />
+                </div>
 
+                <div data-tour="pos-management-filter-opened-before">
                 <DatePicker
                     value={
                         filters.openedBefore ? new Date(filters.openedBefore) : undefined
@@ -88,11 +99,13 @@ export function PosFilters({
                     onChange={(_, formatted) => setFilters({ openedBefore: formatted })}
                     placeholder="Aberto antes de.."
                 />
+                </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
                 {hasFilter && (
                     <Button
+                        data-tour="pos-management-filter-clear"
                         size="sm"
                         variant="outline"
                         onClick={clearAllFilters}

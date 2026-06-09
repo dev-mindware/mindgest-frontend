@@ -10,7 +10,11 @@ export default function Page() {
   }
 
   return (
-    <PageWrapper routeLabel="Movimentos de Caixa" subRoute="Movimentos de Caixa">
+    <PageWrapper
+      routeLabel="Movimentos de Caixa"
+      subRoute="Movimentos de Caixa"
+      onboardingTourId="pos-movements"
+    >
         <MovementsContent />
     </PageWrapper>
   )

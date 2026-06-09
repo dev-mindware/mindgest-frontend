@@ -79,16 +79,16 @@ export function ReservationsView() {
                     <CardTitle className="text-xl font-bold">Calendário de Reservas</CardTitle>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3" data-tour="reservations-controls">
                     {/* Navigation */}
                     <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-md border">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handlePrev}>
+                        <Button data-tour="reservations-prev" variant="ghost" size="icon" className="h-8 w-8" onClick={handlePrev}>
                             <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-8 px-3 text-xs font-semibold" onClick={handleToday}>
+                        <Button data-tour="reservations-today" variant="ghost" size="sm" className="h-8 px-3 text-xs font-semibold" onClick={handleToday}>
                             Hoje
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleNext}>
+                        <Button data-tour="reservations-next" variant="ghost" size="icon" className="h-8 w-8" onClick={handleNext}>
                             <ChevronRight className="h-4 w-4" />
                         </Button>
                     </div>
@@ -96,13 +96,13 @@ export function ReservationsView() {
                     {/* View Switcher */}
                     <Tabs value={view === "dayGridMonth" ? "month" : "week"} onValueChange={handleViewChange}>
                         <TabsList className="bg-muted/50 border">
-                            <TabsTrigger value="month" className="text-xs px-4 h-8">Mês</TabsTrigger>
-                            <TabsTrigger value="week" className="text-xs px-4 h-8">Semana</TabsTrigger>
+                            <TabsTrigger data-tour="reservations-view-month" value="month" className="text-xs px-4 h-8">Mês</TabsTrigger>
+                            <TabsTrigger data-tour="reservations-view-week" value="week" className="text-xs px-4 h-8">Semana</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent data-tour={events?.length ? "reservations-events" : "reservations-empty-state"}>
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

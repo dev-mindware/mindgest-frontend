@@ -7,3 +7,4 @@ export * from "./collaborators";
 export * from "./entities";
 export * from "./banks";
 export * from "./agt";
+export * from "./onboarding-preferences";

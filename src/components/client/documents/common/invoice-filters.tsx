@@ -31,16 +31,19 @@ export function InvoiceFiltersTSX({ type }: Props) {
   const showStatusFilter = type === "invoice";
 
   return (
-    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0" data-tour="documents-filters">
       {/* Search Input and Filter Popovers */}
       <div className="w-full flex flex-col gap-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div data-tour="documents-filter-search">
           <SearchHandlerWrapper
             search={search}
             setSearch={setSearch}
             className="w-full"
             placeholder="Pesquise por cliente ou nº da Factura"
           />
+          </div>
+          <div data-tour="documents-filter-client">
           <Input
             type="search"
             placeholder="Cliente"
@@ -48,11 +51,13 @@ export function InvoiceFiltersTSX({ type }: Props) {
             onChange={(e) => setFilters({ clientName: e.target.value })}
             className="w-full"
           />
+          </div>
         </div>
 
         {/* Filter Popovers - Full width on mobile, auto width on larger screens */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           {showStatusFilter && (
+            <div data-tour="documents-filter-status">
             <FilterPopover
               icon="Tag"
               label="Status"
@@ -62,8 +67,10 @@ export function InvoiceFiltersTSX({ type }: Props) {
                 setFilters({ status: status as InvoiceStatus })
               }
             />
+            </div>
           )}
 
+          <div data-tour="documents-filter-sort-by">
           <FilterPopover
             icon="List"
             label="Ordenar por"
@@ -71,7 +78,9 @@ export function InvoiceFiltersTSX({ type }: Props) {
             value={filters.sortBy}
             onChange={(sortBy) => setFilters({ sortBy })}
           />
+          </div>
 
+          <div data-tour="documents-filter-sort-order">
           <FilterPopover
             label="Ordem"
             icon="ArrowDownUp"
@@ -82,6 +91,8 @@ export function InvoiceFiltersTSX({ type }: Props) {
             value={filters.sortOrder}
             onChange={(sortOrder) => setFilters({ sortOrder })}
           />
+          </div>
+          <div data-tour="documents-filter-number">
           <Input
             type="search"
             placeholder="Nº Fatura"
@@ -89,28 +100,34 @@ export function InvoiceFiltersTSX({ type }: Props) {
             onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
             className="w-full"
           />
+          </div>
         </div>
       </div>
 
       {/* Date Pickers and Clear Button - 3 columns on desktop */}
       <div className="flex justify-center sm:justify-start">
         <div className="grid grid-cols-2 gap-3">
+          <div data-tour="documents-filter-start-date">
           <DatePicker
             value={filters.startDate ? new Date(filters.startDate) : undefined}
             onChange={(_, formatted) => setFilters({ startDate: formatted })}
             placeholder="Data Início"
           />
+          </div>
 
+          <div data-tour="documents-filter-end-date">
           <DatePicker
             value={filters.endDate ? new Date(filters.endDate) : undefined}
             onChange={(_, formatted) => setFilters({ endDate: formatted })}
             placeholder="Data Fim"
           />
+          </div>
         </div>
 
         {/* Clear Button */}
         {hasFilter && (
           <Button
+            data-tour="documents-filter-clear"
             size="sm"
             variant="outline"
             onClick={clearAllFilters}

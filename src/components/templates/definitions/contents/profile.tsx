@@ -20,7 +20,9 @@ export function Profile() {
 
       <ProfileForm user={user} />
 
-      <CompanyForm user={user!} />
+      <div data-tour="setup-company-profile">
+        <CompanyForm user={user!} />
+      </div>
 
       <CompanyLogoForm user={user} />
     </div>

@@ -3,7 +3,7 @@ import { PosManagementContent } from "@/components/client/management/pos/pos-man
 
 export default function PosPage() {
   return (
-    <PageWrapper subRoute="Gestão de POS">
+    <PageWrapper subRoute="Gestão de POS" onboardingTourId="pos-management">
       <PosManagementContent />
     </PageWrapper>
   );

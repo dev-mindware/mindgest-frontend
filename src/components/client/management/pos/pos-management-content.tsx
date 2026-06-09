@@ -61,7 +61,7 @@ export function PosManagementContent() {
   return (
     <div>
       <div className="space-y-8">
-        <section className="space-y-6">
+        <section className="space-y-6" data-tour="pos-management-summary">
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {dynamicSummaryCards.map((card, idx) => (
               <DynamicMetricCard
@@ -90,9 +90,15 @@ export function PosManagementContent() {
 
         <section className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <PosFilters />
-            <div className="flex items-center bg-muted/30 p-1 rounded-md border border-muted-foreground/10 gap-1 ml-auto">
+            <div data-tour="pos-management-filters">
+              <PosFilters />
+            </div>
+            <div
+              className="flex items-center bg-muted/30 p-1 rounded-md border border-muted-foreground/10 gap-1 ml-auto"
+              data-tour="pos-management-view-toggle"
+            >
               <Button
+                data-tour="pos-management-view-grid"
                 variant={viewMode === "grid" ? "secondary" : "ghost"}
                 className={cn(
                   viewMode === "grid"
@@ -105,6 +111,7 @@ export function PosManagementContent() {
                 <Icon name="LayoutGrid" size={30} />
               </Button>
               <Button
+                data-tour="pos-management-view-table"
                 variant={viewMode === "table" ? "secondary" : "ghost"}
                 className={cn(
                   viewMode === "table"
@@ -119,17 +126,19 @@ export function PosManagementContent() {
             </div>
           </div>
 
-          <PosCashierList
-            viewMode={viewMode}
-            data={sessions}
-            isLoading={isLoading}
-            total={total}
-            totalPages={totalPages}
-            goToNextPage={goToNextPage}
-            goToPreviousPage={goToPreviousPage}
-            page={page}
-            setPage={setPage}
-          />
+          <div data-tour="pos-management-list">
+            <PosCashierList
+              viewMode={viewMode}
+              data={sessions}
+              isLoading={isLoading}
+              total={total}
+              totalPages={totalPages}
+              goToNextPage={goToNextPage}
+              goToPreviousPage={goToPreviousPage}
+              page={page}
+              setPage={setPage}
+            />
+          </div>
         </section>
       </div>
 

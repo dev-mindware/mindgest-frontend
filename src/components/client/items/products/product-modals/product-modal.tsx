@@ -178,12 +178,14 @@ function AddProductFormContent() {
 
   return (
     <form
+      data-tour="product-modal"
       onSubmit={handleSubmit(onSubmit)}
       className="grid grid-cols-1 gap-6 sm:grid-flow-col sm:auto-cols-fr"
     >
       <div className="">
         <div className="space-y-4 sm:w-[35rem]">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div data-tour="product-form-name">
             <Input
               label="Nome"
               startIcon="Tag"
@@ -191,6 +193,7 @@ function AddProductFormContent() {
               error={errors.name?.message}
               placeholder="Ex: Teclado Logitech"
             />
+            </div>
             <Controller
               control={control}
               name="taxId"
@@ -215,6 +218,7 @@ function AddProductFormContent() {
               control={control}
               name="price"
               render={({ field }) => (
+                <div data-tour="product-form-price">
                 <InputCurrency
                   ref={field.ref}
                   label="Preço Unitário"
@@ -226,12 +230,14 @@ function AddProductFormContent() {
                   allowNegative={false}
                   error={errors.price?.message}
                 />
+                </div>
               )}
             />
             <Controller
               control={control}
               name="cost"
               render={({ field }) => (
+                <div data-tour="product-form-cost">
                 <InputCurrency
                   ref={field.ref}
                   label="Custo de Compra"
@@ -243,6 +249,7 @@ function AddProductFormContent() {
                   allowNegative={false}
                   error={errors.cost?.message}
                 />
+                </div>
               )}
             />
           </div>
@@ -252,6 +259,7 @@ function AddProductFormContent() {
               control={control}
               name="categoryId"
               render={({ field: { onChange, value } }) => (
+                <div data-tour="product-form-category">
                 <PaginatedSelect
                   label="Categoria"
                   value={value}
@@ -263,12 +271,14 @@ function AddProductFormContent() {
                   placeholder="Selecione uma opção"
                   fullWidth
                 />
+                </div>
               )}
             />
             <Controller
               control={control}
               name="quantity"
               render={({ field }) => (
+                <div data-tour="product-form-quantity">
                 <Input
                   type="quantity"
                   startIcon="Scale"
@@ -277,13 +287,15 @@ function AddProductFormContent() {
                   onChange={(e) => field.onChange(Number(e.target.value))}
                   error={errors.quantity?.message}
                 />
+                </div>
               )}
             />
           </div>
 
           <FeatureGate minPlan="Smart" fallback="hidden">
-            <div className="space-y-4">
+            <div className="space-y-4" data-tour="product-stock-fields">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div data-tour="product-form-barcode">
                 <Input
                   label="Código de Barras (Opcional)"
                   placeholder="Ex: 7891234567890"
@@ -291,12 +303,14 @@ function AddProductFormContent() {
                   error={errors.barcode?.message}
                   startIcon="Barcode"
                 />
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Controller
                   control={control}
                   name="minStock"
                   render={({ field }) => (
+                    <div data-tour="product-form-min-stock">
                     <Input
                       type="quantity"
                       startIcon="Scale"
@@ -305,12 +319,14 @@ function AddProductFormContent() {
                       onChange={(e) => field.onChange(Number(e.target.value))}
                       error={errors.minStock?.message}
                     />
+                    </div>
                   )}
                 />
                 <Controller
                   control={control}
                   name="maxStock"
                   render={({ field }) => (
+                    <div data-tour="product-form-max-stock">
                     <Input
                       type="quantity"
                       startIcon="Scale"
@@ -319,6 +335,7 @@ function AddProductFormContent() {
                       onChange={(e) => field.onChange(Number(e.target.value))}
                       error={errors.maxStock?.message}
                     />
+                    </div>
                   )}
                 />
               </div>
@@ -404,12 +421,19 @@ function AddProductFormContent() {
         </div>
 
         <div className="flex justify-end gap-4 mt-5">
-          <Button type="button" variant="outline" onClick={handleCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            data-tour="product-form-cancel"
+          >
             Cancelar
           </Button>
+          <span data-tour="product-form-submit">
           <ButtonSubmit className="w-max" isLoading={isAdding || isSubmitting}>
             Salvar
           </ButtonSubmit>
+          </span>
         </div>
       </div>
     </form>

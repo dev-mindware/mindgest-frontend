@@ -7,6 +7,7 @@ import { CategoriesPageContent, Icon } from "@/components";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CollaboratorsPageContent,
+  OnboardingPreferences,
   StoresPageContent,
   SubscriptionInfo,
 } from "./contents";
@@ -85,6 +86,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       isVisible: isOwner,
     },
     {
+      id: "guides",
+      label: "Guias",
+      icon: "Route",
+      component: <OnboardingPreferences />,
+      category: "general",
+      isVisible: true,
+    },
+    {
       id: "collaborators",
       label: "Colaboradores",
       icon: "BriefcaseBusiness",
@@ -155,7 +164,12 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       : "data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e";
 
     return (
-      <TabsTrigger key={tab.id} value={tab.id} className={baseClasses}>
+      <TabsTrigger
+        key={tab.id}
+        value={tab.id}
+        className={baseClasses}
+        data-tour={`setup-tab-${tab.id}`}
+      >
         <Icon
           name={tab.icon}
           className={isDesktop ? "-ms-0.5 me-1.5 opacity-60 text-primary" : ""}
@@ -174,7 +188,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
   };
 
   return (
-    <div>
+    <div data-tour="setup-layout">
       <h1 className="text-2xl font-semibold">Definições da Conta</h1>
       <div className="hidden md:block">
         <Tabs
@@ -190,7 +204,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">
                       Gerais
                     </p>
-                    <div>
+                    <div data-tour="setup-general-tabs">
                       {generalTabs.map((tab) => renderTabTrigger(tab, true))}
                     </div>
                   </>
@@ -203,7 +217,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">
                       Ambiente de Trabalho
                     </p>
-                    <div>
+                    <div data-tour="setup-workplace-tabs">
                       {workplaceTabs.map((tab) => renderTabTrigger(tab, true))}
                     </div>
                   </>
@@ -212,7 +226,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
             </TabsList>
           </div>
 
-          <div className="border rounded-md grow min-w-0 text-start">
+          <div className="border rounded-md grow min-w-0 text-start" data-tour="setup-active-content">
             {enabledTabs.map((tab) => (
               <TabsContent key={tab.id} value={tab.id} className="!py-4 sm:p-6">
                 {tab.component}
@@ -229,12 +243,12 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
           onValueChange={handleTabChange}
         >
           <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="h-auto w-full min-w-full inline-flex p-0 shadow-xs bg-background overflow-x-auto overflow-y-hidden scrollbar-hide -space-x-px rtl:space-x-reverse">
+            <TabsList className="h-auto w-full min-w-full inline-flex p-0 shadow-xs bg-background overflow-x-auto overflow-y-hidden scrollbar-hide -space-x-px rtl:space-x-reverse" data-tour="setup-general-tabs">
               {enabledTabs.map((tab) => renderTabTrigger(tab, false))}
             </TabsList>
           </div>
 
-          <div className="mt-4 sm:mt-6">
+          <div className="mt-4 sm:mt-6" data-tour="setup-active-content">
             {enabledTabs.map((tab) => (
               <TabsContent
                 key={tab.id}

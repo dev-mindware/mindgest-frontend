@@ -6,14 +6,18 @@ import { ButtonAddSupplier } from "./button-add-supplier";
 export function SuppliersPageContent() {
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center" data-tour="suppliers-header">
         <TitleList
           title="Fornecedores"
           suTitle="Adicione e gerencie seus fornecedores"
         />
-        <ButtonAddSupplier />
+        <div data-tour="suppliers-create">
+          <ButtonAddSupplier />
+        </div>
       </div>
-      <SuppliersList />
+      <div data-tour="suppliers-list">
+        <SuppliersList />
+      </div>
       <SupplierModal />
     </>
   );

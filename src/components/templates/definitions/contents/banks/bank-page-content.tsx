@@ -3,7 +3,7 @@ import { BankList } from "./banks-list";
 
 export function BankPageContent() {
   return (
-    <div>
+    <div data-tour="setup-banks-content">
       <TitleList
         title="Bancos"
         suTitle="Crie bancos que ajudarão no controlo das suas finanças"

@@ -196,7 +196,7 @@ export function StockList() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <div className="rounded-lg border p-6">
+        <div className="rounded-lg border p-6" data-tour="stock-filters">
           <h3 className="text-lg font-semibold mb-4">Filtros</h3>
           <StockFilters />
         </div>
@@ -208,7 +208,7 @@ export function StockList() {
   if (stock?.length === 0)
     return (
       <div className="space-y-6">
-        <div className="rounded-lg border p-6">
+        <div className="rounded-lg border p-6" data-tour="stock-filters">
           <h3 className="text-lg font-semibold mb-4">Filtros</h3>
           <StockFilters />
         </div>
@@ -223,7 +223,7 @@ export function StockList() {
   return (
     <>
       <div className="space-y-6">
-        <div className="rounded-lg border p-6">
+        <div className="rounded-lg border p-6" data-tour="stock-filters">
          {/*  <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Filtros</h3>
             <Button onClick={() => openModal("add-stock")} size="sm">
