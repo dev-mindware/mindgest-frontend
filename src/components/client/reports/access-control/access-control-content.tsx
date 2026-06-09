@@ -103,11 +103,13 @@ export function AccessControlContent() {
   if (isError) {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        <TitleList
-          title="Acesso e Auditoria"
-          suTitle="Monitore as atividades dos usuários, logs de acessos e alterações críticas de dados."
-        />
-        <div className="rounded-lg border p-6 bg-card">
+        <div data-tour="reports-access-header">
+          <TitleList
+            title="Acesso e Auditoria"
+            suTitle="Monitore as atividades dos usuários, logs de acessos e alterações críticas de dados."
+          />
+        </div>
+        <div className="rounded-lg border p-6 bg-card" data-tour="reports-access-filters">
           <AuditFilters />
         </div>
         <RequestError refetch={refetch} message="Erro ao carregar os registros de auditoria" />
@@ -118,33 +120,39 @@ export function AccessControlContent() {
   return (
     <>
       <div className="space-y-6 animate-in fade-in duration-500">
-        <TitleList
-          title="Acesso e Auditoria"
-          suTitle="Monitore as atividades dos usuários, logs de acessos e alterações críticas de dados."
-        />
+        <div data-tour="reports-access-header">
+          <TitleList
+            title="Acesso e Auditoria"
+            suTitle="Monitore as atividades dos usuários, logs de acessos e alterações críticas de dados."
+          />
+        </div>
 
-        <div className="rounded-lg border p-6 bg-card shadow-sm">
+        <div className="rounded-lg border p-6 bg-card shadow-sm" data-tour="reports-access-filters">
           <AuditFilters />
         </div>
 
         {logs.length === 0 ? (
-          <EmptyState
-            description="Nenhum registro de auditoria encontrado com os filtros selecionados."
-            title="Sem Auditorias"
-            icon="Activity"
-          />
+          <div data-tour="reports-access-list">
+            <EmptyState
+              description="Nenhum registro de auditoria encontrado com os filtros selecionados."
+              title="Sem Auditorias"
+              icon="Activity"
+            />
+          </div>
         ) : (
-          <GenericTable<AuditTrailResponse>
-            page={page}
-            data={logs}
-            columns={columns}
-            total={total}
-            totalPages={totalPages}
-            setPage={setPage}
-            goToNextPage={goToNextPage}
-            goToPreviousPage={goToPreviousPage}
-            emptyMessage="Nenhum registro de auditoria encontrado"
-          />
+          <div data-tour="reports-access-list">
+            <GenericTable<AuditTrailResponse>
+              page={page}
+              data={logs}
+              columns={columns}
+              total={total}
+              totalPages={totalPages}
+              setPage={setPage}
+              goToNextPage={goToNextPage}
+              goToPreviousPage={goToPreviousPage}
+              emptyMessage="Nenhum registro de auditoria encontrado"
+            />
+          </div>
         )}
 
         {totalPages > 1 && (

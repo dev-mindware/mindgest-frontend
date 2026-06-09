@@ -26,7 +26,7 @@ function FeatureItem({ icon, title, description }: FeatureItemProps) {
 
 export function PlanInclusionFeatures() {
   return (
-    <div className="mt-20 py-16 border-t border-border/50">
+    <div className="mt-20 py-16 border-t border-border/50" data-tour="plans-inclusions">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-foreground mb-4">
           Todos os planos incluem

@@ -1,20 +1,55 @@
-import type { DriveStep, Side, Alignment } from "driver.js";
+import type { Alignment, DriveStep, Side } from "driver.js";
+import type { PlanType, Role } from "@/types";
 
-export type OnboardingTourId = "normal-invoice" | "pos-invoice";
+export type OnboardingTourId =
+  | "setup"
+  | "clients"
+  | "items"
+  | "documents-list"
+  | "normal-invoice"
+  | "stock"
+  | "pos-invoice"
+  | "pos-movements"
+  | "pos-management"
+  | "suppliers"
+  | "reservations"
+  | "reports-sales"
+  | "reports-clients"
+  | "reports-access-control"
+  | "plans";
+
+export type OnboardingTourGroup =
+  | "setup"
+  | "core"
+  | "operation"
+  | "advanced"
+  | "reporting";
+
+export type OnboardingTourType =
+  | "setup"
+  | "core"
+  | "advanced"
+  | "reporting";
 
 export type OnboardingTourDemo =
+  | "documents-filters"
   | "normal-client-existing"
   | "normal-client-new"
   | "normal-client-details"
   | "normal-product-existing"
   | "normal-product-new"
   | "normal-product-details"
+  | "product-form-basics"
+  | "product-form-stock"
+  | "pos-management-filters"
+  | "pos-management-view"
+  | "reservations-calendar-view"
   | "pos-products-search"
   | "pos-client-existing"
   | "pos-client-new"
   | "pos-client-details";
 
-type TourStepDefinition = {
+export type TourStepDefinition = {
   selector: string;
   title: string;
   description: string;
@@ -26,190 +61,686 @@ type TourStepDefinition = {
 export type TourDefinition = {
   id: OnboardingTourId;
   title: string;
+  group: OnboardingTourGroup;
+  type: OnboardingTourType;
+  priority: number;
+  roles: Role[];
+  minPlan: PlanType;
   steps: TourStepDefinition[];
 };
 
 export type OnboardingDriveStep = DriveStep & {
+  selector?: string;
   demo?: OnboardingTourDemo;
 };
 
+type TourConfig = Omit<TourDefinition, "id">;
+type StepOptions = Pick<TourStepDefinition, "side" | "align" | "demo">;
+
+const TOUR_ROLES = {
+  owner: ["OWNER"],
+  ownerManager: ["OWNER", "MANAGER"],
+  cashier: ["CASHIER"],
+} satisfies Record<string, Role[]>;
+
+function dataTour(name: string) {
+  return `[data-tour="${name}"]`;
+}
+
+function tourStep(
+  selector: string,
+  title: string,
+  description: string,
+  options: StepOptions = {},
+): TourStepDefinition {
+  return {
+    selector: dataTour(selector),
+    title,
+    description,
+    ...options,
+  };
+}
+
+function defineTour(id: OnboardingTourId, config: TourConfig): TourDefinition {
+  return {
+    id,
+    ...config,
+  };
+}
+
 export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
-  "normal-invoice": {
-    id: "normal-invoice",
+  setup: defineTour("setup", {
+    title: "Configuração inicial",
+    group: "setup",
+    type: "setup",
+    priority: 1,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "setup-layout",
+        "Definições da conta",
+        "Prepare empresa, fiscalidade e operação antes de emitir documentos.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "setup-general-tabs",
+        "Área geral",
+        "Aceda a perfil, segurança, aparência, subscrição e preferências de tours.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-company-profile",
+        "Perfil da empresa",
+        "Confirme nome, contacto, endereço e NIF usados nos documentos.",
+        { side: "left" },
+      ),
+      tourStep(
+        "setup-tab-appearance",
+        "Aparência",
+        "Personalize a experiência visual quando o plano permitir.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-tab-subscription",
+        "Subscrição",
+        "Reveja plano, limites e estado de pagamento da empresa.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-workplace-tabs",
+        "Ambiente de trabalho",
+        "Configure colaboradores, categorias, lojas, bancos e dados fiscais.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-tab-collaborators",
+        "Colaboradores",
+        "Gira acessos da equipa sem misturar perfis operacionais.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-tab-categories",
+        "Categorias",
+        "Organize produtos, serviços e documentos por categorias.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-tab-entities",
+        "Lojas",
+        "Configure lojas quando o plano tiver suporte multi-loja.",
+        { side: "right" },
+      ),
+      tourStep(
+        "setup-banks-content",
+        "Bancos",
+        "Cadastre bancos usados em documentos, recibos e controlo financeiro.",
+        { side: "left" },
+      ),
+      tourStep(
+        "setup-agt-content",
+        "Dados fiscais",
+        "Reveja séries, validações e configurações ligadas à integração fiscal.",
+        { side: "left" },
+      ),
+      tourStep(
+        "setup-guides-content",
+        "Guias e tours",
+        "Controle se os guias aparecem automaticamente e reponha tours já vistos.",
+        { side: "left" },
+      ),
+    ],
+  }),
+
+  clients: defineTour("clients", {
+    title: "Gestão de clientes",
+    group: "core",
+    type: "core",
+    priority: 2,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "clients-header",
+        "Clientes",
+        "Use esta área para centralizar os dados dos clientes usados em faturas e relatórios.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "clients-create",
+        "Novo cliente",
+        "Crie clientes completos quando já conhece o NIF, o telefone e o endereço antes da venda.",
+        { side: "left" },
+      ),
+      tourStep(
+        "clients-list",
+        "Lista e pesquisa",
+        "Pesquise, consulte e edite clientes existentes sem duplicar dados durante a emissão de documentos.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  items: defineTour("items", {
+    title: "Produtos e serviços",
+    group: "core",
+    type: "core",
+    priority: 3,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "items-header",
+        "Catálogo comercial",
+        "Produtos e serviços alimentam faturas, POS, stock e relatórios.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "items-tabs",
+        "Produtos ou serviços",
+        "Alterne entre produtos com controlo de stock e serviços sem inventário.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "items-create",
+        "Criar item",
+        "Crie o item manualmente ou, no plano Pro, use o código de barras para acelerar o cadastro.",
+        { side: "left" },
+      ),
+      tourStep(
+        "product-modal",
+        "Cadastro de produto",
+        "Preencha nome, preço, imposto e categoria antes de guardar.",
+        { side: "left", demo: "product-form-basics" },
+      ),
+      tourStep(
+        "product-stock-fields",
+        "Stock e rastreio",
+        "Defina quantidade, stock mínimo, stock máximo e código de barras quando disponível.",
+        { side: "left", demo: "product-form-stock" },
+      ),
+      tourStep(
+        "items-list",
+        "Listagem",
+        "Use a lista para filtrar e editar preços, categorias, impostos e campos avançados.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "documents-list": defineTour("documents-list", {
+    title: "Documentos",
+    group: "core",
+    type: "core",
+    priority: 4,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "documents-header",
+        "Central de documentos",
+        "Aqui acompanha faturas, faturas-recibo, proformas, recibos e notas de crédito.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "documents-tabs",
+        "Tipos de documento",
+        "Cada separador mostra um tipo fiscal ou comercial, com estados e ações próprias.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "documents-create",
+        "Criar documento",
+        "Inicia o fluxo de emissão no tipo selecionado. As notas de crédito são geradas a partir de documentos existentes.",
+        { side: "left" },
+      ),
+      tourStep(
+        "documents-list",
+        "Listagem e ações",
+        "Use filtros e menus da tabela para ver, baixar, clonar, cancelar ou converter documentos.",
+        { side: "top" },
+      ),
+      tourStep(
+        "documents-filters",
+        "Filtros avançados",
+        "Pesquise por cliente, estado, número e datas sem perder o contexto da lista.",
+        { side: "bottom", demo: "documents-filters" },
+      ),
+    ],
+  }),
+
+  "normal-invoice": defineTour("normal-invoice", {
     title: "Criar fatura",
+    group: "core",
+    type: "core",
+    priority: 5,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
     steps: [
-      {
-        selector: '[data-tour="normal-invoice-document-type"]',
-        title: "Tipo de documento",
-        description:
-          "Comece pela aba Fatura. As outras abas servem para recibos e proformas.",
-        side: "bottom",
-        align: "start",
-      },
-      {
-        selector: '[data-tour="normal-invoice-main-fields"]',
-        title: "Dados principais",
-        description:
-          "Confirme a data de vencimento e a moeda antes de avancar com o cliente e os itens.",
-        side: "bottom",
-      },
-      {
-        selector: '[data-tour="normal-invoice-client"]',
-        title: "Cliente existente",
-        description:
-          "Primeiro cenario: pesquise pelo nome, telefone ou email e escolha um cliente ja cadastrado.",
-        side: "bottom",
-        demo: "normal-client-existing",
-      },
-      {
-        selector: '[data-tour="normal-invoice-client"]',
-        title: "Novo cliente",
-        description:
-          "Segundo cenario: quando o cliente nao existe, escreva o nome e use a opcao de criar no select.",
-        side: "bottom",
-        demo: "normal-client-new",
-      },
-      {
-        selector: '[data-tour="normal-invoice-client-details"]',
-        title: "Dados do novo cliente",
-        description:
-          "Depois de criar o nome no select, complete NIF, telefone e endereco antes de emitir a fatura.",
-        side: "bottom",
-        demo: "normal-client-details",
-      },
-      {
-        selector: '[data-tour="normal-invoice-item-select"]',
-        title: "Item existente",
-        description:
-          "Primeiro cenario: pesquise um produto ou servico ja cadastrado para reaproveitar preco, stock e impostos.",
-        side: "top",
-        demo: "normal-product-existing",
-      },
-      {
-        selector: '[data-tour="normal-invoice-item-select"]',
-        title: "Novo produto ou servico",
-        description:
-          "Segundo cenario: se o item ainda nao existe, escreva o nome e crie-o diretamente na fatura.",
-        side: "top",
-        demo: "normal-product-new",
-      },
-      {
-        selector: '[data-tour="normal-invoice-new-item-fields"]',
-        title: "Dados do novo item",
-        description:
-          "Para itens novos, informe quantidade, preco, tipo e imposto antes de adicionar a fatura.",
-        side: "top",
-        demo: "normal-product-details",
-      },
-      {
-        selector: '[data-tour="normal-invoice-summary"]',
-        title: "Lista e totais",
-        description:
-          "Depois de adicionar itens, aqui acompanha a lista, descontos, retencao e total a pagar.",
-        side: "top",
-      },
-      {
-        selector: '[data-tour="normal-invoice-notes"]',
-        title: "Observacoes",
-        description:
-          "Use este campo para notas comerciais ou instrucoes que devam acompanhar o documento.",
-        side: "top",
-      },
-      {
-        selector: '[data-tour="normal-invoice-submit"]',
-        title: "Criar fatura",
-        description:
-          "Quando tudo estiver validado, este botao emite a fatura. O tour nao clica nem submete por si.",
-        side: "top",
-        align: "end",
-      },
+      tourStep(
+        "normal-invoice-document-type",
+        "Tipo de documento",
+        "Comece pela aba Fatura. As outras abas servem para recibos e proformas.",
+        { side: "bottom", align: "start" },
+      ),
+      tourStep(
+        "normal-invoice-main-fields",
+        "Dados principais",
+        "Confirme a data de vencimento e a moeda antes de avançar para o cliente e os itens.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "normal-invoice-client",
+        "Cliente existente",
+        "Primeiro cenário: pesquise por nome, telefone ou email e escolha um cliente já cadastrado.",
+        { side: "bottom", demo: "normal-client-existing" },
+      ),
+      tourStep(
+        "normal-invoice-client",
+        "Novo cliente",
+        "Segundo cenário: quando o cliente não existe, escreva o nome e use a opção de criação no seletor.",
+        { side: "bottom", demo: "normal-client-new" },
+      ),
+      tourStep(
+        "normal-invoice-client-details",
+        "Dados do novo cliente",
+        "Depois de criar o nome no seletor, complete o NIF, o telefone e o endereço antes de emitir a fatura.",
+        { side: "bottom", demo: "normal-client-details" },
+      ),
+      tourStep(
+        "normal-invoice-item-select",
+        "Item existente",
+        "Primeiro cenário: pesquise um produto ou serviço já cadastrado para reaproveitar preço, stock e impostos.",
+        { side: "top", demo: "normal-product-existing" },
+      ),
+      tourStep(
+        "normal-invoice-item-select",
+        "Novo produto ou serviço",
+        "Segundo cenário: se o item ainda não existe, escreva o nome e crie-o diretamente na fatura.",
+        { side: "top", demo: "normal-product-new" },
+      ),
+      tourStep(
+        "normal-invoice-new-item-fields",
+        "Dados do novo item",
+        "Para itens novos, informe a quantidade, o preço, o tipo e o imposto antes de adicionar à fatura.",
+        { side: "top", demo: "normal-product-details" },
+      ),
+      tourStep(
+        "normal-invoice-summary",
+        "Lista e totais",
+        "Depois de adicionar itens, acompanhe aqui a lista, os descontos, a retenção e o total a pagar.",
+        { side: "top" },
+      ),
+      tourStep(
+        "normal-invoice-notes",
+        "Observações",
+        "Use este campo para notas comerciais ou instruções que devam acompanhar o documento.",
+        { side: "top" },
+      ),
+      tourStep(
+        "normal-invoice-submit",
+        "Criar fatura",
+        "Quando tudo estiver validado, este botão emite a fatura. O tour não clica nem submete por si.",
+        { side: "top", align: "end" },
+      ),
     ],
-  },
-  "pos-invoice": {
-    id: "pos-invoice",
+  }),
+
+  stock: defineTour("stock", {
+    title: "Gestão de stock",
+    group: "operation",
+    type: "core",
+    priority: 6,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Smart",
+    steps: [
+      tourStep(
+        "stock-summary",
+        "Resumo do stock",
+        "Veja totais, disponibilidade, reservas e alertas de baixo stock antes de agir.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "stock-chart",
+        "Níveis de inventário",
+        "O gráfico separa stock adequado, baixo e esgotado para ajudar a priorizar a reposição.",
+        { side: "top" },
+      ),
+      tourStep(
+        "stock-filters",
+        "Filtros",
+        "Filtre por produto, loja, stock baixo, itens esgotados, reservas e intervalos avançados.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "stock-table",
+        "Tabela e ações",
+        "Abra o menu de ações para ver detalhes, ajustar stock, reservar ou liberar reservas.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "pos-invoice": defineTour("pos-invoice", {
     title: "Faturar no POS",
+    group: "operation",
+    type: "core",
+    priority: 7,
+    roles: TOUR_ROLES.cashier,
+    minPlan: "Smart",
     steps: [
-      {
-        selector: '[data-tour="pos-categories"]',
-        title: "Categorias",
-        description:
-          "Use as categorias para filtrar rapidamente o menu de produtos do POS.",
-        side: "bottom",
-      },
-      {
-        selector: '[data-tour="pos-products"]',
-        title: "Produtos no POS",
-        description:
-          "No POS, os produtos vem da base de dados. Use a busca para localizar rapidamente o item antes de adicionar.",
-        side: "right",
-        demo: "pos-products-search",
-      },
-      {
-        selector: '[data-tour="pos-product-add"]',
-        title: "Adicionar ao carrinho",
-        description:
-          "Clique no produto ou no botao de adicionar para enviar o item para o carrinho.",
-        side: "left",
-      },
-      {
-        selector: '[data-tour="pos-cart"]',
-        title: "Carrinho",
-        description:
-          "Aqui reve os itens da venda, quantidades e o documento que sera emitido.",
-        side: "left",
-      },
-      {
-        selector: '[data-tour="pos-payment-summary"]',
-        title: "Resumo",
-        description:
-          "O POS calcula subtotal, impostos, descontos e total antes da confirmacao.",
-        side: "left",
-      },
-      {
-        selector: '[data-tour="pos-customer"]',
-        title: "Cliente existente no POS",
-        description:
-          "Primeiro cenario: abra Cliente Opcional e pesquise um cliente ja cadastrado para associar a venda.",
-        side: "left",
-        demo: "pos-client-existing",
-      },
-      {
-        selector: '[data-tour="pos-customer"]',
-        title: "Novo cliente no POS",
-        description:
-          "Segundo cenario: se o cliente nao existir, escreva o nome e crie o registo no select.",
-        side: "left",
-        demo: "pos-client-new",
-      },
-      {
-        selector: '[data-tour="pos-new-customer-phone"]',
-        title: "Telefone do novo cliente",
-        description:
-          "No POS, o dado complementar do novo cliente e o telefone. Preencha-o antes de confirmar o pagamento.",
-        side: "left",
-        demo: "pos-client-details",
-      },
-      {
-        selector: '[data-tour="pos-payment-methods"]',
-        title: "Pagamento",
-        description:
-          "Escolha o metodo de pagamento e, em dinheiro, informe o valor entregue para calcular o troco.",
-        side: "left",
-      },
-      {
-        selector: '[data-tour="pos-submit"]',
-        title: "Confirmar pagamento",
-        description:
-          "Este botao abre a confirmacao da venda. O tour apenas explica o passo, sem emitir documentos.",
-        side: "top",
-      },
+      tourStep(
+        "pos-categories",
+        "Categorias",
+        "Use as categorias para filtrar rapidamente o menu de produtos do POS.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-products",
+        "Produtos no POS",
+        "No POS, os produtos vêm da base de dados. Use a pesquisa para localizar rapidamente o item antes de adicioná-lo.",
+        { side: "right", demo: "pos-products-search" },
+      ),
+      tourStep(
+        "pos-product-add",
+        "Adicionar ao carrinho",
+        "Clique no produto ou no botão de adicionar para enviar o item para o carrinho.",
+        { side: "left" },
+      ),
+      tourStep(
+        "pos-cart",
+        "Carrinho",
+        "Aqui revê os itens da venda, as quantidades e o documento que será emitido.",
+        { side: "left" },
+      ),
+      tourStep(
+        "pos-payment-summary",
+        "Resumo",
+        "O POS calcula subtotal, impostos, descontos e total antes da confirmação.",
+        { side: "left" },
+      ),
+      tourStep(
+        "pos-customer",
+        "Cliente existente no POS",
+        "Primeiro cenário: abra Cliente Opcional e pesquise um cliente já cadastrado para associá-lo à venda.",
+        { side: "left", demo: "pos-client-existing" },
+      ),
+      tourStep(
+        "pos-customer",
+        "Novo cliente no POS",
+        "Segundo cenário: se o cliente não existir, escreva o nome e crie o registo no seletor.",
+        { side: "left", demo: "pos-client-new" },
+      ),
+      tourStep(
+        "pos-new-customer-phone",
+        "Telefone do novo cliente",
+        "No POS, o dado complementar do novo cliente é o telefone. Preencha-o antes de confirmar o pagamento.",
+        { side: "left", demo: "pos-client-details" },
+      ),
+      tourStep(
+        "pos-payment-methods",
+        "Pagamento",
+        "Escolha o método de pagamento e, em dinheiro, informe o valor entregue para calcular o troco.",
+        { side: "left" },
+      ),
+      tourStep(
+        "pos-submit",
+        "Confirmar pagamento",
+        "Este botão abre a confirmação da venda. O tour apenas explica o passo, sem emitir documentos.",
+        { side: "top" },
+      ),
     ],
-  },
+  }),
+
+  "pos-movements": defineTour("pos-movements", {
+    title: "Movimentos de caixa",
+    group: "operation",
+    type: "core",
+    priority: 8,
+    roles: TOUR_ROLES.cashier,
+    minPlan: "Smart",
+    steps: [
+      tourStep(
+        "pos-movements-header",
+        "Movimentos",
+        "Acompanhe documentos emitidos no POS e notas de crédito associadas.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-movements-tabs",
+        "Tipos de movimento",
+        "Alterne entre faturas-recibo, proformas e notas de crédito do caixa.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-movements-list",
+        "Listagem",
+        "Use as ações da lista para consultar, baixar ou acompanhar documentos emitidos.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "pos-management": defineTour("pos-management", {
+    title: "Gestão de POS",
+    group: "advanced",
+    type: "advanced",
+    priority: 9,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Pro",
+    steps: [
+      tourStep(
+        "pos-management-summary",
+        "Resumo dos caixas",
+        "Veja receitas, pedidos de abertura e sessões para gerir a operação do POS.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-management-filters",
+        "Filtros e visualização",
+        "Filtre sessões e alterne entre grelha e tabela para acompanhar terminais.",
+        { side: "bottom", demo: "pos-management-filters" },
+      ),
+      tourStep(
+        "pos-management-view-toggle",
+        "Alternar visualização",
+        "Troque entre cartões e tabela para rever sessões com mais detalhe.",
+        { side: "left", demo: "pos-management-view" },
+      ),
+      tourStep(
+        "pos-management-list",
+        "Sessões de caixa",
+        "Abra detalhes, pedidos e ações administrativas sem afetar vendas em curso.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  suppliers: defineTour("suppliers", {
+    title: "Fornecedores",
+    group: "advanced",
+    type: "advanced",
+    priority: 10,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Pro",
+    steps: [
+      tourStep(
+        "suppliers-header",
+        "Fornecedores",
+        "Centralize contactos e relações de fornecimento para reposição e histórico.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "suppliers-create",
+        "Novo fornecedor",
+        "Cadastre fornecedores antes de associar entradas de stock ou consultar histórico.",
+        { side: "left" },
+      ),
+      tourStep(
+        "suppliers-list",
+        "Lista e detalhes",
+        "Abra detalhes, edite dados e acompanhe o histórico de stock ligado ao fornecedor.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  reservations: defineTour("reservations", {
+    title: "Reservas",
+    group: "advanced",
+    type: "advanced",
+    priority: 11,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Pro",
+    steps: [
+      tourStep(
+        "reservations-header",
+        "Gestão de reservas",
+        "Controle reservas através do calendário e acompanhe a disponibilidade.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reservations-calendar",
+        "Calendário",
+        "Use o calendário para visualizar, criar e acompanhar reservas por data.",
+        { side: "top", demo: "reservations-calendar-view" },
+      ),
+    ],
+  }),
+
+  "reports-sales": defineTour("reports-sales", {
+    title: "Relatórios de vendas",
+    group: "reporting",
+    type: "reporting",
+    priority: 12,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "reports-sales-header",
+        "Análise de vendas",
+        "Acompanhe receitas, volume e evolução por período para tomar decisões com dados.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reports-sales-filters",
+        "Filtros",
+        "Ajuste período e datas para comparar resultados com o intervalo correto.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reports-sales-summary",
+        "Indicadores e gráfico",
+        "Os cartões e o gráfico mostram desempenho comercial e tendências.",
+        { side: "top" },
+      ),
+      tourStep(
+        "reports-sales-export",
+        "Exportação fiscal",
+        "Quando estiver disponível no plano, use a exportação para apoiar obrigações fiscais.",
+        { side: "left" },
+      ),
+    ],
+  }),
+
+  "reports-clients": defineTour("reports-clients", {
+    title: "Relatórios de clientes",
+    group: "reporting",
+    type: "reporting",
+    priority: 13,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Smart",
+    steps: [
+      tourStep(
+        "reports-clients-header",
+        "Análise de clientes",
+        "Identifique clientes de maior valor, frequência de compra e ticket médio.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reports-clients-filters",
+        "Filtros",
+        "Ajuste datas, tipo de cliente e limite de resultados para focar a análise.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reports-clients-summary",
+        "Métricas",
+        "Leia receita, ticket médio, total de clientes e indicadores de fidelização.",
+        { side: "top" },
+      ),
+      tourStep(
+        "reports-clients-details",
+        "Detalhes",
+        "Gráficos e tabelas mostram principais clientes, receita mensal e produtos preferidos.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "reports-access-control": defineTour("reports-access-control", {
+    title: "Acesso e auditoria",
+    group: "reporting",
+    type: "reporting",
+    priority: 14,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Pro",
+    steps: [
+      tourStep(
+        "reports-access-header",
+        "Auditoria",
+        "Monitore ações, entidades alteradas, utilizadores e origem das operações.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reports-access-filters",
+        "Filtros de auditoria",
+        "Filtre por ação, entidade, utilizador e período para investigar eventos.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "reports-access-list",
+        "Registos",
+        "Abra os detalhes para comparar dados anteriores e atuais quando estiverem disponíveis.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  plans: defineTour("plans", {
+    title: "Planos e subscrição",
+    group: "setup",
+    type: "setup",
+    priority: 15,
+    roles: TOUR_ROLES.owner,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "plans-header",
+        "Escolha de plano",
+        "Compare planos, limites e funcionalidades para perceber qual se adapta melhor à empresa.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "plans-grid",
+        "Cartões de planos",
+        "Cada cartão mostra preço, benefícios e funcionalidades incluídas.",
+        { side: "top" },
+      ),
+      tourStep(
+        "plans-inclusions",
+        "Incluído nos planos",
+        "Benefícios globais e regras de acesso ajudam a perceber quando vale a pena fazer upgrade.",
+        { side: "top" },
+      ),
+    ],
+  }),
 };
 
 export function toDriveStep(step: TourStepDefinition): OnboardingDriveStep {
   return {
     element: step.selector,
+    selector: step.selector,
     demo: step.demo,
     disableActiveInteraction: true,
     popover: {

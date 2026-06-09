@@ -6,14 +6,21 @@ import {
   onboardingTours,
   toDriveStep,
   type OnboardingDriveStep,
+  type OnboardingTourDemo,
   type OnboardingTourId,
 } from "@/constants/onboarding-tours";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useOnboardingPreferencesStore } from "@/stores";
+import { PLAN_HIERARCHY, type User } from "@/types";
 
-const STORAGE_PREFIX = "mindgest:onboarding:v1";
 const ELEMENT_TIMEOUT_MS = 6000;
 const ELEMENT_POLL_INTERVAL_MS = 150;
 const TYPING_DELAY_MS = 70;
+const MOBILE_UNSUPPORTED_STEP_MARKERS = [
+  "setup-workplace-tabs",
+  "pos-customer",
+  "pos-new-customer-phone",
+  "pos-payment-methods",
+];
 
 let activeDriver: Driver | null = null;
 let activeTypingInterval: number | null = null;
@@ -21,13 +28,9 @@ let activeTypingTimeout: number | null = null;
 let activeTypedInput: HTMLInputElement | null = null;
 let activeDemoInputs: HTMLInputElement[] = [];
 let activeRetryIntervals: number[] = [];
-
-function canUseBrowserStorage() {
-  return (
-    typeof window !== "undefined" &&
-    typeof window.localStorage !== "undefined"
-  );
-}
+let activeDemoCleanup: (() => void) | null = null;
+let activeTourResult: "completed" | "skipped" | null = null;
+let activeOriginalUrl: string | null = null;
 
 function prefersReducedMotion() {
   return (
@@ -38,14 +41,6 @@ function prefersReducedMotion() {
 
 function getScope(userId?: string, companyId?: string) {
   return [companyId || "company", userId || "user"].join(":");
-}
-
-function getStorageKey(
-  tourId: OnboardingTourId,
-  userId?: string,
-  companyId?: string,
-) {
-  return `${STORAGE_PREFIX}:${getScope(userId, companyId)}:${tourId}`;
 }
 
 function setInputValue(input: HTMLInputElement, value: string) {
@@ -95,6 +90,20 @@ function clearActiveTyping() {
 
   activeDemoInputs.forEach((input) => setInputValue(input, ""));
   activeDemoInputs = [];
+}
+
+function cleanupActiveDemo() {
+  clearActiveTyping();
+
+  if (activeDemoCleanup) {
+    activeDemoCleanup();
+    activeDemoCleanup = null;
+  }
+
+  if (activeOriginalUrl && window.location.href !== activeOriginalUrl) {
+    window.history.replaceState(null, "", activeOriginalUrl);
+  }
+  activeOriginalUrl = null;
 }
 
 function simulateTyping(
@@ -151,6 +160,27 @@ function setDemoInputValue(input: HTMLInputElement | null, value: string) {
   }
 }
 
+function rememberCurrentUrl() {
+  if (!activeOriginalUrl && typeof window !== "undefined") {
+    activeOriginalUrl = window.location.href;
+  }
+}
+
+function clickSafe(element: HTMLElement | null) {
+  if (!element) return false;
+  element.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+  element.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+  element.click();
+  return true;
+}
+
+function typeIntoSelector(selector: string, value: string) {
+  rememberCurrentUrl();
+  const input = document.querySelector<HTMLInputElement>(selector);
+  setDemoInputValue(input, value);
+  return input;
+}
+
 function getFirstInput(root: ParentNode | null) {
   return root?.querySelector<HTMLInputElement>("input:not([type='hidden'])") ?? null;
 }
@@ -162,9 +192,7 @@ function getPosSearchInput() {
 }
 
 function clickOption(option: HTMLElement) {
-  option.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-  option.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
-  option.click();
+  clickSafe(option);
 }
 
 function getSelectOptions(root: ParentNode | null) {
@@ -233,6 +261,27 @@ function retrySelectAction(action: () => boolean, attempts = 8) {
   activeRetryIntervals.push(interval);
 }
 
+function scheduleSelectDemo({
+  root,
+  searchText,
+  shouldCreate,
+  delayMs = 300,
+}: {
+  root: Element;
+  searchText: string;
+  shouldCreate?: boolean;
+  delayMs?: number;
+}) {
+  clearReactSelect(root);
+  scheduleTyping(getFirstInput(root), searchText, delayMs, () => {
+    retrySelectAction(() =>
+      shouldCreate
+        ? clickCreateOption(root, searchText)
+        : clickFirstExistingOption(root),
+    );
+  });
+}
+
 function clearReactSelect(root: ParentNode | null) {
   root?.querySelector<HTMLElement>(".react-select__clear-indicator")?.click();
 
@@ -251,9 +300,64 @@ function openPosCustomerSection(root: Element) {
   }
 }
 
+function clickSettingsTab(tabId: string) {
+  clickSafe(
+    document.querySelector<HTMLElement>(`[data-tour="setup-tab-${tabId}"]`),
+  );
+}
+
+async function openProductModalForTour() {
+  if (findVisibleElement('[data-tour="product-modal"]')) return;
+
+  clickSafe(
+    document.querySelector<HTMLElement>('[data-tour="items-create"] button'),
+  );
+
+  const manualTrigger = await waitForElement(
+    '[data-tour="items-create-manual"]',
+    1000,
+  );
+  clickSafe(manualTrigger as HTMLElement | null);
+}
+
+function closeProductModalForTour() {
+  clickSafe(
+    document.querySelector<HTMLElement>('[data-tour="product-form-cancel"]'),
+  );
+}
+
+function isElementVisible(element: Element) {
+  const style = window.getComputedStyle(element);
+  return (
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    element.getClientRects().length > 0
+  );
+}
+
+function findVisibleElement(selector: string) {
+  return (
+    Array.from(document.querySelectorAll(selector)).find(isElementVisible) ??
+    null
+  );
+}
+
+function canPrepareMissingStep(selector: string) {
+  return (
+    selector.includes("normal-invoice") ||
+    selector.includes("pos-") ||
+    selector.includes("setup-company-profile") ||
+    selector.includes("setup-banks-content") ||
+    selector.includes("setup-agt-content") ||
+    selector.includes("setup-guides-content") ||
+    selector.includes("product-") ||
+    selector.includes("items-list")
+  );
+}
+
 function waitForElement(selector: string, timeoutMs = ELEMENT_TIMEOUT_MS) {
   return new Promise<Element | null>((resolve) => {
-    const firstMatch = document.querySelector(selector);
+    const firstMatch = findVisibleElement(selector);
     if (firstMatch) {
       resolve(firstMatch);
       return;
@@ -261,7 +365,7 @@ function waitForElement(selector: string, timeoutMs = ELEMENT_TIMEOUT_MS) {
 
     const startedAt = Date.now();
     const interval = window.setInterval(() => {
-      const element = document.querySelector(selector);
+      const element = findVisibleElement(selector);
       if (element) {
         window.clearInterval(interval);
         resolve(element);
@@ -286,21 +390,209 @@ function resolveSteps(tourId: OnboardingTourId): DriveStep[] {
     .map((step) => {
       if (
         isMobile &&
-        (step.selector.includes("pos-customer") ||
-          step.selector.includes("pos-new-customer-phone") ||
-          step.selector.includes("pos-payment-methods"))
+        MOBILE_UNSUPPORTED_STEP_MARKERS.some((marker) =>
+          step.selector.includes(marker),
+        )
       ) {
         return null;
       }
 
-      return toDriveStep(step);
+      const driveStep = toDriveStep(step);
+      const visibleElement = findVisibleElement(step.selector);
+      if (!visibleElement && !canPrepareMissingStep(step.selector)) {
+        return null;
+      }
+
+      return visibleElement ? { ...driveStep, element: visibleElement } : driveStep;
     })
     .filter((step): step is DriveStep => Boolean(step));
 }
 
+export function canUserAccessOnboardingTour(
+  tourId: OnboardingTourId,
+  user?: User | null,
+) {
+  const tour = onboardingTours[tourId];
+  if (!tour || !user) return false;
+  if (user.role === "ADMIN") return true;
+  if (!tour.roles.includes(user.role)) return false;
+
+  const currentPlan = user.company?.subscription?.plan?.name ?? "Base";
+  const currentPlanLevel = PLAN_HIERARCHY[currentPlan] ?? 0;
+  const requiredPlanLevel = PLAN_HIERARCHY[tour.minPlan] ?? 0;
+
+  return currentPlanLevel >= requiredPlanLevel;
+}
+
+type DemoHandler = (element: Element) => void;
+
+const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
+  "documents-filters": (element) => {
+    rememberCurrentUrl();
+    typeIntoSelector('[data-tour="documents-filter-search"] input', "Consumidor");
+    typeIntoSelector('[data-tour="documents-filter-client"] input', "Cliente exemplo");
+    typeIntoSelector('[data-tour="documents-filter-number"] input', "FT");
+    clickSafe(
+      element.querySelector<HTMLElement>('[data-tour="documents-filter-status"] button'),
+    );
+    activeDemoCleanup = () =>
+      clickSafe(document.querySelector<HTMLElement>('[data-tour="documents-filter-clear"]'));
+  },
+  "normal-client-existing": (element) => {
+    scheduleSelectDemo({
+      root: element,
+      searchText: "Consumidor",
+    });
+  },
+  "normal-client-new": (element) => {
+    scheduleSelectDemo({
+      root: element,
+      searchText: "Cliente Tour Novo",
+      shouldCreate: true,
+    });
+  },
+  "normal-client-details": (element) => {
+    setDemoInputValue(
+      element.querySelector<HTMLInputElement>('input[name="client.taxNumber"]'),
+      "500000000",
+    );
+    setDemoInputValue(
+      element.querySelector<HTMLInputElement>('input[name="client.phone"]'),
+      "923000000",
+    );
+    setDemoInputValue(
+      element.querySelector<HTMLInputElement>('input[name="client.address"]'),
+      "Luanda, Angola",
+    );
+  },
+  "normal-product-existing": (element) => {
+    scheduleSelectDemo({
+      root: element,
+      searchText: "Bebida",
+    });
+  },
+  "normal-product-new": (element) => {
+    scheduleSelectDemo({
+      root: element,
+      searchText: "Serviço Tour Novo",
+      shouldCreate: true,
+    });
+  },
+  "normal-product-details": () => {
+    setDemoInputValue(
+      document.querySelector<HTMLInputElement>(
+        '[data-tour="normal-invoice-item-quantity"] input',
+      ),
+      "1",
+    );
+    setDemoInputValue(
+      document.querySelector<HTMLInputElement>(
+        '[data-tour="normal-invoice-item-price"] input',
+      ),
+      "15000",
+    );
+  },
+  "product-form-basics": () => {
+    typeIntoSelector('[data-tour="product-form-name"] input', "Produto Tour");
+    typeIntoSelector('[data-tour="product-form-price"] input', "15000");
+    typeIntoSelector('[data-tour="product-form-cost"] input', "10000");
+    clickSafe(
+      document.querySelector<HTMLElement>('[data-tour="product-form-category"] button'),
+    );
+  },
+  "product-form-stock": () => {
+    typeIntoSelector('[data-tour="product-form-quantity"] input', "5");
+    typeIntoSelector('[data-tour="product-form-barcode"] input', "7891234567890");
+    typeIntoSelector('[data-tour="product-form-min-stock"] input', "2");
+    typeIntoSelector('[data-tour="product-form-max-stock"] input', "20");
+  },
+  "pos-management-filters": (element) => {
+    rememberCurrentUrl();
+    typeIntoSelector('[data-tour="pos-management-filter-search"] input', "caixa");
+    clickSafe(
+      element.querySelector<HTMLElement>('[data-tour="pos-management-filter-status"] button'),
+    );
+    activeDemoCleanup = () =>
+      clickSafe(document.querySelector<HTMLElement>('[data-tour="pos-management-filter-clear"]'));
+  },
+  "pos-management-view": () => {
+    const gridButton = document.querySelector<HTMLElement>(
+      '[data-tour="pos-management-view-grid"]',
+    );
+    clickSafe(
+      document.querySelector<HTMLElement>('[data-tour="pos-management-view-table"]'),
+    );
+    activeDemoCleanup = () => clickSafe(gridButton);
+  },
+  "reservations-calendar-view": () => {
+    const monthButton = document.querySelector<HTMLElement>(
+      '[data-tour="reservations-view-month"]',
+    );
+    clickSafe(document.querySelector<HTMLElement>('[data-tour="reservations-view-week"]'));
+    clickSafe(document.querySelector<HTMLElement>('[data-tour="reservations-today"]'));
+    activeDemoCleanup = () => clickSafe(monthButton);
+  },
+  "pos-products-search": () => {
+    scheduleTyping(getPosSearchInput(), "Bebida");
+  },
+  "pos-client-existing": (element) => {
+    openPosCustomerSection(element);
+    activeTypingTimeout = window.setTimeout(() => {
+      activeTypingTimeout = null;
+      const input = getFirstInput(element);
+      if (!input) return;
+
+      simulateTyping(input, "Consumidor", TYPING_DELAY_MS, () => {
+        retrySelectAction(() => clickFirstExistingOption(element));
+      });
+    }, 400);
+  },
+  "pos-client-new": (element) => {
+    const clientName = "Cliente POS Tour";
+    openPosCustomerSection(element);
+    clearReactSelect(element);
+    activeTypingTimeout = window.setTimeout(() => {
+      activeTypingTimeout = null;
+      const input = getFirstInput(element);
+      if (!input) return;
+
+      simulateTyping(input, clientName, TYPING_DELAY_MS, () => {
+        retrySelectAction(() => clickCreateOption(element, clientName));
+      });
+    }, 400);
+  },
+  "pos-client-details": (element) => {
+    setDemoInputValue(getFirstInput(element), "923000000");
+  },
+};
+
 async function prepareTarget(selector: string) {
-  let targetElement = document.querySelector(selector);
+  let targetElement = findVisibleElement(selector);
   if (targetElement) return targetElement;
+
+  if (selector.includes("setup-company-profile")) {
+    clickSettingsTab("profile");
+  }
+
+  if (selector.includes("setup-banks-content")) {
+    clickSettingsTab("banks");
+  }
+
+  if (selector.includes("setup-agt-content")) {
+    clickSettingsTab("agt");
+  }
+
+  if (selector.includes("setup-guides-content")) {
+    clickSettingsTab("guides");
+  }
+
+  if (selector.includes("product-")) {
+    await openProductModalForTour();
+  }
+
+  if (selector.includes("items-list")) {
+    closeProductModalForTour();
+  }
 
   if (selector.includes("normal-invoice") && !selector.includes("document-type")) {
     document.querySelector<HTMLButtonElement>('button[value="invoice"]')?.click();
@@ -346,22 +638,8 @@ async function handleNextClick(
   { driver }: { driver: Driver },
 ) {
   const currentIndex = driver.getActiveIndex() ?? 0;
-  const nextIndex = currentIndex + 1;
-  const steps = driver.getConfig().steps ?? [];
-  const nextStep = steps[nextIndex];
-
-  clearActiveTyping();
-
-  if (!nextStep) {
-    driver.destroy();
-    return;
-  }
-
-  if (typeof nextStep.element === "string") {
-    await prepareTarget(nextStep.element);
-  }
-
-  driver.moveTo(nextIndex);
+  cleanupActiveDemo();
+  await moveToPreparedStep(driver, currentIndex + 1, 1);
 }
 
 async function handlePrevClick(
@@ -370,164 +648,112 @@ async function handlePrevClick(
   { driver }: { driver: Driver },
 ) {
   const currentIndex = driver.getActiveIndex() ?? 0;
-  const prevIndex = currentIndex - 1;
+  cleanupActiveDemo();
+  await moveToPreparedStep(driver, currentIndex - 1, -1);
+}
+
+async function moveToPreparedStep(
+  driver: Driver,
+  startIndex: number,
+  direction: 1 | -1,
+) {
   const steps = driver.getConfig().steps ?? [];
-  const prevStep = steps[prevIndex];
+  let targetIndex = startIndex;
 
-  clearActiveTyping();
+  while (targetIndex >= 0 && targetIndex < steps.length) {
+    const targetStep = steps[targetIndex];
+    const selector =
+      (targetStep as OnboardingDriveStep).selector ||
+      (typeof targetStep.element === "string" ? targetStep.element : undefined);
 
-  if (prevIndex < 0 || !prevStep) return;
+    if (!selector) {
+      driver.moveTo(targetIndex);
+      return;
+    }
 
-  if (typeof prevStep.element === "string") {
-    await prepareTarget(prevStep.element);
+    const preparedTarget = await prepareTarget(selector);
+    if (preparedTarget) {
+      targetStep.element = preparedTarget;
+      driver.moveTo(targetIndex);
+      return;
+    }
+
+    targetIndex += direction;
   }
 
-  driver.moveTo(prevIndex);
+  if (direction === 1) {
+    activeTourResult = "completed";
+    driver.destroy();
+  }
 }
 
 function handleHighlighted(element: Element | undefined, step: DriveStep) {
-  clearActiveTyping();
+  cleanupActiveDemo();
   if (!element) return;
 
   const demo = (step as OnboardingDriveStep).demo;
+  if (!demo) return;
 
-  if (demo === "normal-client-existing") {
-    clearReactSelect(element);
-    scheduleTyping(getFirstInput(element), "Consumidor", 300, () => {
-      retrySelectAction(() => clickFirstExistingOption(element));
-    });
-    return;
-  }
-
-  if (demo === "normal-client-new") {
-    const clientName = "Cliente Tour Novo";
-    clearReactSelect(element);
-    scheduleTyping(getFirstInput(element), clientName, 300, () => {
-      retrySelectAction(() => clickCreateOption(element, clientName));
-    });
-    return;
-  }
-
-  if (demo === "normal-client-details") {
-    setDemoInputValue(
-      element.querySelector<HTMLInputElement>('input[name="client.taxNumber"]'),
-      "500000000",
-    );
-    setDemoInputValue(
-      element.querySelector<HTMLInputElement>('input[name="client.phone"]'),
-      "923000000",
-    );
-    setDemoInputValue(
-      element.querySelector<HTMLInputElement>('input[name="client.address"]'),
-      "Luanda, Angola",
-    );
-    return;
-  }
-
-  if (demo === "normal-product-existing") {
-    clearReactSelect(element);
-    scheduleTyping(getFirstInput(element), "Bebida", 300, () => {
-      retrySelectAction(() => clickFirstExistingOption(element));
-    });
-    return;
-  }
-
-  if (demo === "normal-product-new") {
-    const itemName = "Servico Tour Novo";
-    clearReactSelect(element);
-    scheduleTyping(getFirstInput(element), itemName, 300, () => {
-      retrySelectAction(() => clickCreateOption(element, itemName));
-    });
-    return;
-  }
-
-  if (demo === "normal-product-details") {
-    setDemoInputValue(
-      document.querySelector<HTMLInputElement>(
-        '[data-tour="normal-invoice-item-quantity"] input',
-      ),
-      "1",
-    );
-    setDemoInputValue(
-      document.querySelector<HTMLInputElement>(
-        '[data-tour="normal-invoice-item-price"] input',
-      ),
-      "15000",
-    );
-    return;
-  }
-
-  if (demo === "pos-products-search") {
-    scheduleTyping(getPosSearchInput(), "Bebida");
-    return;
-  }
-
-  if (demo === "pos-client-existing") {
-    openPosCustomerSection(element);
-    activeTypingTimeout = window.setTimeout(() => {
-      activeTypingTimeout = null;
-      const input = getFirstInput(element);
-      if (input) {
-        simulateTyping(input, "Consumidor", TYPING_DELAY_MS, () => {
-          retrySelectAction(() => clickFirstExistingOption(element));
-        });
-      }
-    }, 400);
-    return;
-  }
-
-  if (demo === "pos-client-new") {
-    const clientName = "Cliente POS Tour";
-    openPosCustomerSection(element);
-    clearReactSelect(element);
-    activeTypingTimeout = window.setTimeout(() => {
-      activeTypingTimeout = null;
-      const input = getFirstInput(element);
-      if (input) {
-        simulateTyping(input, clientName, TYPING_DELAY_MS, () => {
-          retrySelectAction(() => clickCreateOption(element, clientName));
-        });
-      }
-    }, 400);
-    return;
-  }
-
-  if (demo === "pos-client-details") {
-    setDemoInputValue(getFirstInput(element), "923000000");
-  }
+  demoHandlers[demo]?.(element);
 }
 
 export function useOnboardingTour(tourId: OnboardingTourId) {
   const user = useAuthStore((state) => state.user);
   const userId = user?.id;
   const companyId = user?.company?.id;
+  const scope = getScope(userId, companyId);
+  const canAccessTour = canUserAccessOnboardingTour(tourId, user);
+  const getPreferences = useOnboardingPreferencesStore(
+    (state) => state.getPreferences,
+  );
+  const markTourCompleted = useOnboardingPreferencesStore(
+    (state) => state.markTourCompleted,
+  );
+  const markTourSkipped = useOnboardingPreferencesStore(
+    (state) => state.markTourSkipped,
+  );
+  const scopedPreferences = useOnboardingPreferencesStore(
+    (state) => state.preferencesByScope[scope],
+  );
+  const autoStartEnabled = scopedPreferences?.autoStartEnabled ?? true;
+  const tourButtonEnabled = scopedPreferences?.tourButtonEnabled ?? true;
+  const seenStatus = scopedPreferences?.seenTours?.[tourId];
 
   const hasSeenTour = useCallback(() => {
-    if (!canUseBrowserStorage()) return true;
-    return (
-      window.localStorage.getItem(getStorageKey(tourId, userId, companyId)) ===
-      "completed"
-    );
-  }, [companyId, tourId, userId]);
+    return Boolean(getPreferences(scope).seenTours[tourId]);
+  }, [getPreferences, scope, tourId]);
 
   const markTourAsSeen = useCallback(() => {
-    if (!canUseBrowserStorage()) return;
-    window.localStorage.setItem(
-      getStorageKey(tourId, userId, companyId),
-      "completed",
-    );
-  }, [companyId, tourId, userId]);
+    markTourCompleted(scope, tourId);
+  }, [markTourCompleted, scope, tourId]);
 
   const startTour = useCallback(async () => {
     if (typeof window === "undefined") return;
+    if (!canUserAccessOnboardingTour(tourId, user)) return;
+    activeTourResult = null;
 
     const steps = resolveSteps(tourId);
     if (steps.length === 0) return;
 
-    const firstStep = steps[0];
-    if (typeof firstStep.element === "string") {
-      await prepareTarget(firstStep.element);
+    let initialStepIndex = 0;
+    while (initialStepIndex < steps.length) {
+      const firstStep = steps[initialStepIndex];
+      const firstSelector =
+        (firstStep as OnboardingDriveStep).selector ||
+        (typeof firstStep.element === "string" ? firstStep.element : undefined);
+
+      if (!firstSelector) break;
+
+      const preparedTarget = await prepareTarget(firstSelector);
+      if (preparedTarget) {
+        firstStep.element = preparedTarget;
+        break;
+      }
+
+      initialStepIndex += 1;
     }
+
+    if (initialStepIndex >= steps.length) return;
 
     activeDriver?.destroy();
 
@@ -550,23 +776,53 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
       doneBtnText: "Concluir",
       onNextClick: handleNextClick,
       onPrevClick: handlePrevClick,
+      onCloseClick: (_, __, { driver }) => {
+        activeTourResult = "skipped";
+        driver.destroy();
+      },
+      onPopoverRender: (popover) => {
+        popover.closeButton.innerText = "Pular";
+        popover.closeButton.setAttribute("aria-label", "Pular tour");
+      },
       onHighlighted: handleHighlighted,
-      onDeselected: clearActiveTyping,
+      onDeselected: cleanupActiveDemo,
       onDestroyed: () => {
-        clearActiveTyping();
-        markTourAsSeen();
+        cleanupActiveDemo();
+        if (activeTourResult === "completed") {
+          markTourCompleted(scope, tourId);
+        } else if (getPreferences(scope).seenTours[tourId] !== "completed") {
+          markTourSkipped(scope, tourId);
+        }
         activeDriver = null;
+        activeTourResult = null;
       },
     });
 
-    activeDriver.drive();
-  }, [markTourAsSeen, tourId]);
+    activeDriver.drive(initialStepIndex);
+  }, [
+    getPreferences,
+    markTourCompleted,
+    markTourSkipped,
+    markTourAsSeen,
+    scope,
+    tourId,
+    user,
+  ]);
 
   return {
     startTour,
     hasSeenTour,
     markTourAsSeen,
+    canAccessTour,
+    autoStartEnabled,
+    tourButtonEnabled,
+    seenStatus,
   };
+}
+
+export function useCanAccessOnboardingTour(tourId: OnboardingTourId) {
+  const user = useAuthStore((state) => state.user);
+  return canUserAccessOnboardingTour(tourId, user);
 }
 
 export function useAutoOnboardingTour(
@@ -575,10 +831,22 @@ export function useAutoOnboardingTour(
 ) {
   const { startTour, hasSeenTour } = useOnboardingTour(tourId);
   const user = useAuthStore((state) => state.user);
+  const scope = getScope(user?.id, user?.company?.id);
+  const autoStartEnabled = useOnboardingPreferencesStore(
+    (state) => state.preferencesByScope[scope]?.autoStartEnabled ?? true,
+  );
   const autoStartRef = useRef(false);
 
   useEffect(() => {
-    if (!enabled || !user || autoStartRef.current || hasSeenTour()) return;
+    if (
+      !enabled ||
+      !autoStartEnabled ||
+      !canUserAccessOnboardingTour(tourId, user) ||
+      autoStartRef.current ||
+      hasSeenTour()
+    ) {
+      return;
+    }
     if (typeof window === "undefined") return;
 
     autoStartRef.current = true;
@@ -590,5 +858,5 @@ export function useAutoOnboardingTour(
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [enabled, hasSeenTour, startTour, tourId, user]);
+  }, [autoStartEnabled, enabled, hasSeenTour, startTour, tourId, user]);
 }

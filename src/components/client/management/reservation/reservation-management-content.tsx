@@ -5,8 +5,12 @@ import { ReservationsView } from './comps'
 export function ReservationManagementContent() {
   return (
     <div className='space-y-6'>
-        <TitleList title="Gestão de Reservas" suTitle='Gerencie as suas reservas aqui através do calendário'/>
-        <ReservationsView/>
+        <div data-tour="reservations-header">
+          <TitleList title="Gestão de Reservas" suTitle='Gerencie as suas reservas aqui através do calendário'/>
+        </div>
+        <div data-tour="reservations-calendar">
+          <ReservationsView/>
+        </div>
     </div>
   )
 }

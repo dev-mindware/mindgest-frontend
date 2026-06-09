@@ -122,7 +122,7 @@ export function StockSummaryCharts() {
 
       {/* Chart Area */}
       {isLoading ? (
-        <Card className="border-muted-foreground/10 shadow-none">
+        <Card className="border-muted-foreground/10 shadow-none" data-tour="stock-chart">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
             <div className="space-y-2">
               <Skeleton className="h-6 w-64" />
@@ -138,7 +138,7 @@ export function StockSummaryCharts() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-muted-foreground/10 shadow-none overflow-hidden">
+        <Card className="border-muted-foreground/10 shadow-none overflow-hidden" data-tour="stock-chart">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
             <div className="space-y-1">
               <CardTitle className="text-xl font-semibold">
