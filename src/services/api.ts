@@ -95,16 +95,26 @@ const EXCLUDED_STORE_ROUTES = [
 // HELPERS
 // ============================================================================
 
+function matchRoute(url: string, route: string): boolean {
+  const cleanUrl = url.split("?")[0];
+  const cleanUrlWithoutLeading = cleanUrl.startsWith("/") ? cleanUrl.slice(1) : cleanUrl;
+  const routeWithoutLeading = route.startsWith("/") ? route.slice(1) : route;
+  return (
+    cleanUrlWithoutLeading === routeWithoutLeading ||
+    cleanUrlWithoutLeading.endsWith("/" + routeWithoutLeading)
+  );
+}
+
 function isPublicAuthRoute(url: string): boolean {
-  return PUBLIC_AUTH_ROUTES.some((r) => url.includes(r));
+  return PUBLIC_AUTH_ROUTES.some((r) => matchRoute(url, r));
 }
 
 function shouldSkipRefresh(url: string): boolean {
-  return NO_REFRESH_ROUTES.some((r) => url.includes(r));
+  return NO_REFRESH_ROUTES.some((r) => matchRoute(url, r));
 }
 
 function isAuthCriticalRoute(url: string): boolean {
-  return AUTH_CRITICAL_ROUTES.some((r) => url.includes(r));
+  return AUTH_CRITICAL_ROUTES.some((r) => matchRoute(url, r));
 }
 
 /**

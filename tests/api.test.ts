@@ -83,6 +83,15 @@ describe("API Interceptor", () => {
 
       await api.post("/auth/login", { email: "a", password: "b" });
     });
+
+    it("anexa token em rota de registro de colaborador (ex: /auth/register/user)", async () => {
+      mock.onPost("/auth/register/user").reply((config) => {
+        expect(config.headers?.Authorization).toBe("Bearer initial-token");
+        return [200, { ok: true }];
+      });
+
+      await api.post("/auth/register/user", { name: "Collaborator" });
+    });
   });
 
   // ==========================================================================
