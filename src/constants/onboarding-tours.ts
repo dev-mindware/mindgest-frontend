@@ -9,6 +9,7 @@ export type OnboardingTourId =
   | "normal-invoice"
   | "stock"
   | "pos-invoice"
+  | "pos-settings"
   | "pos-movements"
   | "pos-management"
   | "suppliers"
@@ -30,6 +31,8 @@ export type OnboardingTourType =
   | "core"
   | "advanced"
   | "reporting";
+
+export type OnboardingTourMode = "normal" | "demo";
 
 export type OnboardingTourDemo =
   | "documents-filters"
@@ -436,6 +439,12 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
         { side: "bottom" },
       ),
       tourStep(
+        "pos-document-tabs",
+        "Factura ou proforma",
+        "Escolha se a venda será emitida como factura-recibo ou se deve ficar apenas como proforma.",
+        { side: "left" },
+      ),
+      tourStep(
         "pos-products",
         "Produtos no POS",
         "No POS, os produtos vêm da base de dados. Use a pesquisa para localizar rapidamente o item antes de adicioná-lo.",
@@ -448,9 +457,21 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
         { side: "left" },
       ),
       tourStep(
+        "pos-product-quantity",
+        "Quantidade do produto",
+        "Depois de adicionar um produto, ajuste a quantidade no próprio cartão antes de finalizar a venda.",
+        { side: "left" },
+      ),
+      tourStep(
         "pos-cart",
         "Carrinho",
         "Aqui revê os itens da venda, as quantidades e o documento que será emitido.",
+        { side: "left" },
+      ),
+      tourStep(
+        "pos-cart-remove",
+        "Remover item",
+        "Use esta acção apenas quando um produto tiver sido adicionado por engano.",
         { side: "left" },
       ),
       tourStep(
@@ -484,9 +505,110 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
         { side: "left" },
       ),
       tourStep(
+        "pos-payment-cash-received",
+        "Valor entregue",
+        "Quando o pagamento for em dinheiro, indique o valor recebido para calcular o troco.",
+        { side: "left" },
+      ),
+      tourStep(
+        "pos-payment-change",
+        "Troco",
+        "Confirme o troco antes de abrir a pré-visualização e concluir a venda.",
+        { side: "left" },
+      ),
+      tourStep(
         "pos-submit",
         "Confirmar pagamento",
         "Este botão abre a confirmação da venda. O tour apenas explica o passo, sem emitir documentos.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "pos-settings": defineTour("pos-settings", {
+    title: "Definições do POS",
+    group: "operation",
+    type: "core",
+    priority: 8,
+    roles: TOUR_ROLES.cashier,
+    minPlan: "Smart",
+    steps: [
+      tourStep(
+        "pos-settings-header",
+        "Definições do POS",
+        "Use esta área para acompanhar a sessão de caixa e ajustar preferências da estação de trabalho.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-settings-tabs",
+        "Áreas de configuração",
+        "Geral concentra a operação do caixa. Workspace guarda preferências locais. Aparência ajusta o aspecto visual quando disponível.",
+        { side: "right" },
+      ),
+      tourStep(
+        "pos-settings-actions",
+        "Acções da sessão",
+        "Aqui estão abertura, fecho e registo de despesas. O tour apenas explica estes botões e nunca executa a acção por si.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-settings-open-session",
+        "Abertura de caixa",
+        "Inicie uma sessão apenas quando estiver autorizado e tiver o fundo de maneio correcto.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-settings-close-session",
+        "Fecho de caixa",
+        "Feche a sessão no fim do turno, depois de conferir vendas, despesas e valores recebidos.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-settings-register-expense",
+        "Despesas do caixa",
+        "Registe saídas manuais apenas quando existir uma sessão aberta e o motivo estiver documentado.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "pos-settings-session-metrics",
+        "Resumo da sessão",
+        "Leia total vendido, tempo decorrido, fundo de maneio e responsável antes de fechar ou continuar a operar.",
+        { side: "top" },
+      ),
+      tourStep(
+        "pos-settings-tab-workspace",
+        "Workspace",
+        "Abra esta aba para configurar preferências locais desta estação, como teclado virtual e dispositivos.",
+        { side: "right" },
+      ),
+      tourStep(
+        "pos-settings-workspace",
+        "Preferências locais",
+        "Estas opções afectam apenas este navegador e ajudam a adaptar o POS ao equipamento usado no balcão.",
+        { side: "top" },
+      ),
+      tourStep(
+        "pos-settings-virtual-keyboard",
+        "Teclado virtual",
+        "Active ou oculte o teclado virtual conforme o tipo de dispositivo usado no atendimento.",
+        { side: "top" },
+      ),
+      tourStep(
+        "pos-settings-external-scanner",
+        "Scanner externo",
+        "Esta área prepara a configuração de leitores externos quando o equipamento estiver disponível.",
+        { side: "top" },
+      ),
+      tourStep(
+        "pos-settings-tab-appearance",
+        "Aparência",
+        "Use esta aba para rever opções visuais permitidas pelo plano e pela configuração da empresa.",
+        { side: "right" },
+      ),
+      tourStep(
+        "pos-settings-content-appearance",
+        "Aspecto visual",
+        "Ajuste a apresentação do POS sem interferir com vendas, pagamentos ou sessões de caixa.",
         { side: "top" },
       ),
     ],
@@ -496,7 +618,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Movimentos de caixa",
     group: "operation",
     type: "core",
-    priority: 8,
+    priority: 9,
     roles: TOUR_ROLES.cashier,
     minPlan: "Smart",
     steps: [
@@ -525,7 +647,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Gestão de POS",
     group: "advanced",
     type: "advanced",
-    priority: 9,
+    priority: 10,
     roles: TOUR_ROLES.ownerManager,
     minPlan: "Pro",
     steps: [
@@ -560,7 +682,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Fornecedores",
     group: "advanced",
     type: "advanced",
-    priority: 10,
+    priority: 11,
     roles: TOUR_ROLES.ownerManager,
     minPlan: "Pro",
     steps: [
@@ -589,7 +711,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Reservas",
     group: "advanced",
     type: "advanced",
-    priority: 11,
+    priority: 12,
     roles: TOUR_ROLES.ownerManager,
     minPlan: "Pro",
     steps: [
@@ -612,7 +734,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Relatórios de vendas",
     group: "reporting",
     type: "reporting",
-    priority: 12,
+    priority: 13,
     roles: TOUR_ROLES.ownerManager,
     minPlan: "Base",
     steps: [
@@ -647,7 +769,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Relatórios de clientes",
     group: "reporting",
     type: "reporting",
-    priority: 13,
+    priority: 14,
     roles: TOUR_ROLES.ownerManager,
     minPlan: "Smart",
     steps: [
@@ -682,7 +804,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Acesso e auditoria",
     group: "reporting",
     type: "reporting",
-    priority: 14,
+    priority: 15,
     roles: TOUR_ROLES.ownerManager,
     minPlan: "Pro",
     steps: [
@@ -711,7 +833,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Planos e subscrição",
     group: "setup",
     type: "setup",
-    priority: 15,
+    priority: 16,
     roles: TOUR_ROLES.owner,
     minPlan: "Base",
     steps: [

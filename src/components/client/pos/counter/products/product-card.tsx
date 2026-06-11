@@ -184,12 +184,13 @@ export const ProductCard = React.memo<ProductCardProps>(
                       )}
                     </Button>
                   ) : (
-                    <div className="flex items-center gap-1 bg-muted/50 rounded-full p-0.5 sm:p-1 border border-border/60 shadow-sm">
+                    <div className="flex items-center gap-1 bg-muted/50 rounded-full p-0.5 sm:p-1 border border-border/60 shadow-sm" data-tour="pos-product-quantity">
                       <Button
                         size="icon"
                         variant="ghost"
                         className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-destructive/10 hover:text-destructive text-muted-foreground transition-colors"
                         onClick={() => onRemove(product.id)}
+                        data-tour="pos-product-decrease"
                       >
                         <Icon
                           name="Minus"
