@@ -30,9 +30,9 @@ export function HeroImageSide({
       <div className="relative z-20 w-full p-10 md:p-14">
         <div className="relative h-12 w-40">
           <Image
-            src={"/logo.png"}
+            src={"/mindgest.png"}
             fill
-            alt="Mindware Logo"
+            alt="Mindgest Logo"
             className="object-contain object-left"
             priority
           />

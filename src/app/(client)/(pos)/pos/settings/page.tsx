@@ -7,11 +7,11 @@ export default function PosSettingsPage() {
     const isMobile = useIsMobile();
 
     if (isMobile) {
-        return <PosSettingsSetup />;
+        return <PosSettingsSetup showTourButton />;
     }
 
     return (
-        <PageWrapper subRoute="pos" variant="counter">
+        <PageWrapper subRoute="pos" variant="counter" onboardingTourId="pos-settings">
             <PosSettingsSetup />
         </PageWrapper>
     );

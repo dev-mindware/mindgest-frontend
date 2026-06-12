@@ -29,7 +29,7 @@ export function Loader() {
           </svg>
 
           <img
-            src="/mindware.png"
+            src="/mindgest.png"
             alt="Logo"
             className="w-12 h-12 z-10 object-contain drop-shadow-sm opacity-90 transition-opacity"
           />

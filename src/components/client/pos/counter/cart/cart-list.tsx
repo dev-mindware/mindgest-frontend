@@ -23,7 +23,7 @@ const CartItemRow = React.memo<{
     item: CartItem;
     onDelete: (id: string) => void;
 }>(({ item, onDelete }) => (
-    <div key={item.id} className="flex gap-3 mb-2 group items-center">
+    <div key={item.id} className="flex gap-3 mb-2 group items-center" data-tour="pos-cart-item">
         <Avatar className="h-10 w-10 rounded-lg shrink-0 border border-border">
             <AvatarImage src={item.image} className="object-cover" />
             <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-bold text-xs">{item.name.charAt(0)}</AvatarFallback>
@@ -40,6 +40,7 @@ const CartItemRow = React.memo<{
                 onClick={() => onDelete(item.id)}
                 className="text-muted-foreground hover:text-destructive transition-colors hidden group-hover:block"
                 title="Remover item"
+                data-tour="pos-cart-remove"
             >
                 <Icon name="Trash" size={14} />
             </button>

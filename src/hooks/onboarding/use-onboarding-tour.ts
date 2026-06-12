@@ -8,6 +8,7 @@ import {
   type OnboardingDriveStep,
   type OnboardingTourDemo,
   type OnboardingTourId,
+  type OnboardingTourMode,
 } from "@/constants/onboarding-tours";
 import { useAuthStore, useOnboardingPreferencesStore } from "@/stores";
 import { PLAN_HIERARCHY, type User } from "@/types";
@@ -31,6 +32,7 @@ let activeRetryIntervals: number[] = [];
 let activeDemoCleanup: (() => void) | null = null;
 let activeTourResult: "completed" | "skipped" | null = null;
 let activeOriginalUrl: string | null = null;
+let activeTourMode: OnboardingTourMode = "normal";
 
 function prefersReducedMotion() {
   return (
@@ -303,6 +305,12 @@ function openPosCustomerSection(root: Element) {
 function clickSettingsTab(tabId: string) {
   clickSafe(
     document.querySelector<HTMLElement>(`[data-tour="setup-tab-${tabId}"]`),
+  );
+}
+
+function clickPosSettingsTab(tabId: string) {
+  clickSafe(
+    document.querySelector<HTMLElement>(`[data-tour="pos-settings-tab-${tabId}"]`),
   );
 }
 
@@ -586,6 +594,18 @@ async function prepareTarget(selector: string) {
     clickSettingsTab("guides");
   }
 
+  if (
+    selector.includes("pos-settings-workspace") ||
+    selector.includes("pos-settings-virtual-keyboard") ||
+    selector.includes("pos-settings-external-scanner")
+  ) {
+    clickPosSettingsTab("workspace");
+  }
+
+  if (selector.includes("pos-settings-content-appearance")) {
+    clickPosSettingsTab("appearance");
+  }
+
   if (selector.includes("product-")) {
     await openProductModalForTour();
   }
@@ -605,9 +625,18 @@ async function prepareTarget(selector: string) {
       selector.includes("pos-customer") ||
       selector.includes("pos-new-customer-phone") ||
       selector.includes("pos-payment-methods") ||
+      selector.includes("pos-payment-cash-received") ||
+      selector.includes("pos-payment-change") ||
       selector.includes("pos-submit"))
   ) {
     document.querySelector<HTMLButtonElement>('[data-tour="pos-cart"]')?.click();
+  }
+
+  if (
+    selector.includes("pos-payment-cash-received") ||
+    selector.includes("pos-payment-change")
+  ) {
+    document.querySelector<HTMLButtonElement>('[data-tour="pos-payment-method-cash"]')?.click();
   }
 
   if (
@@ -690,6 +719,7 @@ async function moveToPreparedStep(
 function handleHighlighted(element: Element | undefined, step: DriveStep) {
   cleanupActiveDemo();
   if (!element) return;
+  if (activeTourMode !== "demo") return;
 
   const demo = (step as OnboardingDriveStep).demo;
   if (!demo) return;
@@ -727,10 +757,11 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
     markTourCompleted(scope, tourId);
   }, [markTourCompleted, scope, tourId]);
 
-  const startTour = useCallback(async () => {
+  const startTour = useCallback(async (mode: OnboardingTourMode = "normal") => {
     if (typeof window === "undefined") return;
     if (!canUserAccessOnboardingTour(tourId, user)) return;
     activeTourResult = null;
+    activeTourMode = mode;
 
     const steps = resolveSteps(tourId);
     if (steps.length === 0) return;
@@ -795,6 +826,7 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
         }
         activeDriver = null;
         activeTourResult = null;
+        activeTourMode = "normal";
       },
     });
 
@@ -852,7 +884,7 @@ export function useAutoOnboardingTour(
     autoStartRef.current = true;
 
     const timeout = window.setTimeout(() => {
-      startTour();
+      startTour("normal");
     }, 700);
 
     return () => {

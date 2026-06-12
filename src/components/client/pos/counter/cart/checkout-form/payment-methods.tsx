@@ -56,6 +56,7 @@ export function PaymentMethods({
             <button
               key={method}
               onClick={() => onMethodChange(method)}
+              data-tour={method === "Cash" ? "pos-payment-method-cash" : "pos-payment-method-card"}
               className={cn(
                 "flex-1 flex flex-col items-center gap-2 py-2 rounded-md text-xs font-medium transition-all",
                 paymentMethod === method
@@ -88,8 +89,8 @@ export function PaymentMethods({
       </div>
 
       {paymentMethod === "Cash" && (
-        <div className="space-y-3 bg-muted/30 p-3 rounded-xl border border-dashed mb-3">
-          <div className="grid grid-cols-4 gap-2">
+        <div className="space-y-3 bg-muted/30 p-3 rounded-xl border border-dashed mb-3" data-tour="pos-payment-cash-panel">
+          <div className="grid grid-cols-4 gap-2" data-tour="pos-payment-quick-cash">
             {[200, 500, 1000, 5000].map((amt) => (
               <Button
                 key={amt}
@@ -102,7 +103,7 @@ export function PaymentMethods({
               </Button>
             ))}
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1" data-tour="pos-payment-cash-received">
             <label className="block mb-1 text-sm font-medium text-foreground">
               Valor Entregue
             </label>
@@ -120,6 +121,7 @@ export function PaymentMethods({
               "flex justify-between bg-muted text-sm font-bold p-2 rounded-md",
               change >= 0 ? "text-green-700" : "text-red-700",
             )}
+            data-tour="pos-payment-change"
           >
             <span>Troco</span>
             <span>{formatCurrency(change)}</span>

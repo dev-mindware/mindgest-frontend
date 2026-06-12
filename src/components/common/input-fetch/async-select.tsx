@@ -248,18 +248,15 @@ export function AsyncCreatableSelectField({
       const handleInput = (event: FormEvent<HTMLInputElement>) => {
         shouldRestoreVirtualKeyboardFocus.current = !!virtualKeyboardLayout;
         setInputValue(event.currentTarget.value);
-        props.innerProps?.onInput?.(event);
+        props.onInput?.(event);
       };
 
       return (
         <components.Input
           {...props}
-          innerProps={{
-            ...props.innerProps,
-            inputMode: virtualKeyboardLayout ? "none" : props.innerProps?.inputMode,
-            "data-layout": virtualKeyboardLayout,
-            onInput: handleInput,
-          }}
+          inputMode={virtualKeyboardLayout ? "none" : props.inputMode}
+          data-layout={virtualKeyboardLayout}
+          onInput={handleInput}
         />
       );
     },
