@@ -51,7 +51,7 @@ export function SalesReportsContent() {
                 { value: "quarterly", label: "Trimestral" },
                 { value: "yearly", label: "Anual" },
               ],
-              placeholder: "Selecione o período",
+              placeholder: "Seleccione o período",
             },
             {
               type: "date",

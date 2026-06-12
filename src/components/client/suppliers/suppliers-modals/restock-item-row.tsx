@@ -36,7 +36,7 @@ export function RestockItemRow({
           render={({ field }) => (
             <PaginatedSelect
               label="Produto"
-              placeholder="Selecione um produto..."
+              placeholder="Seleccione um produto..."
               options={productOptions}
               value={field.value}
               onChange={field.onChange}

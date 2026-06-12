@@ -30,7 +30,7 @@ export default function NotFoundPage() {
             Página não encontrada
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
-            Ops! O conteúdo que você está procurando não existe ou foi movido.
+            O conteúdo que procura não existe ou foi movido.
             Verifique o link ou retorne para o dashboard.
           </p>
         </div>

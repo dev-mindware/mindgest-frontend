@@ -1,7 +1,7 @@
 {
-  "name": "MindGest",
-  "short_name": "MindGest",
-  "description": "Software de Gestao e Faturacao",
+  "name": "Mindgest",
+  "short_name": "Mindgest",
+  "description": "Software de gestão e facturação",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -113,7 +113,7 @@ export function CashierModal({ action }: CashierModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao salvar o cliente."
+        error?.response?.data?.message || "Não foi possível guardar o operador de caixa."
       );
     }
   }
@@ -124,7 +124,7 @@ export function CashierModal({ action }: CashierModalProps) {
   };
 
   if ((action === "edit" && !currentCashier) || !isOpen) return null;
-  if (isLoadingStores && !storesData) return <p>Carregando lojas...</p>;
+  if (isLoadingStores && !storesData) return <p>A carregar lojas...</p>;
   if (isError)
     return (
       <RequestError
@@ -173,7 +173,7 @@ export function CashierModal({ action }: CashierModalProps) {
               />
 
               <Input
-                label="Senha"
+                label="Palavra-passe"
                 startIcon="Lock"
                 placeholder="Ex: 12345678"
                 {...register("password")}
@@ -214,7 +214,7 @@ export function CashierModal({ action }: CashierModalProps) {
             className="w-max"
             isLoading={isSubmitting || isAdding || isEditing}
           >
-            {action === "add" ? "Adicionar" : "Salvar Alterações"}
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
           </ButtonSubmit>
         </div>
       </form>

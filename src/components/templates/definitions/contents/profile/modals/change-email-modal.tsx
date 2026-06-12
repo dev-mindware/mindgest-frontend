@@ -77,7 +77,7 @@ export function ChangeEmailModal({ currentEmail }: Props) {
                         Cancelar
                     </Button>
                     <Button type="submit" disabled={isPending}>
-                        {isPending ? "A gravar..." : "Salvar Alterações"}
+                        {isPending ? "A guardar..." : "Guardar alterações"}
                     </Button>
                 </div>
             </form>

@@ -35,7 +35,7 @@ export function ClientDocumentSection({
                     <Icon name="BadgeAlert" className="h-4 w-4" />
                     <AlertTitle>Dados do Cliente em Falta</AlertTitle>
                     <AlertDescription>
-                        Os dados do cliente não aparecem neste documento. Por favor, selecione ou atualize os dados do cliente antes de prosseguir com a nota de crédito.
+                        Os dados do cliente não constam deste documento. Seleccione ou actualize os dados do cliente antes de prosseguir com a nota de crédito.
                     </AlertDescription>
                 </Alert>
             )}
@@ -91,7 +91,7 @@ export function ClientDocumentSection({
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="font-medium">Configurações do Documento</h3>
+                    <h3 className="font-medium">Configurações do documento</h3>
                     <Input
                         type="date"
                         label="Data de Emissão"

@@ -105,12 +105,12 @@ export function DetailsProductModal() {
           <section className="space-y-3">
             <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
               <Icon name="Scale" className="w-4 h-4" />
-              <h3 className="font-bold uppercase tracking-wider text-xs">Estoque</h3>
+              <h3 className="font-bold uppercase tracking-wider text-xs">Stock</h3>
             </div>
             <div className="grid gap-2 pl-1">
-              <DetailRow label="Estoque Atual" value={currentProduct.quantity} />
-              <DetailRow label="Estoque Mínimo" value={currentProduct.minStock} />
-              <DetailRow label="Estoque Máximo" value={currentProduct.maxStock} />
+              <DetailRow label="Stock actual" value={currentProduct.quantity} />
+              <DetailRow label="Stock mínimo" value={currentProduct.minStock} />
+              <DetailRow label="Stock máximo" value={currentProduct.maxStock} />
             </div>
           </section>
         </FeatureGate>

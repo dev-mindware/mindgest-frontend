@@ -118,7 +118,7 @@ export function MobileOrderView({
           disabled={cartItems.length === 0}
           data-tour="pos-submit"
         >
-          Processar Transação
+          Processar transacção
         </Button>
       </ScrollArea>
     </div>

@@ -109,7 +109,7 @@ export function ProductList() {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -127,14 +127,14 @@ export function ProductList() {
               variant: "default",
             },
             {
-              label: item.status === "ACTIVE" ? "Desativar" : "Ativar",
+              label: item.status === "ACTIVE" ? "Desactivar" : "Activar",
               onClick: toggleStatusProduct,
               icon: "CirclePower",
               variant: "default",
             },
             { type: "separator" },
             {
-              label: "Deletar",
+              label: "Apagar",
               onClick: handlerDeleteProduct,
               icon: "Trash2",
               variant: "destructive",

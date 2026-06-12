@@ -107,7 +107,7 @@ export function EditSupplierModal() {
       closeModal("edit-supplier");
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Erro ao atualizar fornecedor",
+        error?.response?.data?.message || "Não foi possível actualizar o fornecedor",
       );
     }
   }
@@ -187,7 +187,7 @@ export function EditSupplierModal() {
             <EmptyState
               icon="PackageOpen"
               title="Sem produtos"
-              description="Não há produtos deste fornecedor"
+              description="Este fornecedor não tem produtos associados."
               className="p-4 mt-0"
             />
           ) : (
@@ -201,7 +201,7 @@ export function EditSupplierModal() {
                 placeholder="Nenhum produto listado..."
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Nota: Ao salvar, os itens removidos serão desvinculados deste
+                Nota: ao guardar, os itens removidos deixarão de estar associados a este
                 fornecedor.
               </p>
             </>
@@ -217,7 +217,7 @@ export function EditSupplierModal() {
             Cancelar
           </Button>
           <Button type="submit" loading={isPending} disabled={isPending}>
-            Salvar Alterações
+            Guardar alterações
           </Button>
         </div>
       </form>

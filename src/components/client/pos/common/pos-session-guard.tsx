@@ -112,7 +112,7 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
                             <DialogDescription className="text-base font-medium text-muted-foreground leading-relaxed px-4">
                                 {isClosed
                                     ? "Esta sessão de caixa já foi finalizada. Para continuar operando no POS, é necessário iniciar um novo turno."
-                                    : "Para acessar o terminal de vendas, você precisa de uma sessão de caixa aberta vinculada ao seu usuário."
+                                    : "Para aceder ao terminal de vendas, é necessário ter uma sessão de caixa aberta associada ao seu utilizador."
                                 }
                             </DialogDescription>
                         </div>

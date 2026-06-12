@@ -40,7 +40,7 @@ export function DefaultBankCard() {
                         Nenhum Banco Registado
                     </p>
                     <p className="text-xs text-muted-foreground max-w-[200px]">
-                        Por favor, vá ao menu de <strong>Configurações</strong> para registar os seus dados bancários.
+                        Aceda ao menu <strong>Configurações</strong> para registar os dados bancários.
                     </p>
                 </div>
             </div>

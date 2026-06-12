@@ -38,7 +38,7 @@ export function MovementsContent() {
       <div data-tour="pos-movements-header">
         <TitleList
           title="Movimentos"
-          suTitle="Controle todos os movimentos realizados na sua empresa"
+          suTitle="Acompanhe todos os movimentos realizados na empresa"
         />
       </div>
 

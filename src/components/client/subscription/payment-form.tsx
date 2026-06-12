@@ -47,10 +47,10 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
           <div className="flex flex-col gap-4">
             <div>
               <h1 className="text-2xl font-bold text-foreground">
-                Finalizar Pagamento
+                Concluir pagamento
               </h1>
               <p className="text-muted-foreground">
-                Escolha sua forma de pagamento para poder prosseguir
+                Escolha a forma de pagamento para prosseguir
               </p>
             </div>
           </div>
@@ -58,7 +58,7 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
           <Card className="p-6 border-border shadow-none ">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground border-b pb-2">
-                1. Ciclo de Faturamento
+                1. Ciclo de facturação
               </h3>
 
               <div className="space-y-3">
@@ -150,7 +150,7 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
                   {isPending ? (
                     <Icon name="LoaderCircle" className="animate-spin mr-2" />
                   ) : null}
-                  {isPending ? "Processando..." : "Finalizar"}
+                  {isPending ? "A processar..." : "Concluir"}
                 </Button>
               </form>
             </div>

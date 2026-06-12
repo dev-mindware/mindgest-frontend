@@ -35,7 +35,7 @@ export function DeleteStoreModal() {
       className="!w-max"
       id="delete-store"
       title={`Tem certeza que deseja apagar a loja ${currentStore?.name}?`}
-      description="Lembre-se que esta ação não pode ser desfeita."
+      description="Esta acção não pode ser anulada."
     >
       <div className="flex justify-end gap-4">
         <Button onClick={() => closeModal("delete-store")} variant="outline">

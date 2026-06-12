@@ -84,7 +84,7 @@ export function DetailsCashierModal() {
               value={formatDateTime(currentCashier.createdAt)}
             />
             <DetailRow
-              label="Atualizado em"
+              label="Actualizado em"
               value={formatDateTime(currentCashier.updatedAt)}
             />
           </section>

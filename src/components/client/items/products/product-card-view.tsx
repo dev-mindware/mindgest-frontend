@@ -40,9 +40,9 @@ export function ProductCardView({ product }: ProductCardProps) {
             actions={[
               { label: "Ver detalhes", onClick: handlerDetailsProduct },
               { label: "Editar", onClick: handlerEditProduct },
-              { label: "Deletar", onClick: handlerDeleteProduct },
+              { label: "Apagar", onClick: handlerDeleteProduct },
               {
-                label: `${product.status === "ACTIVE" ? "Desativar" : "Ativar"}`,
+                label: `${product.status === "ACTIVE" ? "Desactivar" : "Activar"}`,
                 onClick: toggleStatusProduct,
               },
             ]}

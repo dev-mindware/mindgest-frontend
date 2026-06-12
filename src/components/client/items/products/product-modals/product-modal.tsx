@@ -206,7 +206,7 @@ function AddProductFormContent() {
                   isLoading={isTaxesLoading}
                   pagination={taxPagination}
                   onPageChange={setTaxPage}
-                  placeholder="Selecione um imposto"
+                  placeholder="Seleccione um imposto"
                   fullWidth
                 />
               )}
@@ -268,7 +268,7 @@ function AddProductFormContent() {
                   isLoading={isLoadingCategories}
                   pagination={pagination}
                   onPageChange={setPage}
-                  placeholder="Selecione uma opção"
+                  placeholder="Seleccione uma opção"
                   fullWidth
                 />
                 </div>
@@ -349,7 +349,7 @@ function AddProductFormContent() {
                 name="unit"
                 label="Unidade de Medida (Opcional)"
                 options={UNIT_OPTIONS}
-                placeholder="Selecione uma unidade"
+                placeholder="Seleccione uma unidade"
               />
               <Input
                 type="date"
@@ -373,7 +373,7 @@ function AddProductFormContent() {
                     isLoading={isLoadingSuppliers}
                     pagination={paginationSuppliers}
                     onPageChange={setPageSuppliers}
-                    placeholder="Selecione uma opção"
+                    placeholder="Seleccione uma opção"
                     fullWidth
                   />
                 )}
@@ -431,7 +431,7 @@ function AddProductFormContent() {
           </Button>
           <span data-tour="product-form-submit">
           <ButtonSubmit className="w-max" isLoading={isAdding || isSubmitting}>
-            Salvar
+            Guardar
           </ButtonSubmit>
           </span>
         </div>

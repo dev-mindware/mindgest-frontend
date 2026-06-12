@@ -56,7 +56,7 @@ export function AccessControlContent() {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => {
         const badge = ACTION_BADGES[item.action] || { variant: "default", label: item.action };
         return <Badge variant={badge.variant}>{badge.label}</Badge>;
@@ -88,7 +88,7 @@ export function AccessControlContent() {
     },
     {
       key: "actions",
-      header: "Ações",
+      header: "Acções",
       render: (_, item) => (
         <Button variant="outline" size="sm" onClick={() => openModal("view-audit", item)}>
           <Icon name="Eye" className="w-4 h-4 mr-2" />
@@ -106,13 +106,13 @@ export function AccessControlContent() {
         <div data-tour="reports-access-header">
           <TitleList
             title="Acesso e Auditoria"
-            suTitle="Monitore as atividades dos usuários, logs de acessos e alterações críticas de dados."
+            suTitle="Acompanhe as actividades dos utilizadores, os registos de acesso e as alterações críticas de dados."
           />
         </div>
         <div className="rounded-lg border p-6 bg-card" data-tour="reports-access-filters">
           <AuditFilters />
         </div>
-        <RequestError refetch={refetch} message="Erro ao carregar os registros de auditoria" />
+        <RequestError refetch={refetch} message="Não foi possível carregar os registos de auditoria" />
       </div>
     );
   }
@@ -123,7 +123,7 @@ export function AccessControlContent() {
         <div data-tour="reports-access-header">
           <TitleList
             title="Acesso e Auditoria"
-            suTitle="Monitore as atividades dos usuários, logs de acessos e alterações críticas de dados."
+            suTitle="Acompanhe as actividades dos utilizadores, os registos de acesso e as alterações críticas de dados."
           />
         </div>
 
@@ -134,7 +134,7 @@ export function AccessControlContent() {
         {logs.length === 0 ? (
           <div data-tour="reports-access-list">
             <EmptyState
-              description="Nenhum registro de auditoria encontrado com os filtros selecionados."
+              description="Não foi encontrado qualquer registo de auditoria com os filtros seleccionados."
               title="Sem Auditorias"
               icon="Activity"
             />
@@ -150,7 +150,7 @@ export function AccessControlContent() {
               setPage={setPage}
               goToNextPage={goToNextPage}
               goToPreviousPage={goToPreviousPage}
-              emptyMessage="Nenhum registro de auditoria encontrado"
+              emptyMessage="Nenhum registo de auditoria encontrado"
             />
           </div>
         )}

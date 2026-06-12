@@ -101,7 +101,7 @@ export function AgtSeriesList() {
       return <Badge variant="destructive" className="text-xs">Esgotada</Badge>;
     }
     
-    return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs">Ativa</Badge>;
+    return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs">Activa</Badge>;
   };
 
   const calculateProgress = (s: AgtSeries) => {
@@ -148,7 +148,7 @@ export function AgtSeriesList() {
                     onValueChange={(v) => setNewSeries({...newSeries, documentType: v})}
                   >
                     <SelectTrigger id="type" className="h-10 text-sm">
-                      <SelectValue placeholder="Selecione o tipo" />
+                      <SelectValue placeholder="Seleccione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="FT">Factura (FT)</SelectItem>
@@ -182,8 +182,8 @@ export function AgtSeriesList() {
                       value={newSeries.establishmentNumber} 
                       onValueChange={(v) => setNewSeries({...newSeries, establishmentNumber: v})}
                     >
-                      <SelectTrigger id="est" className="h-10 text-sm">
-                        <SelectValue />
+                      <SelectTrigger id="est" className="h-10 text-xs">
+                        <SelectValue placeholder="Seleccione o estabelecimento (opcional)" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="SEDE">Sede</SelectItem>
@@ -192,6 +192,20 @@ export function AgtSeriesList() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="establishment" className="text-xs font-medium uppercase tracking-wider opacity-70">Código do Estabelecimento</Label>
+                  <input
+                    id="establishment"
+                    type="text"
+                    value={newSeries.establishmentNumber}
+                    onChange={(e) => setNewSeries({ ...newSeries, establishmentNumber: e.target.value })}
+                    placeholder="Digite o código do estabelecimento (ex: SEDE)"
+                    className="h-10 w-full rounded-md border border-input px-3 text-sm text-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Introduza o código do estabelecimento manualmente ou seleccione uma loja com um código configurado.
+                  </p>
                 </div>
               </div>
               <DialogFooter>
@@ -281,7 +295,7 @@ export function AgtSeriesList() {
           <CardHeader className="p-4 pb-2">
             <div className="flex items-center gap-2 text-blue-500">
               <LayoutGrid size={16} />
-              <CardTitle className="text-xs uppercase tracking-wider">Total Ativas</CardTitle>
+              <CardTitle className="text-xs uppercase tracking-wider">Total de activas</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-0">

@@ -12,7 +12,7 @@ const sortByOptions = [
   { label: "Disponível", value: "available" },
   { label: "Reservado", value: "reserved" },
   { label: "Data de Criação", value: "createdAt" },
-  { label: "Data de Atualização", value: "updatedAt" },
+  { label: "Data de actualização", value: "updatedAt" },
 ];
 
 const sortOrderOptions = [
@@ -79,7 +79,7 @@ export function StockFilters() {
 
         <FilterPopover
           icon="Archive"
-          label="Estoque Baixo"
+          label="Stock baixo"
           options={booleanOptions}
           value={
             filters.lowStock === true
@@ -97,7 +97,7 @@ export function StockFilters() {
 
         <FilterPopover
           icon="CircleAlert"
-          label="Fora de Estoque"
+          label="Sem stock"
           options={booleanOptions}
           value={
             filters.outOfStock === true

@@ -82,7 +82,7 @@ export function ClientsList() {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -100,7 +100,7 @@ export function ClientsList() {
               variant: "default",
             },
             {
-              label: item.isActive ? "Desativar" : "Ativar",
+              label: item.isActive ? "Desactivar" : "Activar",
               onClick: handlerToggleStatusClient,
               icon: "CirclePower",
               variant: "default",

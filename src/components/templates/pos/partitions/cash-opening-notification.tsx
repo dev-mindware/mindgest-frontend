@@ -43,7 +43,7 @@ export function CashOpeningNotification() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">
-          Solicitação de abertura de Caixa
+          Pedido de abertura de caixa
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

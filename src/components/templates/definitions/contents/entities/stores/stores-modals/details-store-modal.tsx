@@ -64,7 +64,7 @@ export function DetailsStoreModal() {
               value={formatDateTime(currentStore.createdAt)}
             />
             <DetailRow
-              label="Atualizado em"
+              label="Actualizado em"
               value={formatDateTime(currentStore.updatedAt)}
             />
           </section>

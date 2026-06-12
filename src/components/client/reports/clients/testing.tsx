@@ -83,7 +83,7 @@ return (
 
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">Score de Fidelização</p>
+                        <p className="text-sm font-medium">Índice de fidelização</p>
                         <Badge variant="success" className="text-sm">
                             {client.loyaltyScore}%
                         </Badge>

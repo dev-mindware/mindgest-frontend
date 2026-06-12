@@ -151,7 +151,7 @@ function DesktopKeyboardScanner({
       <div className="space-y-2">
         <h2 className="text-2xl font-bold tracking-tight">Aguardando Scanner</h2>
         <p className="text-sm text-muted-foreground leading-relaxed px-4">
-          Aponte o leitor para o código de barras do produto para iniciar o cadastro.
+          Aponte o leitor para o código de barras do produto para iniciar o registo.
         </p>
       </div>
 

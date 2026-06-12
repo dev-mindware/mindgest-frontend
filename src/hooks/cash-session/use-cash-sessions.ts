@@ -57,11 +57,11 @@ export function useAuthorizeOpening() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
-      SucessMessage("Solicitação aprovada com sucesso!");
+      SucessMessage("Pedido aprovado com sucesso.");
     },
     onError: (error: any) => {
       ErrorMessage(
-        error?.response?.data?.message || "Erro ao aprovar solicitação",
+        error?.response?.data?.message || "Não foi possível aprovar o pedido.",
       );
     },
   });
@@ -75,11 +75,11 @@ export function useRejectOpeningRequest() {
       cashSessionsService.rejectOpeningRequest(requestId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
-      SucessMessage("Solicitação recusada com sucesso!");
+      SucessMessage("Pedido recusado com sucesso.");
     },
     onError: (error: any) => {
       ErrorMessage(
-        error?.response?.data?.message || "Erro ao recusar solicitação",
+        error?.response?.data?.message || "Não foi possível recusar o pedido.",
       );
     },
   });
@@ -93,11 +93,11 @@ export function useUpdateCashSession() {
       cashSessionsService.updateSession(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
-      SucessMessage("Sessão atualizada com sucesso");
+      SucessMessage("Sessão actualizada com sucesso");
     },
     onError: (error: any) => {
       ErrorMessage(
-        error?.response?.data?.message || "Erro ao atualizar sessão",
+        error?.response?.data?.message || "Não foi possível actualizar a sessão",
       );
     },
   });

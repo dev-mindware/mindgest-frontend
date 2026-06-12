@@ -107,7 +107,7 @@ export function PosManagement() {
     <div className="min-h-screen bg-background">
       <div>
         <div className="mb-8">
-          <h1 className="mb-2 text-2xl font-bold text-foreground">Controle de Caixas</h1>
+          <h1 className="mb-2 text-2xl font-bold text-foreground">Controlo de caixas</h1>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -159,7 +159,7 @@ export function PosManagement() {
                 ))
               ) : (
                 <div className="col-span-2 py-8 text-center">
-                  <p className="text-gray-500">Nenhum caixa encontrado com os filtros selecionados.</p>
+                  <p className="text-gray-500">Não foi encontrado qualquer caixa com os filtros seleccionados.</p>
                 </div>
               )}
             </div>

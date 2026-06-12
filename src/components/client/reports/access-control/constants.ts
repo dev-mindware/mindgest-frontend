@@ -9,8 +9,8 @@ export interface ActionBadgeConfig {
 
 export const ACTION_BADGES: Record<AuditTrailAction, ActionBadgeConfig> = {
   CREATE: { variant: "success", label: "Criação", icon: "CirclePlus" },
-  UPDATE: { variant: "secondary", label: "Atualização", icon: "Pen" },
-  DELETE: { variant: "destructive", label: "Exclusão", icon: "Trash2" },
+  UPDATE: { variant: "secondary", label: "Actualização", icon: "Pen" },
+  DELETE: { variant: "destructive", label: "Eliminação", icon: "Trash2" },
   LOGIN: { variant: "success", label: "Login", icon: "LogIn" },
   LOGOUT: { variant: "secondary", label: "Logout", icon: "LogOut" },
   SALE: { variant: "success", label: "Venda", icon: "DollarSign" },
@@ -18,18 +18,18 @@ export const ACTION_BADGES: Record<AuditTrailAction, ActionBadgeConfig> = {
 };
 
 export const ENTITY_LABELS: Record<AuditTrailEntity, string> = {
-  USER: "Usuário",
+  USER: "Utilizador",
   ITEMS: "Produto / Item",
-  INVOICE: "Fatura",
-  TRANSACTION: "Transação",
+  INVOICE: "Factura",
+  TRANSACTION: "Transacção",
   CLIENT: "Cliente",
   COMPANY: "Empresa",
   STORE: "Loja",
   CATEGORY: "Categoria",
-  STOCK: "Estoque",
+  STOCK: "Stock",
   CASH_SESSION: "Sessão de Caixa",
   SUBSCRIPTION: "Assinatura",
-  STOCK_RESERVATION: "Reserva de Estoque",
+  STOCK_RESERVATION: "Reserva de stock",
 };
 
 export const ENTITY_OPTIONS = Object.entries(ENTITY_LABELS).map(([value, label]) => ({

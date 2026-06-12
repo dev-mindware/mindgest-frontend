@@ -83,7 +83,7 @@ export const menuItems: MenuStructure = {
       minPlan: "Smart",
       items: [
         {
-          name: "Estoque",
+          name: "Stock",
           url: "/management/stock",
         },
         {

@@ -18,9 +18,9 @@ export function DetailsStockModal() {
         };
 
         const labels: Record<string, string> = {
-            IN_STOCK: "Em Estoque",
-            LOW_STOCK: "Estoque Baixo",
-            OUT_OF_STOCK: "Fora de Estoque",
+            IN_STOCK: "Em stock",
+            LOW_STOCK: "Stock baixo",
+            OUT_OF_STOCK: "Sem stock",
         };
 
         return (
@@ -103,7 +103,7 @@ export function DetailsStockModal() {
                                 value={formatDateTime(currentStock.createdAt)}
                             />
                             <DetailRow
-                                label="Atualizado em"
+                                label="Actualizado em"
                                 value={formatDateTime(currentStock.updatedAt)}
                             />
                         </section>

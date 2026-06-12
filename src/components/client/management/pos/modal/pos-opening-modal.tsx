@@ -138,7 +138,7 @@ export function PosOpeningModal() {
         <div className="p-8 text-center flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-muted-foreground font-medium">
-            Carregando lojas...
+            A carregar lojas...
           </p>
         </div>
       </GlobalModal>
@@ -161,11 +161,11 @@ export function PosOpeningModal() {
   return (
     <GlobalModal
       id="opening-cashier"
-      title={isEdit ? "Editar Configuração de Caixa" : "Abertura de Caixa"}
+      title={isEdit ? "Editar configuração de caixa" : "Abertura de caixa"}
       description={
         isEdit
           ? "Edite as configurações da sessão deste caixa"
-          : "Faça a abertura de caixa aqui e controle o fluxo de vendas dos seu funcionários"
+          : "Abra o caixa e acompanhe o fluxo de vendas dos seus colaboradores."
       }
       canClose
       className="sm:max-w-[600px]"
@@ -225,7 +225,7 @@ export function PosOpeningModal() {
               name="fundType"
               control={control}
               label="Tipo de Fundo"
-              placeholder="Selecione o tipo"
+              placeholder="Seleccione o tipo"
               disabled={isEdit}
               options={[
                 { label: "Moeda", value: "Coin" },
@@ -241,7 +241,7 @@ export function PosOpeningModal() {
               render={({ field }) => (
                 <PaginatedSelect
                   label="Loja"
-                  placeholder="Selecione a loja"
+                  placeholder="Seleccione a loja"
                   options={storesData.map((s) => ({ label: s.name, value: s.id }))}
                   value={field.value}
                   onChange={field.onChange}
@@ -296,7 +296,7 @@ export function PosOpeningModal() {
             loading={isOpening || isUpdating}
             className="bg-primary hover:bg-primary/90 text-white"
           >
-            {isEdit ? "Salvar Alterações" : "Abrir Caixa"}
+            {isEdit ? "Guardar alterações" : "Abrir caixa"}
           </Button>
         </div>
       </form>

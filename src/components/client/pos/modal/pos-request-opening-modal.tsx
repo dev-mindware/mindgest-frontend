@@ -49,12 +49,12 @@ export function PosRequestOpeningModal() {
                 storeId: currentStore.id,
                 message: data.message,
             });
-            SucessMessage("Solicitação enviada com sucesso!");
+            SucessMessage("Pedido enviado com sucesso.");
             closeModal(MODAL_POS_REQUEST_OPENING_ID);
             reset();
         } catch (err: any) {
             console.error(err);
-            setError(err.response?.data?.message || "Erro ao enviar solicitação.");
+            setError(err.response?.data?.message || "Não foi possível enviar o pedido.");
         }
     };
 
@@ -83,7 +83,7 @@ export function PosRequestOpeningModal() {
                         Cancelar
                     </Button>
                     <Button type="submit" loading={isSubmitting}>
-                        Enviar Solicitação
+                        Enviar pedido
                     </Button>
                 </div>
             </form>

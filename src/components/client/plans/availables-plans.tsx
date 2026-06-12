@@ -116,7 +116,7 @@ export function AvailablePlans() {
                         onClick={() => onHandlerChoosePlan(plan)}
                       >
                         {isCurrent && subscriptionStatus !== "TRIALING"
-                          ? "Plano Atual"
+                          ? "Plano actual"
                           : `Escolher ${plan.name}`}
                       </Button>
                     </CardFooter>

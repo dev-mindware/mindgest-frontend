@@ -60,7 +60,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
     {
       title: "Fechar",
       subtitle: "Encerrar sessão",
-      description: "Finalizar o turno do caixa",
+      description: "Encerrar o turno do caixa",
       icon: "Power",
       tourKey: "pos-settings-close-session",
       variant: isOpen ? ("action" as const) : ("default" as const),

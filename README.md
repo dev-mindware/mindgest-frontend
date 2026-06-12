@@ -1,7 +1,7 @@
-# MINDGEST FRONTEND
+# Mindgest Frontend
 
 ## Descrição do Projeto
-O **MindGest** é uma solução avançada de gestão empresarial focada na eficiência operacional, oferecendo ferramentas robustas para faturação, controlo de inventário e gestão de clientes, potencializada por um assistente de Inteligência Artificial.
+O **Mindgest** é uma solução avançada de gestão empresarial focada na eficiência operacional, com ferramentas robustas de facturação, controlo de inventário e gestão de clientes, apoiadas por um assistente de inteligência artificial.
 
 ## Requisitos Funcionais
 

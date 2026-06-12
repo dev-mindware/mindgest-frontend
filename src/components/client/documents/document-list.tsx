@@ -46,7 +46,7 @@ export function DocumentList() {
       <div data-tour="documents-header">
         <TitleList
           title="Documentos"
-          suTitle="Crie documentos que ajudaram no controlo das suas atividades"
+          suTitle="Crie documentos que ajudarão no controlo das suas atividades"
         />
       </div>
 

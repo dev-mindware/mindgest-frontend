@@ -98,7 +98,7 @@ export function ServiceList() {
 
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -116,7 +116,7 @@ export function ServiceList() {
               variant: "default",
             },
             {
-              label: "Deletar",
+              label: "Apagar",
               onClick: handlerDeleteService,
               icon: "Trash2",
               variant: "destructive",

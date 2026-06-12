@@ -61,7 +61,7 @@ export function NotificationList({
               icon="BellOff"
               title="Sem notificações"
               className="border-none"
-              description="Você não possui novas notificações no momento."
+              description="Não existem novas notificações neste momento."
             />
           </div>
         ) : (
@@ -80,7 +80,7 @@ export function NotificationList({
                 {isFetchingNextPage ? (
                   <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                 ) : (
-                  <span className="text-xs text-muted-foreground">Carregando mais...</span>
+                  <span className="text-xs text-muted-foreground">A carregar mais...</span>
                 )}
               </div>
             )}

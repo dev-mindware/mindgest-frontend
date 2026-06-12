@@ -218,7 +218,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao atualizar o item",
+        error?.response?.data?.message || "Não foi possível actualizar o item",
       );
     }
   }
@@ -270,7 +270,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                   isLoading={isTaxesLoading}
                   pagination={taxPagination}
                   onPageChange={setTaxPage}
-                  placeholder="Selecione um imposto"
+                  placeholder="Seleccione um imposto"
                   className="w-full"
                 />
               )}
@@ -326,7 +326,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                   isLoading={isLoadingCategories}
                   pagination={pagination}
                   onPageChange={setPage}
-                  placeholder="Selecione uma opção"
+                  placeholder="Seleccione uma opção"
                   className="w-full"
                 />
               )}
@@ -399,7 +399,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                 name="unit"
                 label="Unidade de Medida (Opcional)"
                 options={UNIT_OPTIONS}
-                placeholder="Selecione uma unidade"
+                placeholder="Seleccione uma unidade"
               />
               <Input
                 type="date"
@@ -424,7 +424,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                     pagination={paginationSuppliers}
                     onPageChange={setPageSuppliers}
                     className="w-full"
-                    placeholder="Selecione um aopção"
+                    placeholder="Seleccione uma opção"
                   />
                 )}
               />
@@ -485,7 +485,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
             className="w-max"
             isLoading={isUpdating || isSubmitting}
           >
-            Atualizar
+            Actualizar
           </ButtonSubmit>
         </div>
       </div>

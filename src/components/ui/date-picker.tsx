@@ -36,7 +36,7 @@ export function DatePicker({
   disabledDates = { before: new Date() },
   className,
 }: DatePickerProps) {
-  // fallback: se não tiver value, usa data atual só pra montar selects
+  // Se não existir um valor, utiliza a data actual apenas para montar os selectores.
   const date = value ?? new Date();
 
   const months = [

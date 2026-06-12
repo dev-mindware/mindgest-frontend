@@ -29,7 +29,7 @@ export function NotificationList({
           description={
             isFiltered
               ? "Tente limpar os filtros para ver todas as notificações."
-              : "Você não possui notificações no momento."
+              : "Não existem notificações neste momento."
           }
           className="border-none"
         />

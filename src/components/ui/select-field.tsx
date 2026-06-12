@@ -23,7 +23,7 @@ interface SelectFieldProps {
 export function SelectField({
   label,
   value,
-  placeholder = "Selecione",
+  placeholder = "Seleccione",
   options,
   onValueChange,
   className,

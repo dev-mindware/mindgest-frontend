@@ -68,8 +68,8 @@ export function PosRequestsModal() {
   return (
     <GlobalModal
       id="pos-requests"
-      title="Solicitações de Abertura"
-      description="Gerencie os pedidos de abertura de caixa dos seus funcionários"
+      title="Pedidos de abertura"
+      description="Gerir os pedidos de abertura de caixa dos colaboradores."
       canClose
       className="sm:max-w-[500px]"
     >
@@ -79,7 +79,7 @@ export function PosRequestsModal() {
             <PosRequestsSkeleton />
           </div>
         ) : isError ? (
-          <RequestError refetch={refetch} message="Erro ao carregar solicitações" />
+          <RequestError refetch={refetch} message="Erro ao carregar os pedidos" />
         ) : (
           <>
             <div className="space-y-3">
@@ -155,7 +155,7 @@ export function PosRequestsModal() {
                   <Icon name="Inbox" className="w-6 h-6" />
                 </div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Nenhuma solicitação pendente
+                  Não existem pedidos pendentes.
                 </p>
               </div>
             )}

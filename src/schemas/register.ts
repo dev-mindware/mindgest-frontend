@@ -10,7 +10,7 @@ export const registerSchema = z.object({
         .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
-      email: z.string().trim().email("Email invalido"),
+      email: z.string().trim().email("Email inválido"),
       phone: phoneNumberSchema,
       password: passwordSchema,
       passwordConfirmation: z
@@ -20,7 +20,7 @@ export const registerSchema = z.object({
         .min(3, "No minimo 3 caracters"),
     })
     .refine((data) => data.password === data.passwordConfirmation, {
-      message: "As senhas não coincidem",
+      message: "As palavras-passe não coincidem",
       path: ["passwordConfirmation"],
     }),
   step2: z.object({
@@ -28,7 +28,7 @@ export const registerSchema = z.object({
   }),
   step3: z.object({
     terms: z.literal(true, {
-      errorMap: () => ({ message: "Você deve aceitar os termos" }),
+      errorMap: () => ({ message: "Deve aceitar os termos" }),
     }),
   }),
 });

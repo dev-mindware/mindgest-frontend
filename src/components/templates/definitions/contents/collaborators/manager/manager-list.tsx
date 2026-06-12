@@ -76,7 +76,7 @@ export function ManagerList() {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -94,14 +94,14 @@ export function ManagerList() {
               variant: "default",
             },
             {
-              label: item.status === "ACTIVE" ? "Desativar" : "Ativar",
+              label: item.status === "ACTIVE" ? "Desactivar" : "Activar",
               onClick: handlerToggleStatusManager,
               icon: "CirclePower",
               variant: "default",
             },
             { type: "separator" },
             {
-              label: "Deletar",
+              label: "Apagar",
               onClick: handlerDeleteManager,
               icon: "Trash2",
               variant: "destructive",

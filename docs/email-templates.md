@@ -7,7 +7,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Subscrição Ativada - MindGest</title>
+        <title>Subscrição activada - Mindgest</title>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             body { font-family: 'Outfit', sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -19,7 +19,7 @@
     </head>
     <body>
         <div class="header">
-            <h1 style="color: #712467; margin: 0;">MindGest</h1>
+            <h1 style="color: #712467; margin: 0;">Mindgest</h1>
         </div>
         <div class="content">
             <h2>Subscrição Ativada! 🎉</h2>
@@ -51,7 +51,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Redefinição de Senha - MindGest</title>
+        <title>Redefinição da palavra-passe - Mindgest</title>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             body {
@@ -212,8 +212,8 @@
         <div class="container">
             <div class="header">
                 <div class="logo-container">
-                    <img src="cid:logo" alt="MindGest" style="height: 50px; width: auto; border-radius: 8px;" />
-                    <!-- <div class="logo-text">MindGest</div> -->
+                    <img src="cid:logo" alt="Mindgest" style="height: 50px; width: auto; border-radius: 8px;" />
+                    <!-- <div class="logo-text">Mindgest</div> -->
                 </div>
                 <div class="subtitle">Recuperação de Acesso</div>
             </div>
@@ -239,7 +239,7 @@
                 </div>
                 
                 <div class="security-note">
-                    <strong>🔒 Nota de Segurança MindGest</strong>
+                    <strong>Nota de segurança do Mindgest</strong>
                     • Se não pediste esta alteração, podes ignorar este email com segurança.<br>
                     • A tua palavra-passe atual continuará a funcionar até que a alteres.<br>
                     • A nossa equipa nunca te pedirá a tua palavra-passe por email ou telefone.
@@ -253,7 +253,7 @@
             
             <div class="footer">
                 <p>&copy; 2026 MINDWARE CORP | Todos os direitos reservados</p>
-                <p>MindGest - O futuro da sua gestão empresarial.</p>
+                <p>Mindgest - O futuro da sua gestão empresarial.</p>
             </div>
         </div>
     </body>
@@ -272,7 +272,7 @@
     return `
 Olá, ${userName}!
 
-Recebemos uma solicitação para redefinir a senha da sua conta no MindGest.
+Recebemos um pedido para redefinir a palavra-passe da sua conta no Mindgest.
 
 Se você fez esta solicitação, acesse o seguinte link para criar uma nova senha:
 ${resetUrl}
@@ -287,7 +287,7 @@ NOTA DE SEGURANÇA:
 
 Este é um email automático, não responda a esta mensagem.
 
-© 2024 MindGest - Sistema de Facturação e Gestão
+© 2024 Mindgest - Sistema de facturação e gestão
     `;
   }
 
@@ -303,7 +303,7 @@ Este é um email automático, não responda a esta mensagem.
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Bem-vindo à MindGest</title>
+        <title>Bem-vindo ao Mindgest</title>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             body { font-family: 'Outfit', sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -316,12 +316,12 @@ Este é um email automático, não responda a esta mensagem.
     </head>
     <body>
         <div class="header">
-            <h1 style="color: #712467; margin: 0;">MindGest</h1>
+            <h1 style="color: #712467; margin: 0;">Mindgest</h1>
         </div>
         <div class="content">
             <h2>Bem-vindo à Revolução na Gestão! 🚀</h2>
             <p>Olá <span class="highlight">${userName}</span>,</p>
-            <p>É com enorme prazer que lhe damos as boas-vindas à <span class="highlight">MindGest</span>! A sua empresa <span class="highlight">${companyName}</span> foi registada com sucesso.</p>
+            <p>É com enorme prazer que lhe damos as boas-vindas ao <span class="highlight">Mindgest</span>! A empresa <span class="highlight">${companyName}</span> foi registada com sucesso.</p>
             <p>Agora você tem acesso a uma plataforma completa para gerir o seu negócio de forma inteligente, rápida e segura.</p>
             <p><strong>O que pode fazer agora?</strong></p>
             <ul>
@@ -364,7 +364,7 @@ Este é um email automático, não responda a esta mensagem.
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Novo Acesso MindGest</title>
+        <title>Novo acesso ao Mindgest</title>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             body { font-family: 'Outfit', sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -378,11 +378,11 @@ Este é um email automático, não responda a esta mensagem.
     </head>
     <body>
         <div class="header">
-            <h1 style="color: #712467; margin: 0;">MindGest</h1>
+            <h1 style="color: #712467; margin: 0;">Mindgest</h1>
         </div>
         <div class="content">
             <h2>Olá ${userName}! 👋</h2>
-            <p>Você foi convidado para se juntar à equipa da <span class="highlight">${companyName}</span> no MindGest.</p>
+            <p>Foi convidado a integrar a equipa da <span class="highlight">${companyName}</span> no Mindgest.</p>
             <p>Foi-lhe atribuído o perfil de: <span class="badge">${roleDisplay}</span></p>
             <p>A partir de agora, poderá aceder ao portal para realizar as suas tarefas diárias com toda a agilidade que a nossa plataforma oferece.</p>
             <p><strong>Dicas para começar:</strong></p>

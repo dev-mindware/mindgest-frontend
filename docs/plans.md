@@ -1,6 +1,6 @@
-# Planos de Subscrição MindGest
+# Planos de subscrição Mindgest
 
-Este documento define a matriz comercial dos planos oficiais do MindGest: **Base**, **Smart** e **Pro**.
+Este documento define a matriz comercial dos planos oficiais do Mindgest: **Base**, **Smart** e **Pro**.
 
 ## Benefícios comuns a todos os planos
 

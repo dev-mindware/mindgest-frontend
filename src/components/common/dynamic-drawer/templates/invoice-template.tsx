@@ -21,14 +21,14 @@ export function InvoiceTemplate({ type, data, hideDueDate, hideActions, changeVa
         <div>
           <h2 className="text-xl font-bold uppercase tracking-wide">
             {data.invoiceType === "INVOICE_RECEIPT"
-              ? "Fatura-Recibo"
+              ? "Factura-recibo"
               : data.invoiceType === "PROFORMA"
-                ? "Fatura Proforma"
+                ? "Factura proforma"
                 : data.invoiceType === "RECEIPT"
                   ? "Recibo"
                   : data.invoiceType === "CREDIT_NOTE"
                     ? "Nota de Crédito"
-                    : "Fatura"}
+                    : "Factura"}
           </h2>
           <p className="text-muted-foreground">{data.number}</p>
         </div>

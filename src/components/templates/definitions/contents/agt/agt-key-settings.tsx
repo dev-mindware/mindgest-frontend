@@ -64,11 +64,11 @@ export function AgtKeySettings() {
     setIsLoading(true);
     try {
       await agtService.updatePrivateKey(privateKey);
-      toast.success("Chave privada da AGT atualizada com sucesso!");
+      toast.success("Chave privada da AGT actualizada com sucesso!");
       setPrivateKey("");
       fetchStatus();
     } catch (error: any) {
-      const message = error.response?.data?.message || "Erro ao atualizar a chave.";
+      const message = error.response?.data?.message || "Não foi possível actualizar a chave.";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -79,9 +79,9 @@ export function AgtKeySettings() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <h3 className="text-lg font-medium">Configurações de Chave</h3>
+          <h3 className="text-lg font-medium">Configurações da chave</h3>
           <p className="text-sm text-muted-foreground">
-            Gerencie a chave privada de assinatura digital para a sua empresa.
+            Gerir a chave privada de assinatura digital da empresa.
           </p>
         </div>
         <div className="flex justify-center md:justify-end">
@@ -117,7 +117,7 @@ export function AgtKeySettings() {
               <CardTitle className="text-base">Nova Chave PEM</CardTitle>
             </div>
             <CardDescription className="text-xs">
-              Cole o conteúdo do seu ficheiro .pem abaixo para atualizar a assinatura.
+              Cole abaixo o conteúdo do ficheiro .pem para actualizar a assinatura.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -138,7 +138,7 @@ export function AgtKeySettings() {
                 disabled={isLoading || !privateKey.trim()}
                 className="h-9 px-6 text-xs"
               >
-                {isLoading ? "Processando..." : "Atualizar Chave"}
+                {isLoading ? "A processar..." : "Actualizar chave"}
               </Button>
             </div>
           </CardContent>

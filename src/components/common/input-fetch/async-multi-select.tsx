@@ -25,7 +25,7 @@ export function MultiSelect({
   options,
   value,
   onChange,
-  placeholder = "Selecionar...",
+  placeholder = "Seleccionar...",
   isMulti = true,
   className,
   error,

@@ -30,7 +30,7 @@ export function useFileUpload(apiEndpoint: string, queryKey?: string, method?: U
     mutationFn: async ({ files, extraData = {} }: MutationVariables) => {
       const formData = new FormData();
 
-      // percorre os arquivos
+      // Percorre os ficheiros.
       for (const [key, value] of Object.entries(files)) {
         if (!value) continue;
 

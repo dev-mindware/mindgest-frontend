@@ -7,7 +7,7 @@ export const authService = {
       const response = await api.get<User>("/auth/profile");
       return response.data;
     } catch (error) {
-      console.error("Erro ao buscar usuário atual:", error);
+      console.error("Erro ao obter o utilizador actual:", error);
       return null;
     }
   },

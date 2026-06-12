@@ -41,7 +41,7 @@ export function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
         </h4>
         {isSelected && (
           <Badge className="bg-primary-500 text-white">
-            Selecionado
+            Seleccionado
           </Badge>
         )}
       </div>

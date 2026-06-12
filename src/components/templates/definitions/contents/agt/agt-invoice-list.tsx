@@ -74,7 +74,7 @@ export function AgtInvoiceList({ onConsult }: { onConsult: (docNo: string) => vo
       setPage(data.page);
     } catch (error) {
       console.error("Failed to fetch AGT invoices:", error);
-      toast.error("Erro ao carregar as faturas da AGT.");
+      toast.error("Erro ao carregar as facturas da AGT.");
     } finally {
       setIsLoading(false);
     }

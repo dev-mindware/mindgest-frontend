@@ -66,7 +66,7 @@ export const CartList = React.memo<CartSectionProps>(
                 data-tour="pos-cart"
             >
                 <h2 className="text-xl font-bold mb-4">
-                    {type === "invoice" ? "Faturação" : "Proforma"}
+                    {type === "invoice" ? "Facturação" : "Proforma"}
                 </h2>
 
                 {/* Cart Items List */}

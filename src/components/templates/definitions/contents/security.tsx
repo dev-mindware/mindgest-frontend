@@ -12,7 +12,7 @@ export function Security() {
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">Segurança</h2>
                     <p className="text-muted-foreground mt-1">
-                        Gerencie as credenciais de acesso e segurança da sua conta.
+                        Gerir as credenciais de acesso e a segurança da conta.
                     </p>
                 </div>
             </div>

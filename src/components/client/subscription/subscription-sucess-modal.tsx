@@ -22,8 +22,8 @@ export function SubscriptionSucessModal() {
       title="Subscrição criada com sucesso"
       description={<>
         <span className="text-sm text-muted-foreground">
-          Parabéns! Sua subscrição foi efectuada com sucesso. <br /> Você receberá
-          uma notificação assim que estiver tudo liberado.
+          A subscrição foi efectuada com sucesso. <br /> Receberá uma notificação
+          assim que o acesso estiver disponível.
         </span>
       </>}
     >

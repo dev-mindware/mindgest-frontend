@@ -76,7 +76,7 @@ export function DetailsSupplierModal() {
               value={formatDateTime(currentSupplier.createdAt)}
             />
             <DetailRow
-              label="Atualizado em"
+              label="Actualizado em"
               value={formatDateTime(currentSupplier.updatedAt)}
             />
           </section>

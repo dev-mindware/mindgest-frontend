@@ -26,18 +26,18 @@ export const summaryCards: SummaryCard[] = [
     description: "Despesas totais do dia",
   },
   {
-    title: "Solicitações",
+    title: "Pedidos",
     value: 3,
     type: "interactive",
     modalId: "pos-requests",
     icon: "Bell",
-    description: "Clique para ver as solicitações",
+    description: "Consultar pedidos pendentes",
   },
   {
-    title: "Gerenciar Caixas",
+    title: "Gerir caixas",
     type: "action",
     modalId: "opening-cashier",
     icon: "Info",
-    description: "Clique para gerenciar as sessões",
+    description: "Seleccione para gerir as sessões",
   },
 ];

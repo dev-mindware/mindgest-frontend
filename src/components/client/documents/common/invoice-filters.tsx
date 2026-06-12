@@ -95,7 +95,7 @@ export function InvoiceFiltersTSX({ type }: Props) {
           <div data-tour="documents-filter-number">
           <Input
             type="search"
-            placeholder="Nº Fatura"
+            placeholder="N.º da factura"
             value={filters.invoiceNumber ?? ""}
             onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
             className="w-full"

@@ -46,20 +46,20 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Mindgest | Software de Gestão e Faturação",
+    default: "Mindgest | Software de gestão e facturação",
     template: "%s | Mindgest",
   },
 
   description:
-    "Mindgest é um software de gestão e faturação para empresas, com controlo de vendas, clientes, produtos, stocks, relatórios e emissão de documentos comerciais.",
+    "Mindgest é um software de gestão e facturação para empresas, com controlo de vendas, clientes, produtos, stock, relatórios e emissão de documentos comerciais.",
 
   applicationName: "Mindgest",
 
   keywords: [
     "Mindgest",
     "software de gestão",
-    "software de faturação",
-    "faturação Angola",
+    "software de facturação",
+    "facturação Angola",
     "gestão empresarial",
     "gestão de stock",
     "POS",
@@ -95,9 +95,9 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Mindgest | Software de Gestão e Faturação",
+    title: "Mindgest | Software de gestão e facturação",
     description:
-      "Controle vendas, clientes, produtos, stocks, relatórios e documentos comerciais num único software de gestão empresarial.",
+      "Gira vendas, clientes, produtos, stock, relatórios e documentos comerciais num único software de gestão empresarial.",
     url: "https://mindgest.mindware.ao",
     siteName: "Mindgest",
     images: [
@@ -105,7 +105,7 @@ export const metadata: Metadata = {
         url: "/mindgest.png",
         width: 1200,
         height: 630,
-        alt: "Mindgest - Software de Gestão e Faturação",
+        alt: "Mindgest: software de gestão e facturação",
       },
     ],
     locale: "pt_AO",
@@ -114,9 +114,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Mindgest | Software de Gestão e Faturação",
+    title: "Mindgest | Software de gestão e facturação",
     description:
-      "Software de gestão empresarial para controlar vendas, clientes, produtos, stocks e faturação.",
+      "Software de gestão empresarial para controlar vendas, clientes, produtos, stock e facturação.",
     images: ["/mindgest.png"],
   },
 

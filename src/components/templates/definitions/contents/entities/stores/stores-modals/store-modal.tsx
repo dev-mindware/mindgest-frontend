@@ -55,7 +55,7 @@ export function StoreModal({ action }: StoreModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao salvar a loja."
+        error?.response?.data?.message || "Não foi possível guardar a loja."
       );
     }
   }
@@ -121,7 +121,7 @@ export function StoreModal({ action }: StoreModalProps) {
             className="w-max"
             isLoading={isSubmitting || isAdding || isEditing}
           >
-            {action === "add" ? "Adicionar" : "Salvar Alterações"}
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
           </ButtonSubmit>
         </div>
       </form>

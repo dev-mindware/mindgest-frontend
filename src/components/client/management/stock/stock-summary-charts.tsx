@@ -31,7 +31,7 @@ export function StockSummaryCharts() {
     return (
       <RequestError
         refetch={refetch}
-        message="Erro ao carregar o resumo do estoque"
+        message="Erro ao carregar o resumo do stock"
       />
     );
   }
@@ -44,7 +44,7 @@ export function StockSummaryCharts() {
     return (
       <EmptyState
         title="Resumo Indisponível"
-        description="Não há dados de estoque suficientes para gerar um resumo."
+        description="Não existem dados de stock suficientes para gerar um resumo."
         icon="ChartColumn"
       />
     );
@@ -145,7 +145,7 @@ export function StockSummaryCharts() {
                 Níveis de Inventário
               </CardTitle>
               <CardDescription>
-                Distribuição atual do estoque por categoria
+                Distribuição actual do stock por categoria
               </CardDescription>
             </div>
           </CardHeader>

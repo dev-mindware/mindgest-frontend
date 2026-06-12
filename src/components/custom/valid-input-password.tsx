@@ -42,9 +42,9 @@ export default function ValidInputPassword() {
   }
 
   const getStrengthText = (score: number) => {
-    if (score === 0) return "Enter a password"
-    if (score <= 2) return "Weak password"
-    if (score === 3) return "Medium password"
+    if (score === 0) return "Introduza uma palavra-passe"
+    if (score <= 2) return "Palavra-passe fraca"
+    if (score === 3) return "Palavra-passe média"
     return "Strong password"
   }
 

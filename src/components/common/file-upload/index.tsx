@@ -49,7 +49,7 @@ const DropzoneContent = ({
         const file = acceptedFiles[0];
         if (file.size > maxSize) {
           alert(
-            `O arquivo excede o tamanho Máximo de ${(
+            `O ficheiro excede o tamanho máximo de ${(
               maxSize /
               1024 /
               1024
@@ -118,11 +118,11 @@ const DropzoneContent = ({
             <div>
               <p className="text-sm font-medium text-foreground">
                 {isDragActive
-                  ? "Solte o arquivo aqui"
-                  : "Arraste e solte ou clique para selecionar"}
+                  ? "Largue o ficheiro aqui"
+                  : "Arraste e largue ou seleccione o ficheiro"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Arquivos PDF/Imagens (máx. {(maxSize / 1024 / 1024).toFixed(1)}
+                Ficheiros PDF/imagens (máx. {(maxSize / 1024 / 1024).toFixed(1)}
                 MB)
               </p>
             </div>
@@ -176,7 +176,7 @@ const DropzoneContent = ({
       {error && (
         <div className="mt-2 flex items-center gap-1.5 text-destructive">
           <Icon name="CircleAlert" className="h-4 w-4" />
-          <p className="text-xs">Por favor, selecione um arquivo PDF válido</p>
+          <p className="text-xs">Seleccione um ficheiro PDF válido.</p>
         </div>
       )}
     </div>

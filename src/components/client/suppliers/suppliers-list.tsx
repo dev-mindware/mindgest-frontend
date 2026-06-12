@@ -63,12 +63,12 @@ export function SuppliersList() {
     },
     {
       key: "updatedAt",
-      header: "Atualizado em",
+      header: "Actualizado em",
       render: (_, item) => formatDateTime(item.updatedAt),
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -98,7 +98,7 @@ export function SuppliersList() {
               variant: "default",
             },
             {
-              label: "Deletar",
+              label: "Apagar",
               onClick: handlerDeleteSupplier,
               icon: "Trash2",
               variant: "destructive",

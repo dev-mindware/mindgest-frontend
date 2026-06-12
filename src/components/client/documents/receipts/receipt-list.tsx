@@ -80,7 +80,7 @@ export function ReceiptList({ storeId }: { storeId?: string }) {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}

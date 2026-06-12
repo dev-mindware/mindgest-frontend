@@ -20,7 +20,7 @@ export function SecondStep() {
         <Input
           label="Nif da empresa"
           startIcon="IdCard"
-          placeholder="Insira seu NIF"
+          placeholder="Introduza o NIF"
           {...register("step2.company.taxNumber")}
           error={
             errors?.step2?.company?.taxNumber &&
@@ -41,7 +41,7 @@ export function SecondStep() {
           type="email"
           label="E-mail"
           startIcon="Mail"
-          placeholder="Insira o email da empresa"
+          placeholder="Introduza o endereço de email da empresa"
           {...register("step2.company.email")}
           error={
             errors?.step2?.company?.email &&
@@ -51,7 +51,7 @@ export function SecondStep() {
         <Input
           label="Telefone"
           startIcon="Phone"
-          placeholder="Insira seu telefone"
+          placeholder="Introduza o número de telefone"
           {...register("step2.company.phone")}
           error={
             errors?.step2?.company?.phone &&
@@ -61,7 +61,7 @@ export function SecondStep() {
         <Input
           label="Endereço"
           startIcon="MapPin"
-          placeholder="Insira seu endereço"
+          placeholder="Introduza o endereço"
           {...register("step2.company.address")}
           error={
             errors?.step2?.company?.address &&

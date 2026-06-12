@@ -77,7 +77,7 @@ export const passwordSchema = z
   .string()
   .trim()
   .nonempty("Campo obrigatório")
-  .min(8, "A senha deve ter no mínimo 8 caracteres");
+  .min(8, "A palavra-passe deve ter, no mínimo, 8 caracteres");
 
 export const ibanSchema = z
   .string()

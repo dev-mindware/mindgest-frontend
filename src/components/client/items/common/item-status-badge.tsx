@@ -33,7 +33,7 @@ export function ItemStatusBadge({ status }: StatusBadgeProps) {
 export const statusMap: Record<ItemStatus, string> = {
   ACTIVE: "Activo",
   INACTIVE: "Inactivo",
-  OUT_OF_STOCK: "Fora de Estoque",
+  OUT_OF_STOCK: "Sem stock",
 };
 
 export const displayStatusLabel = (status: ItemStatus): string => {

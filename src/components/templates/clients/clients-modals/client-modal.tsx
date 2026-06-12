@@ -58,7 +58,7 @@ export function ClientModal({ action }: ClientModalProps) {
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-        "Ocorreu um erro ao salvar o cliente."
+        "Não foi possível guardar o cliente."
       );
     }
   }
@@ -132,7 +132,7 @@ export function ClientModal({ action }: ClientModalProps) {
             className="w-max"
             isLoading={isSubmitting || isAdding || isEditing}
           >
-            {action === "add" ? "Adicionar" : "Salvar Alterações"}
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
           </ButtonSubmit>
         </div>
       </form>

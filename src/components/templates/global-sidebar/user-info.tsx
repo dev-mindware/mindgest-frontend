@@ -93,7 +93,7 @@ export function UserInfo() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={promptInstall}>
                   <Icon name="Download" />
-                  Instalar MindGest
+                  Instalar Mindgest
                 </DropdownMenuItem>
               </>
             )}

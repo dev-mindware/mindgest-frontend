@@ -14,7 +14,7 @@ export function HeaderSubscription() {
             className="flex items-center text-muted-foreground hover:text-primary transition-colors"
           >
             <Icon name="ArrowLeft" className="h-4 w-4 mr-2" />
-            Voltar ao MindGest
+            Voltar ao Mindgest
           </Link>
         </div>
       </div>

@@ -6,7 +6,7 @@ export const posOpeningSchema = z.object({
   storeId: z.string().trim().min(1, "Loja é obrigatória"),
   cashierIds: z
     .array(z.string().trim())
-    .min(1, "Selecione pelo menos um caixa"),
+    .min(1, "Seleccione, pelo menos, um caixa"),
   fundType: z.string().trim().optional(),
 });
 
@@ -16,7 +16,7 @@ export const posOpeningCashierSchema = z.object({
   storeId: z.string().trim().min(1, "Loja é obrigatória"),
   cashierIds: z
     .array(z.string().trim())
-    .min(1, "Selecione pelo menos um caixa"),
+    .min(1, "Seleccione, pelo menos, um caixa"),
   fundType: z.string().trim().optional(),
   managerBarcode: z.string().trim().min(1, "Código do gerente é obrigatório"),
 });

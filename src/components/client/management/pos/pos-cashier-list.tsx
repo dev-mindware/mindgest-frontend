@@ -53,7 +53,7 @@ export function PosCashierList({
       type: "separator" as const
     },
     {
-      label: "Deletar",
+      label: "Apagar",
       icon: "Trash2" as const,
       variant: "destructive" as const,
       onClick: () => {
@@ -138,7 +138,7 @@ export function PosCashierList({
       <EmptyState
         icon="LayoutGrid"
         title="Nenhuma sessão encontrada"
-        description="Não há sessões de caixa registradas para os filtros selecionados."
+        description="Não existem sessões de caixa registadas para os filtros seleccionados."
       />
     );
   }
@@ -257,7 +257,7 @@ export function PosCashierList({
                     session.isOpen ? "bg-green-500/10 text-green-600 border-green-500/20 shadow-none" : "bg-muted/50 text-muted-foreground border-muted-foreground/10"
                   )}
                 >
-                  {session.isOpen ? "Sessão Ativa" : "Sessão Encerrada"}
+                  {session.isOpen ? "Sessão activa" : "Sessão encerrada"}
                 </Badge>
 
                 {!session.isOpen && session.closedAt && (

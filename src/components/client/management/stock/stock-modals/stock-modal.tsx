@@ -58,7 +58,7 @@ export function StockModal() {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao salvar o stock."
+        error?.response?.data?.message || "Não foi possível guardar o stock."
       );
     }
   }
@@ -107,7 +107,7 @@ export function StockModal() {
               render={({ field }) => (
                 <PaginatedSelect
                   label="Produto"
-                  placeholder="Selecione o produto"
+                  placeholder="Seleccione o produto"
                   options={itemsData.map((i) => ({ label: i.name, value: i.id }))}
                   value={field.value}
                   onChange={field.onChange}
@@ -128,7 +128,7 @@ export function StockModal() {
               render={({ field }) => (
                 <PaginatedSelect
                   label="Loja"
-                  placeholder="Selecione a loja"
+                  placeholder="Seleccione a loja"
                   options={storesData.map((s) => ({ label: s.name, value: s.id }))}
                   value={field.value}
                   onChange={field.onChange}

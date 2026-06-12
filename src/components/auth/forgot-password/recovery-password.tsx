@@ -53,8 +53,8 @@ export function RecoveryPassword() {
             <Image src={Logo} alt="Logo" className="size-20" />
           </div>
           <AuthHeader
-            title="Recuperar Senha"
-            description="Digite seu endereço de e-mail e enviaremos instruções para redefinir sua senha."
+            title="Recuperar palavra-passe"
+            description="Introduza o seu endereço de correio electrónico. Enviaremos as instruções para definir uma nova palavra-passe."
           />
         </div>
 
@@ -69,7 +69,7 @@ export function RecoveryPassword() {
           />
 
           <ButtonSubmit isLoading={isPending} className="w-full">
-            {isPending ? "Enviando..." : "Verificar"}
+            {isPending ? "A enviar..." : "Verificar"}
           </ButtonSubmit>
 
           <BackToLogin />

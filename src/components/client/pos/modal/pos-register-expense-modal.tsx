@@ -68,7 +68,7 @@ export function PosRegisterExpenseModal({ currentSession }: PosRegisterExpenseMo
         <GlobalModal
             id={MODAL_POS_REGISTER_EXPENSE_ID}
             title="Registar Despesa"
-            description="Informe a descrição e o valor da despesa realizada."
+            description="Introduza a descrição e o valor da despesa."
             className="!w-max"
         >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

@@ -107,7 +107,7 @@ export function InvoiceForm() {
     async (data: InvoiceFormData) => {
       try {
         if (!data.items || data.items.length === 0) {
-          ErrorMessage("Adicione pelo menos um item à fatura");
+          ErrorMessage("Adicione pelo menos um item à factura.");
           return;
         }
 
@@ -164,7 +164,7 @@ export function InvoiceForm() {
         const errorMessage =
           error?.response?.data?.message ||
           error?.message ||
-          "Ocorreu um erro ao criar a fatura. Tente novamente.";
+          "Não foi possível criar a factura. Tente novamente.";
 
         ErrorMessage(errorMessage);
       }
@@ -174,7 +174,7 @@ export function InvoiceForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Fatura:", errors))}
+      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de validação na factura:", errors))}
       className="p-8 mt-4 space-y-8 border rounded-lg"
       data-tour="normal-invoice-form"
     >
@@ -200,7 +200,7 @@ export function InvoiceForm() {
           label="Moeda"
           name="currencyCode"
           control={control}
-          placeholder="Selecione a moeda"
+          placeholder="Seleccione a moeda"
           options={[
             { value: "AOA", label: "AOA" },
             { value: "USD", label: "USD" },
@@ -267,7 +267,7 @@ export function InvoiceForm() {
       <div data-tour="normal-invoice-notes">
         <Textarea
           {...register("notes")}
-          placeholder="Adicione observações sobre esta fatura (opcional)"
+          placeholder="Adicione observações sobre esta factura (opcional)"
           label="Observações"
           error={errors.notes?.message}
           rows={4}
@@ -292,7 +292,7 @@ export function InvoiceForm() {
           className="min-w-[150px]"
           data-tour="normal-invoice-submit"
         >
-          {isPending || isSubmitting ? "Processando..." : "Criar Fatura"}
+          {isPending || isSubmitting ? "A processar..." : "Criar factura"}
         </Button>
       </div>
     </form>

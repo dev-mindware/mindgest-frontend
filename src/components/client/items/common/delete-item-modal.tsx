@@ -35,7 +35,7 @@ export function DeleteItemModal({ type }: { type: string }) {
       className="!w-max"
       id="delete-item"
       title={`Tem certeza que deseja apagar o ${type}?`}
-      description="Lembre-se que esta ação não pode ser desfeita."
+      description="Esta acção não pode ser anulada."
     >
       <div className="flex justify-end gap-4">
         <Button onClick={() => closeModal("delete-item")} variant="outline">

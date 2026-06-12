@@ -11,10 +11,10 @@ export function ThirdStep() {
   return (
     <div className="max-w-2xl p-2 mx-auto space-y-8">
       <div className="flex flex-col items-center mt-4 gap-2 text-center">
-        <StepsHeader title="Termos e Políticas" />
+        <StepsHeader title="Termos e políticas" />
       </div>
       <div className="space-y-6">
-        <p>Isso inclui, mas não se limita a:</p>
+        <p>Estes termos incluem, entre outros aspectos:</p>
 
         <ul className="space-y-4 text-muted-foreground">
           <BulletItem>
@@ -23,15 +23,15 @@ export function ThirdStep() {
           </BulletItem>
           <BulletItem>
             O armazenamento e tratamento dos seus dados pessoais, conforme
-            descrito em nossa Política de Privacidade;
+            descrito na nossa Política de Privacidade;
           </BulletItem>
           <BulletItem>
-            A utilização de cookies e tecnologias semelhantes para melhorar sua
+            A utilização de cookies e tecnologias semelhantes para melhorar a
             experiência de navegação;
           </BulletItem>
           <BulletItem>
             A responsabilidade pelas informações fornecidas, que devem ser
-            verdadeiras e atualizadas;
+            verdadeiras e actualizadas;
           </BulletItem>
           <BulletItem>
             A possibilidade de receber comunicações por e-mail ou outros meios
@@ -41,14 +41,14 @@ export function ThirdStep() {
         </ul>
 
         <p className="pt-4 text-muted-foreground">
-          Se você não concorda com os termos descritos, não continue com o
-          cadastro ou uso da plataforma.
+          Se não concordar com os termos descritos, não prossiga com o registo
+          nem com a utilização da plataforma.
         </p>
 
         <Controller
           name="step3.terms"
           control={control}
-          rules={{ required: "Você precisa aceitar os termos para continuar." }}
+          rules={{ required: "É necessário aceitar os termos para continuar." }}
           render={({ field, fieldState }) => (
             <div className="flex flex-col items-start gap-2 pt-4">
               <div className="space-x-2 flex items-center justify-center">

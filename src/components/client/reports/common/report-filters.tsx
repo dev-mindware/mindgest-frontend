@@ -64,7 +64,7 @@ export function ReportFilters({ filters, className }: ReportFiltersProps) {
               <Select value={filter.value} onValueChange={filter.onChange}>
                 <SelectTrigger className="w-full h-10 bg-background/50 hover:bg-background transition-colors">
                   <SelectValue
-                    placeholder={filter.placeholder || "Selecione"}
+                    placeholder={filter.placeholder || "Seleccione"}
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -94,7 +94,7 @@ export function ReportFilters({ filters, className }: ReportFiltersProps) {
                     <span className="truncate">
                       {filter.value
                         ? format(filter.value, "PPP", { locale: ptBR })
-                        : "Selecione a data"}
+                        : "Seleccione a data"}
                     </span>
                   </Button>
                 </PopoverTrigger>

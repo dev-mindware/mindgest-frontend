@@ -25,22 +25,22 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
   );
 
   const handleUpload = async () => {
-    if (!companyLogo) return ErrorMessage("Selecione um arquivo antes de atualizar.");
+    if (!companyLogo) return ErrorMessage("Seleccione um ficheiro antes de actualizar.");
 
     await uploadLogo(
       { files: { file: companyLogo as MyFile } },
       {
         onSuccess: () => {
-          SucessMessage("Logo da empresa atualizada com sucesso!");
+          SucessMessage("Logótipo da empresa actualizado com sucesso!");
           setValue("companyLogo", null);
           setIsEditingLogo(false);
           setLogoTimestamp(Date.now());
-          // ✅ Força a atualização em tempo real do perfil do usuário em toda a aplicação
+          // Actualiza o perfil do utilizador em toda a aplicação.
           queryClient.invalidateQueries({ queryKey: ["user"] });
         },
         onError: (error: any) =>
           ErrorMessage(
-            error?.response?.data?.message || "Erro ao atualizar logo da empresa",
+            error?.response?.data?.message || "Não foi possível actualizar o logótipo da empresa",
           ),
       },
     );
@@ -54,7 +54,7 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
         <div>
           <h3 className="font-semibold text-lg text-foreground">Logo da Empresa</h3>
           <p className="text-xs text-muted-foreground">
-            Exibido em documentos, faturas e recibos do sistema.
+            Apresentado nos documentos, facturas e recibos do sistema.
           </p>
         </div>
         {user?.company?.logo && (
@@ -102,7 +102,7 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
               disabled={isUploading}
               className="w-full shadow-md transition-all"
             >
-              {isUploading ? "A enviar..." : "Salvar Nova Logo"}
+              {isUploading ? "A enviar..." : "Guardar novo logótipo"}
             </Button>
           )}
         </div>
@@ -110,7 +110,7 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
         <div 
           onClick={() => setIsEditingLogo(true)}
           className="group relative h-48 w-full sm:w-80 rounded-xl border border-border bg-zinc-50 dark:bg-zinc-950/20 overflow-hidden cursor-pointer shadow-inner flex items-center justify-center p-6 transition-all duration-300 hover:border-primary/40 hover:shadow-md"
-          title="Clique para trocar a logo"
+          title="Seleccione para alterar o logótipo"
         >
           {/* Fundo quadriculado sutil para destacar logos com transparência */}
           <div 

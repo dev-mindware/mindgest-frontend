@@ -87,7 +87,7 @@ export function CashierList() {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -105,14 +105,14 @@ export function CashierList() {
               variant: "default",
             },
             {
-              label: item.status === "ACTIVE" ? "Desativar" : "Ativar",
+              label: item.status === "ACTIVE" ? "Desactivar" : "Activar",
               onClick: toggleStatusCashier,
               icon: "CirclePower",
               variant: "default",
             },
             { type: "separator" },
             {
-              label: "Deletar",
+              label: "Apagar",
               onClick: handlerDeleteCashier,
               icon: "Trash2",
               variant: "destructive",

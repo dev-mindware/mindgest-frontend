@@ -41,7 +41,7 @@ export function DashboardRecentSalesTable({ data }: DashboardRecentSalesTablePro
         <div className="space-y-4">
             <div className="flex flex-col gap-1">
                 <h3 className="text-lg font-semibold">Vendas Recentes</h3>
-                <p className="text-sm text-muted-foreground">Últimas transações em todas as lojas</p>
+                <p className="text-sm text-muted-foreground">Últimas transacções em todas as lojas</p>
             </div>
             <GenericTable
                 columns={columns}

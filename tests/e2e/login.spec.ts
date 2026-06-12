@@ -5,7 +5,7 @@ test.describe('Login Page', () => {
     await page.goto('/auth/login');
     
     // Check for the heading
-    await expect(page.getByRole('heading', { name: 'Bem-vindo ao MindGest' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bem-vindo ao Mindgest' })).toBeVisible();
     
     // Check for email input
     await expect(page.getByLabel('Email')).toBeVisible();

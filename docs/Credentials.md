@@ -1,6 +1,6 @@
 # 🔐 Credenciais de Acesso (Ambiente de Testes)
 
-Este documento contém as credenciais de acesso para as empresas e perfis de teste no ecossistema **MindGest**.
+Este documento contém as credenciais de acesso para as empresas e perfis de teste no ecossistema **Mindgest**.
 
 > [!IMPORTANT]
 > Estas credenciais são destinadas apenas para uso em ambiente de **Staging/Desenvolvimento**.

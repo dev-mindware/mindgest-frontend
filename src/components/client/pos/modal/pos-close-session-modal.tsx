@@ -86,7 +86,7 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
         <GlobalModal
             id={MODAL_POS_CLOSE_SESSION_ID}
             title="Fechar Sessão de Caixa"
-            description="Confirme os valores finais e feche a sessão atual."
+            description="Confirme os valores finais e encerre a sessão actual."
             className="!w-max"
         >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 min-w-[350px]">

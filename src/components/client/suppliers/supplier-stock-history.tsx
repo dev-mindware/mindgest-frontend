@@ -74,7 +74,7 @@ export function SupplierStockHistory({ supplierId }: { supplierId: string }) {
     () => [
       {
         key: "entry.number",
-        header: "Fatura",
+        header: "Factura",
         render: (_, row) => (
           <div className="flex items-center gap-1.5 whitespace-nowrap">
             <span className="font-medium text-foreground">{row.entry.number ?? "N/A"}</span>

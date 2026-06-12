@@ -36,7 +36,7 @@ export function CloneInvoiceModal() {
     e.preventDefault();
 
     if (!currentInvoice) {
-      ErrorMessage("Nenhuma fatura selecionada");
+      ErrorMessage("Nenhuma factura seleccionada.");
       return;
     }
 
@@ -54,7 +54,7 @@ export function CloneInvoiceModal() {
 
     const payload: InvoicePayload = {
       issueDate: today,
-      // Nova fatura — vencimento = hoje para não chegar já vencida.
+      // A nova factura vence hoje para não ser criada com o prazo expirado.
       // O utilizador poderá alterar depois.
       dueDate: today,
       client,
@@ -74,7 +74,7 @@ export function CloneInvoiceModal() {
       closeModal(MODAL_CLONE_INVOICE_ID);
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message ?? "Erro ao clonar fatura"
+        error?.response?.data?.message ?? "Não foi possível duplicar a factura."
       );
     }
   }
@@ -85,13 +85,13 @@ export function CloneInvoiceModal() {
     <GlobalModal
       canClose
       id={MODAL_CLONE_INVOICE_ID}
-      title="Clonar Fatura"
+      title="Duplicar factura"
       className="!max-h-[85vh] !w-max"
     >
       <form onSubmit={handleClone} className="space-y-6">
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Deseja criar uma nova fatura com os mesmos dados da fatura{" "}
+            Pretende criar uma nova factura com os mesmos dados da factura{" "}
             <strong>#{currentInvoice?.number}</strong>?
           </p>
 
@@ -128,7 +128,7 @@ export function CloneInvoiceModal() {
             Cancelar
           </Button>
           <ButtonSubmit isLoading={isPending} className="w-max">
-            Clonar Fatura
+            Duplicar factura
           </ButtonSubmit>
         </div>
       </form>

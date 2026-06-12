@@ -20,7 +20,7 @@ import { ErrorMessage } from "@/utils/messages";
 import { ChatTab } from "./chat-tab";
 import { HistoryTab } from "./history-tab";
 
-// Certifica-te de importar o arquivo CSS no teu entrypoint ou aqui:
+// Certifica-te de que o ficheiro CSS é importado no ponto de entrada ou aqui:
 // import "./chatbot-button.css";
 
 const EXPIRATION_DAYS = 7;
@@ -33,7 +33,7 @@ export interface LocalChatSession {
   messages: LocalChatHistoryItem[];
 }
 
-const DB_NAME = "MindGestChatDB";
+const DB_NAME = "MindgestChatDB";
 const STORE_NAME = "chat_sessions";
 const DB_VERSION = 1;
 
@@ -386,7 +386,7 @@ export function ChatbotSheet() {
             ...prev,
             {
               role: "assistant",
-              content: "Desculpe, ocorreu um erro ao processar sua mensagem.",
+              content: "Não foi possível processar a sua mensagem. Tente novamente.",
               created_at: new Date().toISOString(),
               isTyping: true,
             },
@@ -528,7 +528,7 @@ export function ChatbotSheet() {
                   Olá {user?.name} 👋
                 </h2>
                 <p className="text-foreground/80 text-sm mt-1">
-                  Como posso ajudar você hoje?
+                  Como posso ajudar?
                 </p>
               </div>
             )}

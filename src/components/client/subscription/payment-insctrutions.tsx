@@ -17,7 +17,7 @@ export function PaymentInstruction({ currentMethod }: Props) {
           {currentMethod.name}
         </p>
         <p>2. Baixe o PDF do comprovativo</p>
-        <p>3. Envie o arquivo usando o campo acima</p>
+        <p>3. Envie o ficheiro através do campo acima.</p>
         <p>4. Aguarde a aprovação do pagamento</p>
       </div>
     </div>

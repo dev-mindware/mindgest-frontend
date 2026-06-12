@@ -27,13 +27,13 @@ export const includedInAllPlans: PlanBenefit[] = [
     icon: "FileText",
     title: "Documentos ilimitados",
     description:
-      "Emita faturas, recibos, pró-formas e notas de crédito sem limite comercial por plano.",
+      "Emita facturas, recibos, pró-formas e notas de crédito sem limite comercial por plano.",
   },
   {
     icon: "Users",
     title: "Gestão de Clientes",
     description:
-      "Organize clientes, contactos e dados fiscais para faturação e acompanhamento.",
+      "Organize clientes, contactos e dados fiscais para facturação e acompanhamento.",
   },
   {
     icon: "Package",
@@ -60,8 +60,8 @@ export const planFeatureMatrix: Record<PlanType, PlanFeatureGroup> = {
       "Tudo do plano Base",
       "Movimentos de Caixa",
       "Configurações POS do operador",
-      "Controle de Estoque",
-      "Cadastro de Produtos com Código de Barras",
+      "Controlo de stock",
+      "Registo de produtos com código de barras",
       "Relatórios de Clientes",
       "Personalização de Aparência",
       "Assistente MIND - 15 mensagens",
@@ -70,9 +70,9 @@ export const planFeatureMatrix: Record<PlanType, PlanFeatureGroup> = {
   Pro: {
     features: [
       "Tudo do plano Smart",
-      "Gestão de Reservas de Estoque",
+      "Gestão de reservas de stock",
       "Gestão Avançada de POS",
-      "Controle Robusto de Produtos",
+      "Controlo avançado de produtos",
       "Relatórios avançados",
       "Relatórios de Acesso e Auditoria",
       "Gestão Completa para Operações Multi-loja",

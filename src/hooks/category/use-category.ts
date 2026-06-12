@@ -27,7 +27,7 @@ export function useUpdateCategory() {
     mutationFn: ({ id, data }: { id: string; data: CategoryData }) =>
       categoryService.updateCategory(id, data),
     onSuccess: () => {
-      SucessMessage("Categoria atualizada com sucesso!");
+      SucessMessage("Categoria actualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       queryClient.invalidateQueries({ queryKey: ["categories_select"] });
     },

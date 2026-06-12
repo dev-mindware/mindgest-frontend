@@ -45,7 +45,7 @@ export function PaginatedSelect({
   isLoading,
   pagination,
   onPageChange,
-  placeholder = "Selecionar...",
+  placeholder = "Seleccionar...",
   className,
   label,
   error,

@@ -125,7 +125,7 @@ export function PosOpeningCashierModal({ onSuccess }: PosOpeningCashierModalProp
                             <Icon name="Store" className="w-5 h-5 text-primary" />
                         </div>
                         <div className="space-y-1 overflow-hidden">
-                            <p className="text-sm font-bold text-primary uppercase tracking-wider">Loja de Operação</p>
+                            <p className="text-sm font-bold text-primary uppercase tracking-wider">Loja da operação</p>
                             <h4 className="font-outfit font-black text-lg leading-tight uppercase truncate">
                                 {currentStore?.name || "Loja Principal"}
                             </h4>
@@ -197,7 +197,7 @@ export function PosOpeningCashierModal({ onSuccess }: PosOpeningCashierModalProp
                                     name="fundType"
                                     control={control}
                                     label="Tipo de Fundo"
-                                    placeholder="Selecione"
+                                    placeholder="Seleccione"
                                     options={[
                                         { label: "Moeda", value: "COIN" },
                                         { label: "Nota", value: "NOTE" },
@@ -206,7 +206,7 @@ export function PosOpeningCashierModal({ onSuccess }: PosOpeningCashierModalProp
 
                                 <div className="flex flex-col justify-end pb-1.5">
                                     <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Operador</p>
-                                    <p className="text-sm font-medium truncate">{user?.name || "Usuário Logado"}</p>
+                                    <p className="text-sm font-medium truncate">{user?.name || "Utilizador autenticado"}</p>
                                 </div>
                             </div>
                         </div>

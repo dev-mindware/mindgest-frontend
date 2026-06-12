@@ -68,7 +68,7 @@ export function ProformaList({ storeId }: { storeId?: string }) {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -80,7 +80,7 @@ export function ProformaList({ storeId }: { storeId?: string }) {
               variant: "default",
             },
             {
-              label: "Converter em Fatura",
+              label: "Converter em factura",
               onClick: handlerConvertProforma,
               icon: "FileCheck",
               variant: "default",

@@ -189,7 +189,7 @@ export function ReserveStockModal() {
                 onChange={onChange}
                 pagination={clientPagination}
                 onPageChange={setClientPage}
-                placeholder="Selecione um cliente"
+                placeholder="Seleccione um cliente"
                 className="w-full"
                 error={errors.clientId?.message}
                 disabled={isEditing}
@@ -283,7 +283,7 @@ export function ReserveStockModal() {
             className="w-max"
             isLoading={isSubmitting || isReserving || isUpdating}
           >
-            {isEditing ? "Salvar Alterações" : "Reservar Stock"}
+            {isEditing ? "Guardar alterações" : "Reservar stock"}
           </ButtonSubmit>
         </div>
       </form>

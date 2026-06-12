@@ -16,7 +16,7 @@ export function AccountSecurity({ user }: AccountSecurityProps) {
 
   return (
     <div>
-      <h3 className="text-2xl text-center md:text-start">Segurança da Conta</h3>
+      <h3 className="text-2xl text-center md:text-start">Segurança da conta</h3>
       <p className="text-center text-muted-foreground md:text-start">
         Altere as suas configurações de segurança.
       </p>
@@ -33,21 +33,21 @@ export function AccountSecurity({ user }: AccountSecurityProps) {
               className="whitespace-nowrap"
               onClick={() => openModal("change-email")}
             >
-              Alterar Email
+              Alterar email
             </Button>
           </div>
         </div>
         <div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <Input
-              label="Senha"
+              label="Palavra-passe"
               type="password"
               value="************"
               disabled
               className="w-[50%]"
             />
             <Button onClick={() => openModal("change-password")}>
-              Alterar Senha
+              Alterar palavra-passe
             </Button>
           </div>
         </div>

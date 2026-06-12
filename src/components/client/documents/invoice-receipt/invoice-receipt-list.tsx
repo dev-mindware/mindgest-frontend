@@ -51,7 +51,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   });
 
   const columns: Column<InvoiceResponse>[] = [
-    { key: "number", header: "N° da Fatura" },
+    { key: "number", header: "N.º da factura" },
     {
       key: "client",
       header: "Cliente",
@@ -75,7 +75,7 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
 
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}

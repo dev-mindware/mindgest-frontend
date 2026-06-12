@@ -165,7 +165,7 @@ export function CounterContent() {
       <div className="w-[400px] flex flex-col border-l border-border/50 bg-sidebar/30">
         <Tabs value={activeCart} onValueChange={(v) => setActiveCart(v as CartType)} className="flex-1 flex flex-col">
           <TabsList className="grid w-full grid-cols-2 m-4 mb-0" data-tour="pos-document-tabs">
-            <TabsTrigger value="invoice">Faturação</TabsTrigger>
+            <TabsTrigger value="invoice">Facturação</TabsTrigger>
             <TabsTrigger value="proforma" data-tour="pos-document-tab-proforma">Proforma</TabsTrigger>
           </TabsList>
 

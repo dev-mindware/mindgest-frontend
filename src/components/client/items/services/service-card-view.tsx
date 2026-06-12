@@ -34,7 +34,7 @@ export function ServiceCardView({ service }: ProductCardProps) {
             actions={[
               { label: "Ver detalhes", onClick: handlerDetailsService },
               { label: "Editar", onClick: handlerEditService },
-              { label: "Deletar", onClick: handlerDeleteService },
+              { label: "Apagar", onClick: handlerDeleteService },
             ]}
           />
         </div>
