@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import Logo from "@/assets/brand.png";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ErrorMessage } from "@/utils/messages";
@@ -50,7 +49,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 text-center">
-        <Image src={Logo} alt="Logo" className="size-20" />
+        <Image src={"/mindgest.png"} alt="Logo" className="size-20" width={100} height={100} />
         <h1 className="text-2xl font-bold">Bem-vindo ao MindGest</h1>
       </div>
 

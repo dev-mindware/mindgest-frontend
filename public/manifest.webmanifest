@@ -9,13 +9,13 @@
   "theme_color": "#9956f6",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/mindgest.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/mindware.png",
+      "src": "/mindgest.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"

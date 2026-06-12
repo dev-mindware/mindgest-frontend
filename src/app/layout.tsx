@@ -45,13 +45,87 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MindGest",
-  description: "Software de Gestão e Faturação",
-  manifest: "/manifest.webmanifest",
-  icons: {
-    icon: "/mindware.png",
-    apple: "/logo.png",
+  title: {
+    default: "Mindgest | Software de Gestão e Faturação",
+    template: "%s | Mindgest",
   },
+
+  description:
+    "Mindgest é um software de gestão e faturação para empresas, com controlo de vendas, clientes, produtos, stocks, relatórios e emissão de documentos comerciais.",
+
+  applicationName: "Mindgest",
+
+  keywords: [
+    "Mindgest",
+    "software de gestão",
+    "software de faturação",
+    "faturação Angola",
+    "gestão empresarial",
+    "gestão de stock",
+    "POS",
+    "SaaS Angola",
+    "software para empresas",
+  ],
+
+  authors: [
+    {
+      name: "Mindware",
+      url: "https://mindware.co.ao",
+    },
+  ],
+
+  creator: "Mindware",
+  publisher: "Mindware",
+
+  manifest: "/manifest.webmanifest",
+
+  icons: {
+    icon: [
+      {
+        url: "/mindgest.png",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/mindgest.png",
+        type: "image/png",
+      },
+    ],
+  },
+
+  openGraph: {
+    title: "Mindgest | Software de Gestão e Faturação",
+    description:
+      "Controle vendas, clientes, produtos, stocks, relatórios e documentos comerciais num único software de gestão empresarial.",
+    url: "https://mindgest.mindware.ao",
+    siteName: "Mindgest",
+    images: [
+      {
+        url: "/mindgest.png",
+        width: 1200,
+        height: 630,
+        alt: "Mindgest - Software de Gestão e Faturação",
+      },
+    ],
+    locale: "pt_AO",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Mindgest | Software de Gestão e Faturação",
+    description:
+      "Software de gestão empresarial para controlar vendas, clientes, produtos, stocks e faturação.",
+    images: ["/mindgest.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  category: "Software",
 };
 
 export default function RootLayout({
