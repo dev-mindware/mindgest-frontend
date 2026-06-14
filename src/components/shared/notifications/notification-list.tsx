@@ -56,9 +56,11 @@ export function NotificationList({
         </div>
       )}
 
-      <ScrollArea className={cn("h-72", className, {
-        "h-max": notifications.length === 0
-      })}>
+      <ScrollArea
+        className={cn(
+          notifications.length === 0 ? "h-max" : className || "h-72",
+        )}
+      >
         {notifications.length === 0 ? (
           <div className="p-4">
             <EmptyState

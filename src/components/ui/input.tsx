@@ -11,6 +11,7 @@ type InputType =
   | "number"
   | "quantity"
   | "date"
+  | "time"
   | "search";
 
 type InputProps = {

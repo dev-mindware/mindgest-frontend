@@ -6,12 +6,8 @@ import {
   GlobalModal,
   Input,
   Button,
-  Icon,
   RHFSelect,
-  Label,
   RequestError,
-  TimeField,
-  DateInput,
   Textarea,
   InputCurrency,
 } from "@/components";
@@ -25,17 +21,7 @@ import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
 import { SucessMessage, ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
-import { parseTime } from "@internationalized/date";
 import { useAuth } from "@/hooks/auth";
-
-function safeParseTime(timeStr: string) {
-  try {
-    if (!timeStr || timeStr.length < 5) return parseTime("08:00");
-    return parseTime(timeStr.slice(0, 5));
-  } catch (e) {
-    return parseTime("08:00");
-  }
-}
 
 interface PosOpeningModalProps {
   /** Quando true, o utilizador logado (Owner/Manager) abre sessão para si próprio.
@@ -242,29 +228,15 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
               name="workTime"
               control={control}
               render={({ field }) => (
-                <div className="space-y-2">
-                  <Label>Tempo de Expediente</Label>
-                  <TimeField
-                    aria-label="Tempo de Expediente"
-                    hourCycle={24}
-                    className="w-full"
-                    isDisabled={isEdit}
-                    value={safeParseTime(field.value)}
-                    onChange={(time) => {
-                      if (time) field.onChange(time.toString().slice(0, 5));
-                    }}
-                  >
-                    <div className="relative">
-                      <DateInput id="work-time-input" className="bg-background" />
-                      <Icon name="Clock" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                    </div>
-                  </TimeField>
-                  {errors.workTime && (
-                    <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
-                      {errors.workTime.message}
-                    </p>
-                  )}
-                </div>
+                <Input
+                  type="time"
+                  label="Tempo de Expediente"
+                  startIcon="Clock"
+                  value={field.value || ""}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  disabled={isEdit}
+                  error={errors.workTime?.message}
+                />
               )}
             />
           </div>
@@ -298,7 +270,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
                   disabled={isEdit}
                   pagination={{ page: storePage, totalPages: storeTotalPages }}
                   onPageChange={setStorePage}
-                  className="w-full"
+                  fullWidth
                 />
               )}
             />
