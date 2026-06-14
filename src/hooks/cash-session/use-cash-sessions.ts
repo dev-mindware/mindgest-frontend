@@ -82,6 +82,10 @@ export function useGetCurrentSession(
     queryKey: ["current-cash-session", storeId],
     queryFn: () => cashSessionsService.getCurrentSession(storeId),
     retry: false,
+    refetchOnWindowFocus: true,
+    // Enquanto não há sessão aberta, faz polling para refletir automaticamente
+    // uma abertura aprovada por um gestor noutro dispositivo. Pára ao abrir.
+    refetchInterval: (query) => (query.state.data?.isOpen ? false : 15000),
   });
 }
 
@@ -97,6 +101,7 @@ export function useOpenCashSession() {
       }
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
+      queryClient.invalidateQueries({ queryKey: ["current-cash-session"] });
       SucessMessage("Caixa aberto com sucesso!");
     },
     onError: (error: any) => {
@@ -116,6 +121,7 @@ export function useAuthorizeOpening() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
+      queryClient.invalidateQueries({ queryKey: ["current-cash-session"] });
       SucessMessage("Pedido aprovado com sucesso.");
     },
     onError: (error: any) => {

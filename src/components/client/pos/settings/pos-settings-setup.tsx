@@ -62,6 +62,10 @@ export function PosSettingsSetup({
     queryFn: () => cashSessionsService.getCurrentSession(currentStore?.id),
     enabled: activeTab === "general",
     retry: false,
+    refetchOnWindowFocus: true,
+    // Reflete automaticamente a abertura assim que um gestor a aprova,
+    // sem o utilizador ter de recarregar a página. Pára quando o caixa abre.
+    refetchInterval: (query) => (query.state.data?.isOpen ? false : 15000),
   });
 
   const handleTabChange = (value: string) => {

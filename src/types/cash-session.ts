@@ -15,6 +15,8 @@ export interface CashSession {
   fundType: string;
   workTime: string;
   authorizedById: string;
+  authorizedByName: string;
+  remainingTime: string;
   // Relationships
   user?: {
     name: string;

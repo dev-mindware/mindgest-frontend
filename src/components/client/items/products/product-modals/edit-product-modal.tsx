@@ -45,6 +45,15 @@ const UNIT_OPTIONS = [
   { label: "Dúzia (dz)", value: "dz" },
 ];
 
+/** Normaliza qualquer data vinda da API para o formato yyyy-MM-dd usado pelo <input type="date">. */
+function toDateInputValue(value?: string | null): string {
+  if (!value) return "";
+  const datePart = value.includes("T") ? value.split("T")[0] : value;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) return datePart;
+  const parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? "" : parsed.toISOString().split("T")[0];
+}
+
 interface EditProductModalProps {
   product: ItemResponse;
 }
@@ -148,7 +157,8 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   }, [product, taxOptions]);
 
   const finalSupplierOptions = useMemo(() => {
-    if (!hasSuppliers) return [];
+    const noneOption = { label: "Nenhum", value: "none" };
+    if (!hasSuppliers) return [noneOption];
     const currentId = product.supplierId || (product as any).supplier_id;
     const currentName = product.supplierName;
 
@@ -157,9 +167,13 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       currentName &&
       !supplierOptions.find((o) => o.value === currentId)
     ) {
-      return [{ label: currentName, value: currentId }, ...supplierOptions];
+      return [
+        noneOption,
+        { label: currentName, value: currentId },
+        ...supplierOptions,
+      ];
     }
-    return supplierOptions;
+    return [noneOption, ...supplierOptions];
   }, [product, supplierOptions, hasSuppliers]);
 
   const {
@@ -183,12 +197,12 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       unit: product.unit || "",
       weight: product.weight != null ? Number(product.weight) : undefined,
       dimensions: product.dimensions || "",
-      supplierId: product.supplierId || null,
+      supplierId: product.supplierId || "none",
       type: "PRODUCT",
       companyId: String(user?.company?.id),
       categoryId: product.categoryId || (product as any).category_id || "",
       taxId: product.taxId || product.tax?.id || "",
-      expiryDate: product.expiryDate ? product.expiryDate.split("T")[0] : "",
+      expiryDate: toDateInputValue(product.expiryDate),
     },
   });
 
@@ -201,7 +215,8 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
-      supplierId: data.supplierId || null,
+      supplierId:
+        !data.supplierId || data.supplierId === "none" ? null : data.supplierId,
       unit: data.unit === "none" || !data.unit ? undefined : data.unit,
     } as any;
   };
@@ -403,79 +418,239 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                 placeholder="Seleccione uma unidade"
               />
               <Input
-                type="date"
-                label="Data de Validade (opcional)"
-                {...register("expiryDate")}
-                error={errors.expiryDate?.message}
+                label="Nome"
+                startIcon="Tag"
+                {...register("name")}
+                error={errors.name?.message}
+                placeholder="Ex: Teclado Logitech"
               />
-            </FeatureGate>
-          </div>
-          <div className="grid grid-cols-1">
-            <FeatureGate minPlan="Pro" fallback="hidden">
+
               <Controller
                 control={control}
-                name="supplierId"
+                name="taxId"
                 render={({ field: { onChange, value } }) => (
                   <PaginatedSelect
-                    label="Fornecedor (Opcional)"
+                    label="Imposto"
                     value={value}
+                    options={finalTaxOptions}
                     onChange={onChange}
-                    options={finalSupplierOptions}
-                    isLoading={isLoadingSuppliers}
-                    pagination={paginationSuppliers}
-                    onPageChange={setPageSuppliers}
+                    isLoading={isTaxesLoading}
+                    pagination={taxPagination}
+                    onPageChange={setTaxPage}
+                    placeholder="Seleccione um imposto"
+                    error={errors.taxId?.message}
                     className="w-full"
-                    placeholder="Seleccione uma opção"
                   />
                 )}
               />
-            </FeatureGate>
-          </div>
+            </div>
 
-          <FeatureGate minPlan="Pro" fallback="hidden">
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="text"
-                inputMode="decimal"
-                startIcon="Weight"
-                label="Peso (Kg) (opcional)"
-                {...register("weight", {
-                  onChange: (e) => {
-                    e.target.value = e.target.value.replace(/[^0-9.,]/g, "");
-                  },
-                  setValueAs: (v) => {
-                    if (v === "" || v === null || v === undefined)
-                      return undefined;
-                    const trimmed = String(v).trim();
-                    if (trimmed === "") return undefined;
-                    const normalized = trimmed.replace(",", ".");
-                    const parsed = Number(normalized);
-                    return isNaN(parsed) ? "invalid" : parsed;
-                  },
-                })}
-                error={errors.weight?.message}
-                placeholder="Ex: 0.24"
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Controller
+                control={control}
+                name="price"
+                render={({ field }) => (
+                  <InputCurrency
+                    ref={field.ref}
+                    label="Preço Unitário"
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
+                    decimalScale={2}
+                    fixedDecimalScale
+                    allowNegative={false}
+                    error={errors.price?.message}
+                  />
+                )}
               />
-              <Input
-                label="Dimensões (opcional)"
-                placeholder="Ex: 10x20x30"
-                {...register("dimensions", {
-                  onChange: (e) => {
-                    e.target.value = e.target.value.replace(/[^0-9xX\s.,]/g, "");
-                  }
-                })}
-                error={errors.dimensions?.message}
+              <Controller
+                control={control}
+                name="cost"
+                render={({ field }) => (
+                  <InputCurrency
+                    ref={field.ref}
+                    label="Custo de Compra"
+                    placeholder="0,00"
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
+                    decimalScale={2}
+                    fixedDecimalScale
+                    allowNegative={false}
+                    error={errors.cost?.message}
+                  />
+                )}
               />
             </div>
-          </FeatureGate>
 
-          <Textarea
-            label="Descrição (opcional)"
-            {...register("description")}
-            className="mt-1 min-h-[100px]"
-            placeholder="Escreva detalhes do item..."
-            error={errors.description?.message}
-          />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Controller
+                control={control}
+                name="categoryId"
+                render={({ field: { onChange, value } }) => (
+                  <PaginatedSelect
+                    label="Categoria"
+                    value={value}
+                    options={finalCategoryOptions}
+                    onChange={onChange}
+                    isLoading={isLoadingCategories}
+                    pagination={pagination}
+                    onPageChange={setPage}
+                    placeholder="Seleccione uma opção"
+                    className="w-full"
+                  />
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="quantity"
+                render={({ field }) => (
+                  <Input
+                    type="quantity"
+                    startIcon="Scale"
+                    label="Quantidade"
+                    value={field.value ?? 0}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    error={errors.quantity?.message}
+                  />
+                )}
+              />
+            </div>
+
+            <FeatureGate minPlan="Smart" fallback="hidden">
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Input
+                    label="Código de Barras (Opcional)"
+                    placeholder="Ex: 7891234567890"
+                    {...register("barcode")}
+                    error={errors.barcode?.message}
+                    startIcon="Barcode"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    control={control}
+                    name="minStock"
+                    render={({ field }) => (
+                      <Input
+                        type="quantity"
+                        startIcon="Scale"
+                        label="Stock Mínimo"
+                        value={field.value ?? 0}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        error={errors.minStock?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="maxStock"
+                    render={({ field }) => (
+                      <Input
+                        type="quantity"
+                        startIcon="Scale"
+                        label="Stock Máximo"
+                        value={field.value ?? 0}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        error={errors.maxStock?.message}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </FeatureGate>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FeatureGate minPlan="Pro" fallback="hidden">
+                <RHFSelect
+                  control={control}
+                  name="unit"
+                  label="Unidade de Medida (Opcional)"
+                  options={UNIT_OPTIONS}
+                  placeholder="Seleccione uma unidade"
+                />
+                <Controller
+                  control={control}
+                  name="expiryDate"
+                  render={({ field }) => (
+                    <Input
+                      type="date"
+                      label="Data de Validade (opcional)"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      error={errors.expiryDate?.message}
+                    />
+                  )}
+                />
+              </FeatureGate>
+            </div>
+            <div className="grid grid-cols-1">
+              <FeatureGate minPlan="Pro" fallback="hidden">
+                <Controller
+                  control={control}
+                  name="supplierId"
+                  render={({ field: { onChange, value } }) => (
+                    <PaginatedSelect
+                      label="Fornecedor (Opcional)"
+                      value={value}
+                      onChange={onChange}
+                      options={finalSupplierOptions}
+                      isLoading={isLoadingSuppliers}
+                      pagination={paginationSuppliers}
+                      onPageChange={setPageSuppliers}
+                      className="w-full"
+                      placeholder="Seleccione uma opção"
+                    />
+                  )}
+                />
+              </FeatureGate>
+            </div>
+
+            <FeatureGate minPlan="Pro" fallback="hidden">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  startIcon="Weight"
+                  label="Peso (Kg) (opcional)"
+                  {...register("weight", {
+                    onChange: (e) => {
+                      e.target.value = e.target.value.replace(/[^0-9.,]/g, "");
+                    },
+                    setValueAs: (v) => {
+                      if (v === "" || v === null || v === undefined)
+                        return undefined;
+                      const trimmed = String(v).trim();
+                      if (trimmed === "") return undefined;
+                      const normalized = trimmed.replace(",", ".");
+                      const parsed = Number(normalized);
+                      return isNaN(parsed) ? "invalid" : parsed;
+                    },
+                  })}
+                  error={errors.weight?.message}
+                  placeholder="Ex: 0.24"
+                />
+                <Input
+                  label="Dimensões (opcional)"
+                  placeholder="Ex: 10x20x30"
+                  {...register("dimensions", {
+                    onChange: (e) => {
+                      e.target.value = e.target.value.replace(/[^0-9xX\s.,]/g, "");
+                    }
+                  })}
+                  error={errors.dimensions?.message}
+                />
+              </div>
+            </FeatureGate>
+
+            <Textarea
+              label="Descrição (opcional)"
+              {...register("description")}
+              className="mt-1 min-h-[100px]"
+              placeholder="Escreva detalhes do item..."
+              error={errors.description?.message}
+            />
         </div>
 
         <div className="flex justify-end gap-4 mt-5">

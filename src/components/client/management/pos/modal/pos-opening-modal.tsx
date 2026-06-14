@@ -23,18 +23,8 @@ import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
-import { parseTime } from "@internationalized/date";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils";
-
-function safeParseTime(timeStr: string) {
-  try {
-    if (!timeStr || timeStr.length < 5) return parseTime("08:00");
-    return parseTime(timeStr.slice(0, 5));
-  } catch (e) {
-    return parseTime("08:00");
-  }
-}
 
 interface PosOpeningModalProps {
   /** Quando true, o utilizador logado (Owner/Manager) abre sessão para si próprio.
@@ -301,7 +291,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
                   disabled={isEdit}
                   pagination={{ page: storePage, totalPages: storeTotalPages }}
                   onPageChange={setStorePage}
-                  className="w-full"
+                  fullWidth
                 />
               )}
             />

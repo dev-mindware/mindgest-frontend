@@ -11,9 +11,9 @@ import {
   Button,
   Avatar,
   AvatarFallback,
+  Input,
 } from "@/components";
 import DatePickerInput from "@/components/custom/date-picker-input";
-import TimeInput from "@/components/custom/time-input";
 import PriceInput from "@/components/custom/price-input";
 import { CashOpeningFormProps } from "@/types/cashier";
 
@@ -63,11 +63,27 @@ export const CashOpeningForm: React.FC<CashOpeningFormProps> = ({
           </div>
           <div className="space-y-2">
             <Label htmlFor="expediente">Tempo de Expediente</Label>
-            <TimeInput />
+            <Input
+              id="expediente"
+              type="time"
+              startIcon="Clock"
+              value={formData.shiftTime}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, shiftTime: e.target.value }))
+              }
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="hora">Hora de Abertura</Label>
-            <TimeInput />
+            <Input
+              id="hora"
+              type="time"
+              startIcon="Clock"
+              value={formData.openingTime}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, openingTime: e.target.value }))
+              }
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="data">Data de Abertura</Label>

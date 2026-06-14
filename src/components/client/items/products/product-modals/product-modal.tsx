@@ -101,6 +101,11 @@ function AddProductFormContent() {
 
   const initialBarcode = modalData["add-product"]?.barcode || "";
 
+  const supplierOptionsWithNone = [
+    { label: "Nenhum", value: "none" },
+    ...supplierOptions,
+  ];
+
   const {
     reset,
     control,
@@ -117,7 +122,7 @@ function AddProductFormContent() {
       companyId: String(user?.company?.id),
       type: "PRODUCT",
       categoryId: "",
-      supplierId: null,
+      supplierId: "none",
       unit: "",
       minStock: 0,
       maxStock: 0,
@@ -134,7 +139,8 @@ function AddProductFormContent() {
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
       maxStock: data.maxStock ?? undefined,
-      supplierId: data.supplierId || null,
+      supplierId:
+        !data.supplierId || data.supplierId === "none" ? null : data.supplierId,
       unit: data.unit === "none" || !data.unit ? undefined : data.unit,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
@@ -185,241 +191,249 @@ function AddProductFormContent() {
     >
       <div className="">
         <div className="space-y-4 sm:w-[35rem]">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div data-tour="product-form-name">
-            <Input
-              label="Nome"
-              startIcon="Tag"
-              {...register("name")}
-              error={errors.name?.message}
-              placeholder="Ex: Teclado Logitech"
-            />
-            </div>
-            <Controller
-              control={control}
-              name="taxId"
-              render={({ field: { onChange, value } }) => (
-                <PaginatedSelect
-                  label="Imposto"
-                  value={value}
-                  options={taxOptions}
-                  onChange={onChange}
-                  isLoading={isTaxesLoading}
-                  pagination={taxPagination}
-                  onPageChange={setTaxPage}
-                  placeholder="Seleccione um imposto"
-                  error={errors.taxId?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Controller
-              control={control}
-              name="price"
-              render={({ field }) => (
-                <div data-tour="product-form-price">
-                <InputCurrency
-                  ref={field.ref}
-                  label="Preço Unitário"
-                  placeholder="0,00"
-                  value={field.value}
-                  onValueChange={(value) => field.onChange(value)}
-                  decimalScale={2}
-                  fixedDecimalScale
-                  allowNegative={false}
-                  error={errors.price?.message}
-                />
-                </div>
-              )}
-            />
-            <Controller
-              control={control}
-              name="cost"
-              render={({ field }) => (
-                <div data-tour="product-form-cost">
-                <InputCurrency
-                  ref={field.ref}
-                  label="Custo de Compra"
-                  placeholder="0,00"
-                  value={field.value}
-                  onValueChange={(value) => field.onChange(value)}
-                  decimalScale={2}
-                  fixedDecimalScale
-                  allowNegative={false}
-                  error={errors.cost?.message}
-                />
-                </div>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Controller
-              control={control}
-              name="categoryId"
-              render={({ field: { onChange, value } }) => (
-                <div data-tour="product-form-category">
-                <PaginatedSelect
-                  label="Categoria"
-                  value={value}
-                  options={categoryOptions}
-                  onChange={onChange}
-                  isLoading={isLoadingCategories}
-                  pagination={pagination}
-                  onPageChange={setPage}
-                  placeholder="Seleccione uma opção"
-                  fullWidth
-                />
-                </div>
-              )}
-            />
-            <Controller
-              control={control}
-              name="quantity"
-              render={({ field }) => (
-                <div data-tour="product-form-quantity">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div data-tour="product-form-name">
                 <Input
-                  type="quantity"
-                  startIcon="Scale"
-                  label="Quantidade"
-                  value={field.value ?? 0}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                  error={errors.quantity?.message}
-                />
-                </div>
-              )}
-            />
-          </div>
-
-          <FeatureGate minPlan="Smart" fallback="hidden">
-            <div className="space-y-4" data-tour="product-stock-fields">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div data-tour="product-form-barcode">
-                <Input
-                  label="Código de Barras (Opcional)"
-                  placeholder="Ex: 7891234567890"
-                  {...register("barcode")}
-                  error={errors.barcode?.message}
-                  startIcon="Barcode"
-                />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  control={control}
-                  name="minStock"
-                  render={({ field }) => (
-                    <div data-tour="product-form-min-stock">
-                    <Input
-                      type="quantity"
-                      startIcon="Scale"
-                      label="Stock Mínimo"
-                      value={field.value ?? 0}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      error={errors.minStock?.message}
-                    />
-                    </div>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="maxStock"
-                  render={({ field }) => (
-                    <div data-tour="product-form-max-stock">
-                    <Input
-                      type="quantity"
-                      startIcon="Scale"
-                      label="Stock Máximo"
-                      value={field.value ?? 0}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      error={errors.maxStock?.message}
-                    />
-                    </div>
-                  )}
+                  label="Nome"
+                  startIcon="Tag"
+                  {...register("name")}
+                  error={errors.name?.message}
+                  placeholder="Ex: Teclado Logitech"
                 />
               </div>
-            </div>
-          </FeatureGate>
-
-          <div className="grid grid-cols-2 gap-4">
-            <FeatureGate minPlan="Pro" fallback="hidden">
-              <RHFSelect
-                control={control}
-                name="unit"
-                label="Unidade de Medida (Opcional)"
-                options={UNIT_OPTIONS}
-                placeholder="Seleccione uma unidade"
-              />
-              <Input
-                type="date"
-                label="Data de Validade (opcional)"
-                {...register("expiryDate")}
-                error={errors.expiryDate?.message}
-              />
-            </FeatureGate>
-          </div>
-          <div className="grid grid-cols-1">
-            <FeatureGate minPlan="Pro" fallback="hidden">
               <Controller
                 control={control}
-                name="supplierId"
+                name="taxId"
                 render={({ field: { onChange, value } }) => (
                   <PaginatedSelect
-                    label="Fornecedor (Opcional)"
+                    label="Imposto"
                     value={value}
-                    options={supplierOptions}
+                    options={taxOptions}
                     onChange={onChange}
-                    isLoading={isLoadingSuppliers}
-                    pagination={paginationSuppliers}
-                    onPageChange={setPageSuppliers}
-                    placeholder="Seleccione uma opção"
+                    isLoading={isTaxesLoading}
+                    pagination={taxPagination}
+                    onPageChange={setTaxPage}
+                    placeholder="Seleccione um imposto"
+                    error={errors.taxId?.message}
                     fullWidth
                   />
                 )}
               />
-            </FeatureGate>
-          </div>
+            </div>
 
-          <FeatureGate minPlan="Pro" fallback="hidden">
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="text"
-                inputMode="decimal"
-                startIcon="Weight"
-                label="Peso (Kg) (opcional)"
-                {...register("weight", {
-                  setValueAs: (v) => {
-                    if (v === "" || v === null || v === undefined)
-                      return undefined;
-                    const trimmed = String(v).trim();
-                    if (trimmed === "") return undefined;
-                    const normalized = trimmed.replace(",", ".");
-                    const parsed = Number(normalized);
-                    return isNaN(parsed) ? "invalid" : parsed;
-                  },
-                })}
-                error={errors.weight?.message}
-                placeholder="Ex: 0.24"
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Controller
+                control={control}
+                name="price"
+                render={({ field }) => (
+                  <div data-tour="product-form-price">
+                    <InputCurrency
+                      ref={field.ref}
+                      label="Preço Unitário"
+                      placeholder="0,00"
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      allowNegative={false}
+                      error={errors.price?.message}
+                    />
+                  </div>
+                )}
               />
-              <Input
-                label="Dimensões (opcional)"
-                placeholder="Ex: 10x20x30 cm"
-                {...register("dimensions")}
-                error={errors.dimensions?.message}
+              <Controller
+                control={control}
+                name="cost"
+                render={({ field }) => (
+                  <div data-tour="product-form-cost">
+                    <InputCurrency
+                      ref={field.ref}
+                      label="Custo de Compra"
+                      placeholder="0,00"
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      allowNegative={false}
+                      error={errors.cost?.message}
+                    />
+                  </div>
+                )}
               />
             </div>
-          </FeatureGate>
 
-          <Textarea
-            label="Descrição (opcional)"
-            {...register("description")}
-            className="mt-1 min-h-[100px]"
-            placeholder="Escreva detalhes do item..."
-            error={errors?.description?.message}
-          />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Controller
+                control={control}
+                name="categoryId"
+                render={({ field: { onChange, value } }) => (
+                  <div data-tour="product-form-category">
+                    <PaginatedSelect
+                      label="Categoria"
+                      value={value}
+                      options={categoryOptions}
+                      onChange={onChange}
+                      isLoading={isLoadingCategories}
+                      pagination={pagination}
+                      onPageChange={setPage}
+                      placeholder="Seleccione uma opção"
+                      fullWidth
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                control={control}
+                name="quantity"
+                render={({ field }) => (
+                  <div data-tour="product-form-quantity">
+                    <Input
+                      type="quantity"
+                      startIcon="Scale"
+                      label="Quantidade"
+                      value={field.value ?? 0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      error={errors.quantity?.message}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <FeatureGate minPlan="Smart" fallback="hidden">
+              <div className="space-y-4" data-tour="product-stock-fields">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div data-tour="product-form-barcode">
+                    <Input
+                      label="Código de Barras (Opcional)"
+                      placeholder="Ex: 7891234567890"
+                      {...register("barcode")}
+                      error={errors.barcode?.message}
+                      startIcon="Barcode"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    control={control}
+                    name="minStock"
+                    render={({ field }) => (
+                      <div data-tour="product-form-min-stock">
+                        <Input
+                          type="quantity"
+                          startIcon="Scale"
+                          label="Stock Mínimo"
+                          value={field.value ?? 0}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          error={errors.minStock?.message}
+                        />
+                      </div>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="maxStock"
+                    render={({ field }) => (
+                      <div data-tour="product-form-max-stock">
+                        <Input
+                          type="quantity"
+                          startIcon="Scale"
+                          label="Stock Máximo"
+                          value={field.value ?? 0}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          error={errors.maxStock?.message}
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+            </FeatureGate>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FeatureGate minPlan="Pro" fallback="hidden">
+                <RHFSelect
+                  control={control}
+                  name="unit"
+                  label="Unidade de Medida (Opcional)"
+                  options={UNIT_OPTIONS}
+                  placeholder="Seleccione uma unidade"
+                />
+                <Controller
+                  control={control}
+                  name="expiryDate"
+                  render={({ field }) => (
+                    <Input
+                      type="date"
+                      label="Data de Validade (opcional)"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      error={errors.expiryDate?.message}
+                    />
+                  )}
+                />
+              </FeatureGate>
+            </div>
+            <div className="grid grid-cols-1">
+              <FeatureGate minPlan="Pro" fallback="hidden">
+                <Controller
+                  control={control}
+                  name="supplierId"
+                  render={({ field: { onChange, value } }) => (
+                    <PaginatedSelect
+                      label="Fornecedor (Opcional)"
+                      value={value}
+                      options={supplierOptionsWithNone}
+                      onChange={onChange}
+                      isLoading={isLoadingSuppliers}
+                      pagination={paginationSuppliers}
+                      onPageChange={setPageSuppliers}
+                      placeholder="Seleccione uma opção"
+                      fullWidth
+                    />
+                  )}
+                />
+              </FeatureGate>
+            </div>
+
+            <FeatureGate minPlan="Pro" fallback="hidden">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  startIcon="Weight"
+                  label="Peso (Kg) (opcional)"
+                  {...register("weight", {
+                    setValueAs: (v) => {
+                      if (v === "" || v === null || v === undefined)
+                        return undefined;
+                      const trimmed = String(v).trim();
+                      if (trimmed === "") return undefined;
+                      const normalized = trimmed.replace(",", ".");
+                      const parsed = Number(normalized);
+                      return isNaN(parsed) ? "invalid" : parsed;
+                    },
+                  })}
+                  error={errors.weight?.message}
+                  placeholder="Ex: 0.24"
+                />
+                <Input
+                  label="Dimensões (opcional)"
+                  placeholder="Ex: 10x20x30 cm"
+                  {...register("dimensions")}
+                  error={errors.dimensions?.message}
+                />
+              </div>
+            </FeatureGate>
+
+            <Textarea
+              label="Descrição (opcional)"
+              {...register("description")}
+              className="mt-1 min-h-[100px]"
+              placeholder="Escreva detalhes do item..."
+              error={errors?.description?.message}
+            />
         </div>
 
         <div className="flex justify-end gap-4 mt-5">

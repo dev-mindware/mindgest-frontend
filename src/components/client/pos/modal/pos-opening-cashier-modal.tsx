@@ -8,9 +8,6 @@ import {
   Button,
   RHFSelect,
   Icon,
-  TimeField,
-  DateInput,
-  Label,
   InputCurrency,
 } from "@/components";
 import { useModal, currentStoreStore } from "@/stores";
@@ -23,7 +20,6 @@ import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import { useAuth } from "@/hooks/auth";
 import { ManagerAuthModal, MODAL_MANAGER_AUTH_ID } from "../..";
 import { formatCurrency, parseCurrency } from "@/utils";
-import { parseTime } from "@internationalized/date";
 
 interface PosOpeningCashierModalProps {
   onSuccess?: () => void;
@@ -177,57 +173,20 @@ export function PosOpeningCashierModal({
                   )}
                 />
 
-                <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-foreground">
-                    Tempo de Expediente
-                  </Label>
-                  <Controller
-                    name="workTime"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <TimeField
-                        id="workTime"
-                        aria-label="Tempo de expediente"
-                        hourCycle={24}
-                        className="w-full"
-                        value={
-                          value
-                            ? parseTime(value as string)
-                            : parseTime("08:00")
-                        }
-                        onChange={(val: any) => {
-                          if (val) {
-                            const timeStr = val.toString();
-                            // Ensure format is HH:MM
-                            const formatted = timeStr
-                              .split(":")
-                              .slice(0, 2)
-                              .join(":");
-                            onChange(formatted);
-                          } else {
-                            onChange("");
-                          }
-                        }}
-                      >
-                        <div className="relative">
-                          <DateInput
-                            id="workTime-input"
-                            className="bg-background"
-                          />
-                          <Icon
-                            name="Clock"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
-                          />
-                        </div>
-                      </TimeField>
-                    )}
-                  />
-                  {errors.workTime && (
-                    <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
-                      {errors.workTime.message}
-                    </p>
+                <Controller
+                  name="workTime"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <Input
+                      type="time"
+                      label="Tempo de Expediente"
+                      startIcon="Clock"
+                      value={(value as string) || ""}
+                      onChange={(e) => onChange(e.target.value)}
+                      error={errors.workTime?.message}
+                    />
                   )}
-                </div>
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -214,7 +214,10 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
               },
               {
                 label: "Responsável",
-                value: currentSession.authorizedById || "-",
+                value:
+                  currentSession.authorizedByName ||
+                  currentSession.user?.name ||
+                  "-",
                 icon: "User",
                 color: "text-primary-500",
                 bg: "bg-primary-500/10",
@@ -314,7 +317,10 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
               },
               {
                 label: "Responsável",
-                value: currentSession.authorizedById || "-",
+                value:
+                  currentSession.authorizedByName ||
+                  currentSession.user?.name ||
+                  "-",
                 icon: "User",
                 iconColor: "text-gray-500",
                 iconBg: "bg-gray-500/10",

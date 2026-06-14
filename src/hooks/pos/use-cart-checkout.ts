@@ -80,8 +80,7 @@ export function useCartCheckout({
     handleClientChange: handleBaseClientChange,
     selectedClient,
     setSelectedClient,
-  } =
-    useClientSelection(setValue);
+  } = useClientSelection(setValue);
 
   const handleClientChange = (option: any) => {
     handleBaseClientChange(option);
@@ -254,7 +253,8 @@ export function useCartCheckout({
         }
       } else {
         // Remove payment-specific fields for proforma
-        const { cashSessionId, change, receivedValue, ...proformaData } = payload;
+        const { cashSessionId, change, receivedValue, ...proformaData } =
+          payload;
 
         const proformaPayload = {
           ...proformaData,
@@ -290,10 +290,14 @@ export function useCartCheckout({
       queryClient.invalidateQueries({ queryKey: ["items-paginated"] });
       queryClient.invalidateQueries({ queryKey: ["stocks"] });
     } catch (error: any) {
-      console.error("Payment error:", error);
-      ErrorMessage(
-        `Erro ao processar ${type === "invoice" ? "o pagamento" : "a proforma"}.`,
-      );
+      if (error?.response?.data?.message) {
+        ErrorMessage(error?.response?.data?.message);
+        return;
+      } else {
+        ErrorMessage(
+          `Erro ao processar ${type === "invoice" ? "o pagamento" : "a proforma"}.`,
+        );
+      }
     }
   };
 

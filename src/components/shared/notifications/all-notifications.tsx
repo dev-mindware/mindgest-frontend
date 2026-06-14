@@ -84,9 +84,9 @@ export function AllNotifications() {
         setFilterType={setFilterType}
       />
 
-      <div className="bg-card rounded-xl border shadow-sm">
+      <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
         <NotificationList
-          className="h-auto min-h-[15rem] max-h-[calc(100vh-20rem)]"
+          className="h-[calc(100vh-20rem)] min-h-[15rem]"
           notifications={filteredNotifications}
           onNotificationClick={handleNotificationClick}
           deleteNotification={deleteNotification}
