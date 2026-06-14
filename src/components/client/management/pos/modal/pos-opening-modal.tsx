@@ -12,6 +12,8 @@ import {
   RequestError,
   TimeField,
   DateInput,
+  Textarea,
+  InputCurrency,
 } from "@/components";
 import { useModal } from "@/stores";
 import { useGetStoresPaginated } from "@/hooks/entities";
@@ -221,13 +223,15 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
             <Controller
               name="initialCapital"
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Input
+              render={({ field: { onChange, value, ref } }) => (
+                <InputCurrency
+                  ref={ref}
                   label="Capital Inicial"
-                  placeholder="0.00 Kz"
-                  startIcon="CircleDollarSign"
-                  value={formatCurrency(value || 0)}
-                  onChange={(e) => onChange(parseCurrency(e.target.value).toString())}
+                  placeholder="0,00"
+                  value={Number(value || 0)}
+                  onValueChange={(val) => {
+                    onChange(val.toString());
+                  }}
                   error={errors.initialCapital?.message}
                 />
               )}
@@ -333,7 +337,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
 
           {isEdit && (
             <div className="col-span-1 md:col-span-2">
-              <Input
+              <Textarea
                 label="Razão da Edição"
                 placeholder="Insira o motivo desta alteração..."
                 {...register("reason")}

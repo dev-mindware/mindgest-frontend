@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -10,6 +10,7 @@ import {
     Button,
     Textarea,
     Icon,
+    InputCurrency,
 } from "@/components";
 import { useModal } from "@/stores";
 import { useCloseCashSession } from "@/hooks";
@@ -38,6 +39,7 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
 
     const {
         register,
+        control,
         handleSubmit,
         reset,
         setValue,
@@ -103,14 +105,19 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
                     </div>
                 </div>
 
-                <Input
-                    label="Valor em Caixa (Fecho)"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    startIcon="Banknote"
-                    error={errors.closingCash?.message}
-                    {...register("closingCash")}
+                <Controller
+                    name="closingCash"
+                    control={control}
+                    render={({ field }) => (
+                        <InputCurrency
+                            ref={field.ref}
+                            label="Valor em Caixa (Fecho)"
+                            placeholder="0,00"
+                            value={field.value}
+                            onValueChange={(val) => field.onChange(val)}
+                            error={errors.closingCash?.message}
+                        />
+                    )}
                 />
 
                 <Textarea

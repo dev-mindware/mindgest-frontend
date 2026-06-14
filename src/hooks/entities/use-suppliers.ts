@@ -86,6 +86,7 @@ export function useAddSupplierStockEntry() {
     onSuccess: () => {
       SucessMessage("Sessão de reabastecimento inserida com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["supplier-items"] });
+      queryClient.invalidateQueries({ queryKey: ["items"] });
       queryClient.invalidateQueries({ queryKey: ["supplier-stock-entries"] });
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
       queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
