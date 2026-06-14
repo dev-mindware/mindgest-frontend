@@ -23,7 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui";
 import { Button } from "@/components/ui/button";
-import { agtService } from "@/services";
+import { agtService, storesService } from "@/services";
+import type { StoreResponse } from "@/types";
 import { toast } from "sonner";
 import { Plus, ListFilter, RefreshCcw, LayoutGrid, Calendar, Hash } from "lucide-react";
 import { 
@@ -50,7 +51,9 @@ interface AgtSeries {
 
 export function AgtSeriesList() {
   const [series, setSeries] = useState<AgtSeries[]>([]);
+  const [stores, setStores] = useState<StoreResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isStoresLoading, setIsStoresLoading] = useState(true);
   const [isRequesting, setIsRequesting] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -58,7 +61,8 @@ export function AgtSeriesList() {
   const [newSeries, setNewSeries] = useState({
     documentType: "FT",
     seriesYear: new Date().getFullYear().toString(),
-    establishmentNumber: "SEDE",
+    storeId: "",
+    establishmentNumber: "",
   });
 
   const fetchSeries = async () => {
@@ -74,14 +78,34 @@ export function AgtSeriesList() {
     }
   };
 
+  const fetchStores = async () => {
+    setIsStoresLoading(true);
+    try {
+      const response = await storesService.getStores();
+      const storeList = response.data?.data || [];
+      setStores(storeList);
+    } catch (error) {
+      console.error("Failed to fetch stores:", error);
+      toast.error("Erro ao carregar as lojas para solicitar AGT.");
+    } finally {
+      setIsStoresLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSeries();
+    fetchStores();
   }, []);
 
   const handleRequestSeries = async () => {
     setIsRequesting(true);
     try {
-      await agtService.requestSeries(newSeries);
+      await agtService.requestSeries({
+        documentType: newSeries.documentType,
+        seriesYear: newSeries.seriesYear,
+        storeId: newSeries.storeId || undefined,
+        establishmentNumber: newSeries.establishmentNumber || undefined,
+      });
       toast.success("Nova série solicitada com sucesso!");
       setOpen(false);
       fetchSeries();
@@ -162,33 +186,33 @@ export function AgtSeriesList() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="year" className="text-xs font-medium uppercase tracking-wider opacity-70">Ano Fiscal</Label>
-                    <Select 
-                      value={newSeries.seriesYear} 
-                      onValueChange={(v) => setNewSeries({...newSeries, seriesYear: v})}
-                    >
-                      <SelectTrigger id="year" className="h-10 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="2025">2025</SelectItem>
-                        <SelectItem value="2026">2026</SelectItem>
-                        <SelectItem value="2027">2027</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <input
+                    id="year"
+                    type="text"
+                    value={newSeries.seriesYear}
+                    disabled
+                    className="h-10 w-full rounded-md border border-input bg-muted px-3 text-sm text-foreground"
+                  />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="est" className="text-xs font-medium uppercase tracking-wider opacity-70">Estabelecimento</Label>
                     <Select 
-                      value={newSeries.establishmentNumber} 
-                      onValueChange={(v) => setNewSeries({...newSeries, establishmentNumber: v})}
+                      value={newSeries.storeId} 
+                      onValueChange={(v) => setNewSeries({...newSeries, storeId: v})}
                     >
                       <SelectTrigger id="est" className="h-10 text-xs">
-                        <SelectValue placeholder="Seleccione o estabelecimento (opcional)" />
+                        <SelectValue placeholder={isStoresLoading ? "Carregando lojas..." : "Selecione a loja (opcional)"} />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="SEDE">Sede</SelectItem>
-                        <SelectItem value="LOJA1">Loja 1</SelectItem>
-                        <SelectItem value="LOJA2">Loja 2</SelectItem>
+                      <SelectContent className="text-xs">
+                        {stores.length === 0 ? (
+                          <SelectItem value="" disabled>Nenhuma loja disponível</SelectItem>
+                        ) : (
+                          stores.map((store) => (
+                            <SelectItem key={store.id} value={store.id} className="text-xs">
+                              {store.code ? `${store.code} — ${store.name}` : store.name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -204,13 +228,21 @@ export function AgtSeriesList() {
                     className="h-10 w-full rounded-md border border-input px-3 text-sm text-foreground"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Introduza o código do estabelecimento manualmente ou seleccione uma loja com um código configurado.
+                    Informe o código do estabelecimento manualmente ou selecione uma loja com código configurado.
                   </p>
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)} disabled={isRequesting} className="h-10">Cancelar</Button>
-                <Button onClick={handleRequestSeries} disabled={isRequesting} className="h-10 min-w-[120px]">
+                <Button
+                  onClick={handleRequestSeries}
+                  disabled={
+                    isRequesting ||
+                    isStoresLoading ||
+                    (!newSeries.storeId && !newSeries.establishmentNumber)
+                  }
+                  className="h-10 min-w-[120px]"
+                >
                   {isRequesting ? "Solicitando..." : "Confirmar Pedido"}
                 </Button>
               </DialogFooter>

@@ -41,10 +41,11 @@ export function DetailsStoreModal() {
       <div className="space-y-6 text-sm">
         <section className="space-y-2">
           <h3 className="font-semibold text-foreground">Informações da Loja</h3>
-          <DetailRow label="Nome" value={currentStore.name} />
-          <DetailRow label="Email" value={currentStore.email} />
-          <DetailRow label="Telefone" value={currentStore.phone} />
-          <DetailRow label="Endereço" value={currentStore.address} />
+          <DetailRow label="Nome" value={currentStore.name || "-"} />
+          {currentStore.code && <DetailRow label="Código do Estabelecimento" value={currentStore.code} />}
+          {currentStore.email && <DetailRow label="Email" value={currentStore.email} />}
+          {currentStore.phone && <DetailRow label="Telefone" value={currentStore.phone} />}
+          {currentStore.address && <DetailRow label="Endereço" value={currentStore.address} />}
         </section>
 
         {/* {currentStore?. && (
