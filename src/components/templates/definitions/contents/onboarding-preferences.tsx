@@ -36,9 +36,9 @@ export function OnboardingPreferences() {
   return (
     <section className="space-y-6" data-tour="setup-guides-content">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight">Guias e tours</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Guias orientados</h2>
         <p className="text-sm text-muted-foreground">
-          Defina quando os guias devem aparecer e repita os tours sempre que necessário.
+          Defina quando os guias devem aparecer e repita-os sempre que necessário.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export function OnboardingPreferences() {
                 <Icon name="Route" className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold">Mostrar tours automaticamente</h3>
+                <h3 className="font-semibold">Mostrar guias automaticamente</h3>
                 <p className="text-sm text-muted-foreground">
                   Quando estiver ativo, cada guia aparece uma vez por utilizador e fluxo.
                 </p>
@@ -63,7 +63,7 @@ export function OnboardingPreferences() {
           <Switch
             checked={preferences.autoStartEnabled}
             onCheckedChange={(checked) => setAutoStartEnabled(scope, checked)}
-            aria-label="Mostrar tours automaticamente"
+            aria-label="Mostrar guias automaticamente"
           />
         </div>
 
@@ -76,7 +76,7 @@ export function OnboardingPreferences() {
                 <Icon name="CircleHelp" className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold">Mostrar botão “Ver tour”</h3>
+                <h3 className="font-semibold">Mostrar botão “Ver guia”</h3>
                 <p className="text-sm text-muted-foreground">
                   Quando estiver desactivado, o botão manual deixa de aparecer nas páginas com guia.
                 </p>
@@ -87,7 +87,7 @@ export function OnboardingPreferences() {
           <Switch
             checked={preferences.tourButtonEnabled}
             onCheckedChange={(checked) => setTourButtonEnabled(scope, checked)}
-            aria-label="Mostrar botão Ver tour"
+            aria-label="Mostrar botão Ver guia"
           />
         </div>
 
@@ -96,7 +96,7 @@ export function OnboardingPreferences() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-medium">
-              {seenCount} de {totalTours} tours já vistos ou pulados
+              {seenCount} de {totalTours} guias já vistos ou ignorados
             </p>
             <p className="text-sm text-muted-foreground">
               A abertura automática e o botão manual podem ser controlados separadamente.
@@ -109,7 +109,7 @@ export function OnboardingPreferences() {
             onClick={() => resetAllTours(scope)}
           >
             <Icon name="RotateCcw" className="h-4 w-4" />
-            Repor tours
+            Repor guias
           </Button>
         </div>
       </div>

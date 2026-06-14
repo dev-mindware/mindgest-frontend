@@ -12,6 +12,7 @@ import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
 
 import { paymentMethods } from "@/constants";
+import { isSelectableClient } from "@/utils";
 type Props = {
   action?: "create" | "edit";
   initialData?: any;
@@ -317,6 +318,7 @@ export function ProformaForm({
       > */}
         <AsyncCreatableSelectField
           endpoint="/clients"
+          optionFilter={isSelectableClient}
           label="Cliente"
           placeholder="Digite o nome do cliente..."
           value={selectedClient}

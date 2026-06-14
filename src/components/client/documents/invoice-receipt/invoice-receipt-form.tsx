@@ -6,9 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
   Input,
-  InvoiceFormSkeleton,
+  Icon,
   RHFSelect,
   Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@/components";
 import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useCreateInvoiceReceipt, useInvoiceTotals } from "@/hooks";
@@ -17,6 +20,7 @@ import { useClientSelection } from "@/hooks/invoice";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { paymentMethods } from "@/constants";
 import { InvoiceItems } from "../document-forms/items";
+import { isSelectableClient } from "@/utils";
 
 export function InvoiceReceiptForm() {
   const { user } = useAuthStore();
@@ -226,7 +230,27 @@ export function InvoiceReceiptForm() {
 
         <AsyncCreatableSelectField
           endpoint="/clients"
-          label="Cliente (Opcional)"
+          optionFilter={isSelectableClient}
+          label={
+            <span className="inline-flex items-center gap-1.5">
+              Cliente (opcional)
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Informação sobre o cliente da factura-recibo"
+                    className="inline-flex text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <Icon name="CircleHelp" className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-64">
+                  Se não seleccionar um cliente, a factura-recibo será emitida
+                  para Consumidor Final.
+                </TooltipContent>
+              </Tooltip>
+            </span>
+          }
           placeholder="Digite o nome do cliente..."
           value={selectedClient}
           onChange={handleClientChange}

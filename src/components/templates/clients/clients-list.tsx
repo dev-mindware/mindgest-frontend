@@ -14,7 +14,7 @@ import {
   ClientsFiltersSkeleton,
 } from "@/components";
 import { ClientResponse } from "@/types";
-import { formatDateTime } from "@/utils";
+import { excludeFinalConsumer, formatDateTime } from "@/utils";
 import { useDebounce } from "use-debounce";
 import { ClientsFiltersTSX } from "./common";
 import { useClientActions, useClientsFilters } from "@/hooks/entities";
@@ -26,7 +26,7 @@ export function ClientsList() {
   const { handlerToggleStatusClient, handlerDetailsClient, handlerEditClient } =
     useClientActions();
   const {
-    data: clients,
+    data: allClients,
     total,
     totalPages,
     goToNextPage,
@@ -37,8 +37,13 @@ export function ClientsList() {
   } = usePagination<ClientResponse>({
     endpoint: "/clients",
     queryKey: ["clients"],
-    queryParams: { ...filters, search: debounceSearch, page },
+    queryParams: {
+      ...filters,
+      search: debounceSearch,
+      page,
+    },
   });
+  const clients = excludeFinalConsumer(allClients);
 
   const columns: Column<ClientResponse>[] = [
     { key: "name", header: "Nome" },

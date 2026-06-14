@@ -1,20 +1,37 @@
 "use client";
+
+import { useMemo, useState } from "react";
 import {
-  Control,
-  UseFormRegister,
-  useWatch,
   Controller,
+  useWatch,
+  type Control,
+  type UseFieldArrayAppend,
+  type UseFormRegister,
 } from "react-hook-form";
-import { CreditNoteFormData } from "@/schemas";
-import { Input, InputCurrency, Separator, Button } from "@/components";
-import { Trash2 } from "lucide-react";
-import { formatCurrency, parseCurrency } from "@/utils";
+import { Plus, Trash2 } from "lucide-react";
+import type { CreditNoteFormData } from "@/schemas";
+import { Button, Input, InputCurrency, Separator } from "@/components";
+import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
+import { formatCurrency } from "@/utils";
+
+type ItemOption = {
+  value: string | number;
+  label: string;
+  data?: {
+    id: string;
+    name: string;
+    price: number;
+    type: "PRODUCT" | "SERVICE";
+  };
+  __isNew__?: boolean;
+};
 
 interface ItemsSummarySectionProps {
   control: Control<CreditNoteFormData>;
   register: UseFormRegister<CreditNoteFormData>;
   errors: any;
   fields: any[];
+  append: UseFieldArrayAppend<CreditNoteFormData, "invoiceBody.items">;
   remove: (index: number) => void;
 }
 
@@ -23,155 +40,199 @@ export function ItemsSummarySection({
   register,
   errors,
   fields,
+  append,
   remove,
 }: ItemsSummarySectionProps) {
+  const [selectedItem, setSelectedItem] = useState<ItemOption | null>(null);
   const watchedItems = useWatch({ control, name: "invoiceBody.items" });
   const creditNoteSubtotal = useWatch({ control, name: "creditNote.subtotal" });
-  const creditNoteTaxAmount = useWatch({
-    control,
-    name: "creditNote.taxAmount",
-  });
+  const creditNoteTaxAmount = useWatch({ control, name: "creditNote.taxAmount" });
   const creditNoteTotal = useWatch({ control, name: "creditNote.total" });
-
-  const invoiceBodySubtotal = useWatch({
-    control,
-    name: "invoiceBody.subtotal",
-  });
+  const invoiceBodySubtotal = useWatch({ control, name: "invoiceBody.subtotal" });
   const invoiceBodyTotal = useWatch({ control, name: "invoiceBody.total" });
 
+  const existingIds = useMemo(
+    () => new Set((watchedItems || []).map((item) => String(item.id))),
+    [watchedItems],
+  );
+  const selectedAlreadyExists = selectedItem
+    ? existingIds.has(String(selectedItem.value))
+    : false;
+  const canAdd = Boolean(
+    selectedItem?.data &&
+      Number(selectedItem.data.price) > 0 &&
+      !selectedItem.__isNew__ &&
+      !selectedAlreadyExists,
+  );
+
+  const handleAddItem = () => {
+    if (!selectedItem?.data || !canAdd) return;
+
+    append({
+      id: String(selectedItem.data.id || selectedItem.value),
+      name: selectedItem.data.name || selectedItem.label,
+      quantity: 1,
+      price: Number(selectedItem.data.price || 0),
+      type: selectedItem.data.type,
+    });
+    setSelectedItem(null);
+  };
+
   return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="font-medium">Itens e Correções</h3>
-        </div>
+    <section className="space-y-6 rounded-lg border bg-card p-5 shadow-sm">
+      <div>
+        <h2 className="text-base font-semibold">Itens corrigidos</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Ajuste a quantidade ou o preço dos itens existentes. Também pode
+          acrescentar um produto ou serviço do catálogo.
+        </p>
+      </div>
 
-        <div className="overflow-x-auto rounded-lg border border-border shadow-sm">
-          <table className="w-full">
-            <thead className="bg-card border-border">
-              <tr className="text-foreground">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                  Item
-                </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider">
-                  Qtd.
-                </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider">
-                  Preço Unit.
-                </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-4 py-3 w-[60px]" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {fields.map((field, index) => (
-                <tr key={field.id}>
-                  <td className="px-4 py-3">
-                    <Input
-                      {...register(`invoiceBody.items.${index}.name`)}
-                      className="h-9 text-sm"
-                      error={errors?.invoiceBody?.items?.[index]?.name?.message}
-                    />
-                  </td>
-                  <td className="px-4 py-3 text-right w-36">
-                    <Input
-                      type="quantity"
-                      {...register(`invoiceBody.items.${index}.quantity`, {
-                        valueAsNumber: true,
-                      })}
-                      className="h-9 text-sm text-right"
-                      error={errors?.invoiceBody?.items?.[index]?.quantity?.message}
-                    />
-                  </td>
-                  <td className="px-4 py-3 text-right w-48">
-                    <Controller
-                      control={control}
-                      name={`invoiceBody.items.${index}.price`}
-                      render={({ field: controllerField, fieldState }) => (
-                        <InputCurrency
-                          label="Preço Unitário"
-                          placeholder="Preço Unitário"
-                          ref={controllerField.ref}
-                          value={controllerField.value}
-                          onValueChange={(value) =>
-                            controllerField.onChange(value)
-                          }
-                          decimalScale={2}
-                          fixedDecimalScale
-                          allowNegative={false}
-                          className="h-9 text-sm text-left font-mono"
-                          error={fieldState.error?.message}
-                        />
-                      )}
-                    />
-                  </td>
-                  <td className="px-4 py-3 text-right font-mono font-medium text-sm">
-                    {formatCurrency(
-                      (watchedItems?.[index]?.quantity || 0) *
-                        (watchedItems?.[index]?.price || 0),
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="text-destructive hover:bg-destructive/10"
-                      onClick={() => remove(index)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="grid gap-3 rounded-lg border border-dashed bg-muted/20 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <AsyncCreatableSelectField
+          endpoint="/items"
+          label="Adicionar produto ou serviço"
+          placeholder="Pesquisar no catálogo..."
+          value={selectedItem}
+          onChange={setSelectedItem}
+          displayFields={["name", "description"]}
+          minChars={2}
+          formatCreateLabel={(value) => `O item "${value}" não existe no catálogo`}
+        />
+        <Button
+          type="button"
+          onClick={handleAddItem}
+          disabled={!canAdd}
+          className="gap-2 md:min-w-32"
+        >
+          <Plus className="h-4 w-4" />
+          Adicionar
+        </Button>
+        {selectedAlreadyExists && (
+          <p className="text-sm text-destructive md:col-span-2">
+            Este item já faz parte do documento corrigido.
+          </p>
+        )}
+        {selectedItem?.__isNew__ && (
+          <p className="text-sm text-muted-foreground md:col-span-2">
+            Crie primeiro o item na página de produtos ou serviços.
+          </p>
+        )}
+      </div>
 
-          {fields.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground bg-muted/10 border-t border-dashed">
-              Nenhum item restante. Por favor, adicione itens ou anule o
-              documento.
+      <div className="space-y-3">
+        {fields.map((field, index) => (
+          <div
+            key={field.id}
+            className="grid gap-4 rounded-lg border p-4 md:grid-cols-[minmax(180px,1fr)_150px_190px_140px_40px] md:items-end"
+          >
+            <Input
+              {...register(`invoiceBody.items.${index}.name`)}
+              label="Item"
+              readOnly
+              error={errors?.invoiceBody?.items?.[index]?.name?.message}
+            />
+
+            <Controller
+              control={control}
+              name={`invoiceBody.items.${index}.quantity`}
+              render={({ field: quantityField, fieldState }) => (
+                <Input
+                  type="quantity"
+                  label="Quantidade"
+                  min={1}
+                  value={Number(quantityField.value || 1)}
+                  onChange={(event) =>
+                    quantityField.onChange(Math.max(1, Number(event.target.value)))
+                  }
+                  error={fieldState.error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name={`invoiceBody.items.${index}.price`}
+              render={({ field: priceField, fieldState }) => (
+                <InputCurrency
+                  ref={priceField.ref}
+                  label="Preço unitário"
+                  value={priceField.value}
+                  onValueChange={priceField.onChange}
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
+                  error={fieldState.error?.message}
+                />
+              )}
+            />
+
+            <div className="space-y-1">
+              <span className="text-sm font-medium">Total</span>
+              <div className="flex h-10 items-center justify-end rounded-md bg-muted px-3 font-mono text-sm font-semibold">
+                {formatCurrency(
+                  Number(watchedItems?.[index]?.quantity || 0) *
+                    Number(watchedItems?.[index]?.price || 0),
+                )}
+              </div>
             </div>
-          )}
-        </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="text-destructive hover:bg-destructive/10"
+              onClick={() => remove(index)}
+              aria-label={`Remover ${watchedItems?.[index]?.name || "item"}`}
+              title="Remover item"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+
+        {fields.length === 0 && (
+          <div className="rounded-lg border border-dashed bg-muted/10 p-8 text-center text-sm text-muted-foreground">
+            O documento corrigido deve conter, pelo menos, um item.
+          </div>
+        )}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="p-4 rounded-lg bg-primary/5 space-y-2">
-          <h4 className="font-semibold text-sm uppercase">
-            Resumo da Nota de Crédito (Delta)
-          </h4>
-          <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span>{formatCurrency(creditNoteSubtotal)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Imposto:</span>
-            <span>{formatCurrency(creditNoteTaxAmount)}</span>
-          </div>
-          <Separator />
-          <div className="flex justify-between font-bold text-lg">
-            <span>Valor a Creditar:</span>
-            <span>{formatCurrency(creditNoteTotal)}</span>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <h3 className="text-sm font-semibold">Valor da nota de crédito</h3>
+          <div className="mt-4 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span>Subtotal a creditar</span>
+              <span>{formatCurrency(creditNoteSubtotal)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Imposto</span>
+              <span>{formatCurrency(creditNoteTaxAmount)}</span>
+            </div>
+            <Separator />
+            <div className="flex justify-between text-base font-bold">
+              <span>Total a creditar</span>
+              <span>{formatCurrency(creditNoteTotal)}</span>
+            </div>
           </div>
         </div>
 
-        <div className="p-4 rounded-lg bg-orange-500/5 space-y-2">
-          <h4 className="font-semibold text-sm uppercase">
-            Novo Estado do Documento
-          </h4>
-          <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span>{formatCurrency(invoiceBodySubtotal)}</span>
-          </div>
-          <div className="flex justify-between font-bold">
-            <span>Total Final:</span>
-            <span>{formatCurrency(invoiceBodyTotal)}</span>
+        <div className="rounded-lg border bg-muted/20 p-4">
+          <h3 className="text-sm font-semibold">Documento após a correcção</h3>
+          <div className="mt-4 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span>{formatCurrency(invoiceBodySubtotal)}</span>
+            </div>
+            <Separator />
+            <div className="flex justify-between text-base font-bold">
+              <span>Total final</span>
+              <span>{formatCurrency(invoiceBodyTotal)}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,113 +1,83 @@
 "use client";
-import { UseFormRegister } from "react-hook-form";
-import { CreditNoteFormData } from "@/schemas";
-import { Icon, Input } from "@/components";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Client } from "@/types/clients";
 
-import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
+import Link from "next/link";
+import type { UseFormRegister } from "react-hook-form";
+import type { CreditNoteFormData } from "@/schemas";
+import type { Client } from "@/types/clients";
+import { Button, Icon, Input } from "@/components";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ClientDocumentSectionProps {
-    register: UseFormRegister<CreditNoteFormData>;
-    errors: any;
-    isInvoiceDoc: boolean;
-    docType?: "invoice-receipt" | "invoice-normal";
-    client?: Client;
-    selectedClient: any;
-    onClientChange: (option: any) => void;
+  register: UseFormRegister<CreditNoteFormData>;
+  errors: any;
+  isInvoiceDoc: boolean;
+  docType?: "invoice-receipt" | "invoice-normal";
+  client?: Client;
 }
 
 export function ClientDocumentSection({
-    register,
-    errors,
-    isInvoiceDoc,
-    docType,
-    client,
-    selectedClient,
-    onClientChange,
+  register,
+  errors,
+  isInvoiceDoc,
+  docType,
+  client,
 }: ClientDocumentSectionProps) {
-    const hasClient = !!client?.id;
-
-    return (
-        <div className="space-y-6">
-            {!hasClient && (
-                <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive">
-                    <Icon name="BadgeAlert" className="h-4 w-4" />
-                    <AlertTitle>Dados do Cliente em Falta</AlertTitle>
-                    <AlertDescription>
-                        Os dados do cliente não constam deste documento. Seleccione ou actualize os dados do cliente antes de prosseguir com a nota de crédito.
-                    </AlertDescription>
-                </Alert>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                    <h3 className="font-medium">Dados do Cliente</h3>
-                    <AsyncCreatableSelectField
-                        minChars={2}
-                        endpoint="/clients"
-                        label="Nome"
-                        placeholder="Pesquise o nome do cliente..."
-                        value={selectedClient}
-                        onChange={onClientChange}
-                        displayFields={["name"]}
-                        formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
-                        error={errors.invoiceBody?.client?.id?.message || errors.invoiceBody?.client?.name?.message}
-                    />
-                    <input type="hidden" {...register("invoiceBody.client.id")} />
-                    <input type="hidden" {...register("invoiceBody.client.name")} />
-                    {selectedClient ? (
-                        <div className="space-y-4 animate-in fade-in duration-300">
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    label="NIF"
-                                    {...register("invoiceBody.client.taxNumber")}
-                                    error={errors.invoiceBody?.client?.taxNumber?.message}
-                                    disabled={!selectedClient?.__isNew__}
-                                    placeholder="999999999"
-                                />
-                                <Input
-                                    label="Telefone"
-                                    {...register("invoiceBody.client.phone")}
-                                    error={errors.invoiceBody?.client?.phone?.message}
-                                    disabled={!selectedClient?.__isNew__}
-                                    placeholder="9xxxxxxxx"
-                                />
-                            </div>
-                            <Input
-                                label="Endereço"
-                                {...register("invoiceBody.client.address")}
-                                error={errors.invoiceBody?.client?.address?.message}
-                                disabled={!selectedClient?.__isNew__}
-                                placeholder="Luanda, Angola"
-                            />
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg bg-muted/5 text-muted-foreground min-h-[148px] text-center border-muted-foreground/20 animate-in fade-in duration-300">
-                            <Icon name="User" className="h-8 w-8 mb-2 opacity-40 text-muted-foreground" />
-                            <p className="text-sm font-semibold text-foreground/80">Os dados do cliente aparecerão aqui</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="space-y-4">
-                    <h3 className="font-medium">Configurações do documento</h3>
-                    <Input
-                        type="date"
-                        label="Data de Emissão"
-                        {...register("invoiceBody.issueDate")}
-                        error={errors.invoiceBody?.issueDate?.message}
-                    />
-                    {isInvoiceDoc && docType !== "invoice-receipt" && (
-                        <Input
-                            type="date"
-                            label="Data de Vencimento"
-                            {...register("invoiceBody.dueDate")}
-                            error={errors.invoiceBody?.dueDate?.message}
-                        />
-                    )}
-                </div>
-            </div>
+  return (
+    <section className="rounded-lg border bg-card p-5 shadow-sm">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-base font-semibold">Cliente do documento</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            A nota de crédito mantém o cliente associado ao documento original.
+          </p>
         </div>
-    );
+        <Button asChild type="button" variant="outline" size="sm" className="gap-2">
+          <Link href="/clients">
+            <Icon name="Users" size={16} />
+            Ir para clientes
+          </Link>
+        </Button>
+      </div>
+
+      <Alert className="mb-5 border-primary/20 bg-primary/5">
+        <Icon name="Info" className="h-4 w-4 text-primary" />
+        <AlertTitle>Alteração dos dados do cliente</AlertTitle>
+        <AlertDescription>
+          Para alterar o nome, NIF, telefone ou endereço, aceda à página de
+          clientes e edite o respectivo registo. Depois, volte a emitir a nota
+          de crédito.
+        </AlertDescription>
+      </Alert>
+
+      <input type="hidden" {...register("invoiceBody.client.id")} />
+      <input type="hidden" {...register("invoiceBody.client.name")} />
+      <input type="hidden" {...register("invoiceBody.client.taxNumber")} />
+      <input type="hidden" {...register("invoiceBody.client.phone")} />
+      <input type="hidden" {...register("invoiceBody.client.address")} />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Input label="Nome" value={client?.name || "Consumidor Final"} readOnly />
+        <Input label="NIF" value={client?.taxNumber || "999999999"} readOnly />
+        <Input label="Telefone" value={client?.phone || "Não informado"} readOnly />
+        <Input label="Endereço" value={client?.address || "Não informado"} readOnly />
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <Input
+          type="date"
+          label="Data de emissão"
+          {...register("invoiceBody.issueDate")}
+          error={errors.invoiceBody?.issueDate?.message}
+        />
+        {isInvoiceDoc && docType !== "invoice-receipt" && (
+          <Input
+            type="date"
+            label="Data de vencimento"
+            {...register("invoiceBody.dueDate")}
+            error={errors.invoiceBody?.dueDate?.message}
+          />
+        )}
+      </div>
+    </section>
+  );
 }

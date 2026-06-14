@@ -19,12 +19,16 @@ import {
 import { useAuth, useLogout } from "@/hooks/auth";
 import { usePwaInstallPrompt } from "@/hooks/common/use-pwa-install-prompt";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function UserInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
   const { handleLogout } = useLogout();
   const { canInstall, promptInstall } = usePwaInstallPrompt();
+  const pathname = usePathname();
+  const isPos = pathname?.startsWith("/pos");
+  const appearanceHref = isPos ? "/pos/settings?tab=appearance" : "/settings?tab=appearance";
 
   if (!user) return null;
 
@@ -81,7 +85,7 @@ export function UserInfo() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href="/settings?tab=appearance">
+              <Link href={appearanceHref}>
               <DropdownMenuItem>
                 <Icon name="SquarePen" />
                 Aparência

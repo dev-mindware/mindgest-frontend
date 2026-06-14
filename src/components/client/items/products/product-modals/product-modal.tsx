@@ -121,6 +121,7 @@ function AddProductFormContent() {
       unit: "",
       minStock: 0,
       maxStock: 0,
+      taxId: "",
     },
   });
 
@@ -199,7 +200,7 @@ function AddProductFormContent() {
               name="taxId"
               render={({ field: { onChange, value } }) => (
                 <PaginatedSelect
-                  label="Imposto (Opcional)"
+                  label="Imposto"
                   value={value}
                   options={taxOptions}
                   onChange={onChange}
@@ -207,6 +208,7 @@ function AddProductFormContent() {
                   pagination={taxPagination}
                   onPageChange={setTaxPage}
                   placeholder="Seleccione um imposto"
+                  error={errors.taxId?.message}
                   fullWidth
                 />
               )}

@@ -3,6 +3,7 @@ import { clientsService } from "@/services/clients-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage } from "@/utils/messages";
 import { usePagination } from "../common";
+import { excludeFinalConsumer } from "@/utils";
 
 export function useAddClient() {
   const queryClient = useQueryClient();
@@ -46,15 +47,16 @@ export function useGetClients() {
     endpoint: "/clients",
     queryKey: "clients",
   });
+  const clients = excludeFinalConsumer(pagination.data);
 
-  const clientOptions = pagination.data.map((client) => ({
+  const clientOptions = clients.map((client) => ({
     label: `${client.name} (${client.email})`,
     value: client.id,
   }));
 
   return {
     ...pagination,
-    clients: pagination.data,
+    clients,
     clientOptions,
     pagination: {
       page: pagination.page,

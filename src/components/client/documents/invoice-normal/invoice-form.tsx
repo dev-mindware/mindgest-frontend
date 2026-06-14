@@ -13,6 +13,7 @@ import {
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
+import { isSelectableClient } from "@/utils";
 
 const THIRTY_DAYS = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
@@ -212,6 +213,7 @@ export function InvoiceForm() {
           <AsyncCreatableSelectField
             minChars={2}
             endpoint="/clients"
+            optionFilter={isSelectableClient}
             label="Cliente"
             placeholder="Digite o nome do cliente..."
             value={selectedClient}

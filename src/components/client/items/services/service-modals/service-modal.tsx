@@ -112,7 +112,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
           price: currentService.price,
           description: currentService.description || "",
           categoryId: currentService.categoryId,
-          taxId: currentService.taxId || "",
+          taxId: currentService.taxId || currentService.tax?.id || "",
           ...(user?.role === "OWNER" && {
             companyId: String(user?.company?.id),
           }),
@@ -136,7 +136,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
   const cleanPayload = (data: ItemFormData) => {
     return {
       ...data,
-      taxId: data.taxId === "none" ? undefined : data.taxId || undefined,
+      taxId: data.taxId,
       cost: data.cost ?? undefined,
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
@@ -218,7 +218,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                 name="taxId"
                 render={({ field: { onChange, value } }) => (
                   <PaginatedSelect
-                    label="Imposto (Opcional)"
+                    label="Imposto"
                     value={value}
                     options={finalTaxOptions}
                     onChange={onChange}
@@ -227,6 +227,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                     onPageChange={setTaxPage}
                     placeholder="Seleccione um imposto"
                     className="!w-full"
+                    error={errors.taxId?.message}
                   />
                 )}
               />

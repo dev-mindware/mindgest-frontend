@@ -14,13 +14,19 @@ export function SecondStep() {
   return (
     <div className={cn("flex flex-col gap-6")}>
       <div className="flex flex-col items-center mt-4 gap-2 text-center">
-        <StepsHeader title="Insira os dados da empresa" />
+        <StepsHeader title="Dados da actividade" />
+        <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
+          O Mindgest pode ser usado por empresas e por pessoas singulares.
+        </p>
       </div>
       <div className="grid gap-6">
         <Input
-          label="Nif da empresa"
+          label="NIF do Contribuinte"
           startIcon="IdCard"
-          placeholder="Introduza o NIF"
+          placeholder="Introduza o NIF empresarial ou pessoal"
+          maxLength={14}
+          autoCapitalize="characters"
+          spellCheck={false}
           {...register("step2.company.taxNumber")}
           error={
             errors?.step2?.company?.taxNumber &&
@@ -29,8 +35,8 @@ export function SecondStep() {
         />
         <Input
           startIcon="User"
-          label="Nome da empresa"
-          placeholder="Insira o nome da empresa"
+          label="Nome completo ou designação comercial"
+          placeholder="Introduza o nome ou a designação comercial"
           {...register("step2.company.name")}
           error={
             errors?.step2?.company?.name &&
@@ -39,9 +45,9 @@ export function SecondStep() {
         />
         <Input
           type="email"
-          label="E-mail"
+          label="Email de contacto"
           startIcon="Mail"
-          placeholder="Introduza o endereço de email da empresa"
+          placeholder="Introduza o endereço de email"
           {...register("step2.company.email")}
           error={
             errors?.step2?.company?.email &&

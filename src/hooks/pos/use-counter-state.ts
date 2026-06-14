@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Product, CartItem, CartType } from "@/types";
 import { itemsService } from "@/services/items-service";
+import { ErrorMessage } from "@/utils";
 
 interface UseCounterStateProps {
   apiProducts: Product[];
@@ -31,15 +32,24 @@ export function useCounterState({
       setCarts((prev) => {
         const currentCart = prev[activeCart];
         const existingItem = currentCart[product.id];
+        const availableStock = product.quantity ?? Infinity;
 
         if (existingItem) {
           const newQty = existingItem.qty + quantity;
+          if (newQty > availableStock) {
+            ErrorMessage(`Stock insuficiente. Disponível: ${availableStock}`);
+            return prev;
+          }
           const updatedCart = {
             ...currentCart,
             [product.id]: { ...existingItem, qty: newQty },
           };
           return { ...prev, [activeCart]: updatedCart };
         } else {
+          if (quantity > availableStock) {
+            ErrorMessage(`Stock insuficiente. Disponível: ${availableStock}`);
+            return prev;
+          }
           const newItem: CartItem = {
             ...product,
             qty: quantity,
@@ -179,6 +189,12 @@ export function useCounterState({
       const existingItem = currentCart[productId];
 
       if (!existingItem) return prev;
+
+      const availableStock = existingItem.quantity ?? Infinity;
+      if (quantity > availableStock) {
+        ErrorMessage(`Stock insuficiente. Disponível: ${availableStock}`);
+        return prev;
+      }
 
       return {
         ...prev,

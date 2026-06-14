@@ -2,12 +2,12 @@ import { LoginForm, HeroImageSide } from "@/components";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen w-full grid lg:grid-cols-2">
+    <div className="grid h-full min-h-0 w-full overflow-hidden lg:grid-cols-2">
       <div className="hidden lg:block">
         <HeroImageSide source="/login.png" />
       </div>
 
-      <div className="flex items-center justify-center bg-background p-6 md:p-10">
+      <div className="flex min-h-0 items-center justify-center bg-background p-5 md:p-8">
         <div className="w-full max-w-sm">
           <LoginForm />
         </div>

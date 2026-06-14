@@ -4,7 +4,12 @@ import { Icon, Switch } from "@/components";
 import { useWorkspaceStore } from "@/stores/pos/workspace-store";
 
 export function PosWorkspaceSettings() {
-    const { disableVirtualKeyboard, setDisableVirtualKeyboard } = useWorkspaceStore();
+    const {
+        disableVirtualKeyboard,
+        useThermalPrinter,
+        setDisableVirtualKeyboard,
+        setUseThermalPrinter,
+    } = useWorkspaceStore();
 
     return (
         <div className="space-y-6 pb-12" data-tour="pos-settings-workspace">
@@ -24,6 +29,26 @@ export function PosWorkspaceSettings() {
                         <Switch
                             checked={disableVirtualKeyboard}
                             onCheckedChange={setDisableVirtualKeyboard}
+                            className="data-[state=checked]:bg-primary"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 hover:bg-muted/20 transition-all" data-tour="pos-settings-printer">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
+                                <Icon name="Printer" size={16} className="text-primary-500" />
+                            </div>
+                            <div className="space-y-0.5">
+                                <p className="text-sm font-medium">Impressora térmica</p>
+                                <p className="text-[11px] text-muted-foreground">
+                                    Imprimir vendas no formato de talão
+                                </p>
+                            </div>
+                        </div>
+                        <Switch
+                            checked={useThermalPrinter}
+                            onCheckedChange={setUseThermalPrinter}
+                            aria-label="Usar impressora térmica"
                             className="data-[state=checked]:bg-primary"
                         />
                     </div>

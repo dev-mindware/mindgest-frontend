@@ -15,6 +15,9 @@ export interface ClientAnalytics {
   clientId: string;
   clientName: string;
   clientEmail: string;
+  taxNumber?: string | null;
+  nif?: string | null;
+  clientTaxNumber?: string | null;
   totalPurchases: number;
   totalRevenue: number;
   totalInvoices: number;

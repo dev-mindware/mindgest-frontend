@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateInvoiceReceipt, useCreateProforma } from "@/hooks";
-import { currentStoreStore, useAuthStore, useModal } from "@/stores";
-import { ErrorMessage } from "@/utils";
+import { currentStoreStore, useAuthStore } from "@/stores";
+import { ErrorMessage, printPosDocument } from "@/utils";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
-import { Product } from "@/types";
+import { DocumentType, Product } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { useWorkspaceStore } from "@/stores/pos/workspace-store";
 
 export interface CartItem extends Product {
   qty: number;
@@ -32,7 +34,8 @@ export function useCartCheckout({
 }: UseCartCheckoutProps) {
   const { user } = useAuthStore();
   const { currentStore } = currentStoreStore();
-  const { openModal } = useModal();
+  const { useThermalPrinter } = useWorkspaceStore();
+  const queryClient = useQueryClient();
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("Credit Card");
@@ -41,10 +44,11 @@ export function useCartCheckout({
 
   const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [pendingPayload, setPendingPayload] = useState<PosSalesFormData | null>(
-    null,
-  );
+  const [printDocument, setPrintDocument] = useState<{
+    id: string;
+    type: DocumentType;
+  } | null>(null);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const { mutateAsync: createInvoiceReceipt, isPending: isPendingInvoice } =
     useCreateInvoiceReceipt();
@@ -161,7 +165,7 @@ export function useCartCheckout({
     setCashGiven(amount);
   };
 
-  const handlePreview = async (data: any, skipPreview = false) => {
+  const handleCheckout = async (data: any) => {
     if (cartItems.length === 0) {
       ErrorMessage("O carrinho está vazio!");
       return;
@@ -186,7 +190,7 @@ export function useCartCheckout({
       hasInvalidNewPhone ||
       (isCreatingClient && !posPhoneRegex.test(normalizedNewCustomerPhone))
     ) {
-      ErrorMessage("Insira um nÃºmero de telemÃ³vel vÃ¡lido para o cliente.");
+      ErrorMessage("Insira um número de telemóvel válido para o cliente.");
       return;
     }
 
@@ -232,18 +236,7 @@ export function useCartCheckout({
       };
     }
 
-    setPendingPayload(payload);
-    
-    if (skipPreview) {
-      await performSubmit(payload);
-    } else {
-      setIsPreviewOpen(true);
-    }
-  };
-
-  const handleFinalSubmit = async () => {
-    if (!pendingPayload) return;
-    await performSubmit(pendingPayload);
+    await performSubmit(payload);
   };
 
   const performSubmit = async (payload: PosSalesFormData) => {
@@ -254,10 +247,9 @@ export function useCartCheckout({
         const invoiceId = response?.data?.id;
 
         if (invoiceId) {
-          openModal("document-success", {
+          setPrintDocument({
             id: invoiceId,
             type: "invoice-receipt",
-            format: "thermal",
           });
         }
       } else {
@@ -274,10 +266,9 @@ export function useCartCheckout({
         const proformaId = response?.data?.id;
 
         if (proformaId) {
-          openModal("document-success", {
+          setPrintDocument({
             id: proformaId,
             type: "proforma",
-            format: "thermal",
           });
         }
       }
@@ -286,15 +277,46 @@ export function useCartCheckout({
       setSelectedClient(null);
       setNewCustomerPhone("");
       reset();
-      setIsPreviewOpen(false);
-      setPendingPayload(null);
       onSuccess?.();
+
+      // Invalidate items queries so stock quantities update without page refresh
+      // useFetch stores keys as single strings (e.g. "items-for-pos-search-cat-type"),
+      // so we must use a predicate to match all variants
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          typeof query.queryKey[0] === "string" &&
+          (query.queryKey[0] as string).startsWith("items-for-pos"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["items-paginated"] });
+      queryClient.invalidateQueries({ queryKey: ["stocks"] });
     } catch (error: any) {
       console.error("Payment error:", error);
       ErrorMessage(
         `Erro ao processar ${type === "invoice" ? "o pagamento" : "a proforma"}.`,
       );
     }
+  };
+
+  const handlePrint = async () => {
+    if (!printDocument || isPrinting) return;
+
+    setIsPrinting(true);
+    try {
+      await printPosDocument({
+        ...printDocument,
+        thermal: useThermalPrinter,
+      });
+      setPrintDocument(null);
+    } catch (error) {
+      console.error("Erro ao imprimir o documento:", error);
+      ErrorMessage("Não foi possível imprimir o documento. Tente novamente.");
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
+  const dismissPrint = () => {
+    if (!isPrinting) setPrintDocument(null);
   };
 
   return {
@@ -312,11 +334,11 @@ export function useCartCheckout({
     selectedClient,
     handleClientChange,
     handleQuickCash,
-    handlePreview,
-    handleFinalSubmit,
-    isPreviewOpen,
-    setIsPreviewOpen,
-    pendingPayload,
+    handleCheckout,
+    printDocument,
+    handlePrint,
+    dismissPrint,
+    isPrinting,
     isPending,
   };
 }

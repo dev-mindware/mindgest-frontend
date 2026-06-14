@@ -1,5 +1,7 @@
 "use client";
-import { PageWrapper, AllNotifications, TitleList } from "@/components";
+import { PageWrapper, AllNotifications } from "@/components";
+import { MobilePosPageLayout } from "@/components/client/pos/mobile";
+import { NotificationDetail } from "@/components/shared/notifications";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function PosNotificationsPage() {
@@ -7,9 +9,12 @@ export default function PosNotificationsPage() {
 
     if (isMobile) {
         return (
-            <div className="p-4 space-y-6 pb-20">
-                <AllNotifications />
-            </div>
+            <MobilePosPageLayout activeTab="notifications" title="Notificações">
+                <div className="p-4 space-y-6">
+                    <AllNotifications />
+                </div>
+                <NotificationDetail />
+            </MobilePosPageLayout>
         );
     }
 

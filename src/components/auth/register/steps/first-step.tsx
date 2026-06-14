@@ -29,7 +29,7 @@ export function FirstStep() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 mt text-center">
-        <StepsHeader title="Insira os dados do proprietário" />
+        <StepsHeader title="Dados do titular da conta" />
       </div>
       <div className="grid gap-6">
         <Input

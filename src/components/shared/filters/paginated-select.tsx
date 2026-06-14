@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 interface Option {
   label: string;
   value: string;
+  description?: string;
 }
 
 interface Pagination {
@@ -97,7 +98,14 @@ export function PaginatedSelect({
               {options.length > 0 ? (
                 options.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                    <span className="flex min-w-0 flex-col gap-0.5 py-0.5">
+                      <span className="truncate">{option.label}</span>
+                      {option.description && (
+                        <span className="line-clamp-2 text-xs font-normal text-muted-foreground">
+                          {option.description}
+                        </span>
+                      )}
+                    </span>
                   </SelectItem>
                 ))
               ) : (

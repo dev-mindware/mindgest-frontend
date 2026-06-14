@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
-import { currentStoreStore, useModal } from "@/stores";
+import { useModal } from "@/stores";
 import {
   Button,
   Input,
@@ -11,9 +11,7 @@ import {
   ButtonSubmit,
   RequestError,
   PaginatedSelect,
-  Switch,
 } from "@/components";
-import { Label } from "@/components/ui/label";
 import { useGetStoresPaginated } from "@/hooks/entities";
 import {
   CashierFormData,
@@ -24,6 +22,8 @@ import {
   useAddCashier,
   useUpdateCashier,
 } from "@/hooks/collaborators/cashier/use-cashier";
+import { generateBarcode } from "@/utils";
+import { Wand2 } from "lucide-react";
 
 
 type CashierModalProps = {
@@ -58,6 +58,7 @@ export function CashierModal({ action }: CashierModalProps) {
     reset,
     register,
     control,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CashierFormData>({
@@ -69,10 +70,13 @@ export function CashierModal({ action }: CashierModalProps) {
   });
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (action === "edit" && currentCashier) {
       reset({
         name: currentCashier.name,
         phone: currentCashier.phone || "",
+        barcode: currentCashier.barcode || "",
         role: currentCashier.role as "CASHIER",
         storeId: currentCashier.storeId,
       });
@@ -82,11 +86,12 @@ export function CashierModal({ action }: CashierModalProps) {
         phone: "",
         email: "",
         password: "",
+        barcode: generateBarcode(),
         role: "CASHIER",
         storeId: "",
       });
     }
-  }, [action, currentCashier, reset]);
+  }, [action, currentCashier, isOpen, reset]);
 
   async function onSubmit(data: CashierFormData) {
     try {
@@ -104,6 +109,7 @@ export function CashierModal({ action }: CashierModalProps) {
           data: {
             name: finalData.name,
             phone: finalData.phone,
+            barcode: finalData.barcode,
             role: finalData.role,
             storeId: data.storeId,
           },
@@ -123,6 +129,13 @@ export function CashierModal({ action }: CashierModalProps) {
     closeModal(action === "add" ? "add-cashier" : "edit-cashier");
   };
 
+  const handleGenerateBarcode = () => {
+    setValue("barcode", generateBarcode(), {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   if ((action === "edit" && !currentCashier) || !isOpen) return null;
   if (isLoadingStores && !storesData) return <p>A carregar lojas...</p>;
   if (isError)
@@ -132,8 +145,6 @@ export function CashierModal({ action }: CashierModalProps) {
         message="Ocorreu um erro ao carregar as lojas"
       />
     );
-
-  console.log(errors);
 
   return (
     <GlobalModal
@@ -181,6 +192,31 @@ export function CashierModal({ action }: CashierModalProps) {
               />
             </>
           )}
+
+          <div className="space-y-1.5 sm:col-span-2">
+            <label className="text-sm font-medium text-foreground">
+              Código de barras
+            </label>
+            <div className="flex items-start gap-2">
+              <Input
+                startIcon="Barcode"
+                placeholder="Introduza ou gere o código de barras"
+                {...register("barcode")}
+                error={errors.barcode?.message}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                title="Gerar código de barras"
+                aria-label="Gerar código de barras"
+                onClick={handleGenerateBarcode}
+              >
+                <Wand2 className="size-4" />
+              </Button>
+            </div>
+          </div>
 
           <div className="w-full col-span-2">
             <Controller
