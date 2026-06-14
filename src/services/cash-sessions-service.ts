@@ -26,7 +26,7 @@ export const cashSessionsService = {
   },
 
   rejectOpeningRequest: async (requestId: string) => {
-    const response = await api.patch(
+    const response = await api.post(
       `/cash-sessions/opening-requests/${requestId}/reject`,
     );
     return response.data;
