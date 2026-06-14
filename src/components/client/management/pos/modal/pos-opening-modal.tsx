@@ -17,7 +17,6 @@ import {
 import { useModal } from "@/stores";
 import { useGetStoresPaginated } from "@/hooks/entities";
 import { useGetCashiersPaginated } from "@/hooks/collaborators/cashier";
-import { cn } from "@/lib/utils";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
