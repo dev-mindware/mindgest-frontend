@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,10 +12,10 @@ import {
     Icon,
 } from "@/components";
 import { useModal } from "@/stores";
-import { cashSessionsService } from "@/services/cash-sessions-service";
-import { SucessMessage, ErrorMessage } from "@/utils/messages";
+import { useCloseCashSession } from "@/hooks";
 import { CashSession } from "@/types/cash-session";
 import { formatCurrency } from "@/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const MODAL_POS_CLOSE_SESSION_ID = "pos-close-session-modal";
 
@@ -33,7 +33,8 @@ interface PosCloseSessionModalProps {
 
 export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalProps) {
     const { closeModal } = useModal();
-    const [isLoading, setIsLoading] = useState(false);
+    const { mutateAsync: closeSession, isPending: isLoading } = useCloseCashSession();
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -58,27 +59,29 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
 
     const onSubmit = async (data: CloseSessionFormData) => {
         if (!currentSession?.id) {
-            ErrorMessage("Sessão não encontrada.");
             return;
         }
 
         try {
-            setIsLoading(true);
-            await cashSessionsService.closeSession(currentSession.id, {
-                closingCash: data.closingCash,
-                totalSales: data.totalSales,
-                notes: data.notes || "",
+            await closeSession({
+                id: currentSession.id,
+                data: {
+                    closingCash: data.closingCash,
+                    totalSales: data.totalSales,
+                    notes: data.notes || "",
+                },
             });
-            SucessMessage("Sessão fechada com sucesso!");
+            // Force dynamic and immediate query invalidation
+            await queryClient.invalidateQueries({
+                queryKey: ["current-cash-session", currentSession.storeId],
+            });
+            await queryClient.invalidateQueries({
+                queryKey: ["cash-sessions"],
+            });
             closeModal(MODAL_POS_CLOSE_SESSION_ID);
             reset();
-            // Optional: refresh page or state to reflect closure
-            window.location.reload();
         } catch (err: any) {
             console.error(err);
-            ErrorMessage("Erro ao fechar sessão.");
-        } finally {
-            setIsLoading(false);
         }
     };
 

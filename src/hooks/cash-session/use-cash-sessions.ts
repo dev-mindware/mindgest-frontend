@@ -103,6 +103,25 @@ export function useUpdateCashSession() {
   });
 }
 
+export function useCloseCashSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      cashSessionsService.closeSession(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
+      queryClient.invalidateQueries({ queryKey: ["current-cash-session"] });
+      SucessMessage("Sessão fechada com sucesso!");
+    },
+    onError: (error: any) => {
+      ErrorMessage(
+        error?.response?.data?.message || "Erro ao fechar sessão.",
+      );
+    },
+  });
+}
+
 export function useDeleteCashSession() {
   const queryClient = useQueryClient();
 

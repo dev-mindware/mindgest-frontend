@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,7 +17,6 @@ import { useModal } from "@/stores";
 import { useGetStoresPaginated } from "@/hooks/entities";
 import { useGetCashiersPaginated } from "@/hooks/collaborators/cashier";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
@@ -25,6 +24,7 @@ import { SucessMessage, ErrorMessage, formatCurrency, parseCurrency } from "@/ut
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
 import { parseTime } from "@internationalized/date";
+import { useAuth } from "@/hooks/auth";
 
 function safeParseTime(timeStr: string) {
   try {
@@ -35,7 +35,15 @@ function safeParseTime(timeStr: string) {
   }
 }
 
-export function PosOpeningModal() {
+interface PosOpeningModalProps {
+  /** Quando true, o utilizador logado (Owner/Manager) abre sessão para si próprio.
+   *  O select de caixas fica oculto e o cashierId é injetado automaticamente. */
+  selfSessionMode?: boolean;
+  /** Chamado após abertura ou atualização de sessão com sucesso. */
+  onSuccess?: () => void;
+}
+
+export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeningModalProps) {
   const { closeModal } = useModal();
   const { currentCashier, setCurrentCashier } = useCurrentCashierStore();
   const [storePage, setStorePage] = useState(1);
@@ -65,6 +73,7 @@ export function PosOpeningModal() {
       initialCapital: "",
       workTime: "06:00",
       storeId: "",
+      // No selfSessionMode, o cashierId do próprio gestor é injetado depois de obter o user
       cashierIds: [],
       fundType: "Coin",
     },
@@ -77,7 +86,34 @@ export function PosOpeningModal() {
     isLoading: isLoadingCashiers,
   } = useGetCashiersPaginated(1, 100, "", selectedStoreId);
 
+  const { user } = useAuth();
+
+  const cashierOptions = useMemo(() => {
+    const cashiersList = allCashiers || [];
+    const opts = cashiersList.map((c) => ({
+      label: `${c.name} (${c.email})`,
+      value: c.id,
+    }));
+
+    if (user && (user.role === "OWNER" || user.role === "MANAGER")) {
+      if (!opts.some((opt) => opt.value === user.id)) {
+        opts.unshift({
+          label: `${user.name} (${user.email} - Tu/Gestor)`,
+          value: user.id,
+        });
+      }
+    }
+    return opts;
+  }, [allCashiers, user]);
+
   const isEdit = !!currentCashier;
+
+  // No selfSessionMode, injeta o id do utilizador logado nos cashierIds ao montar
+  useEffect(() => {
+    if (selfSessionMode && user?.id) {
+      setValue("cashierIds", [user.id]);
+    }
+  }, [selfSessionMode, user, setValue]);
 
   useEffect(() => {
     if (isEdit && currentCashier) {
@@ -93,7 +129,7 @@ export function PosOpeningModal() {
         cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
         fundType: normalizedFundType,
       });
-    } else {
+    } else if (!selfSessionMode) {
       reset({
         initialCapital: "",
         workTime: "06:00",
@@ -102,7 +138,7 @@ export function PosOpeningModal() {
         fundType: "Coin",
       });
     }
-  }, [isEdit, currentCashier, reset]);
+  }, [isEdit, currentCashier, reset, selfSessionMode]);
 
   const selectedCashierIds = watch("cashierIds") || [];
 
@@ -126,6 +162,7 @@ export function PosOpeningModal() {
         };
         await openSession(payload);
       }
+      onSuccess?.();
       handleClose();
     } catch (error: any) {
       // Errors are handled by the mutation's onError
@@ -260,31 +297,50 @@ export function PosOpeningModal() {
             )}
           </div>
 
-          <div className="col-span-1 md:col-span-2">
-            <Controller
-              name="cashierIds"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  label="Caixas Disponíveis para Abertura"
-                  placeholder="Escolha os caixas"
-                  options={allCashiers.map((c) => ({
-                    label: `${c.name} (${c.email})`,
-                    value: c.id,
-                  }))}
-                  isDisabled={isEdit}
-                  value={allCashiers
-                    .filter((c) => field.value?.includes(c.id))
-                    .map((c) => ({ label: c.name, value: c.id }))}
-                  onChange={(options) =>
-                    field.onChange(options.map((opt) => opt.value))
-                  }
-                  isLoading={isLoadingCashiers}
-                  error={errors.cashierIds?.message}
-                />
-              )}
-            />
-          </div>
+          {/* No selfSessionMode o select de caixas é ocultado — o id já foi injetado automaticamente */}
+          {!selfSessionMode && (
+            <div className="col-span-1 md:col-span-2">
+              <Controller
+                name="cashierIds"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelect
+                    label="Caixas Disponíveis para Abertura"
+                    placeholder="Escolha os caixas"
+                    options={cashierOptions}
+                    isDisabled={isEdit}
+                    value={cashierOptions.filter((opt) => field.value?.includes(opt.value))}
+                    onChange={(options) =>
+                      field.onChange(options.map((opt) => opt.value))
+                    }
+                    isLoading={isLoadingCashiers}
+                    error={errors.cashierIds?.message}
+                  />
+                )}
+              />
+            </div>
+          )}
+
+          {/* Em selfSessionMode, mostra um banner informativo com o nome do gestor */}
+          {selfSessionMode && user && (
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/5 border border-primary/10">
+                <div className="p-2 bg-primary/10 rounded-full shrink-0">
+                  <Icon name="User" className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Operador desta sessão</p>
+                  <p className="text-sm font-bold">{user.name}</p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                </div>
+                <div className="ml-auto">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-primary/10 text-primary">
+                    {user.role === "OWNER" ? "Proprietário" : "Gestor"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-muted-foreground/5">

@@ -72,6 +72,8 @@ export function MobilePosLayout({
             products={products}
             categories={categories}
             onAddToCart={onAddToCart}
+            onUpdateQty={onUpdateQty}
+            onRemove={onRemove}
             activeCategory={activeCategory}
             onCategoryChange={onCategoryChange}
             isLoading={isLoading}

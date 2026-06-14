@@ -111,12 +111,19 @@ export const ProductCard = React.memo<ProductCardProps>(
                     )}
 
                     {/* Tax Rate Badge */}
-                    {product.tax?.rate && (
+                    {product.tax?.rate != null ? (
                       <Badge
                         variant="outline"
                         className="text-[10px] px-2 py-0.5 border border-blue-500/30 bg-blue-500/10 text-blue-600 hover:bg-blue-500/15 transition-colors font-medium shadow-sm"
                       >
                         IVA {product.tax.rate}%
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-2 py-0.5 border border-gray-500/30 bg-gray-500/10 text-gray-600 hover:bg-gray-500/15 transition-colors font-medium shadow-sm"
+                      >
+                        Sem IVA
                       </Badge>
                     )}
                   </div>

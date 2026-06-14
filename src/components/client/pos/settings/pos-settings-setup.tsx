@@ -61,6 +61,7 @@ export function PosSettingsSetup({
     queryKey: ["current-cash-session", currentStore?.id],
     queryFn: () => cashSessionsService.getCurrentSession(currentStore?.id),
     enabled: activeTab === "general",
+    retry: false,
   });
 
   const handleTabChange = (value: string) => {

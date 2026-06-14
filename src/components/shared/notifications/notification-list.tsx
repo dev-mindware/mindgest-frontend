@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { EmptyState } from "@/components/common";
 import { cn } from "@/lib";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface NotificationListProps {
   notifications: NotificationType[];
@@ -41,12 +42,15 @@ export function NotificationList({
     (n) => !n.isRead
   );
 
+  const pathname = usePathname();
+  const isPos = pathname?.startsWith("/pos");
+
   return (
     <div className="w-full">
       {isDropdown && (
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-semibold text-foreground">Notificações</h3>
-          <Link href="/notifications" className="text-primary text-sm">
+          <Link href={isPos ? "/pos/notifications" : "/notifications"} className="text-primary text-sm">
             Ver todas
           </Link>
         </div>

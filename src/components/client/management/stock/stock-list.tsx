@@ -26,8 +26,13 @@ import {
   UnreserveStockModal,
 } from "./stock-modals";
 import { useModal } from "@/stores";
+import { useAuth } from "@/hooks/auth";
 
 export function StockList() {
+  const { user } = useAuth();
+  const currentPlan = user?.company?.subscription?.plan?.name;
+  const isSmartPlan = currentPlan === "Smart";
+
   const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useStockFilters();
@@ -149,45 +154,54 @@ export function StockList() {
     {
       key: "actions",
       header: "Acções",
-      render: (_, item) => (
-        <ButtonOnlyAction
-          data={item}
-          actions={[
-            {
-              label: "Ver Detalhes",
-              onClick: handlerDetailsStock,
-              icon: "Eye",
-              variant: "default",
-            },
-            {
-              label: "Apagar",
-              onClick: handlerDeleteStock,
-              variant: "destructive",
-              icon: "Trash2",
-            },
-            { type: "separator" },
-            {
-              label: "Ajustar Stock",
-              onClick: handlerAdjustStock,
-              icon: "SlidersHorizontal",
-              variant: "default",
-            },
-            { type: "separator" },
+      render: (_, item) => {
+        const baseActions: any[] = [
+          {
+            label: "Ver Detalhes",
+            onClick: handlerDetailsStock,
+            icon: "Eye" as const,
+            variant: "default" as const,
+          },
+          {
+            label: "Apagar",
+            onClick: handlerDeleteStock,
+            variant: "destructive" as const,
+            icon: "Trash2" as const,
+          },
+          { type: "separator" as const },
+          {
+            label: "Ajustar Stock",
+            onClick: handlerAdjustStock,
+            icon: "SlidersHorizontal" as const,
+            variant: "default" as const,
+          },
+        ];
+
+        if (!isSmartPlan) {
+          baseActions.push(
+            { type: "separator" as const },
             {
               label: "Reservar",
               onClick: handlerReserveStock,
-              icon: "CircleArrowUp",
-              variant: "default",
+              icon: "CircleArrowUp" as const,
+              variant: "default" as const,
             },
             {
               label: "Liberar Reserva",
               onClick: handlerUnreserveStock,
-              icon: "CircleArrowDown",
-              variant: "default",
-            },
-          ]}
-        />
-      ),
+              icon: "CircleArrowDown" as const,
+              variant: "default" as const,
+            }
+          );
+        }
+
+        return (
+          <ButtonOnlyAction
+            data={item}
+            actions={baseActions}
+          />
+        );
+      },
     },
   ];
 

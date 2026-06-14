@@ -4,6 +4,7 @@ import React from "react";
 import { Icon, Avatar, AvatarFallback, AvatarImage } from "@/components";
 import { Product } from "@/types";
 import { CartCheckoutForm } from "./checkout-form";
+import { formatCurrency } from "@/utils";
 
 interface CartItem extends Product {
     qty: number;
@@ -35,7 +36,7 @@ const CartItemRow = React.memo<{
             </p>
         </div>
         <div className="flex flex-col items-end justify-center gap-1 shrink-0">
-            <span className="font-bold text-sm text-nowrap">${((item.price || 0) * item.qty).toFixed(1)}</span>
+            <span className="font-bold text-sm text-nowrap">{formatCurrency((item.price || 0) * item.qty)}</span>
             <button
                 onClick={() => onDelete(item.id)}
                 className="text-muted-foreground hover:text-destructive transition-colors hidden group-hover:block"
