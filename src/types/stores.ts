@@ -8,7 +8,7 @@ export type storesFilters = {
 
 export type StoreData = {
   name: string;
-  code?: string | null;
+  code: string;
   email?: string | null;
   phone?: string | null;
   address?: string | null;
@@ -17,10 +17,12 @@ export type StoreData = {
 
 export type StoreResponse = StoreData & {
   id: string;
-  code?: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
 export type StoreList = StoreData[];
+
+export type CreateStorePayload = StoreData;
+export type UpdateStorePayload = Partial<StoreData>;

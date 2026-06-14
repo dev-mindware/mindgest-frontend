@@ -5,7 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
 import { useModal } from "@/stores";
 import { StoreFormData, storeSchema } from "@/schemas";
-import { Button, Input, GlobalModal, ButtonSubmit } from "@/components";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  ButtonSubmit,
+  GlobalModal,
+  Icon,
+  Input,
+} from "@/components";
 import { currentStoreStore } from "@/stores/entities/current-store-store";
 import { useAddStore, useUpdateStore } from "@/hooks/entities";
 
@@ -29,55 +38,87 @@ export function StoreModal({ action }: StoreModalProps) {
   } = useForm<StoreFormData>({
     resolver: zodResolver(storeSchema),
     mode: "onChange",
+    defaultValues: {
+      name: "",
+      code: "SEDE",
+      email: "",
+      phone: "",
+      address: "",
+    },
   });
 
   useEffect(() => {
     if (action === "edit" && currentStore) {
       reset({
         name: currentStore.name || "",
-        code: currentStore.code || "",
+        code: currentStore.code || "SEDE",
         email: currentStore.email || "",
         phone: currentStore.phone || "",
         address: currentStore.address || "",
       });
+      return;
     }
-  }, [action, currentStore, reset]);
+
+    if (action === "add" && isOpen) {
+      reset({
+        name: "",
+        code: "SEDE",
+        email: "",
+        phone: "",
+        address: "",
+      });
+    }
+  }, [action, currentStore, isOpen, reset]);
 
   async function onSubmit(data: StoreFormData) {
     try {
-      const finalData = data;
-
       if (action === "add") {
-        await addStore(finalData);
+        await addStore(data);
       } else if (action === "edit" && currentStore) {
-        await editStore({ id: currentStore.id, data: finalData });
+        await editStore({ id: currentStore.id, data });
       }
 
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Não foi possível guardar a loja."
+        error?.response?.data?.message || "Não foi possível guardar a loja.",
       );
     }
   }
 
   const handleCancel = () => {
-    reset();
+    reset({
+      name: "",
+      code: "SEDE",
+      email: "",
+      phone: "",
+      address: "",
+    });
     closeModal(action === "add" ? "add-store" : "edit-store");
   };
 
   if ((action === "edit" && !currentStore) || !isOpen) return null;
-
-  console.log(errors)
 
   return (
     <GlobalModal
       canClose
       id={action === "add" ? "add-store" : "edit-store"}
       title={action === "add" ? "Adicionar Loja" : "Editar Loja"}
-      className="!max-h-[85vh] !w-max"
+      className="!max-h-[85vh] sm:!w-[600px]"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        {action === "add" && (
+          <Alert className="border-primary/20 bg-primary/5">
+            <Icon name="Info" className="text-primary" />
+            <AlertTitle>Código fiscal do estabelecimento</AlertTitle>
+            <AlertDescription>
+              O código padrão é SEDE. Para utilizar outro código, registe
+              primeiro o estabelecimento na AGT e introduza exactamente o
+              código atribuído.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nome"
@@ -90,8 +131,13 @@ export function StoreModal({ action }: StoreModalProps) {
           <Input
             label="Código do Estabelecimento"
             startIcon="Code"
-            placeholder="Ex: 001, SEDE, LU"
-            {...register("code")}
+            placeholder="Ex: SEDE ou 001"
+            maxLength={20}
+            {...register("code", {
+              onChange: (event) => {
+                event.target.value = event.target.value.toUpperCase();
+              },
+            })}
             error={errors.code?.message}
           />
 

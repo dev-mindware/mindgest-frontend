@@ -24,6 +24,17 @@ import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils";
+import { parseTime } from "@internationalized/date";
+
+function safeParseTime(value?: string) {
+  if (!value) return undefined;
+
+  try {
+    return parseTime(value);
+  } catch {
+    return undefined;
+  }
+}
 
 interface PosOpeningModalProps {
   /** Quando true, o utilizador logado (Owner/Manager) abre sessão para si próprio.

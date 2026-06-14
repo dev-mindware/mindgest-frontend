@@ -42,7 +42,10 @@ export function DetailsStoreModal() {
         <section className="space-y-2">
           <h3 className="font-semibold text-foreground">Informações da Loja</h3>
           <DetailRow label="Nome" value={currentStore.name || "-"} />
-          {currentStore.code && <DetailRow label="Código do Estabelecimento" value={currentStore.code} />}
+          <DetailRow
+            label="Código do Estabelecimento"
+            value={currentStore.code || "SEDE"}
+          />
           {currentStore.email && <DetailRow label="Email" value={currentStore.email} />}
           {currentStore.phone && <DetailRow label="Telefone" value={currentStore.phone} />}
           {currentStore.address && <DetailRow label="Endereço" value={currentStore.address} />}

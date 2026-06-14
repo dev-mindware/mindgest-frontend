@@ -53,6 +53,15 @@ export function StoresList() {
   const columns: Column<StoreResponse>[] = [
     { key: "name", header: "Nome da Loja" },
     {
+      key: "code",
+      header: "Estabelecimento",
+      render: (_, item) => (
+        <div className="font-mono text-sm font-semibold">
+          {item.code || "SEDE"}
+        </div>
+      ),
+    },
+    {
       key: "gerente",
       header: "Gerente",
       render: (_, item) => (
