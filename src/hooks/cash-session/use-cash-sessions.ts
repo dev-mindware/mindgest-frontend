@@ -38,6 +38,7 @@ export function useGetOpeningRequests(filters?: CashSessionRequestFilters) {
   return useQuery({
     queryKey: ["opening-requests", filters],
     queryFn: () => cashSessionsService.getOpeningRequests(filters as any),
+    refetchInterval: 10000, // Refetch every 10 seconds to reflect requests on manager side
   });
 }
 

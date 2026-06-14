@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -29,6 +30,7 @@ type RequestFormData = z.infer<typeof requestSchema>;
 export function PosRequestOpeningModal() {
     const { closeModal } = useModal();
     const { currentStore } = currentStoreStore();
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -51,6 +53,7 @@ export function PosRequestOpeningModal() {
                 message: data.message,
             });
             SucessMessage("Pedido enviado com sucesso.");
+            await queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
             closeModal(MODAL_POS_REQUEST_OPENING_ID);
             reset();
         } catch (err: any) {

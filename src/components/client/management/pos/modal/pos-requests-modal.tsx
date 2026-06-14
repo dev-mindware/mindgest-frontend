@@ -90,7 +90,6 @@ export function PosRequestsModal() {
                     key={request.id}
                     className="p-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer rounded-xl border border-muted-foreground/10"
                   >
-                    {/* Avatar */}
                     <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-full bg-primary/10 border-primary/10 font-bold text-primary text-sm">
                       {request.userName?.charAt(0)?.toUpperCase() || "?"}
                     </div>
