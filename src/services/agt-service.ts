@@ -16,7 +16,7 @@ export const agtService = {
     return response.data;
   },
 
-  requestSeries: async (data: { documentType: string; seriesYear: string; establishmentNumber?: string }) => {
+  requestSeries: async (data: { documentType: string; seriesYear: string; storeId?: string; establishmentNumber?: string }) => {
     const response = await api.post("/agt/series/solicitar", data);
     return response.data;
   },

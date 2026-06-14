@@ -2,17 +2,25 @@
 
 import React from "react";
 import { Button } from "@/components";
-import { Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { formatCurrency } from "@/utils";
 
 interface ItemRowProps {
   item: any;
   index: number;
   onRemove: (index: number) => void;
+  onQuantityChange: (index: number, quantity: number) => void;
 }
 
-export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove }) => {
+export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove, onQuantityChange }) => {
   const subtotal = item.unitPrice * item.quantity;
+  const isService = item.type === "SERVICE";
+  const maximumQuantity = Number(item.availableQuantity);
+  const hasMaximumQuantity =
+    Number.isFinite(maximumQuantity) && maximumQuantity > 0;
+  const canIncrement =
+    !isService &&
+    (!hasMaximumQuantity || Number(item.quantity) < maximumQuantity);
 
   return (
     <tr>
@@ -39,8 +47,40 @@ export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove }) => {
           {item.type === "PRODUCT" ? "Produto" : "Serviço"}
         </span>
       </td>
-      <td className="px-4 py-3 text-right font-mono text-foreground">
-        {item.quantity}
+      <td className="px-4 py-3">
+        <div className="ml-auto flex w-[116px] items-center overflow-hidden rounded-md border border-input bg-background">
+          <button
+            type="button"
+            className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            onClick={() => onQuantityChange(index, Number(item.quantity) - 1)}
+            disabled={isService || Number(item.quantity) <= 1}
+            aria-label={`Diminuir quantidade de ${item.description}`}
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </button>
+          <input
+            type="number"
+            min={1}
+            max={hasMaximumQuantity ? maximumQuantity : undefined}
+            step={1}
+            value={item.quantity}
+            disabled={isService}
+            onChange={(event) =>
+              onQuantityChange(index, Number(event.target.value) || 1)
+            }
+            aria-label={`Quantidade de ${item.description}`}
+            className="h-8 min-w-0 flex-1 border-x border-input bg-transparent px-1 text-center font-mono text-sm text-foreground outline-none disabled:cursor-not-allowed disabled:opacity-60 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          />
+          <button
+            type="button"
+            className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            onClick={() => onQuantityChange(index, Number(item.quantity) + 1)}
+            disabled={!canIncrement}
+            aria-label={`Aumentar quantidade de ${item.description}`}
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </td>
       <td className="px-4 py-3 text-right font-mono text-foreground">
         {formatCurrency(item.unitPrice)}

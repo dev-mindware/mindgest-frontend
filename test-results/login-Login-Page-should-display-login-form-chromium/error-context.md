@@ -41,7 +41,7 @@ Call log:
       - generic [ref=e20]:
         - generic [ref=e21]:
           - img "Logo" [ref=e22]
-          - heading "Bem-vindo ao MindGest" [level=1] [ref=e23]
+          - heading "Bem-vindo(a) ao MindGest" [level=1] [ref=e23]
         - generic [ref=e24]:
           - generic [ref=e25]:
             - generic [ref=e26]: Email
@@ -84,7 +84,7 @@ Call log:
   5  |     await page.goto('/auth/login');
   6  |     
   7  |     // Check for the heading
-  8  |     await expect(page.getByRole('heading', { name: 'Bem-vindo ao MindGest' })).toBeVisible();
+  8  |     await expect(page.getByRole('heading', { name: 'Bem-vindo(a) ao MindGest' })).toBeVisible();
   9  |     
   10 |     // Check for email input
 > 11 |     await expect(page.getByLabel('Email')).toBeVisible();

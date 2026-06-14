@@ -20,6 +20,7 @@ export interface ProductOption {
     description?: string;
     taxId?: string | number;
     tax?: {
+      id?: string | number;
       rate: number;
     };
   };
@@ -94,7 +95,10 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             }
           }
 
-          setValue("taxId", String(option.data.taxId ?? ""));
+          setValue(
+            "taxId",
+            String(option.data.taxId ?? option.data.tax?.id ?? ""),
+          );
         }
       },
       [setValue],
@@ -102,7 +106,12 @@ export const AddItemForm = React.memo<AddItemFormProps>(
 
     const handleAddClick = useCallback(() => {
       const values = getValues();
-      if (!selectedProduct || values.quantity <= 0 || values.price <= 0) {
+      if (
+        !selectedProduct ||
+        values.quantity <= 0 ||
+        values.price <= 0 ||
+        !values.taxId
+      ) {
         return;
       }
 
@@ -127,10 +136,14 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         unitPrice: values.price,
         quantity: values.quantity,
         tax: selectedProduct.data?.tax?.rate || taxRate,
-        taxId: values.taxId === "none" ? undefined : values.taxId || undefined,
+        taxId: values.taxId,
         discount: globalDiscount,
         total: values.price * values.quantity,
         type: values.type,
+        availableQuantity:
+          selectedProduct.data?.type === "PRODUCT"
+            ? selectedProduct.data.quantity
+            : undefined,
         isFromAPI: !selectedProduct.__isNew__,
         apiId: selectedProduct.__isNew__
           ? undefined
@@ -159,6 +172,13 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     );
 
     const isNewProduct = selectedProduct?.__isNew__ ?? false;
+    const requiresTaxSelection =
+      isNewProduct ||
+      Boolean(
+        selectedProduct &&
+          !selectedProduct.data?.taxId &&
+          !selectedProduct.data?.tax?.id,
+      );
 
     // Stock validation
     const availableStock =
@@ -178,6 +198,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       selectedProduct &&
       watchedQuantity > 0 &&
       watchedPrice > 0 &&
+      Boolean(watchedTaxId) &&
       !isOverStock &&
       !isAlreadyAdded;
 
@@ -268,20 +289,22 @@ export const AddItemForm = React.memo<AddItemFormProps>(
           /> 
         </div>
 
-        {isNewProduct && (
+        {requiresTaxSelection && (
           <div
             className="grid grid-cols-1 sm:grid-cols-2 gap-4"
             data-tour="normal-invoice-new-item-fields"
           >
-            <RHFSelect
-              name="type"
-              label="Tipo de Item"
-              control={control}
-              options={[
-                { value: "PRODUCT", label: "Produto" },
-                { value: "SERVICE", label: "Serviço" },
-              ]}
-            />
+            {isNewProduct && (
+              <RHFSelect
+                name="type"
+                label="Tipo de Item"
+                control={control}
+                options={[
+                  { value: "PRODUCT", label: "Produto" },
+                  { value: "SERVICE", label: "Serviço" },
+                ]}
+              />
+            )}
             <Controller
               control={control}
               name="taxId"
@@ -295,6 +318,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   onPageChange={setTaxPage}
                   placeholder="Seleccione um imposto"
                   className="w-full"
+                  error={errors.taxId?.message}
                 />
               )}
             />

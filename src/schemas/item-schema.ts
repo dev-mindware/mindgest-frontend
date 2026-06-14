@@ -43,7 +43,7 @@ export const itemSchema = z
     hasExpiry: z.boolean().optional(),
     expiryDate: z.string().trim().optional(),
     daysToExpiry: z.coerce.string().optional(),
-    taxId: z.string().trim().min(1, "Campo obrigatório"),
+    taxId: z.string().trim().min(1, "Seleccione um imposto"),
   })
 
   .refine(

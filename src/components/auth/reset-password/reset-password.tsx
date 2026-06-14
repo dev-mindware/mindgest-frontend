@@ -68,7 +68,7 @@ function ResetPasswordForm() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 w-full max-w-sm mx-auto mb-24 sm:mb-0">
+      <div className="mx-auto flex w-full max-w-sm flex-col gap-5">
         <div className="space-y-4">
           <div className="flex items-center justify-center">
             <Image src={Logo} alt="Logo" className="size-20" />

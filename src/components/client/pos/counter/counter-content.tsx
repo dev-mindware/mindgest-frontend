@@ -18,23 +18,50 @@ import {
 } from "@/components";
 import { Product, CartType, CartItem as TypeCartItem } from "@/types";
 import { useCounterState, useIsMobile } from "@/hooks";
+import { useGetProductCountsByCategory } from "@/hooks/stock/use-items";
 import { MobilePosLayout } from "../mobile";
 
 export function CounterContent() {
   const [search] = useQueryState("search", { defaultValue: "" });
   const { categories, isLoading: isLoadingCategories } = useGetCategories();
+  const {
+    data: productCountsByCategory = {},
+    isLoading: isLoadingProductCounts,
+  } = useGetProductCountsByCategory();
   const [activeCart, setActiveCart] = useState<CartType>("invoice");
   const { currentStore } = currentStoreStore();
-  const { data: currentSession } = useGetCurrentSession(currentStore?.id);
+  const { data: currentSession } = useGetCurrentSession(currentStore?.id, {
+    realtime: false,
+  });
 
-  // Default to the first category if available
+  const availableCategories = useMemo(
+    () =>
+      categories
+        .map((category) => ({
+          ...category,
+          itemsCount: productCountsByCategory[category.id] ?? 0,
+        }))
+        .filter((category) => category.itemsCount > 0)
+        .sort((a, b) => b.itemsCount - a.itemsCount),
+    [categories, productCountsByCategory],
+  );
+
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   useEffect(() => {
-    if (categories.length > 0 && !selectedCategory) {
-      setSelectedCategory(categories[0].id);
+    if (availableCategories.length === 0) {
+      setSelectedCategory("");
+      return;
     }
-  }, [categories, selectedCategory]);
+
+    const selectedCategoryIsAvailable = availableCategories.some(
+      (category) => category.id === selectedCategory,
+    );
+
+    if (!selectedCategoryIsAvailable) {
+      setSelectedCategory(availableCategories[0].id);
+    }
+  }, [availableCategories, selectedCategory]);
 
   const { items: apiProducts, isLoading: isLoadingProducts } = useGetItems({
     search: search || undefined,
@@ -62,8 +89,8 @@ export function CounterContent() {
   }, []);
 
   const currentCategoryName = useMemo(() =>
-    categories.find((c) => c.id === selectedCategory)?.name
-    , [categories, selectedCategory]);
+    availableCategories.find((c) => c.id === selectedCategory)?.name
+    , [availableCategories, selectedCategory]);
 
   const products: Product[] = useMemo(() =>
     (apiProducts as any[]).map((p) => ({
@@ -104,7 +131,7 @@ export function CounterContent() {
     return (
       <MobilePosLayout
         products={products}
-        categories={categories}
+        categories={availableCategories}
         cartItems={getCartItemsArray(activeCart)}
         onAddToCart={handleAddToCart}
         onUpdateQty={(item: TypeCartItem, delta: number) => handleUpdateQuantity(item.id, item.qty + delta)}
@@ -117,7 +144,9 @@ export function CounterContent() {
         onResolveScan={findProductByBarcode}
         activeCategory={selectedCategory}
         onCategoryChange={handleCategorySelect}
-        isLoading={isLoadingProducts}
+        isLoading={
+          isLoadingCategories || isLoadingProductCounts || isLoadingProducts
+        }
         cashSessionId={currentSession?.id || ""}
       />
     );
@@ -130,11 +159,11 @@ export function CounterContent() {
         onConfirm={onConfirmScan}
       />
       <div className="flex-1 flex flex-col min-w-0 gap-4 p-4">
-        {isLoadingCategories ? (
+        {isLoadingCategories || isLoadingProductCounts ? (
           <PosCategorySkeleton />
         ) : (
           <CategorySelector
-            categories={categories}
+            categories={availableCategories}
             activeCategory={selectedCategory}
             onSelectCategory={handleCategorySelect}
           />

@@ -62,6 +62,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
         ? () =>
             openModal(
               isManagement ? "opening-cashier" : "opening-cashier-session",
+              isManagement ? { mode: "create" } : undefined,
             )
         : undefined,
     },

@@ -1,13 +1,12 @@
 "use client";
 
 import { Button } from "@/components";
-import { InvoicePreviewDrawer as PosInvoicePreviewDrawer } from "../../modals/invoice-preview-drawer";
 import { ErrorMessage } from "@/utils";
 import { useCartCheckout, CartItem } from "@/hooks";
 import { PaymentSummary } from "./payment-summary";
 import { CustomerSelection } from "./customer-selection";
 import { PaymentMethods } from "./payment-methods";
-import { DocumentSuccessModal } from "@/components/client/documents/modals/document-success-modal";
+import { PrintSaleDialog } from "./print-sale-dialog";
 
 interface CartCheckoutFormProps {
     cartItems: CartItem[];
@@ -37,11 +36,11 @@ export function CartCheckoutForm({
         selectedClient,
         handleClientChange,
         handleQuickCash,
-        handlePreview,
-        handleFinalSubmit,
-        isPreviewOpen,
-        setIsPreviewOpen,
-        pendingPayload,
+        handleCheckout,
+        printDocument,
+        handlePrint,
+        dismissPrint,
+        isPrinting,
         isPending,
     } = useCartCheckout({ cartItems, type, onSuccess, cashSessionId });
 
@@ -80,7 +79,7 @@ export function CartCheckoutForm({
 
                 <Button
                     className="w-full"
-                    onClick={handleSubmit((data) => handlePreview(data), (errors) => {
+                    onClick={handleSubmit(handleCheckout, (errors) => {
                         console.error("Form Validation Errors:", errors);
                         ErrorMessage("Verifique os campos obrigatórios");
                     })}
@@ -91,17 +90,12 @@ export function CartCheckoutForm({
                 </Button>
             </div>
 
-            <PosInvoicePreviewDrawer
-                open={isPreviewOpen}
-                onOpenChange={setIsPreviewOpen}
-                data={pendingPayload}
-                cartItems={cartItems}
-                onConfirm={handleFinalSubmit}
-                isLoading={isPending}
-                type={type}
+            <PrintSaleDialog
+                document={printDocument}
+                isPrinting={isPrinting}
+                onPrint={handlePrint}
+                onDismiss={dismissPrint}
             />
-
-            <DocumentSuccessModal />
         </>
     );
 }

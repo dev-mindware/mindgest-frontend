@@ -126,6 +126,7 @@ function AddProductFormContent() {
       unit: "",
       minStock: 0,
       maxStock: 0,
+      taxId: "",
     },
   });
 

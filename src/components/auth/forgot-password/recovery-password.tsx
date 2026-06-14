@@ -45,7 +45,7 @@ export function RecoveryPassword() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={cn(
-          "flex flex-col gap-6 w-full max-w-sm mx-auto mb-24 sm:mb-0",
+          "mx-auto flex w-full max-w-sm flex-col gap-5",
         )}
       >
         <div className="space-y-4">

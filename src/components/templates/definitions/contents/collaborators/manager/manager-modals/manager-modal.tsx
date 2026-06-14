@@ -4,11 +4,12 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
 import { ManagerFormData, managerSchema } from "@/schemas";
-import { useModal, currentManagerStore, currentStoreStore } from "@/stores";
-import { Button, Input, GlobalModal, ButtonSubmit, Icon, MultiSelect, Switch } from "@/components";
+import { useModal, currentManagerStore } from "@/stores";
+import { Button, Input, GlobalModal, ButtonSubmit, MultiSelect } from "@/components";
 import { useAddManager, useUpdateManager } from "@/hooks/collaborators";
 import { useGetStores } from "@/hooks/entities";
-import { Label } from "@/components/ui/label";
+import { generateBarcode } from "@/utils";
+import { Wand2 } from "lucide-react";
 
 type ManagerModalProps = {
   action: "add" | "edit";
@@ -16,10 +17,9 @@ type ManagerModalProps = {
 
 export function ManagerModal({ action }: ManagerModalProps) {
   const { stores } = useGetStores();
-  const { closeModal, open, openModal } = useModal();
+  const { closeModal, open } = useModal();
   const { currentManager } = currentManagerStore();
   const isOpen = open["add-manager"] || open["edit-manager"];
-  const { currentStore } = currentStoreStore();
   const [selectedStores, setSelectedStores] = useState<
     { label: string; value: string }[]
   >([]);
@@ -31,6 +31,7 @@ export function ManagerModal({ action }: ManagerModalProps) {
     reset,
     control,
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ManagerFormData>({
@@ -39,10 +40,13 @@ export function ManagerModal({ action }: ManagerModalProps) {
   });
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (action === "edit" && currentManager) {
       reset({
         name: currentManager.name,
         phone: currentManager.phone || "",
+        barcode: currentManager.barcode || "",
         storeIds: currentManager.stores?.map((s) => s.id) || [],
       });
       setSelectedStores(
@@ -58,10 +62,11 @@ export function ManagerModal({ action }: ManagerModalProps) {
         phone: "",
         email: "",
         password: "",
+        barcode: generateBarcode(),
         storeIds: [],
       });
     }
-  }, [action, currentManager, reset]);
+  }, [action, currentManager, isOpen, reset]);
 
   async function onSubmit(data: ManagerFormData) {
     try {
@@ -75,6 +80,7 @@ export function ManagerModal({ action }: ManagerModalProps) {
           data: {
             name: finalData.name,
             phone: finalData.phone,
+            barcode: finalData.barcode,
             storeIds: finalData.storeIds,
           },
         });
@@ -92,6 +98,13 @@ export function ManagerModal({ action }: ManagerModalProps) {
     reset();
     setSelectedStores([]);
     closeModal(action === "add" ? "add-manager" : "edit-manager");
+  };
+
+  const handleGenerateBarcode = () => {
+    setValue("barcode", generateBarcode(), {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   if ((action === "edit" && !currentManager) || !isOpen) return null;
@@ -142,6 +155,31 @@ export function ManagerModal({ action }: ManagerModalProps) {
               />
             </>
           )}
+
+          <div className="space-y-1.5 sm:col-span-2">
+            <label className="text-sm font-medium text-foreground">
+              Código de barras
+            </label>
+            <div className="flex items-start gap-2">
+              <Input
+                startIcon="Barcode"
+                placeholder="Introduza ou gere o código de barras"
+                {...register("barcode")}
+                error={errors.barcode?.message}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                title="Gerar código de barras"
+                aria-label="Gerar código de barras"
+                onClick={handleGenerateBarcode}
+              >
+                <Wand2 className="size-4" />
+              </Button>
+            </div>
+          </div>
 
           <div className="flex items-end gap-2 sm:col-span-2">
             <Controller

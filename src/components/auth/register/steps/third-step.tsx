@@ -1,94 +1,62 @@
 "use client";
-import { RegisterFormData } from "@/schemas";
-import { useFormContext, Controller } from "react-hook-form";
-import { Label, Checkbox } from "@/components/ui";
+
+import { Controller, useFormContext } from "react-hook-form";
+import type { RegisterFormData } from "@/schemas";
 import { AlertError } from "@/components/common";
+import { Checkbox, Label } from "@/components/ui";
 import { StepsHeader } from "./steps-header";
+
+const terms = [
+  "Utilizar a plataforma de forma responsável e em conformidade com a lei.",
+  "Fornecer informações verdadeiras e mantê-las actualizadas.",
+  "Autorizar o tratamento dos dados conforme a Política de Privacidade.",
+  "Aceitar cookies necessários à utilização e melhoria da plataforma.",
+  "Receber comunicações relacionadas com os serviços contratados.",
+];
 
 export function ThirdStep() {
   const { control } = useFormContext<RegisterFormData>();
 
   return (
-    <div className="max-w-2xl p-2 mx-auto space-y-8">
-      <div className="flex flex-col items-center mt-4 gap-2 text-center">
+    <div className="mx-auto max-w-2xl space-y-4 p-2">
+      <div className="text-center">
         <StepsHeader title="Termos e políticas" />
-      </div>
-      <div className="space-y-6">
-        <p>Estes termos incluem, entre outros aspectos:</p>
-
-        <ul className="space-y-4 text-muted-foreground">
-          <BulletItem>
-            A utilização responsável da plataforma, de acordo com as leis
-            vigentes;
-          </BulletItem>
-          <BulletItem>
-            O armazenamento e tratamento dos seus dados pessoais, conforme
-            descrito na nossa Política de Privacidade;
-          </BulletItem>
-          <BulletItem>
-            A utilização de cookies e tecnologias semelhantes para melhorar a
-            experiência de navegação;
-          </BulletItem>
-          <BulletItem>
-            A responsabilidade pelas informações fornecidas, que devem ser
-            verdadeiras e actualizadas;
-          </BulletItem>
-          <BulletItem>
-            A possibilidade de receber comunicações por e-mail ou outros meios
-            digitais com conteúdos informativos, promocionais ou relacionados
-            aos serviços contratados;
-          </BulletItem>
-        </ul>
-
-        <p className="pt-4 text-muted-foreground">
-          Se não concordar com os termos descritos, não prossiga com o registo
-          nem com a utilização da plataforma.
+        <p className="mt-1 text-sm text-muted-foreground">
+          Confirme os pontos abaixo para concluir o registo.
         </p>
-
-        <Controller
-          name="step3.terms"
-          control={control}
-          rules={{ required: "É necessário aceitar os termos para continuar." }}
-          render={({ field, fieldState }) => (
-            <div className="flex flex-col items-start gap-2 pt-4">
-              <div className="space-x-2 flex items-center justify-center">
-                <Checkbox
-                  id="termos"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  className="
-            bg-white dark:bg-gray-600
-            border-gray-300 dark:border-gray-600
-            checked:bg-primary dark:checked:bg-primary
-            focus:ring-2 focus:ring-primary dark:focus:ring-primary
-            transition-colors
-          "
-                />
-                <Label
-                  htmlFor="termos"
-                  className="text-sm font-normal text-gray-700 dark:text-gray-300"
-                >
-                  Eu li e concordo com os termos acima.
-                </Label>
-              </div>
-              <div>
-                {fieldState.error && (
-                  <AlertError errorMessage={fieldState.error?.message} />
-                )}
-              </div>
-            </div>
-          )}
-        />
       </div>
-    </div>
-  );
-}
 
-function BulletItem({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start">
-      <span className="mt-1 mr-2 text-muted-foreground">•</span>
-      <span>{children}</span>
-    </li>
+      <ul className="space-y-2 rounded-lg border bg-muted/20 p-4 text-sm text-muted-foreground">
+        {terms.map((term) => (
+          <li key={term} className="flex items-start gap-2">
+            <span className="mt-1 text-primary">•</span>
+            <span>{term}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Controller
+        name="step3.terms"
+        control={control}
+        rules={{ required: "É necessário aceitar os termos para continuar." }}
+        render={({ field, fieldState }) => (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="termos"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              <Label htmlFor="termos" className="text-sm font-normal">
+                Li e concordo com os termos e políticas.
+              </Label>
+            </div>
+            {fieldState.error && (
+              <AlertError errorMessage={fieldState.error.message} />
+            )}
+          </div>
+        )}
+      />
+    </div>
   );
 }

@@ -9,12 +9,12 @@ interface HeroImageSideProps {
 
 export function HeroImageSide({
   source,
-  title = "Mindgest: o futuro da gestão empresarial.",
-  subtitle = "Gestão empresarial simples para empresas que querem vender, controlar e crescer.",
+  title = "Gestão e facturação para empresas e profissionais.",
+  subtitle = "Uma forma simples de vender, controlar a actividade e crescer, seja uma empresa ou uma pessoa singular.",
   badge = "MINDWARE - Comércio & Serviços",
 }: HeroImageSideProps) {
   return (
-    <div className="relative hidden w-full h-screen lg:flex flex-col justify-between overflow-hidden bg-black">
+    <div className="relative hidden h-full min-h-0 w-full flex-col justify-between overflow-hidden bg-black lg:flex">
       <div className="absolute inset-0 z-0">
         <Image
           fill

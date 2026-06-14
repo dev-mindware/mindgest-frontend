@@ -41,12 +41,12 @@ export function CompanyForm({ user }: { user: User }) {
       { id: user.company.id, data },
       {
         onSuccess: () => {
-          SucessMessage("Dados da empresa actualizados com sucesso!");
+          SucessMessage("Dados da actividade actualizados com sucesso!");
           setIsEditing(false);
         },
         onError: (error: any) => {
           ErrorMessage(
-            error?.response?.data?.message || "Não foi possível actualizar os dados da empresa",
+            error?.response?.data?.message || "Não foi possível actualizar os dados da actividade",
           );
         },
       },
@@ -59,7 +59,7 @@ export function CompanyForm({ user }: { user: User }) {
       className="bg-card rounded-lg border p-6 shadow-sm"
     >
       <div className="flex items-center justify-between mb-6 pb-4 border-b">
-        <h3 className="font-semibold text-lg">Informação da Empresa</h3>
+        <h3 className="font-semibold text-lg">Dados da Actividade</h3>
         <div className="sm:ml-auto flex gap-2">
           <Button
             type="button"
@@ -70,7 +70,7 @@ export function CompanyForm({ user }: { user: User }) {
               setIsEditing(!isEditing);
             }}
           >
-            {isEditing ? "Cancelar" : "Editar Empresa"}
+            {isEditing ? "Cancelar" : "Editar dados"}
           </Button>
         </div>
       </div>
@@ -82,8 +82,8 @@ export function CompanyForm({ user }: { user: User }) {
       >
         <Input
           {...register("name")}
-          label="Nome da Empresa"
-          placeholder="Ex.: Mindgest Soluções"
+          label="Nome completo ou designação comercial"
+          placeholder="Ex.: Manuel António ou Mindgest Soluções"
           className="bg-background shadow-none"
           readOnly={!isEditing}
           error={errors.name?.message}
@@ -91,7 +91,7 @@ export function CompanyForm({ user }: { user: User }) {
 
         <Input
           {...register("email")}
-          label="Email da Empresa"
+          label="Email de contacto"
           placeholder="Ex.: contacto@mindgest.com"
           className="bg-background shadow-none"
           readOnly={!isEditing}
@@ -100,7 +100,7 @@ export function CompanyForm({ user }: { user: User }) {
 
         <Input
           {...register("phone")}
-          label="Telefone da Empresa"
+          label="Telefone de contacto"
           placeholder="Ex: +244 900 000 000"
           className="bg-background shadow-none"
           readOnly={!isEditing}
@@ -119,7 +119,10 @@ export function CompanyForm({ user }: { user: User }) {
         <Input
           {...register("taxNumber")}
           label="NIF"
-          placeholder="Ex: 123456789"
+          placeholder="NIF empresarial ou pessoal"
+          maxLength={14}
+          autoCapitalize="characters"
+          spellCheck={false}
           className="bg-background shadow-none"
           readOnly={!isEditing}
           error={errors?.taxNumber?.message}

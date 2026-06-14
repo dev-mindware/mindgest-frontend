@@ -13,8 +13,8 @@ import {
 import { PaymentSummary } from "../counter/cart/checkout-form/payment-summary";
 import { CustomerSelection } from "../counter/cart/checkout-form/customer-selection";
 import { PaymentMethods } from "../counter/cart/checkout-form/payment-methods";
-import { DocumentSuccessModal } from "@/components/client/documents/modals/document-success-modal";
 import { ErrorMessage } from "@/utils";
+import { PrintSaleDialog } from "../counter/cart/checkout-form/print-sale-dialog";
 
 interface MobileCheckoutDrawerProps {
   open: boolean;
@@ -48,11 +48,11 @@ export function MobileCheckoutDrawer({
     selectedClient,
     handleClientChange,
     handleQuickCash,
-    handlePreview,
-    handleFinalSubmit,
-    isPreviewOpen,
-    setIsPreviewOpen,
-    pendingPayload,
+    handleCheckout,
+    printDocument,
+    handlePrint,
+    dismissPrint,
+    isPrinting,
     isPending,
   } = useCartCheckout({ cartItems, type, onSuccess: () => {
     onSuccess?.();
@@ -99,7 +99,7 @@ export function MobileCheckoutDrawer({
           <DrawerFooter className="pt-0">
             <Button
                 className="w-full h-12 text-base font-bold"
-                onClick={handleSubmit((data) => handlePreview(data, true), (errors) => {
+                onClick={handleSubmit(handleCheckout, (errors) => {
                     console.error("Form Validation Errors:", errors);
                     ErrorMessage("Verifique os campos obrigatórios");
                 })}
@@ -112,7 +112,12 @@ export function MobileCheckoutDrawer({
         </DrawerContent>
       </Drawer>
 
-      <DocumentSuccessModal />
+      <PrintSaleDialog
+        document={printDocument}
+        isPrinting={isPrinting}
+        onPrint={handlePrint}
+        onDismiss={dismissPrint}
+      />
     </>
   );
 }

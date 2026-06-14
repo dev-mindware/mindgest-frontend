@@ -12,6 +12,7 @@ export * from "./cashier-service";
 export * from "./taxes-service";
 export * from "./download-invoice-service";
 export * from "./banks-service";
+export * from "./stores-service";
 export * from "./user-service";
 export * from "./agt-service";
 export * from "./chatbot-service";

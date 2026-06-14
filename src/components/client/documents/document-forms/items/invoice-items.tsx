@@ -33,7 +33,7 @@ export function InvoiceItems({
   totals,
 }: InvoiceItemsProps) {
 
-  const { fields, append, remove } = fieldArray;
+  const { fields, append, remove, update } = fieldArray;
 
   // Stable set of IDs already in the invoice — used to prevent duplicates
   const existingItemIds = useMemo(
@@ -53,6 +53,32 @@ export function InvoiceItems({
       remove(index);
     },
     [remove]
+  );
+
+  const handleQuantityChange = useCallback(
+    (index: number, quantity: number) => {
+      const item = fields[index] as any;
+      if (!item || item.type === "SERVICE") return;
+      const { id: _fieldId, ...itemValue } = item;
+
+      const maximum = Number(item.availableQuantity);
+      const normalizedQuantity = Number.isFinite(quantity)
+        ? Math.floor(quantity)
+        : 1;
+      const nextQuantity = Math.max(
+        1,
+        Number.isFinite(maximum) && maximum > 0
+          ? Math.min(normalizedQuantity, maximum)
+          : normalizedQuantity,
+      );
+
+      update(index, {
+        ...itemValue,
+        quantity: nextQuantity,
+        total: Number(item.unitPrice) * nextQuantity,
+      });
+    },
+    [fields, update],
   );
 
   return (
@@ -92,7 +118,11 @@ export function InvoiceItems({
         </div>
       ) : (
         <>
-          <ItemList items={fields} onRemove={handleRemoveItem} />
+          <ItemList
+            items={fields}
+            onRemove={handleRemoveItem}
+            onQuantityChange={handleQuantityChange}
+          />
           <div
             className="grid grid-cols-1 gap-6 md:grid-cols-2"
             data-tour="normal-invoice-summary"
