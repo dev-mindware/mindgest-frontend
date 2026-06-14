@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { ItemSchema, phoneNumberSchema, taxNumberSchema } from "./helps";
+import {
+  ItemSchema,
+  optionalTaxNumberSchema,
+  phoneNumberSchema,
+} from "./helps";
 
 export const CompanySchema = z.object({
   name: z
@@ -8,7 +12,7 @@ export const CompanySchema = z.object({
     .min(3, "O nome da empresa precisa ter pelo menos 3 caracteres")
     .optional()
     .or(z.literal("")),
-  taxNumber: taxNumberSchema.optional().or(z.literal("")),
+  taxNumber: optionalTaxNumberSchema,
   address: z
     .string()
     .trim()
@@ -22,7 +26,7 @@ export type CompanyFormData = z.infer<typeof CompanySchema>;
 
 const ClientReceiptSchema = z.object({
   name: z.string().trim().optional().or(z.literal("")),
-  taxNumber: taxNumberSchema.optional().or(z.literal("")),
+  taxNumber: optionalTaxNumberSchema,
   address: z
     .string()
     .trim()
@@ -43,7 +47,7 @@ const ClientSchema = z.object({
     .string()
     .trim()
     .min(3, "O nome do cliente precisa ter pelo menos 3 caracteres"),
-  taxNumber: taxNumberSchema.optional().or(z.literal("")),
+  taxNumber: optionalTaxNumberSchema,
   address: z
     .string()
     .trim()

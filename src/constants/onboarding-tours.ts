@@ -129,7 +129,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "setup-general-tabs",
         "Área geral",
-        "Aceda a perfil, segurança, aparência, subscrição e preferências de tours.",
+        "Aceda a perfil, segurança, aparência, subscrição e preferências dos guias.",
         { side: "right" },
       ),
       tourStep(
@@ -188,8 +188,8 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       ),
       tourStep(
         "setup-guides-content",
-        "Guias e tours",
-        "Defina se os guias devem aparecer automaticamente e reponha os tours já vistos.",
+        "Guias orientados",
+        "Defina se os guias devem aparecer automaticamente e reponha os guias já vistos.",
         { side: "left" },
       ),
     ],
@@ -383,7 +383,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "normal-invoice-submit",
         "Criar factura",
-        "Quando todos os dados estiverem validados, este botão emite a factura. O tour não clica nem submete o formulário.",
+        "Quando todos os dados estiverem validados, este botão emite a factura. O guia não clica nem submete o formulário.",
         { side: "top", align: "end" },
       ),
     ],
@@ -519,7 +519,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-submit",
         "Confirmar pagamento",
-        "Este botão abre a confirmação da venda. O tour apenas explica o passo, sem emitir documentos.",
+        "Este botão abre a confirmação da venda. O guia apenas explica o passo, sem emitir documentos.",
         { side: "top" },
       ),
     ],
@@ -548,7 +548,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-settings-actions",
         "Acções da sessão",
-        "Aqui estão abertura, fecho e registo de despesas. O tour apenas explica estes botões e nunca executa a acção por si.",
+        "Aqui estão a abertura, o fecho e o registo de despesas. O guia apenas explica estes botões e nunca executa a acção.",
         { side: "bottom" },
       ),
       tourStep(

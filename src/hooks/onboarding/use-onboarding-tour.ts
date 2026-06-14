@@ -455,7 +455,7 @@ const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
   "normal-client-new": (element) => {
     scheduleSelectDemo({
       root: element,
-      searchText: "Cliente Tour Novo",
+      searchText: "Cliente de Demonstração",
       shouldCreate: true,
     });
   },
@@ -482,7 +482,7 @@ const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
   "normal-product-new": (element) => {
     scheduleSelectDemo({
       root: element,
-      searchText: "Serviço Tour Novo",
+      searchText: "Serviço de Demonstração",
       shouldCreate: true,
     });
   },
@@ -501,7 +501,7 @@ const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
     );
   },
   "product-form-basics": () => {
-    typeIntoSelector('[data-tour="product-form-name"] input', "Produto Tour");
+    typeIntoSelector('[data-tour="product-form-name"] input', "Produto de Demonstração");
     typeIntoSelector('[data-tour="product-form-price"] input', "15000");
     typeIntoSelector('[data-tour="product-form-cost"] input', "10000");
     clickSafe(
@@ -556,7 +556,7 @@ const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
     }, 400);
   },
   "pos-client-new": (element) => {
-    const clientName = "Cliente POS Tour";
+    const clientName = "Cliente POS de Demonstração";
     openPosCustomerSection(element);
     clearReactSelect(element);
     activeTypingTimeout = window.setTimeout(() => {
@@ -813,7 +813,7 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
       },
       onPopoverRender: (popover) => {
         popover.closeButton.innerText = "Pular";
-        popover.closeButton.setAttribute("aria-label", "Pular tour");
+        popover.closeButton.setAttribute("aria-label", "Ignorar guia");
       },
       onHighlighted: handleHighlighted,
       onDeselected: cleanupActiveDemo,

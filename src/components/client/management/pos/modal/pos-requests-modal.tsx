@@ -12,16 +12,16 @@ import { useModal } from "@/stores/modal/use-modal-store";
 import { formatDateTime } from "@/utils";
 import {
   useGetOpeningRequests,
-  useAuthorizeOpening,
   useRejectOpeningRequest,
 } from "@/hooks/cash-session/use-cash-sessions";
 import { CashSessionRequest } from "@/types/cash-session";
+import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 
 export function PosRequestsModal() {
-  const { closeModal, open } = useModal();
+  const { closeModal, openModal, open } = useModal();
   const isOpen = open["pos-requests"];
+  const { setCurrentCashier } = useCurrentCashierStore();
 
-  const [approvingId, setApprovingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
 
   const {
@@ -31,23 +31,22 @@ export function PosRequestsModal() {
     refetch,
   } = useGetOpeningRequests({ status: "PENDING" });
 
-  const { mutateAsync: authorizeOpening } = useAuthorizeOpening();
   const { mutateAsync: rejectOpening } = useRejectOpeningRequest();
 
-  const handleApprove = async (request: CashSessionRequest) => {
-    setApprovingId(request.id);
-    try {
-      await authorizeOpening({
-        storeId: request.storeId,
-        cashierIds: [request.userId],
-        initialCapital: "0",
-        workTime: "08:00",
-        fundType: "COIN",
-        managerBarcode: "",
-      });
-    } finally {
-      setApprovingId(null);
-    }
+  const handleApprove = (request: CashSessionRequest) => {
+    // Close this modal and open opening-cashier with user pre-selected
+    closeModal("pos-requests");
+    // Inject only the minimal data needed — the modal will handle the rest
+    setCurrentCashier({
+      // Pre-select the requesting user (manager just sets capital + store)
+      userId: request.userId,
+      storeId: request.storeId,
+      user: { name: request.userName, email: "" },
+      // Signal to the modal that this is a "request approval" open (not an edit)
+      _fromRequest: true,
+      _requestId: request.id,
+    } as any);
+    openModal("opening-cashier-from-request");
   };
 
   const handleReject = async (request: CashSessionRequest) => {
@@ -84,62 +83,56 @@ export function PosRequestsModal() {
           <>
             <div className="space-y-3">
               {openingRequests?.map((request: CashSessionRequest) => {
-                const isApproving = approvingId === request.id;
                 const isRejecting = rejectingId === request.id;
-                const isBusy = isApproving || isRejecting;
 
                 return (
                   <div
                     key={request.id}
-                    className={`p-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer rounded-xl border border-muted-foreground/10`}
+                    className="p-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer rounded-xl border border-muted-foreground/10"
                   >
-                    <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-lg bg-primary/10 border-primary/5">
-                      <Icon name="LayoutGrid" className="w-5 h-5 text-primary" />
+                    {/* Avatar */}
+                    <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-full bg-primary/10 border-primary/10 font-bold text-primary text-sm">
+                      {request.userName?.charAt(0)?.toUpperCase() || "?"}
                     </div>
-                    <div className="flex-1 min-w-0 space-y-1.5">
+
+                    <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <h4 className="text-sm font-semibold text-foreground">
                             {request.userName}
                           </h4>
                           <p className="text-[12px] font-medium leading-tight text-muted-foreground line-clamp-2">
-                            {request.message}
+                            {request.message || "Pedido de abertura de caixa"}
                           </p>
                         </div>
                         <span className="text-[10px] font-bold text-muted-foreground whitespace-nowrap pt-0.5">
                           {formatDateTime(request.createdAt)}
                         </span>
                       </div>
+
                       <div className="flex items-center gap-2">
                         <Button
                           size="sm"
-                          className="text-xs"
-                          disabled={isBusy}
+                          className="text-xs gap-1.5"
                           onClick={() => handleApprove(request)}
                         >
-                          {isApproving ? (
-                            <Icon
-                              name="LoaderCircle"
-                              className="w-3 h-3 animate-spin"
-                            />
-                          ) : (
-                            "Aprovar"
-                          )}
+                          <Icon name="CircleCheck" className="w-3 h-3" />
+                          Aprovar
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-xs"
-                          disabled={isBusy}
+                          className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                          disabled={isRejecting}
                           onClick={() => handleReject(request)}
                         >
                           {isRejecting ? (
-                            <Icon
-                              name="LoaderCircle"
-                              className="w-3 h-3 animate-spin"
-                            />
+                            <Icon name="LoaderCircle" className="w-3 h-3 animate-spin" />
                           ) : (
-                            "Recusar"
+                            <>
+                              <Icon name="CircleX" className="w-3 h-3 mr-1" />
+                              Recusar
+                            </>
                           )}
                         </Button>
                       </div>

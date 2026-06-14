@@ -44,18 +44,24 @@ export const ItemSchema = z.object({
     .nullable(),
 
   isFromAPI: z.boolean().optional(),
-  taxId: z.string().trim().optional(),
+  taxId: z.string().trim().min(1, "Seleccione um imposto"),
   apiId: z.string().trim().optional(),
 });
 
 export const taxNumberSchema = z
   .string()
   .trim()
-  .nonempty("Campo obrigatorio")
+  .toUpperCase()
+  .nonempty("Campo obrigatório")
   .refine(
     (value) => /^\d{9}[A-Z]{2}\d{3}$/.test(value) || /^\d{10}$/.test(value),
-    "NIF inválido — use formato de pessoa singular ou coletiva",
+    "NIF inválido. Introduza o NIF de uma pessoa singular ou colectiva.",
   );
+
+export const optionalTaxNumberSchema = z.union([
+  taxNumberSchema,
+  z.literal(""),
+]).optional();
 
 export const phoneNumberSchema = z
   .string({ invalid_type_error: "Insira um número de telefone válido" })

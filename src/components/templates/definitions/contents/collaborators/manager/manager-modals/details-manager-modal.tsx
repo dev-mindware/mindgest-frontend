@@ -64,6 +64,15 @@ export function DetailsManagerModal() {
               Identificação e Empresa
             </h3>
             <DetailRow label="Empresa" value={currentManager.companyId} />
+            <DetailRow label="Código de Barras" value={currentManager.barcode} />
+            <DetailRow
+              label="Lojas"
+              value={
+                currentManager.stores?.length
+                  ? currentManager.stores.map((store) => store.name).join(", ")
+                  : "Nenhuma loja associada"
+              }
+            />
           </section>
         )}
 

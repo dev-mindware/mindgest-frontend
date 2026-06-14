@@ -33,7 +33,9 @@ export const cashSessionsService = {
   },
 
   getCurrentSession: async (id: string | undefined) => {
-    const { data } = await api.get<CashSession>("/cash-sessions/current");
+    const { data } = await api.get<CashSession>("/cash-sessions/current", {
+      params: id ? { storeId: id } : undefined,
+    });
     return data;
   },
 

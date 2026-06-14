@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Mindgest é um software de gestão e facturação para empresas, com controlo de vendas, clientes, produtos, stock, relatórios e emissão de documentos comerciais.",
+    "Mindgest é um software de gestão e facturação para empresas e profissionais em nome individual, com controlo de vendas, clientes, produtos, stock, relatórios e documentos comerciais.",
 
   applicationName: "Mindgest",
 
@@ -65,6 +65,8 @@ export const metadata: Metadata = {
     "POS",
     "SaaS Angola",
     "software para empresas",
+    "software para profissionais",
+    "software para pessoas singulares",
   ],
 
   authors: [
@@ -97,7 +99,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Mindgest | Software de gestão e facturação",
     description:
-      "Gira vendas, clientes, produtos, stock, relatórios e documentos comerciais num único software de gestão empresarial.",
+      "Empresas e profissionais podem gerir vendas, clientes, produtos, stock, relatórios e documentos comerciais num único software.",
     url: "https://mindgest.mindware.ao",
     siteName: "Mindgest",
     images: [
@@ -116,7 +118,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Mindgest | Software de gestão e facturação",
     description:
-      "Software de gestão empresarial para controlar vendas, clientes, produtos, stock e facturação.",
+      "Software de gestão e facturação para empresas e profissionais em nome individual.",
     images: ["/mindgest.png"],
   },
 
@@ -135,7 +137,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-AO"
       suppressHydrationWarning
       className={`${inter.variable} ${outfit.variable} ${roboto.variable} ${poppins.variable} ${plusJakartaSans.variable}`}
     >

@@ -46,7 +46,7 @@ export function PosCashierList({
       variant: "default" as const,
       onClick: () => {
         setCurrentCashier(item);
-        openModal("opening-cashier");
+        openModal("opening-cashier", { mode: "edit" });
       }
     },
     {

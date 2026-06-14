@@ -1,5 +1,17 @@
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+"use client";
+
+import { useEffect } from "react";
+import {
+  useMutation,
+  useQueryClient,
+  useQuery,
+  type QueryClient,
+} from "@tanstack/react-query";
 import { cashSessionsService } from "@/services/cash-sessions-service";
+import {
+  cashSessionRealtimeService,
+  type CashSessionRealtimePayload,
+} from "@/services/cash-session-realtime-service";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import {
   CashSession,
@@ -7,6 +19,19 @@ import {
   AuthorizeOpeningPayload,
 } from "@/types/cash-session";
 import { usePagination } from "@/hooks/common";
+
+function removeOpeningRequestFromCache(
+  queryClient: QueryClient,
+  requestId: string,
+) {
+  queryClient.setQueriesData(
+    { queryKey: ["opening-requests"] },
+    (requests: unknown) =>
+      Array.isArray(requests)
+        ? requests.filter((request) => request.id !== requestId)
+        : requests,
+  );
+}
 
 export function useGetCashSessions(params: any) {
   return usePagination<CashSession>({
@@ -23,7 +48,36 @@ export function useGetOpeningRequests(filters?: CashSessionRequestFilters) {
   });
 }
 
-export function useGetCurrentSession(storeId?: string) {
+export function useGetCurrentSession(
+  storeId?: string,
+  options: { realtime?: boolean } = {},
+) {
+  const queryClient = useQueryClient();
+  const realtime = options.realtime ?? true;
+
+  useEffect(() => {
+    if (!realtime) return;
+
+    const refreshCurrentSession = (payload?: CashSessionRealtimePayload) => {
+      const isPayloadObject = payload && typeof payload === "object";
+      const payloadStoreId =
+        isPayloadObject && "session" in payload
+          ? payload.session?.storeId || payload.storeId
+          : isPayloadObject
+            ? payload.storeId
+            : undefined;
+
+      if (storeId && payloadStoreId && payloadStoreId !== storeId) return;
+
+      queryClient.invalidateQueries({
+        queryKey: ["current-cash-session", storeId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
+    };
+
+    return cashSessionRealtimeService.subscribe(refreshCurrentSession);
+  }, [queryClient, realtime, storeId]);
+
   return useQuery({
     queryKey: ["current-cash-session", storeId],
     queryFn: () => cashSessionsService.getCurrentSession(storeId),
@@ -35,8 +89,13 @@ export function useOpenCashSession() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: any) => cashSessionsService.authorizeOpening(data),
-    onSuccess: () => {
+    mutationFn: ({ requestId: _requestId, ...data }: any) =>
+      cashSessionsService.authorizeOpening(data),
+    onSuccess: (_response, variables) => {
+      if (variables.requestId) {
+        removeOpeningRequestFromCache(queryClient, variables.requestId);
+      }
+      queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
       SucessMessage("Caixa aberto com sucesso!");
     },
@@ -73,14 +132,28 @@ export function useRejectOpeningRequest() {
   return useMutation({
     mutationFn: (requestId: string) =>
       cashSessionsService.rejectOpeningRequest(requestId),
+    onMutate: async (requestId) => {
+      await queryClient.cancelQueries({ queryKey: ["opening-requests"] });
+      const previousRequests = queryClient.getQueriesData({
+        queryKey: ["opening-requests"],
+      });
+
+      removeOpeningRequestFromCache(queryClient, requestId);
+      return { previousRequests };
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
       SucessMessage("Pedido recusado com sucesso.");
     },
-    onError: (error: any) => {
+    onError: (error: any, _requestId, context) => {
+      context?.previousRequests.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
       ErrorMessage(
         error?.response?.data?.message || "Não foi possível recusar o pedido.",
       );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
     },
   });
 }

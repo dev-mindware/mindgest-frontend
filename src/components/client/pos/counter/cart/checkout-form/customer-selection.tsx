@@ -1,6 +1,7 @@
 import { Icon } from "@/components";
 import { Input } from "@/components/ui/input";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
+import { isSelectableClient } from "@/utils";
 
 const phoneRegex = /^(92|99|91|95|93|94|97)\d{7}$/;
 
@@ -59,6 +60,7 @@ export function CustomerSelection({
                         </label>
                         <AsyncCreatableSelectField
                             endpoint="/clients"
+                            optionFilter={isSelectableClient}
                             label=""
                             placeholder="Procurar cliente..."
                             value={selectedClient}

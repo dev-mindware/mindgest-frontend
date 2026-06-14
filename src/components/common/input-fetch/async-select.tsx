@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   type FormEvent,
+  type ReactNode,
 } from "react";
 import CreatableSelect from "react-select/creatable";
 import { api } from "@/services/api";
@@ -24,7 +25,7 @@ interface Option {
 
 interface AsyncCreatableSelectProps {
   endpoint: string;
-  label: string;
+  label: ReactNode;
   placeholder?: string;
   value: Option | null;
   onChange: (option: Option | null) => void;
@@ -35,6 +36,8 @@ interface AsyncCreatableSelectProps {
   error?: string;
   inputId?: string;
   virtualKeyboardLayout?: "default" | "numeric";
+  optionFilter?: (item: any) => boolean;
+  queryParams?: Record<string, string | number | boolean | undefined>;
 }
 
 export function AsyncCreatableSelectField({
@@ -50,6 +53,8 @@ export function AsyncCreatableSelectField({
   error,
   inputId,
   virtualKeyboardLayout,
+  optionFilter,
+  queryParams,
 }: AsyncCreatableSelectProps) {
   const [inputValue, setInputValue] = useState("");
   const [debouncedSearch] = useDebounce(inputValue, 300);
@@ -80,6 +85,7 @@ export function AsyncCreatableSelectField({
             search: search || undefined,
             page: currentPage,
             limit: 5,
+            ...queryParams,
           },
         });
 
@@ -89,6 +95,7 @@ export function AsyncCreatableSelectField({
           : Array.isArray(raw)
             ? raw
             : [];
+        const visibleData = optionFilter ? data.filter(optionFilter) : data;
 
         const meta = raw?.meta || {};
         const totalCount = meta.total ?? raw?.total ?? 0;
@@ -103,7 +110,7 @@ export function AsyncCreatableSelectField({
         setTotal(totalCount);
 
         const fields = displayFieldsKey.split(",");
-        const mappedOptions = data.map((item: any) => ({
+        const mappedOptions = visibleData.map((item: any) => ({
           value: item.id,
           label: fields
             .map((field) => getNestedValue(item, field))
@@ -121,7 +128,7 @@ export function AsyncCreatableSelectField({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [endpoint, displayFieldsKey, minChars]
+    [endpoint, displayFieldsKey, minChars, optionFilter, queryParams]
   );
 
   // Only fetch on mount (initial load) or when the user explicitly interacts

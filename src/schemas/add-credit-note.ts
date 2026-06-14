@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { optionalTaxNumberSchema } from "./helps";
 
 const BaseCreditNoteSchema = z.object({
   notes: z.string().trim().optional(),
@@ -13,7 +14,7 @@ export const CorrectionSchema = BaseCreditNoteSchema.extend({
       name: z.string().trim().optional().or(z.literal("")),
       phone: z.string().trim().optional().or(z.literal("")),
       address: z.string().trim().optional().or(z.literal("")),
-      taxNumber: z.string().trim().optional().or(z.literal("")),
+      taxNumber: optionalTaxNumberSchema,
     }),
     items: z.array(
       z.object({
@@ -22,14 +23,14 @@ export const CorrectionSchema = BaseCreditNoteSchema.extend({
         description: z.string().optional(),
         sku: z.string().optional(),
         barcode: z.string().optional(),
-        quantity: z.number(),
-        price: z.number(),
+        quantity: z.number().positive("A quantidade deve ser superior a zero"),
+        price: z.number().positive("O preço deve ser superior a zero"),
         cost: z.number().optional(),
         type: z.enum(["PRODUCT", "SERVICE"]).optional(),
         unit: z.string().optional(),
         // Adicione outros campos se necessário, mas os básicos já estão aqui
       }),
-    ),
+    ).min(1, "Adicione, pelo menos, um item ao documento corrigido"),
     issueDate: z.string().trim().date(),
     dueDate: z.string().trim().optional(), // opcional para permitir esconder em factura-recibo
     total: z.number(),

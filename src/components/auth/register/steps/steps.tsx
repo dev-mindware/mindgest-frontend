@@ -92,11 +92,11 @@ export function RegisterForm() {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="relative grid min-h-svh lg:grid-cols-2">
+        <div className="relative grid h-dvh min-h-0 overflow-hidden lg:grid-cols-2">
           <HeroImageSide source="/login2.jpg" />
 
-          <div className="relative z-20 flex flex-col p-6 md:p-10">
-            <div className="max-w-xl mx-auto space-y-8 text-center md:w-[25rem] w-50">
+          <div className="relative z-20 flex min-h-0 flex-col p-4 md:p-6">
+            <div className="mx-auto w-full max-w-md text-center">
               <Stepper value={currentStep} onValueChange={setCurrentStep}>
                 {steps.map((step) => (
                   <StepperItem
@@ -114,7 +114,7 @@ export function RegisterForm() {
               </Stepper>
             </div>
 
-            <div className="flex flex-col gap-8 items-center justify-center flex-1">
+            <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4">
               <div className="w-full max-w-md">{renderCurrentForm()}</div>
 
               <NavigationButtons

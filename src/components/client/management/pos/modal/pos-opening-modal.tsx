@@ -7,13 +7,12 @@ import {
   Input,
   Button,
   Icon,
-  RHFSelect,
   Label,
   RequestError,
   TimeField,
   DateInput,
-  Textarea,
   InputCurrency,
+  Textarea,
 } from "@/components";
 import { useModal } from "@/stores";
 import { useGetStoresPaginated } from "@/hooks/entities";
@@ -22,11 +21,11 @@ import { cn } from "@/lib/utils";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
-import { SucessMessage, ErrorMessage, formatCurrency, parseCurrency } from "@/utils";
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
 import { parseTime } from "@internationalized/date";
 import { useAuth } from "@/hooks/auth";
+import { ErrorMessage } from "@/utils";
 
 function safeParseTime(timeStr: string) {
   try {
@@ -46,9 +45,13 @@ interface PosOpeningModalProps {
 }
 
 export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeningModalProps) {
-  const { closeModal } = useModal();
+  const { closeModal, open, modalData } = useModal();
   const { currentCashier, setCurrentCashier } = useCurrentCashierStore();
   const [storePage, setStorePage] = useState(1);
+
+  // This modal serves both IDs: regular "opening-cashier" and "opening-cashier-from-request" (approve flow)
+  const isFromRequest = !!(currentCashier as any)?._fromRequest;
+  const modalId = open["opening-cashier-from-request"] ? "opening-cashier-from-request" : "opening-cashier";
 
   const {
     data: storesData,
@@ -75,10 +78,8 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
       initialCapital: "",
       workTime: "06:00",
       storeId: "",
-      // No selfSessionMode, o cashierId do próprio gestor é injetado depois de obter o user
       cashierIds: [],
-      fundType: "Coin",
-      reason: "",
+      fundType: "Cash",
     },
   });
 
@@ -109,7 +110,10 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
     return opts;
   }, [allCashiers, user]);
 
-  const isEdit = !!currentCashier;
+  const isEdit =
+    modalData[modalId]?.mode === "edit" &&
+    !!currentCashier &&
+    !isFromRequest;
 
   // No selfSessionMode, injeta o id do utilizador logado nos cashierIds ao montar
   useEffect(() => {
@@ -119,19 +123,22 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
   }, [selfSessionMode, user, setValue]);
 
   useEffect(() => {
-    if (isEdit && currentCashier) {
-      // Normalize fundType from API (e.g. "COIN" -> "Coin", "NOTE" -> "Note")
-      const normalizedFundType = currentCashier.fundType
-        ? currentCashier.fundType.charAt(0).toUpperCase() + currentCashier.fundType.slice(1).toLowerCase()
-        : "Coin";
-
+    if (isFromRequest && currentCashier) {
+      // Pre-fill from request: user + store already known
+      reset({
+        initialCapital: "",
+        workTime: "06:00",
+        storeId: (currentCashier as any).storeId || "",
+        cashierIds: (currentCashier as any).userId ? [(currentCashier as any).userId] : [],
+        fundType: "Cash",
+      });
+    } else if (isEdit && currentCashier) {
       reset({
         initialCapital: (currentCashier.openingCash || 0).toString(),
         workTime: currentCashier.workTime || "06:00",
         storeId: currentCashier.storeId || "",
         cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
-        fundType: normalizedFundType,
-        reason: "",
+        fundType: "Cash",
       });
     } else if (!selfSessionMode) {
       reset({
@@ -139,11 +146,10 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         workTime: "06:00",
         storeId: "",
         cashierIds: [],
-        fundType: "Coin",
-        reason: "",
+        fundType: "Cash",
       });
     }
-  }, [isEdit, currentCashier, reset, selfSessionMode]);
+  }, [isEdit, isFromRequest, currentCashier, reset, selfSessionMode]);
 
   const selectedCashierIds = watch("cashierIds") || [];
 
@@ -151,6 +157,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
     reset();
     setCurrentCashier(null);
     closeModal("opening-cashier");
+    closeModal("opening-cashier-from-request");
   };
 
   const onSubmit = async (data: PosOpeningFormData) => {
@@ -169,6 +176,9 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         const payload = {
           ...data,
           fundType: data.fundType?.toUpperCase(),
+          ...(isFromRequest && (currentCashier as any)?._requestId
+            ? { requestId: (currentCashier as any)._requestId }
+            : {}),
         };
         await openSession(payload);
       }
@@ -181,7 +191,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
 
   if (isLoadingStores) {
     return (
-      <GlobalModal id="opening-cashier" title="Abertura de Caixa" canClose>
+      <GlobalModal id={modalId} title="Abertura de Caixa" canClose>
         <div className="p-8 text-center flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-muted-foreground font-medium">
@@ -194,7 +204,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
 
   if (storesError) {
     return (
-      <GlobalModal id="opening-cashier" title="Abertura de Caixa" canClose className="!w-max">
+      <GlobalModal id={modalId} title="Abertura de Caixa" canClose className="!w-max">
         <div className="p-4">
           <RequestError
             refetch={refetchStores}
@@ -207,32 +217,38 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
 
   return (
     <GlobalModal
-      id="opening-cashier"
-      title={isEdit ? "Editar configuração de caixa" : "Abertura de caixa"}
+      id={modalId}
+      title={isFromRequest ? "Aprovar pedido de abertura" : isEdit ? "Editar configuração de caixa" : "Abertura de caixa"}
       description={
-        isEdit
-          ? "Edite as configurações da sessão deste caixa"
-          : "Abra o caixa e acompanhe o fluxo de vendas dos seus colaboradores."
+        isFromRequest
+          ? "Defina o capital inicial e a loja para autorizar este pedido."
+          : isEdit
+            ? "Edite as configurações da sessão deste caixa"
+            : "Abra o caixa e acompanhe o fluxo de vendas dos seus colaboradores."
       }
       canClose
-      className="sm:max-w-[600px]"
+      className="!max-h-[85vh] !w-max"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2 col-span-1">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 sm:w-[35rem] sm:grid-cols-2">
+          <div className="col-span-1 space-y-2">
             <Controller
               name="initialCapital"
               control={control}
-              render={({ field: { onChange, value, ref } }) => (
+              render={({ field }) => (
                 <InputCurrency
-                  ref={ref}
+                  ref={field.ref}
+                  value={field.value}
+                  decimalScale={2}
+                  fixedDecimalScale
+                  placeholder="0,00 Kz"
+                  allowNegative={false}
                   label="Capital Inicial"
-                  placeholder="0,00"
-                  value={Number(value || 0)}
-                  onValueChange={(val) => {
-                    onChange(val.toString());
-                  }}
+                  startIcon="CircleDollarSign"
                   error={errors.initialCapital?.message}
+                  onValueChange={(value) => {
+                    field.onChange(value ? String(value) : "");
+                  }}
                 />
               )}
             />
@@ -243,9 +259,9 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
               control={control}
               render={({ field }) => (
                 <div className="space-y-2">
-                  <Label>Tempo de Expediente</Label>
+                  <Label>Tempo de expediente</Label>
                   <TimeField
-                    aria-label="Tempo de Expediente"
+                    aria-label="Tempo de expediente"
                     hourCycle={24}
                     className="w-full"
                     isDisabled={isEdit}
@@ -269,21 +285,8 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
             />
           </div>
 
-          <div className="space-y-2 col-span-1">
-            <RHFSelect
-              name="fundType"
-              control={control}
-              label="Tipo de Fundo"
-              placeholder="Seleccione o tipo"
-              disabled={isEdit}
-              options={[
-                { label: "Moeda", value: "Coin" },
-                { label: "Nota", value: "Note" },
-              ]}
-            />
-          </div>
 
-          <div className="col-span-1">
+          <div className="col-span-1 space-y-2">
             <Controller
               name="storeId"
               control={control}
@@ -309,33 +312,32 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
             )}
           </div>
 
-          <div className="col-span-1 md:col-span-2">
-            <Controller
-              name="cashierIds"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  label="Caixas Disponíveis para Abertura"
-                  placeholder="Escolha os caixas"
-                  options={allCashiers.map((c) => ({
-                    label: `${c.name} (${c.email})`,
-                    value: c.id,
-                  }))}
-                  isDisabled={isEdit}
-                  value={allCashiers
-                    .filter((c) => field.value?.includes(c.id))
-                    .map((c) => ({ label: c.name, value: c.id }))}
-                  onChange={(options) =>
-                    field.onChange(options.map((opt) => opt.value))
-                  }
-                  isLoading={isLoadingCashiers}
-                  error={errors.cashierIds?.message}
-                />
-              )}
-            />
-          </div>
+          {/* No selfSessionMode ou fromRequest o select de caixas é ocultado */}
+          {!selfSessionMode && !isFromRequest && (
+            <div className="col-span-1 md:col-span-2">
+              <Controller
+                name="cashierIds"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelect
+                    label="Caixas Disponíveis para Abertura"
+                    placeholder="Escolha os caixas"
+                    options={cashierOptions}
+                    isDisabled={isEdit}
+                    value={cashierOptions.filter((opt) => field.value?.includes(opt.value))}
+                    onChange={(options) =>
+                      field.onChange(options.map((opt) => opt.value))
+                    }
+                    isLoading={isLoadingCashiers}
+                    error={errors.cashierIds?.message}
+                  />
+                )}
+              />
+            </div>
+          )}
 
-          {isEdit && (
+          {/* Banner: selfSessionMode (gestor abre para si) */}
+          {selfSessionMode && user && (
             <div className="col-span-1 md:col-span-2">
               <Textarea
                 label="Razão da Edição"
@@ -345,9 +347,28 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
               />
             </div>
           )}
+
+          {/* Banner: pedido aprovado — mostra o colaborador solicitante */}
+          {isFromRequest && currentCashier && (
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-400/8 border border-amber-400/25">
+                <div className="w-10 h-10 rounded-full bg-amber-400/15 flex items-center justify-center font-bold text-amber-600 shrink-0">
+                  {(currentCashier as any).user?.name?.charAt(0)?.toUpperCase() || "?"}
+                </div>
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Colaborador solicitante</p>
+                  <p className="text-sm font-bold">{(currentCashier as any).user?.name}</p>
+                  <p className="text-xs text-muted-foreground">{(currentCashier as any).user?.email}</p>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-400/15 text-amber-600">
+                  Aguarda aprovação
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-muted-foreground/5">
+        <div className="flex justify-end gap-3 border-t pt-4">
           <Button type="button" variant="outline" onClick={handleClose}>
             Cancelar
           </Button>

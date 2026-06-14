@@ -67,6 +67,8 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
      ```
    - Preencha as variáveis no ficheiro `.env`:
      - `NEXT_PUBLIC_API_URL`: URL da API do backend.
+     - `NEXT_PUBLIC_CASH_SESSION_SOCKET_URL`: URL opcional do servidor Socket.IO das sessões de caixa.
+     - `NEXT_PUBLIC_CASH_SESSION_SOCKET_EVENT`: nome opcional do evento de actualização da sessão de caixa.
      - `SESSION_SECRET`: Um segredo seguro para a sessão (mínimo 32 caracteres).
 
 3. **Executar em Desenvolvimento**:

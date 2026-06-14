@@ -195,7 +195,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   const cleanPayload = (data: ItemFormData) => {
     return {
       ...data,
-      taxId: data.taxId === "none" ? undefined : data.taxId || undefined,
+      taxId: data.taxId,
       cost: data.cost ?? undefined,
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
@@ -263,7 +263,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
               name="taxId"
               render={({ field: { onChange, value } }) => (
                 <PaginatedSelect
-                  label="Imposto (Opcional)"
+                  label="Imposto"
                   value={value}
                   options={finalTaxOptions}
                   onChange={onChange}
@@ -272,6 +272,7 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                   onPageChange={setTaxPage}
                   placeholder="Seleccione um imposto"
                   className="w-full"
+                  error={errors.taxId?.message}
                 />
               )}
             />

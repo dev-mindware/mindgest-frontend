@@ -50,7 +50,7 @@ export function OnboardingTourButton({
             )}
           >
             <Icon name="CircleHelp" className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Ver tour</span>
+            <span className="hidden sm:inline">Ver guia</span>
             <Icon name="ChevronDown" className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
@@ -61,14 +61,14 @@ export function OnboardingTourButton({
           <TourModeItem
             mode="normal"
             icon="Map"
-            label="Tour normal"
+            label="Guia normal"
             description="Explica o fluxo sem preencher campos."
             onSelect={startTour}
           />
           <TourModeItem
             mode="demo"
             icon="Sparkles"
-            label="Demo guiada"
+            label="Demonstração guiada"
             description="Preenche dados de teste e limpa ao sair. Não executa acções."
             onSelect={startTour}
           />
@@ -91,7 +91,7 @@ export function OnboardingTourButton({
           onClick={() => startTour("normal")}
         >
           <Icon name="CircleHelp" className="h-4 w-4 text-primary" />
-          <span className="hidden sm:inline">Ver tour</span>
+          <span className="hidden sm:inline">Ver guia</span>
         </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom">
