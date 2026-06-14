@@ -39,20 +39,23 @@ export function PosCashierList({
   const { openModal } = useModal();
   const { setCurrentCashier } = useCurrentCashierStore();
 
-  const sessionActions = (item: CashSession) => [
-    {
-      label: "Editar",
-      icon: "Pencil" as const,
-      variant: "default" as const,
-      onClick: () => {
-        setCurrentCashier(item);
-        openModal("opening-cashier", { mode: "edit" });
-      }
-    },
-    {
-      type: "separator" as const
-    },
-    {
+  const sessionActions = (item: CashSession) => {
+    const actions = [];
+    if (item.isOpen) {
+      actions.push({
+        label: "Editar",
+        icon: "Pencil" as const,
+        variant: "default" as const,
+        onClick: () => {
+          setCurrentCashier(item);
+          openModal("opening-cashier", { mode: "edit" });
+        }
+      });
+      actions.push({
+        type: "separator" as const
+      });
+    }
+    actions.push({
       label: "Apagar",
       icon: "Trash2" as const,
       variant: "destructive" as const,
@@ -60,8 +63,9 @@ export function PosCashierList({
         setCurrentCashier(item);
         openModal("delete-cashier");
       }
-    }
-  ];
+    });
+    return actions;
+  };
 
   const columns: Column<CashSession>[] = [
     {

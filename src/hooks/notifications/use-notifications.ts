@@ -123,6 +123,9 @@ export function useNotifications(
       playNotificationSound();
       showBrowserNotification(newNotification);
 
+      // Invalida os pedidos de abertura para atualizar instantaneamente na tela do gerente
+      queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
+
       queryClient.setQueryData<any>(
         ["notifications", initialFilters],
         (oldData: any) => {
