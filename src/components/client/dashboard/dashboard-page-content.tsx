@@ -16,14 +16,17 @@ export function DashboardPageContent() {
     <PageWrapper
       routeLabel={isOwner ? "Dashboard Global" : "Dashboard Loja"}
       subRoute={isOwner ? "Visão do Proprietário" : "Visão do Gerente"}
+      onboardingTourId="dashboard"
     >
-      <TitleList
-        suTitle={
-          isOwner
-            ? "Painel Consolidado da Empresa"
-            : `Painel da Loja ${user?.store?.name || ""}`
-        }
-      />
+      <div data-tour="dashboard-header">
+        <TitleList
+          suTitle={
+            isOwner
+              ? "Painel Consolidado da Empresa"
+              : `Painel da Loja ${user?.store?.name || ""}`
+          }
+        />
+      </div>
 
       <div className="mt-4">
         {isOwner ? <OwnerDashboardView /> : <ManagerDashboardView />}

@@ -4,7 +4,7 @@ import type { OnboardingTourId } from "@/constants/onboarding-tours";
 
 export type OnboardingTourSeenStatus = "completed" | "skipped";
 
-type OnboardingScopePreferences = {
+export type OnboardingScopePreferences = {
   autoStartEnabled: boolean;
   tourButtonEnabled: boolean;
   seenTours: Partial<Record<OnboardingTourId, OnboardingTourSeenStatus>>;
@@ -13,6 +13,10 @@ type OnboardingScopePreferences = {
 type OnboardingPreferencesState = {
   preferencesByScope: Record<string, OnboardingScopePreferences>;
   getPreferences: (scope: string) => OnboardingScopePreferences;
+  hydratePreferences: (
+    scope: string,
+    preferences: Partial<OnboardingScopePreferences>,
+  ) => void;
   setAutoStartEnabled: (scope: string, enabled: boolean) => void;
   setTourButtonEnabled: (scope: string, enabled: boolean) => void;
   markTourCompleted: (scope: string, tourId: OnboardingTourId) => void;
@@ -46,6 +50,13 @@ export const useOnboardingPreferencesStore =
         preferencesByScope: {},
         getPreferences: (scope) =>
           mergeWithDefaults(get().preferencesByScope[scope]),
+        hydratePreferences: (scope, preferences) =>
+          set((state) => ({
+            preferencesByScope: {
+              ...state.preferencesByScope,
+              [scope]: mergeWithDefaults(preferences),
+            },
+          })),
         setAutoStartEnabled: (scope, enabled) =>
           set((state) => ({
             preferencesByScope: {

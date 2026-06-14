@@ -316,18 +316,20 @@ export function ProformaForm({
           "grid gap-6 md:grid-cols-2": !isEdit,
         })}
       > */}
-        <AsyncCreatableSelectField
-          endpoint="/clients"
-          optionFilter={isSelectableClient}
-          label="Cliente"
-          placeholder="Digite o nome do cliente..."
-          value={selectedClient}
-          onChange={handleClientChange}
-          displayFields={["name", "email"]}
-          minChars={2}
-          formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
-          error={errors.client?.name?.message}
-        />
+        <div data-tour={isEdit ? "proforma-edit-client" : undefined}>
+          <AsyncCreatableSelectField
+            endpoint="/clients"
+            optionFilter={isSelectableClient}
+            label="Cliente"
+            placeholder="Digite o nome do cliente..."
+            value={selectedClient}
+            onChange={handleClientChange}
+            displayFields={["name", "email"]}
+            minChars={2}
+            formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
+            error={errors.client?.name?.message}
+          />
+        </div>
         <input type="hidden" {...register("clientId")} />
         <input type="hidden" {...register("client.name")} />
       </div>
@@ -358,16 +360,18 @@ export function ProformaForm({
         </div>
       )}
 
-      <InvoiceItems
-        totals={totals}
-        fieldArray={fieldArray}
-        globalRetention={globalRetention ?? 0}
-        setGlobalRetention={setGlobalRetention}
-        globalDiscount={globalDiscount ?? 0}
-        setGlobalDiscount={setGlobalDiscount}
-      />
+      <div data-tour={isEdit ? "proforma-edit-items" : undefined}>
+        <InvoiceItems
+          totals={totals}
+          fieldArray={fieldArray}
+          globalRetention={globalRetention ?? 0}
+          setGlobalRetention={setGlobalRetention}
+          globalDiscount={globalDiscount ?? 0}
+          setGlobalDiscount={setGlobalDiscount}
+        />
+      </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2" data-tour={isEdit ? "proforma-edit-notes" : undefined}>
         <Textarea
           {...register("notes")}
           placeholder="Adicione observações sobre esta proforma (opcional)"
@@ -400,17 +404,19 @@ export function ProformaForm({
           </Button>
         )}
 
-        <Button
-          type="submit"
-          disabled={isSubmitting || isLoading}
-          className="min-w-[150px]"
-        >
-          {isLoading || isSubmitting
-            ? "A processar..."
-            : isEdit
-              ? "Guardar alterações"
-              : "Criar Proforma"}
-        </Button>
+        <span data-tour={isEdit ? "proforma-edit-submit" : undefined}>
+          <Button
+            type="submit"
+            disabled={isSubmitting || isLoading}
+            className="min-w-[150px]"
+          >
+            {isLoading || isSubmitting
+              ? "A processar..."
+              : isEdit
+                ? "Guardar alterações"
+                : "Criar Proforma"}
+          </Button>
+        </span>
       </div>
     </form>
   );

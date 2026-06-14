@@ -3,16 +3,21 @@ import type { PlanType, Role } from "@/types";
 
 export type OnboardingTourId =
   | "setup"
+  | "dashboard"
   | "clients"
   | "items"
   | "documents-list"
   | "normal-invoice"
+  | "proforma-edit"
+  | "credit-note"
   | "stock"
   | "pos-invoice"
   | "pos-settings"
   | "pos-movements"
   | "pos-management"
   | "suppliers"
+  | "supplier-details"
+  | "supplier-history"
   | "reservations"
   | "reports-sales"
   | "reports-clients"
@@ -63,6 +68,7 @@ export type TourStepDefinition = {
 
 export type TourDefinition = {
   id: OnboardingTourId;
+  version: number;
   title: string;
   group: OnboardingTourGroup;
   type: OnboardingTourType;
@@ -77,7 +83,7 @@ export type OnboardingDriveStep = DriveStep & {
   demo?: OnboardingTourDemo;
 };
 
-type TourConfig = Omit<TourDefinition, "id">;
+type TourConfig = Omit<TourDefinition, "id" | "version"> & { version?: number };
 type StepOptions = Pick<TourStepDefinition, "side" | "align" | "demo">;
 
 const TOUR_ROLES = {
@@ -107,6 +113,7 @@ function tourStep(
 function defineTour(id: OnboardingTourId, config: TourConfig): TourDefinition {
   return {
     id,
+    version: config.version ?? 1,
     ...config,
   };
 }
@@ -195,6 +202,47 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     ],
   }),
 
+  dashboard: defineTour("dashboard", {
+    title: "Leitura do painel",
+    group: "core",
+    type: "core",
+    priority: 2,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "dashboard-header",
+        "Visão operacional",
+        "Comece por confirmar se está a consultar os dados globais da empresa ou apenas os dados da loja associada.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "dashboard-summary",
+        "Indicadores principais",
+        "Compare produtos vendidos, serviços prestados e valores facturados. Utilize as variações para identificar mudanças que exigem atenção.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "dashboard-revenue",
+        "Evolução da facturação",
+        "Observe a evolução por período para reconhecer crescimento, quebras e sazonalidade antes de consultar os detalhes.",
+        { side: "top" },
+      ),
+      tourStep(
+        "dashboard-distribution",
+        "Distribuição das vendas",
+        "Compare o peso de produtos e serviços na receita para perceber a composição do negócio.",
+        { side: "left" },
+      ),
+      tourStep(
+        "dashboard-recent-sales",
+        "Vendas recentes",
+        "Confirme os últimos movimentos, respectivos valores e estados para detectar rapidamente situações pendentes.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
   clients: defineTour("clients", {
     title: "Gestão de clientes",
     group: "core",
@@ -216,9 +264,15 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
         { side: "left" },
       ),
       tourStep(
+        "clients-filters",
+        "Pesquisar e filtrar",
+        "Pesquise por dados do cliente e combine estado, ordenação e período de criação para reduzir a lista.",
+        { side: "bottom" },
+      ),
+      tourStep(
         "clients-list",
-        "Lista e pesquisa",
-        "Pesquise, consulte e edite clientes existentes sem duplicar dados durante a emissão de documentos.",
+        "Consultar e actualizar",
+        "Abra o menu de acções para consultar detalhes, corrigir dados ou alterar o estado. Actualize aqui os dados que devem aparecer em documentos futuros.",
         { side: "top" },
       ),
     ],
@@ -389,6 +443,88 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     ],
   }),
 
+  "proforma-edit": defineTour("proforma-edit", {
+    title: "Editar proforma",
+    group: "core",
+    type: "core",
+    priority: 6,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "proforma-edit-header",
+        "Rever a proforma",
+        "Confirme a referência do documento antes de alterar cliente, itens ou condições comerciais.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "proforma-edit-client",
+        "Cliente associado",
+        "Seleccione o cliente correcto. Os dados de um cliente existente devem ser actualizados na área de clientes.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "proforma-edit-items",
+        "Itens e quantidades",
+        "Adicione ou remova itens e ajuste as quantidades directamente na lista antes de guardar.",
+        { side: "top" },
+      ),
+      tourStep(
+        "proforma-edit-notes",
+        "Observações comerciais",
+        "Registe condições, prazos ou informações que devam acompanhar a proforma.",
+        { side: "top" },
+      ),
+      tourStep(
+        "proforma-edit-submit",
+        "Guardar alterações",
+        "Reveja os totais antes de guardar. O guia nunca submete o formulário nem altera o documento.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "credit-note": defineTour("credit-note", {
+    title: "Emitir nota de crédito",
+    group: "core",
+    type: "core",
+    priority: 7,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Base",
+    steps: [
+      tourStep(
+        "credit-note-reason",
+        "Escolher o motivo",
+        "Seleccione Correcção para ajustar valores ou Anulação total para reverter integralmente o documento.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "credit-note-client",
+        "Dados do cliente",
+        "A nota mantém o cliente do documento original. Para corrigir estes dados, actualize primeiro o registo na área de clientes.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "credit-note-items",
+        "Corrigir itens",
+        "Ajuste quantidades e preços, remova linhas indevidas ou acrescente itens existentes no catálogo.",
+        { side: "top" },
+      ),
+      tourStep(
+        "credit-note-totals",
+        "Conferir a diferença",
+        "Compare o valor a creditar com o total final do documento corrigido antes de continuar.",
+        { side: "top" },
+      ),
+      tourStep(
+        "credit-note-submit",
+        "Emitir a nota",
+        "Confirme o motivo, as notas e os valores. O guia não emite nem anula documentos automaticamente.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
   stock: defineTour("stock", {
     title: "Gestão de stock",
     group: "operation",
@@ -513,13 +649,13 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-payment-change",
         "Troco",
-        "Confirme o troco antes de abrir a pré-visualização e concluir a venda.",
+        "Confirme o troco antes de concluir a venda. Depois da emissão, o POS pergunta se pretende imprimir o documento.",
         { side: "left" },
       ),
       tourStep(
         "pos-submit",
         "Confirmar pagamento",
-        "Este botão abre a confirmação da venda. O guia apenas explica o passo, sem emitir documentos.",
+        "Este botão confirma a venda. Após a emissão, pode imprimir directamente numa impressora térmica ou utilizar a impressão do navegador. O guia nunca executa esta acção.",
         { side: "top" },
       ),
     ],
@@ -572,7 +708,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-settings-session-metrics",
         "Resumo da sessão",
-        "Leia total vendido, tempo decorrido, fundo de maneio e responsável antes de fechar ou continuar a operar.",
+        "Leia o total vendido, o término previsto, o fundo de maneio e o responsável antes de fechar ou continuar a operar.",
         { side: "top" },
       ),
       tourStep(
@@ -636,8 +772,8 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       ),
       tourStep(
         "pos-movements-list",
-        "Listagem",
-        "Utilize as acções da lista para consultar, descarregar ou acompanhar os documentos emitidos.",
+        "Filtros e documentos",
+        "Em cada separador, filtre a listagem antes de abrir o menu de acções. Pode consultar o documento, emitir uma nota de crédito autorizada ou duplicar quando permitido.",
         { side: "top" },
       ),
     ],
@@ -707,6 +843,70 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     ],
   }),
 
+  "supplier-details": defineTour("supplier-details", {
+    title: "Detalhe do fornecedor",
+    group: "advanced",
+    type: "advanced",
+    priority: 14,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Pro",
+    steps: [
+      tourStep(
+        "supplier-details-header",
+        "Fornecedor seleccionado",
+        "Confirme a identidade e o estado do fornecedor antes de registar movimentos de stock.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "supplier-details-actions",
+        "Entrada e histórico",
+        "Registe uma nova entrada para actualizar o stock ou abra o histórico para conferir abastecimentos anteriores.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "supplier-details-tabs",
+        "Dados e produtos",
+        "Utilize Informações para validar os contactos e Produtos para consultar os itens associados ao fornecedor.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "supplier-details-content",
+        "Informação operacional",
+        "Reveja dados fiscais, contactos, estado e produtos antes de efectuar uma reposição.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
+  "supplier-history": defineTour("supplier-history", {
+    title: "Histórico do fornecedor",
+    group: "advanced",
+    type: "advanced",
+    priority: 15,
+    roles: TOUR_ROLES.ownerManager,
+    minPlan: "Pro",
+    steps: [
+      tourStep(
+        "supplier-history-header",
+        "Histórico de entradas",
+        "Esta página reúne os abastecimentos registados para o fornecedor seleccionado.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "supplier-history-summary",
+        "Indicadores do período",
+        "Compare número de entradas, valor, quantidades e produtos distintos para avaliar a relação de fornecimento.",
+        { side: "bottom" },
+      ),
+      tourStep(
+        "supplier-history-list",
+        "Detalhe dos custos",
+        "Consulte factura, produto, loja, quantidade e variação de custo por entrada. Utilize a paginação para rever períodos anteriores.",
+        { side: "top" },
+      ),
+    ],
+  }),
+
   reservations: defineTour("reservations", {
     title: "Reservas",
     group: "advanced",
@@ -724,8 +924,20 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "reservations-calendar",
         "Calendário",
-        "Use o calendário para visualizar, criar e acompanhar reservas por data.",
+        "Utilize os controlos para regressar ao dia actual, navegar entre períodos e alternar entre mês e semana.",
         { side: "top", demo: "reservations-calendar-view" },
+      ),
+      tourStep(
+        "reservations-events",
+        "Consultar uma reserva",
+        "Seleccione um evento para rever item, quantidade, período e estado. As alterações e cancelamentos exigem confirmação explícita.",
+        { side: "top" },
+      ),
+      tourStep(
+        "reservations-empty-state",
+        "Sem reservas no período",
+        "Quando não existirem eventos, altere o período ou crie a reserva a partir da gestão de stock do item.",
+        { side: "top" },
       ),
     ],
   }),

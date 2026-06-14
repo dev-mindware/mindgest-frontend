@@ -198,7 +198,7 @@ export function ItemsSummarySection({
         )}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2" data-tour="credit-note-totals">
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
           <h3 className="text-sm font-semibold">Valor da nota de crédito</h3>
           <div className="mt-4 space-y-2 text-sm">

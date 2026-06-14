@@ -196,7 +196,7 @@ export function SupplierStockHistory({ supplierId }: { supplierId: string }) {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-tour="supplier-history-summary">
         <MetricCard
           icon="Receipt"
           label="Entradas"
@@ -224,17 +224,19 @@ export function SupplierStockHistory({ supplierId }: { supplierId: string }) {
         />
       </div>
 
-      <GenericTable
-        page={page}
-        total={total}
-        columns={columns}
-        setPage={setPage}
-        data={flattenedItems}
-        totalPages={totalPages}
-        goToNextPage={goToNextPage}
-        goToPreviousPage={goToPreviousPage}
-        emptyMessage="Nenhuma entrada registada."
-      />
+      <div data-tour="supplier-history-list">
+        <GenericTable
+          page={page}
+          total={total}
+          columns={columns}
+          setPage={setPage}
+          data={flattenedItems}
+          totalPages={totalPages}
+          goToNextPage={goToNextPage}
+          goToPreviousPage={goToPreviousPage}
+          emptyMessage="Nenhuma entrada registada."
+        />
+      </div>
     </div>
   );
 }

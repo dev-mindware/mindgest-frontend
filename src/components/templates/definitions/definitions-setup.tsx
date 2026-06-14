@@ -75,7 +75,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Bell",
       component: <Notification />,
       category: "general",
-      isVisible: isActive && isOwner,
+      isVisible: isActive,
     },
     {
       id: "subscription",

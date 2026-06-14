@@ -1,116 +1,266 @@
 "use client";
+
+import { useEffect, useState } from "react";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Icon,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Separator,
-  Label,
   Switch,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { useNotificationSettingsStore } from "@/stores/notifications/notification-settings-store";
+import { useNotificationSettingsStore } from "@/stores";
+import { ErrorMessage, SucessMessage } from "@/utils/messages";
+
+const SOUND_OPTIONS = [
+  {
+    value: "/sound-effects/notification-1.mp3",
+    label: "Clássico",
+  },
+  {
+    value: "/notification-2.mp3",
+    label: "Suave",
+  },
+  {
+    value: "/sound-effects/notification-3.mp3",
+    label: "Breve",
+  },
+] as const;
+
+type BrowserPermission = NotificationPermission | "unsupported";
+
+function getBrowserPermission(): BrowserPermission {
+  if (typeof window === "undefined" || !("Notification" in window)) {
+    return "unsupported";
+  }
+
+  return window.Notification.permission;
+}
 
 export function Notification() {
-  const { pushEnabled, badgeEnabled, setPushEnabled, setBadgeEnabled } =
-    useNotificationSettingsStore();
+  const {
+    soundEnabled,
+    soundType,
+    browserNotificationsEnabled,
+    badgeEnabled,
+    setSoundEnabled,
+    setSoundType,
+    setBrowserNotificationsEnabled,
+    setBadgeEnabled,
+  } = useNotificationSettingsStore();
+  const [browserPermission, setBrowserPermission] =
+    useState<BrowserPermission>("unsupported");
+
+  useEffect(() => {
+    setBrowserPermission(getBrowserPermission());
+  }, []);
+
+  const previewSound = () => {
+    const audio = new Audio(soundType);
+    audio.volume = 0.5;
+    audio.play().catch(() => {
+      ErrorMessage("O navegador não permitiu reproduzir o som.");
+    });
+  };
+
+  const requestBrowserPermission = async () => {
+    if (getBrowserPermission() === "unsupported") return;
+
+    const permission = await window.Notification.requestPermission();
+    setBrowserPermission(permission);
+
+    if (permission === "granted") {
+      setBrowserNotificationsEnabled(true);
+      SucessMessage("Notificações do navegador activadas.");
+      return;
+    }
+
+    setBrowserNotificationsEnabled(false);
+    if (permission === "denied") {
+      ErrorMessage(
+        "A permissão foi bloqueada. Pode alterá-la nas definições do navegador.",
+      );
+    }
+  };
+
+  const handleBrowserNotificationsChange = (enabled: boolean) => {
+    if (!enabled) {
+      setBrowserNotificationsEnabled(false);
+      return;
+    }
+
+    if (browserPermission === "granted") {
+      setBrowserNotificationsEnabled(true);
+      return;
+    }
+
+    void requestBrowserPermission();
+  };
+
+  const browserNotificationsAvailable = browserPermission !== "unsupported";
+  const browserNotificationsBlocked = browserPermission === "denied";
 
   return (
-    <div>
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Notificações</h2>
-          <p className="text-sm text-muted-foreground">
-            Personalize a forma como recebe notificações no Mindgest.
-          </p>
-        </div>
-        <Separator />
+    <section className="space-y-6" data-tour="setup-notifications-content">
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold tracking-tight">Notificações</h2>
+        <p className="text-sm text-muted-foreground">
+          Configure os alertas deste navegador e a forma como são apresentados.
+        </p>
+      </div>
 
-        <div className="space-y-6 md:p-8">
-          <SettingRow
-            label="Activar notificações"
-            description="Receber notificações sobre mensagens, facturas e documentos."
-            control={
-              <Switch checked={pushEnabled} onCheckedChange={setPushEnabled} />
-            }
-          />
+      <Separator />
 
-          <Separator />
+      <div className="rounded-lg border bg-card p-5 shadow-sm">
+        <SettingRow
+          icon="Volume2"
+          label="Som das notificações"
+          description="Reproduzir um aviso sonoro quando chegar uma nova notificação."
+          control={
+            <Switch
+              checked={soundEnabled}
+              onCheckedChange={setSoundEnabled}
+              aria-label="Reproduzir som das notificações"
+            />
+          }
+        />
 
-          <SettingRow
-            label="Activar indicador de notificação não lida"
-            description="Apresentar um emblema no ícone de notificação quando tem mensagens não lidas"
-            disabled={!pushEnabled}
-            control={
-              <Switch
-                checked={badgeEnabled}
-                onCheckedChange={setBadgeEnabled}
-                disabled={!pushEnabled}
-              />
-            }
-          />
+        <Separator className="my-5" />
 
-          <Separator />
-        </div>
-      </section>
+        <SettingRow
+          icon="AudioLines"
+          label="Som do alerta"
+          description="Escolha e teste o som usado neste dispositivo."
+          disabled={!soundEnabled}
+          control={
+            <div className="flex w-full items-center gap-2 sm:w-auto">
+              <Select
+                value={soundType}
+                onValueChange={setSoundType}
+                disabled={!soundEnabled}
+              >
+                <SelectTrigger className="w-full sm:w-40" aria-label="Som do alerta">
+                  <SelectValue placeholder="Seleccionar som" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SOUND_OPTIONS.map((sound) => (
+                    <SelectItem key={sound.value} value={sound.value}>
+                      {sound.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                disabled={!soundEnabled}
+                onClick={previewSound}
+                aria-label="Ouvir som seleccionado"
+                title="Ouvir som"
+              >
+                <Icon name="Play" className="h-4 w-4" />
+              </Button>
+            </div>
+          }
+        />
 
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Alertas no Email</h2>
-          <p className="text-sm text-muted-foreground">
-            Personalize a forma como recebe mensagens no seu email.
-          </p>
-        </div>
-        <Separator />
+        <Separator className="my-5" />
 
-        <div className="space-y-6 md:p-8">
-          <SettingRow
-            label="E-mails de comunicação"
-            description="Recebe mensagens de alertas simples, receitas, despesas e irregularidades"
-            control={<Switch />}
-          />
+        <SettingRow
+          icon="CircleDot"
+          label="Indicador de não lidas"
+          description="Mostrar no sino a quantidade de notificações ainda não consultadas."
+          control={
+            <Switch
+              checked={badgeEnabled}
+              onCheckedChange={setBadgeEnabled}
+              aria-label="Mostrar indicador de notificações não lidas"
+            />
+          }
+        />
 
-          <Separator />
+        <Separator className="my-5" />
 
-          <SettingRow
-            label="Anúncios & Upgrades"
-            description="Recebe anúncios de produtos novos, melhorias no software, etc"
-            control={<Switch />}
-          />
+        <SettingRow
+          icon="MonitorUp"
+          label="Notificações do navegador"
+          description="Apresentar um aviso do sistema quando o Mindgest estiver aberto em segundo plano."
+          disabled={!browserNotificationsAvailable || browserNotificationsBlocked}
+          control={
+            <Switch
+              checked={
+                browserNotificationsEnabled && browserPermission === "granted"
+              }
+              onCheckedChange={handleBrowserNotificationsChange}
+              disabled={!browserNotificationsAvailable || browserNotificationsBlocked}
+              aria-label="Activar notificações do navegador"
+            />
+          }
+        />
+      </div>
 
-          <Separator />
-        </div>
-      </section>
-    </div>
+      {!browserNotificationsAvailable && (
+        <Alert>
+          <Icon name="Info" />
+          <AlertTitle>Recurso indisponível</AlertTitle>
+          <AlertDescription>
+            Este navegador não suporta notificações do sistema.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {browserNotificationsBlocked && (
+        <Alert variant="destructive">
+          <Icon name="BellOff" />
+          <AlertTitle>Permissão bloqueada</AlertTitle>
+          <AlertDescription>
+            Autorize as notificações nas definições do navegador e volte a abrir esta página.
+          </AlertDescription>
+        </Alert>
+      )}
+    </section>
   );
 }
 
 function SettingRow({
+  icon,
   label,
   description,
   control,
   disabled,
 }: {
+  icon: "Volume2" | "AudioLines" | "CircleDot" | "MonitorUp";
   label: string;
-  description?: string;
+  description: string;
   control: React.ReactNode;
   disabled?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between transition-opacity",
-        disabled && "opacity-50 pointer-events-none",
+        "flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between",
+        disabled && "opacity-60",
       )}
     >
-      <div className="max-w-md">
-        <Label className="block">{label}</Label>
-        {description && (
+      <div className="flex max-w-xl items-start gap-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10">
+          <Icon name={icon} className="h-4 w-4 text-primary" />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-sm font-semibold">{label}</Label>
           <p className="text-sm text-muted-foreground">{description}</p>
-        )}
+        </div>
       </div>
-      <div className="mt-2 sm:mt-0">{control}</div>
+      <div className="shrink-0">{control}</div>
     </div>
   );
 }

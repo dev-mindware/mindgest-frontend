@@ -189,7 +189,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
       })}
       className="space-y-6"
     >
-      <section className="rounded-lg border bg-card p-5 shadow-sm">
+      <section className="rounded-lg border bg-card p-5 shadow-sm" data-tour="credit-note-reason">
         <ReasonNotesSection
           control={control}
           register={register}
@@ -200,26 +200,30 @@ export function CreditNoteForm({ invoice, docType }: Props) {
 
       {reason === "CORRECTION" && (
         <div className="space-y-6">
-          <ClientDocumentSection
-            register={register}
-            errors={errors}
-            isInvoiceDoc={isInvoiceDoc}
-            docType={docType}
-            client={invoice.client}
-          />
+          <div data-tour="credit-note-client">
+            <ClientDocumentSection
+              register={register}
+              errors={errors}
+              isInvoiceDoc={isInvoiceDoc}
+              docType={docType}
+              client={invoice.client}
+            />
+          </div>
 
-          <ItemsSummarySection
-            control={control}
-            register={register}
-            errors={errors}
-            fields={fields}
-            append={append}
-            remove={remove}
-          />
+          <div data-tour="credit-note-items">
+            <ItemsSummarySection
+              control={control}
+              register={register}
+              errors={errors}
+              fields={fields}
+              append={append}
+              remove={remove}
+            />
+          </div>
         </div>
       )}
 
-      <div className="sticky bottom-0 flex justify-end border-t bg-background/95 py-4 backdrop-blur">
+      <div className="sticky bottom-0 flex justify-end border-t bg-background/95 py-4 backdrop-blur" data-tour="credit-note-submit">
         <ButtonSubmit className="w-max" isLoading={isSubmitting}>
           {reason === "ANNULMENT"
             ? "Confirmar Anulação"

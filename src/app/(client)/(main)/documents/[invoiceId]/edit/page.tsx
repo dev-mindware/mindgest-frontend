@@ -13,6 +13,7 @@ export default async function InvoiceDetailsPage({ params }: PageProps) {
       routeLabel="Documentos"
       subRoute="Editar Proforma"
       showSeparator={true}
+      onboardingTourId="proforma-edit"
     >
       <ProformaEditContent invoiceId={invoiceId} />
     </PageWrapper>

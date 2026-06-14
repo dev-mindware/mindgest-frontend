@@ -50,10 +50,12 @@ export function ProformaEditContent({ invoiceId }: { invoiceId: string }) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <TitleList
-        title="Editar Proforma"
-        suTitle={`Referente à proforma: ${data.id.slice(-8)}`} // Melhora o contexto apresentado ao utilizador.
-      />
+      <div data-tour="proforma-edit-header">
+        <TitleList
+          title="Editar Proforma"
+          suTitle={`Referente à proforma: ${data.id.slice(-8)}`}
+        />
+      </div>
 
       <ProformaForm
         action="edit"

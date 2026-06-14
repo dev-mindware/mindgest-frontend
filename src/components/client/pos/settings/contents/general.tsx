@@ -11,7 +11,11 @@ import {
 } from "../../modal";
 import { PosOpeningModal } from "@/components/client/management/pos/modal/pos-opening-modal";
 import { useAuth } from "@/hooks/auth/use-auth";
-import { formatCurrency, formatDateTime } from "@/utils";
+import {
+  formatCurrency,
+  formatDateTime,
+  getExpectedCashSessionEnd,
+} from "@/utils";
 import { CashSession } from "@/types/cash-session";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -31,6 +35,12 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
     user?.role === "MANAGER";
   const currentPlan = user?.company?.subscription?.plan?.name;
   const isSmartPlan = currentPlan === "Smart";
+  const expectedEnd = currentSession
+    ? getExpectedCashSessionEnd(currentSession)
+    : null;
+  const expectedSessionEnd = expectedEnd
+    ? formatDateTime(expectedEnd.toISOString())
+    : "-";
 
   // Razão pela qual "Solicitar" está desabilitado (null = habilitado)
   const requestDisabledReason: string | null = isManagement
@@ -199,9 +209,9 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                 valueClass: "text-primary-600",
               },
               {
-                label: "Tempo decorrido",
-                value: currentSession.duration || "00:00:00",
-                icon: "Timer",
+                label: "Término previsto",
+                value: expectedSessionEnd,
+                icon: "Clock",
                 color: "text-primary-500",
                 bg: "bg-primary-500/10",
               },
@@ -287,9 +297,9 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
 
             {[
               {
-                label: "Tempo decorrido",
-                value: currentSession.duration || "00:00:00",
-                icon: "Timer",
+                label: "Término previsto",
+                value: expectedSessionEnd,
+                icon: "Clock",
                 iconColor: "text-primary-500",
                 iconBg: "bg-primary-500/10",
               },
