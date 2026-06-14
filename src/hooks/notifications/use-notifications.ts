@@ -22,16 +22,22 @@ export function useNotifications(
   const queryClient = useQueryClient();
   const { openModal } = useModal();
   const { setCurrentNotification } = useCurrentNotificationStore();
-  const { soundEnabled, soundType } = useNotificationSettingsStore();
+  const { soundEnabled, soundType, browserNotificationsEnabled } =
+    useNotificationSettingsStore();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // Ref para evitar stale closure dentro do handler do socket —
   // sem isto, o toggle de som não teria efeito sem reconectar o socket.
   const soundEnabledRef = useRef(soundEnabled);
+  const browserNotificationsEnabledRef = useRef(browserNotificationsEnabled);
 
   useEffect(() => {
     soundEnabledRef.current = soundEnabled;
   }, [soundEnabled]);
+
+  useEffect(() => {
+    browserNotificationsEnabledRef.current = browserNotificationsEnabled;
+  }, [browserNotificationsEnabled]);
 
   useEffect(() => {
     audioRef.current = new Audio(soundType);
@@ -44,6 +50,28 @@ export function useNotifications(
     audioRef.current.play().catch((err) => {
       console.warn("Navegador bloqueou a reprodução automática do som:", err);
     });
+  };
+
+  const showBrowserNotification = (notification: NotificationType) => {
+    if (
+      !browserNotificationsEnabledRef.current ||
+      typeof Notification === "undefined" ||
+      Notification.permission !== "granted" ||
+      document.visibilityState === "visible"
+    ) {
+      return;
+    }
+
+    const browserNotification = new Notification(notification.title, {
+      body: notification.message,
+      icon: "/favicon.ico",
+      tag: notification.id,
+    });
+
+    browserNotification.onclick = () => {
+      window.focus();
+      browserNotification.close();
+    };
   };
 
   const TAKE = 5;
@@ -93,6 +121,10 @@ export function useNotifications(
     socket.on("new_notification", (newNotification: NotificationType) => {
       // Som tocado aqui — fora do updater do setQueryData que deve ser puro
       playNotificationSound();
+      showBrowserNotification(newNotification);
+
+      // Invalida os pedidos de abertura para atualizar instantaneamente na tela do gerente
+      queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
 
       queryClient.setQueryData<any>(
         ["notifications", initialFilters],

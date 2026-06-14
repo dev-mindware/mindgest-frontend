@@ -17,7 +17,6 @@ import {
 import { useModal } from "@/stores";
 import { useGetStoresPaginated } from "@/hooks/entities";
 import { useGetCashiersPaginated } from "@/hooks/collaborators/cashier";
-import { cn } from "@/lib/utils";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
@@ -25,12 +24,20 @@ import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils";
+import { parseTime } from "@internationalized/date";
+
+function safeParseTime(timeStr: string) {
+  try {
+    if (!timeStr || timeStr.length < 5) return parseTime("08:00");
+    return parseTime(timeStr.slice(0, 5));
+  } catch (e) {
+    return parseTime("08:00");
+  }
+}
+
 
 interface PosOpeningModalProps {
-  /** Quando true, o utilizador logado (Owner/Manager) abre sessão para si próprio.
-   *  O select de caixas fica oculto e o cashierId é injetado automaticamente. */
   selfSessionMode?: boolean;
-  /** Chamado após abertura ou atualização de sessão com sucesso. */
   onSuccess?: () => void;
 }
 
@@ -39,7 +46,6 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
   const { currentCashier, setCurrentCashier } = useCurrentCashierStore();
   const [storePage, setStorePage] = useState(1);
 
-  // This modal serves both IDs: regular "opening-cashier" and "opening-cashier-from-request" (approve flow)
   const isFromRequest = !!(currentCashier as any)?._fromRequest;
   const modalId = open["opening-cashier-from-request"] ? "opening-cashier-from-request" : "opening-cashier";
 
@@ -70,6 +76,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
       storeId: "",
       cashierIds: [],
       fundType: "Cash",
+      reason: "",
     },
   });
 
@@ -121,6 +128,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         storeId: (currentCashier as any).storeId || "",
         cashierIds: (currentCashier as any).userId ? [(currentCashier as any).userId] : [],
         fundType: "Cash",
+        reason: "",
       });
     } else if (isEdit && currentCashier) {
       reset({
@@ -129,6 +137,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         storeId: currentCashier.storeId || "",
         cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
         fundType: "Cash",
+        reason: "",
       });
     } else if (!selfSessionMode) {
       reset({
@@ -137,6 +146,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         storeId: "",
         cashierIds: [],
         fundType: "Cash",
+        reason: "",
       });
     }
   }, [isEdit, isFromRequest, currentCashier, reset, selfSessionMode]);
@@ -153,18 +163,21 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
   const onSubmit = async (data: PosOpeningFormData) => {
     try {
       if (isEdit && currentCashier) {
-        if (!data.reason?.trim()) {
-          ErrorMessage("A razão da edição é obrigatória.");
-          return;
-        }
         const payload = {
-          openingCash: parseFloat(data.initialCapital),
-          reason: data.reason,
+          openingCash: parseFloat(data.initialCapital) || 0,
+          initialCapital: data.initialCapital,
+          reason: data.reason || "",
+          workTime: data.workTime,
+          fundType: data.fundType?.toUpperCase(),
+          storeId: data.storeId,
+          cashierIds: data.cashierIds,
         };
         await updateSession({ id: currentCashier.id.toString(), data: payload });
       } else {
+        const { reason, ...restData } = data;
         const payload = {
-          ...data,
+          ...restData,
+          openingCash: parseFloat(data.initialCapital) || 0,
           fundType: data.fundType?.toUpperCase(),
           ...(isFromRequest && (currentCashier as any)?._requestId
             ? { requestId: (currentCashier as any)._requestId }
@@ -326,8 +339,8 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
             </div>
           )}
 
-          {/* Banner: selfSessionMode (gestor abre para si) */}
-          {selfSessionMode && user && (
+          {/* Razão da Edição (mostrado apenas ao editar) */}
+          {isEdit && (
             <div className="col-span-1 md:col-span-2">
               <Textarea
                 label="Razão da Edição"

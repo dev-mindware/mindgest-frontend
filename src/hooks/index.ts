@@ -21,3 +21,4 @@ export * from "./chatbot/use-chatbot";
 export * from "./stock-reservations";
 export * from "./use-mobile";
 export * from "./audit-trail/use-audit-trails";
+export * from "./onboarding/use-onboarding-preferences";

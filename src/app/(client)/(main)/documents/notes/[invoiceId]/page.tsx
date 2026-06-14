@@ -15,6 +15,7 @@ export default async function CreditsNotes({ params, searchParams }: PageProps) 
       routeLabel="Documentos"
       subRoute="Notas de Crédito"
       showSeparator={true}
+      onboardingTourId="credit-note"
     >
       <CreditNotes invoiceId={invoiceId} invoiceType={invoiceType} />
     </PageWrapper>

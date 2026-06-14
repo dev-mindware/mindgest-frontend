@@ -30,9 +30,7 @@ export function CounterContent() {
   } = useGetProductCountsByCategory();
   const [activeCart, setActiveCart] = useState<CartType>("invoice");
   const { currentStore } = currentStoreStore();
-  const { data: currentSession } = useGetCurrentSession(currentStore?.id, {
-    realtime: false,
-  });
+  const { data: currentSession } = useGetCurrentSession(currentStore?.id);
 
   const availableCategories = useMemo(
     () =>

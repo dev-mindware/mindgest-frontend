@@ -14,6 +14,7 @@ export default async function SupplierStockHistoryRoute({ params }: PageProps) {
       routePath="/suppliers"
       subRoute="Histórico de Stock"
       showSeparator={true}
+      onboardingTourId="supplier-history"
     >
       <SupplierStockHistoryPage supplierId={supplierId} />
     </PageWrapper>

@@ -35,7 +35,7 @@ export function SupplierDetailsContent({ supplierId }: { supplierId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-tour="supplier-details-header">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{supplier.name}</h2>
           <p className="text-muted-foreground">
@@ -46,12 +46,12 @@ export function SupplierDetailsContent({ supplierId }: { supplierId: string }) {
 
       <Tabs defaultValue="info" className="w-full">
         <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
-          <TabsList>
+          <TabsList data-tour="supplier-details-tabs">
             <TabsTrigger value="info">Informações Pessoais</TabsTrigger>
             <TabsTrigger value="items">Produtos</TabsTrigger>
           </TabsList>
 
-          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-4 mt-4 sm:mt-0">
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-4 mt-4 sm:mt-0" data-tour="supplier-details-actions">
             <Button
               variant="default"
               className="w-full sm:w-auto text-sm sm:text-base"
@@ -73,7 +73,7 @@ export function SupplierDetailsContent({ supplierId }: { supplierId: string }) {
           </div>
         </div>
 
-        <TabsContent value="info" className="space-y-4">
+        <TabsContent value="info" className="space-y-4" data-tour="supplier-details-content">
           <Card>
             <CardHeader>
               <CardTitle>Dados do Fornecedor</CardTitle>
@@ -107,7 +107,7 @@ export function SupplierDetailsContent({ supplierId }: { supplierId: string }) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="items" className="space-y-4">
+        <TabsContent value="items" className="space-y-4" data-tour="supplier-details-content">
           <SuppliersProductList supplierId={supplierId} />
         </TabsContent>
       </Tabs>

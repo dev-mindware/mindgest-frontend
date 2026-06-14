@@ -14,6 +14,7 @@ export default async function SupplierDetailsPage({ params }: PageProps) {
       routePath="/suppliers"
       subRoute="Detalhes do Fornecedor"
       showSeparator={true}
+      onboardingTourId="supplier-details"
     >
       <SupplierDetailsContent supplierId={supplierId} />
     </PageWrapper>

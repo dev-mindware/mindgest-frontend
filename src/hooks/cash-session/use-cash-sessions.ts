@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect } from "react";
 import {
   useMutation,
   useQueryClient,
@@ -8,10 +5,6 @@ import {
   type QueryClient,
 } from "@tanstack/react-query";
 import { cashSessionsService } from "@/services/cash-sessions-service";
-import {
-  cashSessionRealtimeService,
-  type CashSessionRealtimePayload,
-} from "@/services/cash-session-realtime-service";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import {
   CashSession,
@@ -45,39 +38,11 @@ export function useGetOpeningRequests(filters?: CashSessionRequestFilters) {
   return useQuery({
     queryKey: ["opening-requests", filters],
     queryFn: () => cashSessionsService.getOpeningRequests(filters as any),
+    refetchInterval: 10000, // Refetch every 10 seconds to reflect requests on manager side
   });
 }
 
-export function useGetCurrentSession(
-  storeId?: string,
-  options: { realtime?: boolean } = {},
-) {
-  const queryClient = useQueryClient();
-  const realtime = options.realtime ?? true;
-
-  useEffect(() => {
-    if (!realtime) return;
-
-    const refreshCurrentSession = (payload?: CashSessionRealtimePayload) => {
-      const isPayloadObject = payload && typeof payload === "object";
-      const payloadStoreId =
-        isPayloadObject && "session" in payload
-          ? payload.session?.storeId || payload.storeId
-          : isPayloadObject
-            ? payload.storeId
-            : undefined;
-
-      if (storeId && payloadStoreId && payloadStoreId !== storeId) return;
-
-      queryClient.invalidateQueries({
-        queryKey: ["current-cash-session", storeId],
-      });
-      queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
-    };
-
-    return cashSessionRealtimeService.subscribe(refreshCurrentSession);
-  }, [queryClient, realtime, storeId]);
-
+export function useGetCurrentSession(storeId?: string) {
   return useQuery({
     queryKey: ["current-cash-session", storeId],
     queryFn: () => cashSessionsService.getCurrentSession(storeId),

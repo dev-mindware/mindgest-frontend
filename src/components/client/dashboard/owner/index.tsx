@@ -41,13 +41,15 @@ export function OwnerDashboardView() {
 
     return (
         <div className="flex flex-col gap-6">
-            <DashboardSummaryCards summary={dashboardData.summary} />
+            <div data-tour="dashboard-summary">
+                <DashboardSummaryCards summary={dashboardData.summary} />
+            </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2" data-tour="dashboard-revenue">
                     <DashboardRevenueChart data={dashboardData.revenueEvolution} />
                 </div>
-                <div>
+                <div data-tour="dashboard-distribution">
                     <DashboardSalesPie data={dashboardData.salesDistribution} />
                 </div>
             </div>
@@ -55,7 +57,9 @@ export function OwnerDashboardView() {
             <FeatureGate minPlan="Pro" fallback="hidden">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <StoresBreakdownTable data={dashboardData.storesBreakdown} />
-                <DashboardRecentSalesTable data={dashboardData.recentSales} />
+                <div data-tour="dashboard-recent-sales">
+                    <DashboardRecentSalesTable data={dashboardData.recentSales} />
+                </div>
             </div>
             </FeatureGate>
         </div>

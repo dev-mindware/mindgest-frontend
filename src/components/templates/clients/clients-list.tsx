@@ -133,7 +133,9 @@ export function ClientsList() {
 
   return (
     <div className="mt-6 space-y-8">
-      <ClientsFiltersTSX />
+      <div data-tour="clients-filters">
+        <ClientsFiltersTSX />
+      </div>
 
       {clients.length > 0 ? (
         <GenericTable<ClientResponse>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -9,11 +9,15 @@ import {
     Input,
     Button,
     Textarea,
-    RequestError,
 } from "@/components";
 import { useModal, currentStoreStore } from "@/stores";
 import { cashSessionsService } from "@/services/cash-sessions-service";
-import { SucessMessage } from "@/utils/messages";
+import {
+    ErrorMessage,
+    SucessMessage,
+    WarningMessage,
+} from "@/utils/messages";
+import { isDuplicateOpeningRequestError } from "@/utils/cash-session";
 
 export const MODAL_POS_REQUEST_OPENING_ID = "pos-request-opening-modal";
 
@@ -26,7 +30,7 @@ type RequestFormData = z.infer<typeof requestSchema>;
 export function PosRequestOpeningModal() {
     const { closeModal } = useModal();
     const { currentStore } = currentStoreStore();
-    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
     const {
         register,
@@ -39,22 +43,30 @@ export function PosRequestOpeningModal() {
 
     const onSubmit = async (data: RequestFormData) => {
         if (!currentStore?.id) {
-            setError("Loja não identificada. Contacte o suporte.");
+            ErrorMessage("Loja não identificada. Contacte o suporte.");
             return;
         }
 
         try {
-            setError(null);
             await cashSessionsService.requestOpening({
                 storeId: currentStore.id,
                 message: data.message,
             });
             SucessMessage("Pedido enviado com sucesso.");
+            await queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
             closeModal(MODAL_POS_REQUEST_OPENING_ID);
             reset();
         } catch (err: any) {
-            console.error(err);
-            setError(err.response?.data?.message || "Não foi possível enviar o pedido.");
+            const apiMessage = String(err?.response?.data?.message || "");
+
+            if (isDuplicateOpeningRequestError(err)) {
+                WarningMessage(
+                    "Já solicitou a abertura de caixa. Aguarde a aprovação do pedido pendente.",
+                );
+                return;
+            }
+
+            ErrorMessage(apiMessage || "Não foi possível enviar o pedido.");
         }
     };
 

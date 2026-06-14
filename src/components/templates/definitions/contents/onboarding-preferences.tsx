@@ -4,6 +4,7 @@ import { Button, Icon, Separator, Switch } from "@/components";
 import { onboardingTours } from "@/constants/onboarding-tours";
 import { useAuth } from "@/hooks/auth";
 import { useOnboardingPreferencesStore } from "@/stores";
+import { useOnboardingPreferencesPersistence } from "@/hooks/onboarding/use-onboarding-preferences";
 
 function getOnboardingScope(userId?: string, companyId?: string) {
   return [companyId || "company", userId || "user"].join(":");
@@ -12,6 +13,10 @@ function getOnboardingScope(userId?: string, companyId?: string) {
 export function OnboardingPreferences() {
   const { user } = useAuth();
   const scope = getOnboardingScope(user?.id, user?.company?.id);
+  const persistence = useOnboardingPreferencesPersistence(
+    scope,
+    Boolean(user?.id && user?.company?.id),
+  );
   const scopedPreferences = useOnboardingPreferencesStore(
     (state) => state.preferencesByScope[scope],
   );
@@ -62,7 +67,10 @@ export function OnboardingPreferences() {
 
           <Switch
             checked={preferences.autoStartEnabled}
-            onCheckedChange={(checked) => setAutoStartEnabled(scope, checked)}
+            onCheckedChange={(checked) => {
+              setAutoStartEnabled(scope, checked);
+              persistence.persistPreferences({ autoStartEnabled: checked });
+            }}
             aria-label="Mostrar guias automaticamente"
           />
         </div>
@@ -86,7 +94,10 @@ export function OnboardingPreferences() {
 
           <Switch
             checked={preferences.tourButtonEnabled}
-            onCheckedChange={(checked) => setTourButtonEnabled(scope, checked)}
+            onCheckedChange={(checked) => {
+              setTourButtonEnabled(scope, checked);
+              persistence.persistPreferences({ tourButtonEnabled: checked });
+            }}
             aria-label="Mostrar botão Ver guia"
           />
         </div>
@@ -106,7 +117,10 @@ export function OnboardingPreferences() {
             type="button"
             variant="outline"
             className="w-full gap-2 sm:w-auto"
-            onClick={() => resetAllTours(scope)}
+            onClick={() => {
+              resetAllTours(scope);
+              persistence.persistResetAllTours();
+            }}
           >
             <Icon name="RotateCcw" className="h-4 w-4" />
             Repor guias

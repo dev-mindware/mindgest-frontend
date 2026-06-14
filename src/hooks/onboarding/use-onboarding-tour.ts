@@ -12,6 +12,7 @@ import {
 } from "@/constants/onboarding-tours";
 import { useAuthStore, useOnboardingPreferencesStore } from "@/stores";
 import { PLAN_HIERARCHY, type User } from "@/types";
+import { useOnboardingPreferencesPersistence } from "./use-onboarding-preferences";
 
 const ELEMENT_TIMEOUT_MS = 6000;
 const ELEMENT_POLL_INTERVAL_MS = 150;
@@ -21,6 +22,13 @@ const MOBILE_UNSUPPORTED_STEP_MARKERS = [
   "pos-customer",
   "pos-new-customer-phone",
   "pos-payment-methods",
+];
+const CONDITIONAL_STEP_MARKERS = [
+  "reservations-events",
+  "reservations-empty-state",
+  "credit-note-client",
+  "credit-note-items",
+  "credit-note-totals",
 ];
 
 let activeDriver: Driver | null = null;
@@ -350,19 +358,6 @@ function findVisibleElement(selector: string) {
   );
 }
 
-function canPrepareMissingStep(selector: string) {
-  return (
-    selector.includes("normal-invoice") ||
-    selector.includes("pos-") ||
-    selector.includes("setup-company-profile") ||
-    selector.includes("setup-banks-content") ||
-    selector.includes("setup-agt-content") ||
-    selector.includes("setup-guides-content") ||
-    selector.includes("product-") ||
-    selector.includes("items-list")
-  );
-}
-
 function waitForElement(selector: string, timeoutMs = ELEMENT_TIMEOUT_MS) {
   return new Promise<Element | null>((resolve) => {
     const firstMatch = findVisibleElement(selector);
@@ -407,10 +402,14 @@ function resolveSteps(tourId: OnboardingTourId): DriveStep[] {
 
       const driveStep = toDriveStep(step);
       const visibleElement = findVisibleElement(step.selector);
-      if (!visibleElement && !canPrepareMissingStep(step.selector)) {
+      if (
+        !visibleElement &&
+        CONDITIONAL_STEP_MARKERS.some((marker) =>
+          step.selector.includes(marker),
+        )
+      ) {
         return null;
       }
-
       return visibleElement ? { ...driveStep, element: visibleElement } : driveStep;
     })
     .filter((step): step is DriveStep => Boolean(step));
@@ -648,7 +647,7 @@ async function prepareTarget(selector: string) {
     document.querySelector<HTMLButtonElement>('[data-tour="pos-back-to-menu"]')?.click();
   }
 
-  targetElement = await waitForElement(selector, 1000);
+  targetElement = await waitForElement(selector, 2500);
 
   if (selector.includes("pos-new-customer-phone")) {
     const customerSection = document.querySelector('[data-tour="pos-customer"]');
@@ -733,6 +732,11 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
   const companyId = user?.company?.id;
   const scope = getScope(userId, companyId);
   const canAccessTour = canUserAccessOnboardingTour(tourId, user);
+  const { persistTour, isHydrating: isHydratingPreferences } =
+    useOnboardingPreferencesPersistence(
+    scope,
+    Boolean(userId && companyId),
+  );
   const getPreferences = useOnboardingPreferencesStore(
     (state) => state.getPreferences,
   );
@@ -786,6 +790,14 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
 
     if (initialStepIndex >= steps.length) return;
 
+    persistTour(
+      tourId,
+      "in_progress",
+      mode,
+      onboardingTours[tourId].version,
+      initialStepIndex,
+    );
+
     activeDriver?.destroy();
 
     activeDriver = driver({
@@ -821,8 +833,22 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
         cleanupActiveDemo();
         if (activeTourResult === "completed") {
           markTourCompleted(scope, tourId);
+          persistTour(
+            tourId,
+            "completed",
+            activeTourMode,
+            onboardingTours[tourId].version,
+            steps.length - 1,
+          );
         } else if (getPreferences(scope).seenTours[tourId] !== "completed") {
           markTourSkipped(scope, tourId);
+          persistTour(
+            tourId,
+            "skipped",
+            activeTourMode,
+            onboardingTours[tourId].version,
+            activeDriver?.getActiveIndex() ?? undefined,
+          );
         }
         activeDriver = null;
         activeTourResult = null;
@@ -836,6 +862,7 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
     markTourCompleted,
     markTourSkipped,
     markTourAsSeen,
+    persistTour,
     scope,
     tourId,
     user,
@@ -849,6 +876,7 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
     autoStartEnabled,
     tourButtonEnabled,
     seenStatus,
+    isHydratingPreferences,
   };
 }
 
@@ -861,7 +889,8 @@ export function useAutoOnboardingTour(
   tourId: OnboardingTourId,
   enabled = true,
 ) {
-  const { startTour, hasSeenTour } = useOnboardingTour(tourId);
+  const { startTour, hasSeenTour, isHydratingPreferences } =
+    useOnboardingTour(tourId);
   const user = useAuthStore((state) => state.user);
   const scope = getScope(user?.id, user?.company?.id);
   const autoStartEnabled = useOnboardingPreferencesStore(
@@ -872,6 +901,7 @@ export function useAutoOnboardingTour(
   useEffect(() => {
     if (
       !enabled ||
+      isHydratingPreferences ||
       !autoStartEnabled ||
       !canUserAccessOnboardingTour(tourId, user) ||
       autoStartRef.current ||
@@ -890,5 +920,13 @@ export function useAutoOnboardingTour(
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [autoStartEnabled, enabled, hasSeenTour, startTour, tourId, user]);
+  }, [
+    autoStartEnabled,
+    enabled,
+    hasSeenTour,
+    isHydratingPreferences,
+    startTour,
+    tourId,
+    user,
+  ]);
 }

@@ -198,7 +198,17 @@ export function AgtSeriesList() {
                     <Label htmlFor="est" className="text-xs font-medium uppercase tracking-wider opacity-70">Estabelecimento</Label>
                     <Select 
                       value={newSeries.storeId} 
-                      onValueChange={(v) => setNewSeries({...newSeries, storeId: v})}
+                      onValueChange={(value) => {
+                        const selectedStore = stores.find(
+                          (store) => store.id === value,
+                        );
+
+                        setNewSeries({
+                          ...newSeries,
+                          storeId: value,
+                          establishmentNumber: selectedStore?.code || "SEDE",
+                        });
+                      }}
                     >
                       <SelectTrigger id="est" className="h-10 text-xs">
                         <SelectValue placeholder={isStoresLoading ? "Carregando lojas..." : "Selecione a loja (opcional)"} />
@@ -209,7 +219,7 @@ export function AgtSeriesList() {
                         ) : (
                           stores.map((store) => (
                             <SelectItem key={store.id} value={store.id} className="text-xs">
-                              {store.code ? `${store.code} — ${store.name}` : store.name}
+                              {`${store.code || "SEDE"} — ${store.name}`}
                             </SelectItem>
                           ))
                         )}
@@ -223,7 +233,13 @@ export function AgtSeriesList() {
                     id="establishment"
                     type="text"
                     value={newSeries.establishmentNumber}
-                    onChange={(e) => setNewSeries({ ...newSeries, establishmentNumber: e.target.value })}
+                    onChange={(event) =>
+                      setNewSeries({
+                        ...newSeries,
+                        establishmentNumber: event.target.value.toUpperCase(),
+                      })
+                    }
+                    maxLength={20}
                     placeholder="Digite o código do estabelecimento (ex: SEDE)"
                     className="h-10 w-full rounded-md border border-input px-3 text-sm text-foreground"
                   />
