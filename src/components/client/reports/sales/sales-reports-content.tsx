@@ -2,7 +2,7 @@
 import { TitleList, RequestError, SalesSkeleton } from "@/components/common";
 import { SalesAreaChart } from "./sales-area-chart";
 import { SalesSummaryCards } from "./sales-summary-cards";
-import { SaftExportCard } from "./saft-export-card";
+
 import { ReportFilters } from "../common";
 import { useSalesReports } from "@/hooks/reports";
 import { SalesPeriod } from "@/types/reports";
@@ -70,16 +70,9 @@ export function SalesReportsContent() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="space-y-6 md:col-span-3">
-          <div data-tour="reports-sales-summary">
-            <SalesSummaryCards summary={data.summary} />
-          </div>
-          <SalesAreaChart data={data.data} period={period} />
-        </div>
-        <div data-tour="reports-sales-export">
-          <SaftExportCard />
-        </div>
+      <div className="space-y-6">
+        <SalesSummaryCards summary={data.summary} />
+        <SalesAreaChart data={data.data} period={period} />
       </div>
     </div>
   );

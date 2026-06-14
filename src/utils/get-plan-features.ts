@@ -14,7 +14,6 @@ export function getPlanFeatures(plan: Plan): string[] {
   const baseBackendFeatures = [
     plan.features.hasInvoices && "Facturas e documentos ilimitados",
     plan.features.hasReporting && "Relatórios",
-    plan.features.canExportSaft && "Exportação SAF-T",
   ];
 
   const smartBackendFeatures = [

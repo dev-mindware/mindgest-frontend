@@ -37,6 +37,8 @@ export function DashboardRecentSalesTable({ data }: DashboardRecentSalesTablePro
         },
     ];
 
+    const slicedData = data.slice(0, 5);
+
     return (
         <div className="space-y-4">
             <div className="flex flex-col gap-1">
@@ -45,9 +47,9 @@ export function DashboardRecentSalesTable({ data }: DashboardRecentSalesTablePro
             </div>
             <GenericTable
                 columns={columns}
-                data={data}
+                data={slicedData}
                 page={1}
-                total={data.length}
+                total={slicedData.length}
                 totalPages={1}
                 setPage={() => { }}
                 goToNextPage={() => { }}

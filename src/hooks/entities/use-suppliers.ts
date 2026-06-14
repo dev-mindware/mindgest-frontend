@@ -87,6 +87,11 @@ export function useAddSupplierStockEntry() {
       SucessMessage("Sessão de reabastecimento inserida com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["supplier-items"] });
       queryClient.invalidateQueries({ queryKey: ["supplier-stock-entries"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
+      queryClient.invalidateQueries({ queryKey: ["invoice-proforma"] });
+      queryClient.invalidateQueries({ queryKey: ["receipt"] });
+      queryClient.invalidateQueries({ queryKey: ["credit-notes"] });
     },
   });
 }

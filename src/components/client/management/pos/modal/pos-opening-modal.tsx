@@ -76,6 +76,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
       // No selfSessionMode, o cashierId do próprio gestor é injetado depois de obter o user
       cashierIds: [],
       fundType: "Coin",
+      reason: "",
     },
   });
 
@@ -128,6 +129,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         storeId: currentCashier.storeId || "",
         cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
         fundType: normalizedFundType,
+        reason: "",
       });
     } else if (!selfSessionMode) {
       reset({
@@ -136,6 +138,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         storeId: "",
         cashierIds: [],
         fundType: "Coin",
+        reason: "",
       });
     }
   }, [isEdit, currentCashier, reset, selfSessionMode]);
@@ -151,8 +154,13 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
   const onSubmit = async (data: PosOpeningFormData) => {
     try {
       if (isEdit && currentCashier) {
+        if (!data.reason?.trim()) {
+          ErrorMessage("A razão da edição é obrigatória.");
+          return;
+        }
         const payload = {
           openingCash: parseFloat(data.initialCapital),
+          reason: data.reason,
         };
         await updateSession({ id: currentCashier.id.toString(), data: payload });
       } else {
@@ -297,48 +305,40 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
             )}
           </div>
 
-          {/* No selfSessionMode o select de caixas é ocultado — o id já foi injetado automaticamente */}
-          {!selfSessionMode && (
-            <div className="col-span-1 md:col-span-2">
-              <Controller
-                name="cashierIds"
-                control={control}
-                render={({ field }) => (
-                  <MultiSelect
-                    label="Caixas Disponíveis para Abertura"
-                    placeholder="Escolha os caixas"
-                    options={cashierOptions}
-                    isDisabled={isEdit}
-                    value={cashierOptions.filter((opt) => field.value?.includes(opt.value))}
-                    onChange={(options) =>
-                      field.onChange(options.map((opt) => opt.value))
-                    }
-                    isLoading={isLoadingCashiers}
-                    error={errors.cashierIds?.message}
-                  />
-                )}
-              />
-            </div>
-          )}
+          <div className="col-span-1 md:col-span-2">
+            <Controller
+              name="cashierIds"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  label="Caixas Disponíveis para Abertura"
+                  placeholder="Escolha os caixas"
+                  options={allCashiers.map((c) => ({
+                    label: `${c.name} (${c.email})`,
+                    value: c.id,
+                  }))}
+                  isDisabled={isEdit}
+                  value={allCashiers
+                    .filter((c) => field.value?.includes(c.id))
+                    .map((c) => ({ label: c.name, value: c.id }))}
+                  onChange={(options) =>
+                    field.onChange(options.map((opt) => opt.value))
+                  }
+                  isLoading={isLoadingCashiers}
+                  error={errors.cashierIds?.message}
+                />
+              )}
+            />
+          </div>
 
-          {/* Em selfSessionMode, mostra um banner informativo com o nome do gestor */}
-          {selfSessionMode && user && (
+          {isEdit && (
             <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/5 border border-primary/10">
-                <div className="p-2 bg-primary/10 rounded-full shrink-0">
-                  <Icon name="User" className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Operador desta sessão</p>
-                  <p className="text-sm font-bold">{user.name}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
-                </div>
-                <div className="ml-auto">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-primary/10 text-primary">
-                    {user.role === "OWNER" ? "Proprietário" : "Gestor"}
-                  </span>
-                </div>
-              </div>
+              <Input
+                label="Razão da Edição"
+                placeholder="Insira o motivo desta alteração..."
+                {...register("reason")}
+                error={errors.reason?.message}
+              />
             </div>
           )}
         </div>

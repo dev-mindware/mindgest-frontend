@@ -8,6 +8,7 @@ export const posOpeningSchema = z.object({
     .array(z.string().trim())
     .min(1, "Seleccione, pelo menos, um caixa"),
   fundType: z.string().trim().optional(),
+  reason: z.string().trim().optional(),
 });
 
 export const posOpeningCashierSchema = z.object({

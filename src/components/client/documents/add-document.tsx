@@ -15,7 +15,7 @@ export function AddDocuments() {
   const searchParams = useSearchParams();
   const current_Tab = useSearchParams().get("tab");
   const [currentTab] = useState<TabsAloweds>(() => {
-    if (current_Tab) {
+    if (current_Tab && (current_Tab === "invoice" || current_Tab === "invoice-receipt" || current_Tab === "proforma")) {
       return current_Tab as TabsAloweds;
     }
     return "invoice";

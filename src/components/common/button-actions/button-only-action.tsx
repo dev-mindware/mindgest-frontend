@@ -68,7 +68,7 @@ export function ButtonOnlyAction<T>({ data, actions }: Props<T>) {
           // Verifica se o rótulo indica uma acção crítica, excepto quando isProtected já estiver definido.
           const isCritical =
             action.isProtected ??
-            /criar|novo|editar|apagar|eliminar|remover|gerar|descarregar|exportar/i.test(
+            /criar|novo|editar|apagar|excluir|remover|deletar|gerar|cancelar|clonar|converter|emitir/i.test(
               action.label
             );
 
