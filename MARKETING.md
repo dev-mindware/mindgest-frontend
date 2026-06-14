@@ -1,18 +1,18 @@
-# MindGest
+# Mindgest
 
 ## Documentação Comercial e Apresentação de Produto
 
-O **MindGest** é uma plataforma de gestão empresarial desenvolvida para empresas que querem centralizar vendas, faturação, ponto de venda, stock, clientes, fornecedores, documentos, relatórios e equipas num único ambiente digital.
+O **Mindgest** é uma plataforma de gestão empresarial desenvolvida para empresas que querem centralizar vendas, facturação, ponto de venda, stock, clientes, fornecedores, documentos, relatórios e equipas num único ambiente digital.
 
-Mais do que um sistema de faturação, o MindGest funciona como o centro operacional do negócio. A plataforma ajuda empresas a reduzir processos manuais, melhorar o controlo da operação, acelerar o atendimento, organizar documentos e transformar dados em decisões mais seguras.
+Mais do que um sistema de facturação, o Mindgest funciona como o centro operacional do negócio. A plataforma ajuda as empresas a reduzir processos manuais, melhorar o controlo da operação, acelerar o atendimento, organizar documentos e transformar dados em decisões mais seguras.
 
 ---
 
 ## 1. Resumo Executivo
 
-O MindGest foi criado para empresas que precisam de crescer com organização. Ele reúne as principais áreas da operação comercial e administrativa numa experiência moderna, acessível pela web e preparada para diferentes perfis de utilizador.
+O Mindgest foi criado para empresas que precisam de crescer com organização. Reúne as principais áreas da operação comercial e administrativa numa experiência moderna, acessível pela Internet e preparada para diferentes perfis de utilizador.
 
-Com o MindGest, a empresa consegue:
+Com o Mindgest, a empresa consegue:
 
 - emitir documentos comerciais com mais rapidez;
 - controlar produtos, serviços, stock e fornecedores;
@@ -24,7 +24,7 @@ Com o MindGest, a empresa consegue:
 - apoiar decisões com dados centralizados;
 - evoluir por planos conforme a maturidade do negócio.
 
-**Mensagem central:** o MindGest dá às empresas mais controlo, menos retrabalho e uma visão clara da operação.
+**Mensagem central:** o Mindgest proporciona às empresas mais controlo, menos trabalho repetido e uma visão clara da operação.
 
 ---
 
@@ -32,7 +32,7 @@ Com o MindGest, a empresa consegue:
 
 ### Frase de posicionamento
 
-**MindGest é a plataforma de gestão empresarial para empresas que querem vender, faturar, controlar stock e acompanhar resultados com simplicidade, segurança e inteligência.**
+**Mindgest é a plataforma de gestão empresarial para empresas que querem vender, facturar, controlar o stock e acompanhar resultados com simplicidade, segurança e inteligência.**
 
 ### Categoria
 
@@ -56,9 +56,9 @@ Transformar operações dispersas em processos conectados, dando ao gestor uma v
 
 ## 3. Elevator Pitch
 
-O MindGest é uma plataforma completa de gestão empresarial que centraliza faturação, POS, stock, clientes, fornecedores, relatórios e equipas. Ele ajuda empresas a vender com mais rapidez, emitir documentos com mais confiança, controlar inventário, acompanhar caixas e tomar decisões baseadas em dados reais da operação.
+O Mindgest é uma plataforma completa de gestão empresarial que centraliza facturação, POS, stock, clientes, fornecedores, relatórios e equipas. Ajuda as empresas a vender com mais rapidez, emitir documentos com mais confiança, controlar o inventário, acompanhar caixas e tomar decisões baseadas em dados reais da operação.
 
-Com uma interface moderna e planos escaláveis, o MindGest adapta-se tanto a pequenos negócios que precisam organizar a faturação como a empresas em crescimento que precisam de controlo multi-loja, ponto de venda, fornecedores, reservas, relatórios avançados e funcionalidades inteligentes.
+Com uma interface moderna e planos escaláveis, o Mindgest adapta-se tanto a pequenos negócios que precisam de organizar a facturação como a empresas em crescimento que precisam de controlo de várias lojas, ponto de venda, fornecedores, reservas, relatórios avançados e funcionalidades inteligentes.
 
 ---
 
@@ -78,13 +78,13 @@ Esse cenário cria problemas recorrentes:
 - dependência excessiva de informação manual;
 - tomada de decisão baseada em perceções, não em dados.
 
-O MindGest resolve estes desafios ao conectar os processos principais do negócio numa única plataforma.
+O Mindgest resolve estes desafios ao ligar os principais processos do negócio numa única plataforma.
 
 ---
 
 ## 5. Solução
 
-O MindGest organiza a operação empresarial em módulos integrados. Cada área da empresa passa a trabalhar com a mesma base de informação, reduzindo duplicação de dados e aumentando a confiança nos números.
+O Mindgest organiza a operação empresarial em módulos integrados. Cada área da empresa passa a trabalhar com a mesma base de informação, reduzindo a duplicação de dados e aumentando a confiança nos números.
 
 ### O que a empresa ganha
 
@@ -101,25 +101,25 @@ O MindGest organiza a operação empresarial em módulos integrados. Cada área 
 
 ### Para o proprietário
 
-O MindGest entrega uma visão clara do negócio. O proprietário consegue acompanhar vendas, documentos, stock, caixas, clientes, lojas e equipa sem depender apenas de relatórios manuais ou mensagens informais.
+O Mindgest proporciona uma visão clara do negócio. O proprietário consegue acompanhar vendas, documentos, stock, caixas, clientes, lojas e equipa sem depender apenas de relatórios manuais ou mensagens informais.
 
 ### Para o gerente
 
-O MindGest simplifica a gestão diária. A plataforma ajuda a organizar clientes, produtos, fornecedores, stock, documentos e POS, permitindo que a equipa execute tarefas com menos fricção.
+O Mindgest simplifica a gestão diária. A plataforma ajuda a organizar clientes, produtos, fornecedores, stock, documentos e POS, permitindo que a equipa execute tarefas com menos dificuldade.
 
 ### Para o operador de caixa
 
-O MindGest oferece uma experiência prática para vender no balcão, selecionar produtos, gerir carrinho, processar pagamentos, emitir documentos e trabalhar com sessões de caixa.
+O Mindgest oferece uma experiência prática para vender ao balcão, seleccionar produtos, gerir o carrinho, processar pagamentos, emitir documentos e trabalhar com sessões de caixa.
 
 ### Para a equipa administrativa
 
-O MindGest centraliza documentos, dados fiscais, clientes, bancos, relatórios e configurações, reduzindo retrabalho e melhorando a consistência da informação.
+O Mindgest centraliza documentos, dados fiscais, clientes, bancos, relatórios e configurações, reduzindo o trabalho repetido e melhorando a consistência da informação.
 
 ---
 
 ## 7. Público-Alvo
 
-O MindGest é indicado para:
+O Mindgest é indicado para:
 
 - lojas de retalho;
 - minimercados e mercearias;
@@ -169,7 +169,7 @@ O módulo de clientes permite criar uma base organizada com dados fiscais, conta
 
 ### 8.3 Documentos e Faturação
 
-O MindGest suporta documentos comerciais essenciais para a operação, incluindo faturas, faturas-recibo, recibos, pró-formas e notas de crédito. A plataforma também apoia impostos, descontos, retenções, moedas e informações adicionais nos documentos.
+O Mindgest suporta documentos comerciais essenciais para a operação, incluindo facturas, facturas-recibo, recibos, pró-formas e notas de crédito. A plataforma também contempla impostos, descontos, retenções, moedas e informações adicionais nos documentos.
 
 **Benefícios:**
 
@@ -228,7 +228,7 @@ O módulo de fornecedores organiza os dados de parceiros de abastecimento, apoia
 
 ### 8.7 POS - Ponto de Venda
 
-O POS do MindGest foi pensado para operações de balcão. Ele permite vender com rapidez, gerir carrinho, selecionar produtos, aplicar pagamentos, imprimir documentos e manter ligação com o stock.
+O POS do Mindgest foi concebido para operações de balcão. Permite vender com rapidez, gerir o carrinho, seleccionar produtos, processar pagamentos, imprimir documentos e manter a ligação com o stock.
 
 **Benefícios:**
 
@@ -245,7 +245,7 @@ O POS do MindGest foi pensado para operações de balcão. Ele permite vender co
 
 ### 8.8 Sessões de Caixa
 
-O MindGest contempla fluxos de abertura, operação e controlo de sessões de caixa, diferenciando proprietários, gerentes e operadores.
+O Mindgest contempla fluxos de abertura, operação e controlo de sessões de caixa, diferenciando proprietários, gestores e operadores.
 
 **Benefícios:**
 
@@ -274,7 +274,7 @@ Os relatórios ajudam a transformar a operação em informação útil. A empres
 
 ### 8.10 Notificações e Alertas
 
-O MindGest utiliza notificações para manter a equipa informada sobre eventos importantes da operação.
+O Mindgest utiliza notificações para manter a equipa informada sobre eventos importantes da operação.
 
 **Benefícios:**
 
@@ -287,7 +287,7 @@ O MindGest utiliza notificações para manter a equipa informada sobre eventos i
 
 ### 8.11 Assistente Inteligente MIND
 
-O MIND é o assistente inteligente integrado ao MindGest, pensado para facilitar consultas e apoiar a interpretação de dados. A proposta é tornar o acesso à informação mais natural, permitindo que a equipa consulte dados e obtenha apoio dentro do próprio ambiente de gestão.
+O MIND é o assistente inteligente integrado no Mindgest, concebido para facilitar consultas e apoiar a interpretação de dados. O objectivo é tornar o acesso à informação mais natural, permitindo que a equipa consulte dados e obtenha apoio no próprio ambiente de gestão.
 
 **Benefícios:**
 
@@ -297,7 +297,7 @@ O MIND é o assistente inteligente integrado ao MindGest, pensado para facilitar
 - experiência mais moderna para o utilizador;
 - suporte a decisões rápidas.
 
-**Mensagem comercial:** o MindGest não apenas guarda informação; ele ajuda a equipa a entender e usar essa informação.
+**Mensagem comercial:** o Mindgest não se limita a guardar informação; ajuda a equipa a compreendê-la e utilizá-la.
 
 ---
 
@@ -305,7 +305,7 @@ O MIND é o assistente inteligente integrado ao MindGest, pensado para facilitar
 
 ### Plataforma completa
 
-O MindGest reúne áreas que muitas empresas gerem separadamente: faturação, POS, stock, clientes, fornecedores, relatórios, notificações e perfis de acesso.
+O Mindgest reúne áreas que muitas empresas gerem separadamente: facturação, POS, stock, clientes, fornecedores, relatórios, notificações e perfis de acesso.
 
 ### Experiência moderna
 
@@ -325,13 +325,13 @@ Vendas, documentos, itens, stock e relatórios trabalham de forma integrada, red
 
 ### Foco na realidade local
 
-O MindGest considera necessidades comuns do mercado empresarial angolano, como NIF, IVA, documentos comerciais, moeda local, operações em Kz e processos de caixa.
+O Mindgest considera necessidades comuns do mercado empresarial angolano, como NIF, IVA, documentos comerciais, moeda local, operações em Kz e processos de caixa.
 
 ---
 
 ## 10. Benefícios por Área
 
-| Área | Antes do MindGest | Com o MindGest |
+| Área | Antes do Mindgest | Com o Mindgest |
 | --- | --- | --- |
 | Faturação | Documentos dispersos e emissão lenta | Documentos organizados e emissão mais fluida |
 | POS | Vendas manuais ou pouco controladas | Atendimento rápido com registo de caixa |
@@ -345,7 +345,7 @@ O MindGest considera necessidades comuns do mercado empresarial angolano, como N
 
 ## 11. Planos e Posicionamento Comercial
 
-Os planos oficiais do MindGest são **Base**, **Smart** e **Pro**. Cada plano foi pensado para uma fase de maturidade da empresa, desde a organização inicial da faturação até à gestão completa com POS, stock, fornecedores, reservas e auditoria.
+Os planos oficiais do Mindgest são **Base**, **Smart** e **Pro**. Cada plano foi concebido para uma fase de maturidade da empresa, desde a organização inicial da facturação até à gestão completa com POS, stock, fornecedores, reservas e auditoria.
 
 Todos os planos incluem benefícios comerciais importantes:
 
@@ -422,7 +422,7 @@ Indicado para empresas com processos mais avançados, maior escala, fornecedores
 
 ### Abertura
 
-Toda empresa precisa vender, faturar, controlar stock e acompanhar resultados. O problema é que, muitas vezes, essas áreas trabalham separadas. O MindGest nasce para unir esses processos numa única plataforma.
+Todas as empresas precisam de vender, facturar, controlar o stock e acompanhar resultados. Muitas vezes, porém, essas áreas trabalham separadamente. O Mindgest foi criado para unir esses processos numa única plataforma.
 
 ### Dor
 
@@ -430,15 +430,15 @@ Quando a empresa usa ferramentas separadas, perde tempo, duplica informação, c
 
 ### Solução
 
-O MindGest centraliza a operação. O que é vendido no POS pode alimentar documentos, stock e relatórios. Os clientes ficam organizados. Os produtos e serviços ficam padronizados. A equipa trabalha com perfis adequados. A gestão acompanha os indicadores.
+O Mindgest centraliza a operação. As vendas realizadas no POS podem alimentar documentos, stock e relatórios. Os clientes ficam organizados, os produtos e serviços são normalizados, a equipa trabalha com perfis adequados e a gestão acompanha os indicadores.
 
 ### Valor
 
-Com o MindGest, a empresa trabalha com mais organização, vende com mais rapidez, controla melhor a operação e toma decisões com dados mais confiáveis.
+Com o Mindgest, a empresa trabalha com mais organização, vende com mais rapidez, controla melhor a operação e toma decisões com dados mais fiáveis.
 
 ### Fecho
 
-O MindGest é a base digital para empresas que querem crescer com controlo.
+O Mindgest é a base digital para empresas que querem crescer com controlo.
 
 ---
 
@@ -485,7 +485,7 @@ Foco em lojas, equipas, stock, relatórios, perfis, planos avançados e controlo
 
 ## 14. Estrutura Sugerida para Slides
 
-1. **MindGest**
+1. **Mindgest**
    Gestão empresarial inteligente para empresas que querem vender, faturar e crescer com controlo.
 
 2. **O desafio**
@@ -519,7 +519,7 @@ Foco em lojas, equipas, stock, relatórios, perfis, planos avançados e controlo
     Base, Smart e Pro.
 
 12. **Fecho**
-    MindGest: gestão, controlo e crescimento num único sistema.
+    Mindgest: gestão, controlo e crescimento num único sistema.
 
 ---
 
@@ -527,7 +527,7 @@ Foco em lojas, equipas, stock, relatórios, perfis, planos avançados e controlo
 
 ### Proprietário
 
-Com o MindGest, o proprietário consegue acompanhar o negócio com mais clareza: vendas, documentos, stock, caixas, clientes e equipa ficam reunidos numa plataforma preparada para crescer.
+Com o Mindgest, o proprietário consegue acompanhar o negócio com mais clareza: vendas, documentos, stock, caixas, clientes e equipa ficam reunidos numa plataforma preparada para crescer.
 
 ### Gerente
 
@@ -551,15 +551,15 @@ O cliente recebe atendimento mais rápido, documentos mais profissionais e uma e
 
 ### "Já usamos folhas de cálculo."
 
-Folhas ajudam no início, mas tornam-se difíceis de controlar quando aumentam as vendas, clientes, produtos e caixas. O MindGest organiza esses processos de forma integrada e reduz o risco de erro manual.
+As folhas de cálculo ajudam no início, mas tornam-se difíceis de controlar quando aumentam as vendas, os clientes, os produtos e os caixas. O Mindgest organiza esses processos de forma integrada e reduz o risco de erro manual.
 
 ### "A minha equipa pode achar complicado."
 
-O MindGest foi pensado para uso diário. Cada perfil vê o que precisa para a sua função, o que torna a experiência mais simples para operadores, gerentes e proprietários.
+O Mindgest foi concebido para utilização diária. Cada perfil vê apenas o que necessita para a sua função, tornando a experiência mais simples para operadores, gestores e proprietários.
 
 ### "Só preciso faturar."
 
-O MindGest permite começar pela faturação e evoluir depois. À medida que a empresa cresce, pode ativar stock, POS, fornecedores, relatórios e funcionalidades mais avançadas.
+O Mindgest permite começar pela facturação e evoluir posteriormente. À medida que a empresa cresce, pode activar stock, POS, fornecedores, relatórios e funcionalidades mais avançadas.
 
 ### "Tenho receio de perder controlo do caixa."
 
@@ -567,7 +567,7 @@ O POS e as sessões de caixa ajudam a registar operadores, movimentos, abertura 
 
 ### "Tenho várias lojas."
 
-O MindGest foi desenhado com lógica de crescimento, permitindo estruturar lojas, equipas, stock e relatórios de forma mais organizada nos planos adequados.
+O Mindgest foi concebido com uma lógica de crescimento, permitindo estruturar lojas, equipas, stock e relatórios de forma mais organizada nos planos adequados.
 
 ---
 
@@ -578,7 +578,7 @@ O MindGest foi desenhado com lógica de crescimento, permitindo estruturar lojas
 - "Menos processos manuais. Mais controlo para crescer."
 - "Do balcão ao relatório, tudo conectado."
 - "Organize clientes, produtos, documentos, stock e vendas numa só plataforma."
-- "O MindGest ajuda a sua empresa a trabalhar melhor todos os dias."
+- "O Mindgest ajuda a sua empresa a trabalhar melhor todos os dias."
 - "Gestão simples para a equipa, poderosa para a decisão."
 
 ---
@@ -587,33 +587,33 @@ O MindGest foi desenhado com lógica de crescimento, permitindo estruturar lojas
 
 ### Texto curto
 
-O MindGest é uma plataforma de gestão empresarial que centraliza faturação, POS, stock, clientes, fornecedores, relatórios e equipas. Com uma interface moderna e planos escaláveis, ajuda empresas a reduzir tarefas manuais, controlar melhor a operação e tomar decisões com dados confiáveis.
+O Mindgest é uma plataforma de gestão empresarial que centraliza facturação, POS, stock, clientes, fornecedores, relatórios e equipas. Com uma interface moderna e planos escaláveis, ajuda as empresas a reduzir tarefas manuais, controlar melhor a operação e tomar decisões com dados fiáveis.
 
 ### Texto médio
 
-O MindGest foi desenvolvido para empresas que precisam vender, faturar, controlar stock e acompanhar resultados de forma profissional. A plataforma reúne documentos comerciais, ponto de venda, clientes, fornecedores, produtos, serviços, relatórios e perfis de acesso num único ambiente. Assim, a equipa trabalha com mais organização e a gestão ganha uma visão mais clara do negócio.
+O Mindgest foi desenvolvido para empresas que precisam de vender, facturar, controlar o stock e acompanhar resultados de forma profissional. A plataforma reúne documentos comerciais, ponto de venda, clientes, fornecedores, produtos, serviços, relatórios e perfis de acesso num único ambiente. Assim, a equipa trabalha com mais organização e a gestão obtém uma visão mais clara do negócio.
 
 ### Texto para proposta
 
-Propomos a implementação do MindGest como plataforma central de gestão empresarial, permitindo à empresa organizar faturação, ponto de venda, stock, clientes, fornecedores, documentos e relatórios. A solução contribui para a redução de processos manuais, melhoria do controlo operacional, maior rastreabilidade de vendas e caixas, e melhor acompanhamento dos indicadores de desempenho.
+Propomos a implementação do Mindgest como plataforma central de gestão empresarial, permitindo à empresa organizar a facturação, o ponto de venda, o stock, os clientes, os fornecedores, os documentos e os relatórios. A solução contribui para reduzir processos manuais, melhorar o controlo operacional, aumentar a rastreabilidade de vendas e caixas e acompanhar melhor os indicadores de desempenho.
 
 ### Texto para website
 
-Controle a sua empresa com o MindGest. Uma plataforma completa para faturação, POS, stock, clientes, fornecedores e relatórios, criada para empresas que querem crescer com organização e tomar decisões com mais confiança.
+Gira a sua empresa com o Mindgest. Uma plataforma completa de facturação, POS, stock, clientes, fornecedores e relatórios, criada para empresas que querem crescer com organização e tomar decisões com mais confiança.
 
 ### Texto para redes sociais
 
-Gerir uma empresa não precisa ser confuso. Com o MindGest, pode vender, faturar, controlar stock, acompanhar clientes e consultar relatórios numa única plataforma. Mais organização para a equipa. Mais controlo para a gestão.
+Gerir uma empresa não precisa de ser confuso. Com o Mindgest, pode vender, facturar, controlar o stock, acompanhar clientes e consultar relatórios numa única plataforma. Mais organização para a equipa. Mais controlo para a gestão.
 
 ---
 
 ## 19. Slogans e Assinaturas
 
-- MindGest: gestão, controlo e crescimento num único sistema.
-- MindGest: a operação da sua empresa, finalmente conectada.
-- MindGest: venda melhor, fature melhor, decida melhor.
-- MindGest: tecnologia para empresas que querem crescer com controlo.
-- MindGest: do balcão à gestão, tudo no mesmo lugar.
+- Mindgest: gestão, controlo e crescimento num único sistema.
+- Mindgest: a operação da sua empresa, finalmente ligada.
+- Mindgest: venda melhor, facture melhor, decida melhor.
+- Mindgest: tecnologia para empresas que querem crescer com controlo.
+- Mindgest: do balcão à gestão, tudo no mesmo lugar.
 
 ---
 
@@ -641,22 +641,22 @@ Gerir uma empresa não precisa ser confuso. Com o MindGest, pode vender, faturar
 
 ### CTA principal
 
-**Comece a gerir a sua empresa com mais controlo usando o MindGest.**
+**Comece a gerir a sua empresa com mais controlo utilizando o Mindgest.**
 
 ### CTAs alternativos
 
 - Solicitar demonstração;
 - Conhecer planos;
-- Experimentar o MindGest;
+- Experimentar o Mindgest;
 - Falar com a equipa comercial;
-- Ver como o MindGest se adapta ao seu negócio.
+- Ver como o Mindgest se adapta ao seu negócio.
 
 ---
 
 ## 22. Fecho Institucional
 
-O MindGest é uma plataforma para empresas que querem sair da gestão improvisada e avançar para uma operação mais organizada, controlada e preparada para crescer.
+O Mindgest é uma plataforma para empresas que querem abandonar a gestão improvisada e avançar para uma operação mais organizada, controlada e preparada para crescer.
 
-Ao ligar faturação, POS, stock, clientes, fornecedores, documentos, relatórios e equipa, o MindGest transforma a rotina empresarial numa operação mais simples de executar e mais clara de gerir.
+Ao ligar facturação, POS, stock, clientes, fornecedores, documentos, relatórios e equipa, o Mindgest transforma a rotina empresarial numa operação mais simples de executar e mais clara de gerir.
 
-**MindGest: gestão empresarial inteligente para negócios que querem crescer com controlo.**
+**Mindgest: gestão empresarial inteligente para negócios que querem crescer com controlo.**

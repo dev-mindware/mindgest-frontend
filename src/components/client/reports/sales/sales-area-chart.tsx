@@ -79,7 +79,7 @@ export function SalesAreaChart({ data, period }: SalesAreaChartProps) {
                         </span>
                     </div>
                     <div className="flex items-center justify-between gap-4">
-                        <span className="text-xs text-muted-foreground">Transações:</span>
+                        <span className="text-xs text-muted-foreground">Transacções:</span>
                         <span className="text-sm font-semibold">
                             {data.transactionCount}
                         </span>
@@ -100,7 +100,7 @@ export function SalesAreaChart({ data, period }: SalesAreaChartProps) {
             <CardHeader>
                 <CardTitle>Evolução de Vendas</CardTitle>
                 <CardDescription>
-                    Receita total e número de transações por período
+                    Receita total e número de transacções por período
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -109,7 +109,7 @@ export function SalesAreaChart({ data, period }: SalesAreaChartProps) {
                         <EmptyState
                             icon="ChartArea"
                             title="Sem dados de evolução"
-                            description="Não há histórico de vendas suficiente para gerar o gráfico neste período."
+                            description="Ainda não existe histórico de vendas suficiente para gerar o gráfico neste período."
                         />
                     ) : (
                         <ResponsiveContainer width="100%" height="100%">
@@ -147,7 +147,7 @@ export function SalesAreaChart({ data, period }: SalesAreaChartProps) {
                                     wrapperStyle={{ paddingTop: "20px" }}
                                     formatter={(value) => {
                                         if (value === "totalRevenue") return "Receita Total";
-                                        if (value === "transactionCount") return "Nº de Transações";
+                                        if (value === "transactionCount") return "N.º de transacções";
                                         return value;
                                     }}
                                 />

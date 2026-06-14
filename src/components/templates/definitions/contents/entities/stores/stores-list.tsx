@@ -80,7 +80,7 @@ export function StoresList() {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
@@ -98,13 +98,13 @@ export function StoresList() {
               variant: "default",
             },
             {
-              label: item.isActive ? "Desativar" : "Ativar",
+              label: item.isActive ? "Desactivar" : "Activar",
               onClick: toggleStatusStore,
               icon: "CirclePower",
               variant: "default",
             },
             {
-              label: "Deletar",
+              label: "Apagar",
               onClick: handlerDeleteStore,
               icon: "Trash2",
               variant: "destructive",

@@ -305,7 +305,7 @@ export function AsyncCreatableSelectField({
           }
           return "Nenhum resultado encontrado";
         }}
-        loadingMessage={() => "Buscando..."}
+        loadingMessage={() => "A pesquisar..."}
         isClearable
         filterOption={() => true}
         components={selectComponents}
@@ -424,7 +424,7 @@ export function AsyncCreatableSelectField({
       {error && <p className="mt-1 text-sm text-destructive">{error}</p>}
       {value?.__isNew__ && (
         <p className="mt-1 text-sm text-amber-600">
-          ⚠️ Novo registro - preencha os dados adicionais
+          Novo registo: preencha os dados adicionais
         </p>
       )}
     </div>

@@ -9,7 +9,7 @@ export function SuppliersPageContent() {
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-center" data-tour="suppliers-header">
         <TitleList
           title="Fornecedores"
-          suTitle="Adicione e gerencie seus fornecedores"
+          suTitle="Adicione e gira os seus fornecedores"
         />
         <div data-tour="suppliers-create">
           <ButtonAddSupplier />

@@ -35,8 +35,8 @@ export function PlanUpgradeGate({
       default:
         return [
           "Gestão de clientes e vendas",
-          "Faturação e emissão de documentos",
-          "Relatórios básicos de faturação",
+          "Facturação e emissão de documentos",
+          "Relatórios básicos de facturação",
         ];
     }
   };
@@ -64,7 +64,7 @@ export function PlanUpgradeGate({
               <span className="font-semibold text-foreground">
                 {featureName}
               </span>{" "}
-              não está disponível no seu plano atual. Atualize a sua subscrição
+              não está disponível no plano actual. Actualize a subscrição
               para desbloquear esta funcionalidade.
             </>
           ) : (

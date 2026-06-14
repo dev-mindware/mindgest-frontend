@@ -4,7 +4,7 @@ import { FileSchema, phoneNumberSchema, taxNumberSchema } from "./helps";
 export const editProfileSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").optional(),
   phone: phoneNumberSchema.optional(),
-  email: z.string().trim().email("Email invalido").optional(),
+  email: z.string().trim().email("Email inválido").optional(),
   companyLogo: FileSchema.optional(),
   taxNumber: taxNumberSchema.optional(),
 

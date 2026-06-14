@@ -102,7 +102,7 @@ export async function loginAction({
     const { user, tokens, message } = res.data;
 
     if (!user) {
-      throw new Error("Usuário não autorizado");
+      throw new Error("Utilizador não autorizado");
     }
 
     await createSession({

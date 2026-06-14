@@ -33,16 +33,16 @@ export function FirstStep() {
       </div>
       <div className="grid gap-6">
         <Input
-          label="Seu nome"
+          label="Nome"
           startIcon="User"
-          placeholder="Insira seu nome"
+          placeholder="Introduza o seu nome"
           {...register("step1.name")}
           error={errors?.step1?.name?.message}
         />
         <Input
           label="Email"
           startIcon="Mail"
-          placeholder="Insira seu email"
+          placeholder="Introduza o seu endereço de email"
           {...register("step1.email")}
           error={errors?.step1?.email?.message}
         />
@@ -50,7 +50,7 @@ export function FirstStep() {
           label="Telefone"
           maxLength={9}
           startIcon="Phone"
-          placeholder="Insira seu telefone"
+          placeholder="Introduza o seu número de telefone"
           {...register("step1.phone")}
           error={errors?.step1?.phone?.message}
         />
@@ -74,7 +74,7 @@ export function FirstStep() {
                 variant="outline"
                 size="icon"
                 className="shrink-0"
-                title="Gerar senha forte"
+                title="Gerar uma palavra-passe segura"
                 onClick={generateStrongPassword}
               >
                 <Wand2 className="size-4" />

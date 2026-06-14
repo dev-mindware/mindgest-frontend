@@ -7,7 +7,7 @@ export function SupportAccess() {
         Zona de Perigo
       </h3>
       <p className="text-center text-muted-foreground md:text-start">
-        Ações destrutivas e irreversíveis relacionadas à sua conta.
+        Acções destrutivas e irreversíveis relacionadas com a sua conta.
       </p>
       <Separator className="my-4" />
       <div className="space-y-4">
@@ -17,7 +17,7 @@ export function SupportAccess() {
               Excluir conta
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              A exclusão da sua conta é uma ação permanente e irreversível.
+              A eliminação da sua conta é uma acção permanente e irreversível.
               Todos os seus dados pessoais, configurações e acessos aos espaços
               de trabalho serão apagados imediatamente.
             </p>

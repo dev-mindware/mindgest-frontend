@@ -91,7 +91,7 @@ export function BankModal({ action }: BankModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao salvar o banco",
+        error?.response?.data?.message || "Não foi possível guardar o banco.",
       );
     }
   }
@@ -131,7 +131,7 @@ export function BankModal({ action }: BankModalProps) {
                 }
               }}
               options={bankOptions}
-              placeholder="Selecione o banco"
+              placeholder="Seleccione o banco"
             />
           )}
         />
@@ -187,7 +187,7 @@ export function BankModal({ action }: BankModalProps) {
             className="w-max"
             isLoading={isSubmitting || isAdding || isEditing}
           >
-            {action === "add" ? "Adicionar" : "Salvar alterações"}
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
           </ButtonSubmit>
         </div>
       </form>

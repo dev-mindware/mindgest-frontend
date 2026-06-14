@@ -43,7 +43,7 @@ export function SupplierItemsFiltersTSX({
           options={[
             { value: "ACTIVE", label: "Ativo" },
             { value: "INACTIVE", label: "Inativo" },
-            { value: "OUT_OF_STOCK", label: "Sem Estoque" },
+            { value: "OUT_OF_STOCK", label: "Sem stock" },
           ]}
           value={filters.status}
           onChange={(status) => setFilters({ status: status as any })}
@@ -57,7 +57,7 @@ export function SupplierItemsFiltersTSX({
             { value: "sku", label: "SKU" },
             { value: "price", label: "Preço", },
             { value: "createdAt", label: "Data Criação" },
-            { value: "updatedAt", label: "Data Atualização" },
+            { value: "updatedAt", label: "Data de actualização" },
           ]}
           value={filters.sortBy}
           onChange={(sortBy) => setFilters({ sortBy })}

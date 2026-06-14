@@ -1,6 +1,6 @@
 /**
- * Baixa documento térmico de Fatura-Recibo e retorna URL do blob
- * @param invoiceReceiptId - ID da fatura-recibo
+ * Descarrega o documento térmico de factura-recibo e devolve o URL do blob.
+ * @param invoiceReceiptId - ID da factura-recibo
  * @returns URL do blob para exibir no modal
  */
 export async function getThermalInvoiceUrl(
@@ -22,7 +22,7 @@ export async function getThermalInvoiceUrl(
     const url = URL.createObjectURL(blob);
     return url;
   } catch (error) {
-    console.error("Erro ao baixar fatura-recibo térmica:", error);
+    console.error("Erro ao descarregar a factura-recibo térmica:", error);
     throw error;
   }
 }

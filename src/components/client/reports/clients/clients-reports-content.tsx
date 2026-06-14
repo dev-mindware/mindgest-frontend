@@ -54,7 +54,7 @@ export function ClientsReportsContent() {
       title: formatCurrency(data.summary.totalRevenue),
       subtitle: "Receita Total",
       icon: "DollarSign",
-      description: "Faturamento no período",
+      description: "Facturação no período",
     },
     {
       title: formatCurrency(data.summary.averageTicket),
@@ -66,7 +66,7 @@ export function ClientsReportsContent() {
       title: data.summary.totalClients,
       subtitle: "Total Clientes",
       icon: "Users",
-      description: "Base de clientes ativa",
+      description: "Base de clientes activa",
     },
     {
       title: `${data.summary.averageLoyaltyScore}%`,
@@ -111,7 +111,7 @@ export function ClientsReportsContent() {
                 { value: "recent", label: "Recentes" },
                 { value: "inactive", label: "Inativos" },
               ],
-              placeholder: "Selecione o tipo",
+              placeholder: "Seleccione o tipo",
             },
             {
               type: "select",
@@ -123,7 +123,7 @@ export function ClientsReportsContent() {
                 { value: "10", label: "10" },
                 { value: "20", label: "20" },
               ],
-              placeholder: "Selecione o limite",
+              placeholder: "Seleccione o limite",
             },
           ]}
         />

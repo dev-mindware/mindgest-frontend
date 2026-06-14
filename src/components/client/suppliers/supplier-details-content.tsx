@@ -81,7 +81,7 @@ export function SupplierDetailsContent({ supplierId }: { supplierId: string }) {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <PillItem keyV="Nome do Fornecedor" value={supplier.name} />
-                <PillItem keyV="Email de Contato" value={supplier.email} />
+                <PillItem keyV="Email de contacto" value={supplier.email} />
                 <PillItem keyV="Telefone" value={supplier.phone} />
                 <PillItem keyV="NIF" value={supplier.taxNumber} />
                 <div>

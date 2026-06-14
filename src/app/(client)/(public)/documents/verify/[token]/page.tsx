@@ -33,7 +33,7 @@ export default function DocumentVerifyPage() {
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Documento não encontrado</h2>
           <p className="text-muted-foreground mb-4">
-            O documento que você está tentando verificar não existe ou o link de
+            O documento que está a tentar verificar não existe ou a ligação de
             verificação é inválido.
           </p>
           <p className="text-sm text-muted-foreground">

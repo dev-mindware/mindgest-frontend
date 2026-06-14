@@ -7,18 +7,17 @@ export function getPlanFeatures(plan: Plan): string[] {
   const { features } = getPlanFeatureGroups(plan.name);
 
   const planLimits = [
-    plan.maxUsers > 0 ? `Até ${plan.maxUsers} usuários` : "Usuários ilimitados",
+    plan.maxUsers > 0 ? `Até ${plan.maxUsers} utilizadores` : "Utilizadores ilimitados",
     plan.maxStores > 0 ? `Até ${plan.maxStores} loja(s)` : "Lojas ilimitadas",
   ];
 
   const baseBackendFeatures = [
-    plan.features.hasInvoices && "Faturas e Documentos Ilimitados",
+    plan.features.hasInvoices && "Facturas e documentos ilimitados",
     plan.features.hasReporting && "Relatórios",
-    plan.features.canExportSaft && "Exportação SAF-T",
   ];
 
   const smartBackendFeatures = [
-    plan.features.hasStock && "Gestão de Estoque",
+    plan.features.hasStock && "Gestão de stock",
     plan.features.hasPos && "Ponto de Venda",
     plan.features.hasAppearance && "Personalização de Aparência",
     plan.features.hasPrintFormats && "Impressão em A4 e Talão",

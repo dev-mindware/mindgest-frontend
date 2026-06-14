@@ -80,7 +80,7 @@ export function GlassWrapper({
 
 const billingConfig = {
   revenue: {
-    label: "Faturação",
+    label: "Facturação",
     color: "var(--primary)",
   },
 } satisfies ChartConfig;
@@ -91,7 +91,7 @@ export function HeroBillingChart() {
       <div className="flex items-center justify-between mb-4">
         <div className="space-y-1">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Faturação Semestral
+            Facturação semestral
           </p>
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-bold">$42,500</h3>

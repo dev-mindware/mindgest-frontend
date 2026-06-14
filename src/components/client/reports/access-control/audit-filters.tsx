@@ -38,7 +38,7 @@ export function AuditFilters() {
 
         <FilterPopover
           icon="User"
-          label="Usuário"
+          label="Utilizador"
           options={userOptions}
           value={filters.userId}
           onChange={(userId) => setFilters({ userId: userId || undefined })}
@@ -54,7 +54,7 @@ export function AuditFilters() {
 
         <FilterPopover
           icon="Activity"
-          label="Ação"
+          label="Acção"
           options={ACTION_OPTIONS}
           value={filters.action}
           onChange={(action) => setFilters({ action: (action as any) || undefined })}

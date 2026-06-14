@@ -1,6 +1,6 @@
-# Documentação de Autenticação - MindGest
+# Documentação de autenticação - Mindgest
 
-Este documento descreve o fluxo de autenticação e gerenciamento de sessões no MindGest Frontend, detalhando os arquivos e a lógica aplicada.
+Este documento descreve o fluxo de autenticação e gestão de sessões no Mindgest Frontend, detalhando os ficheiros e a lógica aplicada.
 
 ## 1. Visão Geral
 A autenticação utiliza **JWT (JSON Web Tokens)** e o gerenciamento de sessão é feito através de **Cookies HTTP-only**. Isso garante que os tokens não fiquem expostos ao JavaScript do lado do cliente, protegendo a aplicação contra ataques XSS.

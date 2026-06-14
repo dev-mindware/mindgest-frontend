@@ -50,7 +50,7 @@ export function SupplierFiltersTSX({
           options={[
             { value: "name", label: "Nome" },
             { value: "createdAt", label: "Data de Criação" },
-            { value: "updatedAt", label: "Data de Atualização" },
+            { value: "updatedAt", label: "Data de actualização" },
           ]}
           value={filters.sortBy}
           onChange={(sortBy) => setFilters({ sortBy })}

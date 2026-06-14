@@ -76,7 +76,7 @@ export function useUpdateStore() {
     mutationFn: ({ id, data }: { id: string; data: Partial<StoreData> }) =>
       storesService.updateStore(id, data),
     onSuccess: () => {
-      SucessMessage("Loja atualizada com sucesso!");
+      SucessMessage("Loja actualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["stores"] });
     },
   });

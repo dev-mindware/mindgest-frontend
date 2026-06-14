@@ -404,9 +404,9 @@ export function ProformaForm({
           className="min-w-[150px]"
         >
           {isLoading || isSubmitting
-            ? "Processando..."
+            ? "A processar..."
             : isEdit
-              ? "Guardar Alterações"
+              ? "Guardar alterações"
               : "Criar Proforma"}
         </Button>
       </div>

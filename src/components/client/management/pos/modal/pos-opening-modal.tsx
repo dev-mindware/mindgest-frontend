@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -12,12 +12,13 @@ import {
   RequestError,
   TimeField,
   DateInput,
+  Textarea,
+  InputCurrency,
 } from "@/components";
 import { useModal } from "@/stores";
 import { useGetStoresPaginated } from "@/hooks/entities";
 import { useGetCashiersPaginated } from "@/hooks/collaborators/cashier";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 import { PosOpeningFormData, posOpeningSchema } from "@/schemas/pos-opening";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { useOpenCashSession, useUpdateCashSession } from "@/hooks/entities";
@@ -25,6 +26,7 @@ import { SucessMessage, ErrorMessage, formatCurrency, parseCurrency } from "@/ut
 import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
 import { parseTime } from "@internationalized/date";
+import { useAuth } from "@/hooks/auth";
 
 function safeParseTime(timeStr: string) {
   try {
@@ -35,7 +37,15 @@ function safeParseTime(timeStr: string) {
   }
 }
 
-export function PosOpeningModal() {
+interface PosOpeningModalProps {
+  /** Quando true, o utilizador logado (Owner/Manager) abre sessão para si próprio.
+   *  O select de caixas fica oculto e o cashierId é injetado automaticamente. */
+  selfSessionMode?: boolean;
+  /** Chamado após abertura ou atualização de sessão com sucesso. */
+  onSuccess?: () => void;
+}
+
+export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeningModalProps) {
   const { closeModal } = useModal();
   const { currentCashier, setCurrentCashier } = useCurrentCashierStore();
   const [storePage, setStorePage] = useState(1);
@@ -65,8 +75,10 @@ export function PosOpeningModal() {
       initialCapital: "",
       workTime: "06:00",
       storeId: "",
+      // No selfSessionMode, o cashierId do próprio gestor é injetado depois de obter o user
       cashierIds: [],
       fundType: "Coin",
+      reason: "",
     },
   });
 
@@ -77,7 +89,34 @@ export function PosOpeningModal() {
     isLoading: isLoadingCashiers,
   } = useGetCashiersPaginated(1, 100, "", selectedStoreId);
 
+  const { user } = useAuth();
+
+  const cashierOptions = useMemo(() => {
+    const cashiersList = allCashiers || [];
+    const opts = cashiersList.map((c) => ({
+      label: `${c.name} (${c.email})`,
+      value: c.id,
+    }));
+
+    if (user && (user.role === "OWNER" || user.role === "MANAGER")) {
+      if (!opts.some((opt) => opt.value === user.id)) {
+        opts.unshift({
+          label: `${user.name} (${user.email} - Tu/Gestor)`,
+          value: user.id,
+        });
+      }
+    }
+    return opts;
+  }, [allCashiers, user]);
+
   const isEdit = !!currentCashier;
+
+  // No selfSessionMode, injeta o id do utilizador logado nos cashierIds ao montar
+  useEffect(() => {
+    if (selfSessionMode && user?.id) {
+      setValue("cashierIds", [user.id]);
+    }
+  }, [selfSessionMode, user, setValue]);
 
   useEffect(() => {
     if (isEdit && currentCashier) {
@@ -92,17 +131,19 @@ export function PosOpeningModal() {
         storeId: currentCashier.storeId || "",
         cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
         fundType: normalizedFundType,
+        reason: "",
       });
-    } else {
+    } else if (!selfSessionMode) {
       reset({
         initialCapital: "",
         workTime: "06:00",
         storeId: "",
         cashierIds: [],
         fundType: "Coin",
+        reason: "",
       });
     }
-  }, [isEdit, currentCashier, reset]);
+  }, [isEdit, currentCashier, reset, selfSessionMode]);
 
   const selectedCashierIds = watch("cashierIds") || [];
 
@@ -115,8 +156,13 @@ export function PosOpeningModal() {
   const onSubmit = async (data: PosOpeningFormData) => {
     try {
       if (isEdit && currentCashier) {
+        if (!data.reason?.trim()) {
+          ErrorMessage("A razão da edição é obrigatória.");
+          return;
+        }
         const payload = {
           openingCash: parseFloat(data.initialCapital),
+          reason: data.reason,
         };
         await updateSession({ id: currentCashier.id.toString(), data: payload });
       } else {
@@ -126,6 +172,7 @@ export function PosOpeningModal() {
         };
         await openSession(payload);
       }
+      onSuccess?.();
       handleClose();
     } catch (error: any) {
       // Errors are handled by the mutation's onError
@@ -138,7 +185,7 @@ export function PosOpeningModal() {
         <div className="p-8 text-center flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-muted-foreground font-medium">
-            Carregando lojas...
+            A carregar lojas...
           </p>
         </div>
       </GlobalModal>
@@ -161,11 +208,11 @@ export function PosOpeningModal() {
   return (
     <GlobalModal
       id="opening-cashier"
-      title={isEdit ? "Editar Configuração de Caixa" : "Abertura de Caixa"}
+      title={isEdit ? "Editar configuração de caixa" : "Abertura de caixa"}
       description={
         isEdit
           ? "Edite as configurações da sessão deste caixa"
-          : "Faça a abertura de caixa aqui e controle o fluxo de vendas dos seu funcionários"
+          : "Abra o caixa e acompanhe o fluxo de vendas dos seus colaboradores."
       }
       canClose
       className="sm:max-w-[600px]"
@@ -176,13 +223,15 @@ export function PosOpeningModal() {
             <Controller
               name="initialCapital"
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Input
+              render={({ field: { onChange, value, ref } }) => (
+                <InputCurrency
+                  ref={ref}
                   label="Capital Inicial"
-                  placeholder="0.00 Kz"
-                  startIcon="CircleDollarSign"
-                  value={formatCurrency(value || 0)}
-                  onChange={(e) => onChange(parseCurrency(e.target.value).toString())}
+                  placeholder="0,00"
+                  value={Number(value || 0)}
+                  onValueChange={(val) => {
+                    onChange(val.toString());
+                  }}
                   error={errors.initialCapital?.message}
                 />
               )}
@@ -225,7 +274,7 @@ export function PosOpeningModal() {
               name="fundType"
               control={control}
               label="Tipo de Fundo"
-              placeholder="Selecione o tipo"
+              placeholder="Seleccione o tipo"
               disabled={isEdit}
               options={[
                 { label: "Moeda", value: "Coin" },
@@ -241,7 +290,7 @@ export function PosOpeningModal() {
               render={({ field }) => (
                 <PaginatedSelect
                   label="Loja"
-                  placeholder="Selecione a loja"
+                  placeholder="Seleccione a loja"
                   options={storesData.map((s) => ({ label: s.name, value: s.id }))}
                   value={field.value}
                   onChange={field.onChange}
@@ -285,6 +334,17 @@ export function PosOpeningModal() {
               )}
             />
           </div>
+
+          {isEdit && (
+            <div className="col-span-1 md:col-span-2">
+              <Textarea
+                label="Razão da Edição"
+                placeholder="Insira o motivo desta alteração..."
+                {...register("reason")}
+                error={errors.reason?.message}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-muted-foreground/5">
@@ -296,7 +356,7 @@ export function PosOpeningModal() {
             loading={isOpening || isUpdating}
             className="bg-primary hover:bg-primary/90 text-white"
           >
-            {isEdit ? "Salvar Alterações" : "Abrir Caixa"}
+            {isEdit ? "Guardar alterações" : "Abrir caixa"}
           </Button>
         </div>
       </form>

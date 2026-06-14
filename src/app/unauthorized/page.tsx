@@ -30,7 +30,7 @@ export default function UnauthorizedPage() {
             Acesso Não Autorizado
           </h1>
           <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
-            Parece que você não tem as permissões necessárias para acessar este recurso.
+            Não tem as permissões necessárias para aceder a este recurso.
             Verifique o seu plano ou contacte o administrador.
           </p>
         </div>

@@ -225,7 +225,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                     isLoading={isTaxesLoading}
                     pagination={taxPagination}
                     onPageChange={setTaxPage}
-                    placeholder="Selecione um imposto"
+                    placeholder="Seleccione um imposto"
                     className="!w-full"
                   />
                 )}
@@ -262,7 +262,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
                     isLoading={isLoading}
                     pagination={categoryPagination}
                     onPageChange={setCategoryPage}
-                    placeholder="Selecione uma categoria"
+                    placeholder="Seleccione uma categoria"
                     className="!w-full"
                   />
                 )}
@@ -285,7 +285,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
               Cancelar
             </Button>
             <ButtonSubmit className="w-max" isLoading={isAdding || isUpdating}>
-              {action === "add" ? "Criar Serviço" : "Salvar"}
+              {action === "add" ? "Criar serviço" : "Guardar"}
             </ButtonSubmit>
           </div>
         </form>

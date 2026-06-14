@@ -8,7 +8,7 @@ export const status = [
     value: "INACTIVE",
   },
   {
-    label: "Fora de Estoque",
+    label: "Sem stock",
     value: "OUT_OF_STOCK",
   },
 ];

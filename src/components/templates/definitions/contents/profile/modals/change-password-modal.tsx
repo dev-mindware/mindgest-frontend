@@ -33,14 +33,14 @@ export function ChangePasswordModal() {
       },
       {
         onSuccess: () => {
-          SucessMessage("Senha alterada com sucesso!");
+          SucessMessage("Palavra-passe alterada com sucesso.");
           reset();
           closeModal("change-password");
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {
           ErrorMessage(
-            error?.response?.data?.message || "Erro ao alterar a senha.",
+            error?.response?.data?.message || "Não foi possível alterar a palavra-passe.",
           );
         },
       },
@@ -50,30 +50,30 @@ export function ChangePasswordModal() {
   return (
     <GlobalModal
       id="change-password"
-      title="Alterar Senha"
-      description="Crie uma nova senha forte para a sua conta."
+      title="Alterar palavra-passe"
+      description="Defina uma palavra-passe segura para a sua conta."
       canClose
       className="max-w-md"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
         <Input
-          label="Senha Atual"
+          label="Palavra-passe actual"
           type="password"
-          placeholder="Insira a sua senha atual"
+          placeholder="Introduza a palavra-passe actual"
           error={errors.currentPassword?.message}
           {...register("currentPassword")}
         />
         <Input
-          label="Nova Senha"
+          label="Nova palavra-passe"
           type="password"
-          placeholder="Insira a nova senha"
+          placeholder="Introduza a nova palavra-passe"
           error={errors.newPassword?.message}
           {...register("newPassword")}
         />
         <Input
-          label="Confirmar Senha"
+          label="Confirmar palavra-passe"
           type="password"
-          placeholder="Repita a nova senha"
+          placeholder="Repita a nova palavra-passe"
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
         />
@@ -88,7 +88,7 @@ export function ChangePasswordModal() {
             Cancelar
           </Button>
           <Button type="submit" disabled={isPending}>
-            {isPending ? "A gravar..." : "Salvar Alterações"}
+            {isPending ? "A guardar..." : "Guardar alterações"}
           </Button>
         </div>
       </form>

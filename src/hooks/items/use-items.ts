@@ -22,7 +22,7 @@ export function useUpdateItem() {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateItemData> }) =>
       itemsService.updateItem(id, data),
     onSuccess: () => {
-      SucessMessage("Item atualizado com sucesso!");
+      SucessMessage("Item actualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });

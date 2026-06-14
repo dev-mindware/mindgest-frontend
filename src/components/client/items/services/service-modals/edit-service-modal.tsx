@@ -46,7 +46,7 @@ export function EditServiceModal() {
     closeModal("edit-service");
   };
 
-  if (isLoading) return <p>Carregando categorias...</p>;
+  if (isLoading) return <p>A carregar categorias...</p>;
   if (error)
     return (
       <RequestError
@@ -78,7 +78,7 @@ export function EditServiceModal() {
           <Button variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <Button onClick={handleSubmit(onSubmit)}>Salvar</Button>
+          <Button onClick={handleSubmit(onSubmit)}>Guardar</Button>
         </div>
       }
     >

@@ -97,10 +97,10 @@ export const InputFetch = forwardRef<HTMLInputElement, InputFetchProps>(({
     const value = e.target.value;
     setInputValue(value);
 
-    // Se o usuário está digitando algo diferente da seleção, limpa a seleção
+    // Limpa a selecção quando o utilizador introduz um valor diferente.
     if (selectedOption) {
       setSelectedOption(null);
-      console.log("🔄 Seleção limpa - usuário está digitando novamente");
+      console.log("Selecção limpa: o utilizador voltou a introduzir dados.");
     }
 
     // O valor digitado é sempre notificado ao componente pai
@@ -160,7 +160,7 @@ export const InputFetch = forwardRef<HTMLInputElement, InputFetchProps>(({
   // Log imediato quando selectedOption mudar
   useEffect(() => {
     if (selectedOption) {
-      console.log("Estado atualizado: item da API selecionado");
+      console.log("Estado actualizado: item da API seleccionado");
     }
   }, [selectedOption]);
 
@@ -227,7 +227,7 @@ export const InputFetch = forwardRef<HTMLInputElement, InputFetchProps>(({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              Buscando...
+              A pesquisar...
             </div>
           ) : error ? (
             <div className="px-4 py-3 text-sm text-destructive text-center">
@@ -365,7 +365,7 @@ export function InputFetch({
         <div className="max-h-60 overflow-auto">
           {isLoading && (
             <div className="px-4 py-3 text-sm text-muted-foreground text-center">
-              Buscando...
+              A pesquisar...
             </div>
           )}
 

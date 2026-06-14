@@ -50,7 +50,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
   const columns: Column<InvoiceResponse>[] = [
     {
       key: "inv-number",
-      header: "N° da Fatura",
+      header: "N.º da factura",
       render: (_, item) => item.number,
     },
     {
@@ -80,13 +80,13 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
     },
     {
       key: "action",
-      header: "Ação",
+      header: "Acção",
       render: (_, item) => (
         <ButtonOnlyAction
           data={item}
           actions={[
             {
-              label: "Ver Fatura",
+              label: "Ver factura",
               onClick: handlerDetailsInvoice,
               icon: "Eye",
               variant: "default",
@@ -94,7 +94,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
             ...(item.status === "DRAFT"
               ? [
                 {
-                  label: "Cancelar Fatura",
+                  label: "Cancelar factura",
                   onClick: handlerCancelInvoice,
                   icon: "Ban",
                   variant: "destructive",
@@ -146,7 +146,7 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
 
   if (isError) {
     return (
-      <RequestError refetch={refetch} message="Erro ao carregar as faturas" />
+      <RequestError refetch={refetch} message="Erro ao carregar as facturas" />
     );
   }
 

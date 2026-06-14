@@ -19,7 +19,7 @@ export function LoginHeroComposition() {
 
             {/* CTA Text - Top Header */}
             <div className="absolute top-12 left-1/2 -translate-x-1/2 z-50 text-center w-full px-4 animate-in fade-in slide-in-from-top-4 duration-1000">
-                <Badge>Gestão Inteligente para o seu Negócio</Badge>
+                <Badge>Gestão inteligente para o seu negócio</Badge>
                 <h2 className="text-3xl md:text-3xl font-bold text-white mb-2 tracking-tight">
                     Mindgest <span className="text-primary">ERP</span>
                 </h2>
@@ -66,7 +66,7 @@ export function LoginHeroComposition() {
                 <div className="absolute bottom-20 right-8 z-20">
                     <HeroStatsWidget
                         icon={CreditCard}
-                        label="Transações"
+                        label="Transacções"
                         value="89"
                         trend="+4%"
                         delay="delay-500"

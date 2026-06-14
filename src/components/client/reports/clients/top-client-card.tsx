@@ -23,7 +23,7 @@ export function TopClientCard({ client }: TopClientCardProps) {
       <Card className="h-full border-none bg-muted/30 flex items-center justify-center p-6 min-h-[400px]">
         <EmptyState
           title="Sem Top Cliente"
-          description="Ainda não há dados suficientes para identificar o melhor cliente."
+          description="Ainda não existem dados suficientes para identificar o cliente com melhor desempenho."
           icon="Award"
         />
       </Card>
@@ -92,7 +92,7 @@ export function TopClientCard({ client }: TopClientCardProps) {
 
         <div className="pt-2 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold uppercase tracking-tighter text-muted-foreground">Loyalty Score</p>
+            <p className="text-xs font-bold uppercase tracking-tighter text-muted-foreground">Índice de fidelização</p>
             <span className="text-sm font-black text-primary">
               {client.loyaltyScore}%
             </span>

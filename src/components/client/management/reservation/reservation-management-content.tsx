@@ -6,7 +6,7 @@ export function ReservationManagementContent() {
   return (
     <div className='space-y-6'>
         <div data-tour="reservations-header">
-          <TitleList title="Gestão de Reservas" suTitle='Gerencie as suas reservas aqui através do calendário'/>
+          <TitleList title="Gestão de reservas" suTitle="Gerir as reservas através do calendário." />
         </div>
         <div data-tour="reservations-calendar">
           <ReservationsView/>

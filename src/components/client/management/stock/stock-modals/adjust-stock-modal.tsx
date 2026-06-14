@@ -57,7 +57,7 @@ export function AdjustStockModal() {
                     {currentStock.item?.name || "N/A"}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">Quantidade Atual:</span>{" "}
+                    <span className="font-semibold text-foreground">Quantidade actual:</span>{" "}
                     {currentStock.quantity}
                 </p>
                 <p className="text-sm text-muted-foreground">

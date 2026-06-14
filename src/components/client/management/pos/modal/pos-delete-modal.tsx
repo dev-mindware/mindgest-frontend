@@ -33,7 +33,7 @@ export function PosDeleteModal() {
       className="!w-max"
       id="delete-cashier"
       title={`Tem certeza que deseja apagar a sessão de ${currentCashier?.user?.name || "Operador"}?`}
-      description="Lembre-se que esta ação não pode ser desfeita."
+      description="Esta acção não pode ser anulada."
     >
       <div className="flex justify-end gap-4 pt-4">
         <Button

@@ -114,7 +114,7 @@ export function AgtConsultation({
             Consulta Direta de Documentos
           </CardTitle>
           <CardDescription>
-            Pesquise por número de documento para validar faturas de fornecedores.
+            Pesquise pelo número do documento para validar facturas de fornecedores.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -288,7 +288,7 @@ export function AgtConsultation({
                 Ajuda
               </div>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Ao confirmar um documento, você está a declarar à AGT que aceita a validade fiscal desta operação e o respectivo montante.
+                Ao confirmar um documento, declara à AGT que aceita a validade fiscal desta operação e o respectivo montante.
               </p>
             </div>
           </div>

@@ -79,7 +79,7 @@ export function AddSupplierModal() {
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit" loading={isPending} disabled={isPending}>Salvar Fornecedor</Button>
+          <Button type="submit" loading={isPending} disabled={isPending}>Guardar fornecedor</Button>
         </div>
       </form>
     </GlobalModal>

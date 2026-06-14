@@ -31,8 +31,7 @@ export function InvoiceFiltersTSX({ type }: Props) {
   const showStatusFilter = type === "invoice";
 
   return (
-    <div className="w-full flex flex-col gap-4 px-2 sm:px-0" data-tour="documents-filters">
-      {/* Search Input and Filter Popovers */}
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
       <div className="w-full flex flex-col gap-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div data-tour="documents-filter-search">
@@ -54,7 +53,6 @@ export function InvoiceFiltersTSX({ type }: Props) {
           </div>
         </div>
 
-        {/* Filter Popovers - Full width on mobile, auto width on larger screens */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           {showStatusFilter && (
             <div data-tour="documents-filter-status">
@@ -95,7 +93,7 @@ export function InvoiceFiltersTSX({ type }: Props) {
           <div data-tour="documents-filter-number">
           <Input
             type="search"
-            placeholder="Nº Fatura"
+            placeholder="N.º da factura"
             value={filters.invoiceNumber ?? ""}
             onChange={(e) => setFilters({ invoiceNumber: e.target.value })}
             className="w-full"
@@ -104,7 +102,6 @@ export function InvoiceFiltersTSX({ type }: Props) {
         </div>
       </div>
 
-      {/* Date Pickers and Clear Button - 3 columns on desktop */}
       <div className="flex justify-center sm:justify-start">
         <div className="grid grid-cols-2 gap-3">
           <div data-tour="documents-filter-start-date">
@@ -124,7 +121,6 @@ export function InvoiceFiltersTSX({ type }: Props) {
           </div>
         </div>
 
-        {/* Clear Button */}
         {hasFilter && (
           <Button
             data-tour="documents-filter-clear"

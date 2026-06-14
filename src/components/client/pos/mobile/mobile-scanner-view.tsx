@@ -144,7 +144,7 @@ export function MobileScannerView({
           className="flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-transform active:scale-95"
         >
           <ShoppingCart className="h-3.5 w-3.5" />
-          <span>Finalizar Venda</span>
+          <span>Concluir venda</span>
         </button>
       </div>
 

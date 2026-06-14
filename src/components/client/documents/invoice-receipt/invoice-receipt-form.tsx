@@ -116,7 +116,7 @@ export function InvoiceReceiptForm() {
     async (data: InvoiceReceiptFormData) => {
       try {
         if (!data.items || data.items.length === 0) {
-          ErrorMessage("Adicione pelo menos um item à fatura recibo");
+          ErrorMessage("Adicione pelo menos um item à factura-recibo.");
           return;
         }
 
@@ -186,7 +186,7 @@ export function InvoiceReceiptForm() {
         const errorMessage =
           error?.response?.data?.message ||
           error?.message ||
-          "Ocorreu um erro ao criar a fatura recibo. Tente novamente.";
+          "Não foi possível criar a factura-recibo. Tente novamente.";
 
         ErrorMessage(errorMessage);
       }
@@ -201,7 +201,7 @@ export function InvoiceReceiptForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Fatura Recibo:", errors))}
+      onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de validação na factura-recibo:", errors))}
       className="p-8 mt-4 space-y-8 border rounded-lg"
     >
       <div className="grid gap-6 md:grid-cols-2">
@@ -216,7 +216,7 @@ export function InvoiceReceiptForm() {
           label="Moeda"
           name="currencyCode"
           control={control}
-          placeholder="Selecione a moeda"
+          placeholder="Seleccione a moeda"
           options={[
             { value: "AOA", label: "AOA" },
             { value: "USD", label: "USD" },
@@ -276,7 +276,7 @@ export function InvoiceReceiptForm() {
 
       <Textarea
         {...register("notes")}
-        placeholder="Adicione observações sobre esta fatura recibo (opcional)"
+        placeholder="Adicione observações sobre esta factura-recibo (opcional)"
         label="Observações"
         error={errors.notes?.message}
         rows={4}
@@ -296,7 +296,7 @@ export function InvoiceReceiptForm() {
           disabled={isSubmitting || isPending}
           className="min-w-[150px]"
         >
-          {isPending || isSubmitting ? "Processando..." : "Criar Fatura Recibo"}
+          {isPending || isSubmitting ? "A processar..." : "Criar factura-recibo"}
         </Button>
       </div>
     </form>

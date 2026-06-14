@@ -8,7 +8,7 @@ export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export const otpSchema = z.object({
   otpCode: z.string().trim().min(6, {
-    message: "Seu código de verificação deve ter 6 caracteres.",
+    message: "O código de verificação deve ter 6 caracteres.",
   }),
 });
 

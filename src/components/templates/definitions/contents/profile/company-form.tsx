@@ -41,12 +41,12 @@ export function CompanyForm({ user }: { user: User }) {
       { id: user.company.id, data },
       {
         onSuccess: () => {
-          SucessMessage("Dados da empresa atualizados com sucesso!");
+          SucessMessage("Dados da empresa actualizados com sucesso!");
           setIsEditing(false);
         },
         onError: (error: any) => {
           ErrorMessage(
-            error?.response?.data?.message || "Erro ao atualizar empresa",
+            error?.response?.data?.message || "Não foi possível actualizar os dados da empresa",
           );
         },
       },
@@ -83,7 +83,7 @@ export function CompanyForm({ user }: { user: User }) {
         <Input
           {...register("name")}
           label="Nome da Empresa"
-          placeholder="Ex: MindGest Solutions"
+          placeholder="Ex.: Mindgest Soluções"
           className="bg-background shadow-none"
           readOnly={!isEditing}
           error={errors.name?.message}
@@ -92,7 +92,7 @@ export function CompanyForm({ user }: { user: User }) {
         <Input
           {...register("email")}
           label="Email da Empresa"
-          placeholder="Ex: contato@mindgest.com"
+          placeholder="Ex.: contacto@mindgest.com"
           className="bg-background shadow-none"
           readOnly={!isEditing}
           error={errors?.email?.message}
@@ -128,7 +128,7 @@ export function CompanyForm({ user }: { user: User }) {
         <Input
           {...register("website")}
           label="Website"
-          placeholder="Ex: https://www.mindgest.com"
+          placeholder="Ex.: https://www.mindgest.com"
           className="bg-background shadow-none"
           readOnly={!isEditing}
           error={errors.website?.message}

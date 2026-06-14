@@ -39,7 +39,7 @@ export function CategoryCardView({ category }: CategoryCardProps) {
               { label: "Ver detalhes", onClick: handlerDetailsCategory },
               { label: "Editar", onClick: handlerEditCategory },
               {
-                label: `${category.isActive ? "Desativar" : "Ativar"}`,
+                label: `${category.isActive ? "Desactivar" : "Activar"}`,
                 onClick: toggleStatusCategory,
               },
             ]}
@@ -62,11 +62,11 @@ export function CategoryCardView({ category }: CategoryCardProps) {
               category.isActive ? "text-green-600" : "text-red-600"
             }`}
           >
-            {category.isActive ? "Ativa" : "Inativa"}
+            {category.isActive ? "Activa" : "Inactiva"}
           </span>
         </p>
         <p className="text-xs text-muted-foreground">
-          Última atualização: {formatDateTime(category.updatedAt)}
+          Última actualização: {formatDateTime(category.updatedAt)}
         </p>
       </CardContent>
     </Card>

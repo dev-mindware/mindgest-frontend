@@ -31,7 +31,7 @@ export function useCancelInvoice() {
   return useMutation({
     mutationFn: (id: string) => invoiceService.cancelInvoice(id),
     onSuccess: () => {
-      SucessMessage("Fatura cancelada com sucesso!");
+      SucessMessage("Factura cancelada com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });
@@ -43,7 +43,7 @@ export function useCreateInvoice() {
   return useMutation({
     mutationFn: (data: InvoicePayload) => invoiceService.createInvoice(data),
     onSuccess: (response) => {
-      SucessMessage("Fatura criada com sucesso!");
+      SucessMessage("Factura criada com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
       return response.data;
     },

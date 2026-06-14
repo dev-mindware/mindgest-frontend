@@ -1,4 +1,4 @@
-# Deploy na Vercel — MindGest Frontend
+# Implementação na Vercel - Mindgest Frontend
 
 ## Checklist
 
@@ -55,7 +55,7 @@ renderizar outros menus, mas travar com o miodal - dizer que a sua subscrição 
     - [x] Analisar ficheiro central `definitions-setup.tsx`
     - [x] Mapear Abas de Configuração (Empresa, Documentos, Bancos, etc.)
     - [x] Realizar varredura visual no frontend das Definições
-    - [x] Criar Documentação Final (`configuracoes_mapeamento.md`)- [x] Integração com MindGest AI:
+    - [x] Criar documentação final (`configuracoes_mapeamento.md`)- [x] Integração com Mindgest AI:
     - [x] Analisar sugestões atuais em `chat-tab.tsx`
     - [x] Atualizar `QUICK_ACTIONS` com base nos manuais `.md`
     - [x] Atualizar `SUGGESTION_CHIPS` com categorias documentadas

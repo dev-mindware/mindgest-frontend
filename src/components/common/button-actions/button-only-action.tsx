@@ -65,10 +65,10 @@ export function ButtonOnlyAction<T>({ data, actions }: Props<T>) {
           const variant = action.variant || "default";
           const itemKey = action.label + index;
 
-          // Verifica se a label indica uma ação crítica, a menos que isProtected já tenha sido definido.
+          // Verifica se o rótulo indica uma acção crítica, excepto quando isProtected já estiver definido.
           const isCritical =
             action.isProtected ??
-            /criar|novo|editar|apagar|excluir|remover|deletar|gerar|baixar|exportar/i.test(
+            /criar|novo|editar|apagar|excluir|remover|deletar|gerar|cancelar|clonar|converter|emitir/i.test(
               action.label
             );
 

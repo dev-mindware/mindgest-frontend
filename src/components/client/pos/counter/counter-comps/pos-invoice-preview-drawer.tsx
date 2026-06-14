@@ -57,7 +57,7 @@ export function PosInvoicePreviewDrawer({
         <DynamicDrawer
             open={open}
             onOpenChange={onOpenChange}
-            title={`Confirmar ${type === 'invoice' ? 'Fatura' : 'Proforma'}`}
+            title={`Confirmar ${type === 'invoice' ? 'factura' : 'proforma'}`}
             description="Verifique os dados antes de finalizar."
             className="max-w-4xl"
         >
@@ -77,7 +77,7 @@ export function PosInvoicePreviewDrawer({
                         Cancelar
                     </Button>
                     <Button onClick={onConfirm} disabled={isLoading} className="min-w-[150px]">
-                        {isLoading ? "Processando..." : `Confirmar e Emitir`}
+                        {isLoading ? "A processar..." : "Confirmar e emitir"}
                     </Button>
                 </div>
             </div>

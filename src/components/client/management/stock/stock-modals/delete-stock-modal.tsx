@@ -21,7 +21,7 @@ export function DeleteStockModal() {
             closeModal("delete-stock");
         } catch (error: any) {
             ErrorMessage(
-                error?.response?.data?.message || "Erro ao deletar stock"
+                error?.response?.data?.message || "Não foi possível apagar o registo de stock."
             );
         } finally {
             setIsDeleting(false);
@@ -36,7 +36,7 @@ export function DeleteStockModal() {
             canClose
             id="delete-stock"
             title={`Tem certeza que deseja apagar?`}
-            description="Lembre-se que esta ação não pode ser desfeita."
+            description="Esta acção não pode ser anulada."
             className="!w-max"
         >
 

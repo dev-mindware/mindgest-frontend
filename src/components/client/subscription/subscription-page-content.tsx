@@ -29,7 +29,7 @@ export function SubscriptionPageContent() {
     },
   });
 
-  // Seleciona o primeiro plano por padrão se nenhum estiver selecionado
+  // Selecciona o primeiro plano por predefinição quando nenhum estiver seleccionado.
   useEffect(() => {
     if (!currentPlanSelected && plans && plans.length > 0) {
       setCurrentPlanSelected(plans[0]);

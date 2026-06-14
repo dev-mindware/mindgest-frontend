@@ -6,10 +6,10 @@ import { LocalChatHistoryItem } from "./index";
 export const QUICK_ACTIONS = [
     { label: "Como emitir uma Factura Recibo (FR)?" },
     { label: "Como converter Proforma em Factura?" },
-    { label: "Como fazer uma reserva de estoque?" },
+    { label: "Como efectuar uma reserva de stock?" },
     { label: "Como configurar os dados do banco?" },
 ];
-export const SUGGESTION_CHIPS = ["Faturamento", "Estoque", "Relatórios", "Clientes", "Definições"];
+export const SUGGESTION_CHIPS = ["Facturação", "Stock", "Relatórios", "Clientes", "Definições"];
 
 export const RenderAIMessage = ({ content, isTyping }: { content: string, isTyping?: boolean }) => {
     const paragraphs = content.split('\n');

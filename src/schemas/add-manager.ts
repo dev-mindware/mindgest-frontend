@@ -6,7 +6,7 @@ export const managerSchema = z.object({
   phone: phoneNumberSchema,
   email: z.string().trim().email("Email inválido").optional().or(z.literal("")),
   password: z.string().optional().or(z.literal("")),
-  storeIds: z.array(z.string()).min(1, "Deve selecionar pelo menos uma loja"),
+  storeIds: z.array(z.string()).min(1, "Deve seleccionar, pelo menos, uma loja"),
 });
 
 export type ManagerFormData = z.infer<typeof managerSchema>

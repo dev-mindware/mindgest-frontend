@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -10,12 +10,13 @@ import {
     Button,
     Textarea,
     Icon,
+    InputCurrency,
 } from "@/components";
 import { useModal } from "@/stores";
-import { cashSessionsService } from "@/services/cash-sessions-service";
-import { SucessMessage, ErrorMessage } from "@/utils/messages";
+import { useCloseCashSession } from "@/hooks";
 import { CashSession } from "@/types/cash-session";
 import { formatCurrency } from "@/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const MODAL_POS_CLOSE_SESSION_ID = "pos-close-session-modal";
 
@@ -33,10 +34,12 @@ interface PosCloseSessionModalProps {
 
 export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalProps) {
     const { closeModal } = useModal();
-    const [isLoading, setIsLoading] = useState(false);
+    const { mutateAsync: closeSession, isPending: isLoading } = useCloseCashSession();
+    const queryClient = useQueryClient();
 
     const {
         register,
+        control,
         handleSubmit,
         reset,
         setValue,
@@ -58,27 +61,29 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
 
     const onSubmit = async (data: CloseSessionFormData) => {
         if (!currentSession?.id) {
-            ErrorMessage("Sessão não encontrada.");
             return;
         }
 
         try {
-            setIsLoading(true);
-            await cashSessionsService.closeSession(currentSession.id, {
-                closingCash: data.closingCash,
-                totalSales: data.totalSales,
-                notes: data.notes || "",
+            await closeSession({
+                id: currentSession.id,
+                data: {
+                    closingCash: data.closingCash,
+                    totalSales: data.totalSales,
+                    notes: data.notes || "",
+                },
             });
-            SucessMessage("Sessão fechada com sucesso!");
+            // Force dynamic and immediate query invalidation
+            await queryClient.invalidateQueries({
+                queryKey: ["current-cash-session", currentSession.storeId],
+            });
+            await queryClient.invalidateQueries({
+                queryKey: ["cash-sessions"],
+            });
             closeModal(MODAL_POS_CLOSE_SESSION_ID);
             reset();
-            // Optional: refresh page or state to reflect closure
-            window.location.reload();
         } catch (err: any) {
             console.error(err);
-            ErrorMessage("Erro ao fechar sessão.");
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -86,7 +91,7 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
         <GlobalModal
             id={MODAL_POS_CLOSE_SESSION_ID}
             title="Fechar Sessão de Caixa"
-            description="Confirme os valores finais e feche a sessão atual."
+            description="Confirme os valores finais e encerre a sessão actual."
             className="!w-max"
         >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 min-w-[350px]">
@@ -100,14 +105,19 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
                     </div>
                 </div>
 
-                <Input
-                    label="Valor em Caixa (Fecho)"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    startIcon="Banknote"
-                    error={errors.closingCash?.message}
-                    {...register("closingCash")}
+                <Controller
+                    name="closingCash"
+                    control={control}
+                    render={({ field }) => (
+                        <InputCurrency
+                            ref={field.ref}
+                            label="Valor em Caixa (Fecho)"
+                            placeholder="0,00"
+                            value={field.value}
+                            onValueChange={(val) => field.onChange(val)}
+                            error={errors.closingCash?.message}
+                        />
+                    )}
                 />
 
                 <Textarea

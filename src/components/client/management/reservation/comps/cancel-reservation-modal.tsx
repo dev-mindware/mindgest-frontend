@@ -35,7 +35,7 @@ export function CancelReservationModal() {
             className="!w-max"
             id="cancel-reservation"
             title="Tem certeza que deseja cancelar esta reserva?"
-            description="Esta ação removerá a reserva do sistema e devolverá o stock disponível."
+            description="Esta acção removerá a reserva do sistema e devolverá a quantidade ao stock disponível."
         >
             <div className="flex justify-end gap-4 mt-6">
                 <Button onClick={() => closeModal("cancel-reservation")} variant="outline">

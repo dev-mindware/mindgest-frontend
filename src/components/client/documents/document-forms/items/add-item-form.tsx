@@ -293,7 +293,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   onChange={onChange}
                   pagination={taxPagination}
                   onPageChange={setTaxPage}
-                  placeholder="Selecione um imposto"
+                  placeholder="Seleccione um imposto"
                   className="w-full"
                 />
               )}
@@ -304,7 +304,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         <div className="flex items-center justify-between pt-2">
           {isAlreadyAdded && (
             <p className="text-sm text-destructive font-medium">
-              Este item já foi adicionado à fatura
+              Este item já foi adicionado à factura.
             </p>
           )}
           {isOverStock && !isAlreadyAdded && (
@@ -319,7 +319,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             className="ml-auto flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Adicionar à Fatura
+            Adicionar à factura
           </Button>
         </div>
       </div>

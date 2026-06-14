@@ -26,7 +26,7 @@ export function SubscriptionInfo() {
         <CardHeader>
           <CardTitle>Nenhum plano ativo</CardTitle>
           <CardDescription>
-            Parece que você ainda não possui uma subscrição ativa.
+            Ainda não existe uma subscrição activa.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -54,7 +54,7 @@ export function SubscriptionInfo() {
           <div className="space-y-1">
             <CardTitle className="text-2xl">Plano {plan.name}</CardTitle>
             <CardDescription>
-              Gerencie os detalhes da sua subscrição
+              Gerir os detalhes da sua subscrição.
             </CardDescription>
           </div>
           <Badge
@@ -79,7 +79,7 @@ export function SubscriptionInfo() {
 
             <div>
               <p className="text-sm text-muted-foreground">
-                {isTrial ? "Expira em" : "Próximo Faturamento"}
+                {isTrial ? "Expira em" : "Próxima facturação"}
               </p>
               <p className="text-lg font-semibold">
                 {endDate
@@ -102,7 +102,7 @@ export function SubscriptionInfo() {
             <Link href="/plans" className={`${isPending && "pointer-events-none"}`}>
               <Button className="gap-2" disabled={isPending}>
                 <Icon name="ArrowUpToLine" size={16} />
-                Atualizar Plano
+                Actualizar plano
               </Button>
             </Link>
           </div>

@@ -64,9 +64,9 @@ export function TrialBanner() {
         {Icon}
         <span>
           {urgency === "expired" ? (
-            "O seu período de teste expirou. Atualize o seu plano para continuar acessando todos os recursos."
+            "O seu período de teste expirou. Actualize o plano para continuar a utilizar todas as funcionalidades."
           ) : (
-            `Período de teste: ${daysRemaining} ${daysRemaining === 1 ? 'dia restante' : 'dias restantes'}. Atualize o seu plano para continuar usando todos os recursos.`
+            `Período de teste: ${daysRemaining} ${daysRemaining === 1 ? 'dia restante' : 'dias restantes'}. Actualize o plano para continuar a utilizar todas as funcionalidades.`
           )}
         </span>
       </div>

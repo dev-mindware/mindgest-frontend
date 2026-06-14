@@ -16,7 +16,7 @@ export function HeroSubscription({
         ) : (
           <>
             Simplifique a gestão da sua empresa com{" "}
-            <span className="text-primary-500">MindGest</span>
+            <span className="text-primary-500">Mindgest</span>
           </>
         )}
       </h1>

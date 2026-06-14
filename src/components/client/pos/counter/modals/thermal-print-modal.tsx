@@ -44,7 +44,7 @@ export function ThermalPrintModal({
     const handleDownload = () => {
         const link = document.createElement("a");
         link.href = pdfUrl;
-        link.download = `fatura-recibo-${invoiceId}-thermal.pdf`;
+        link.download = `factura-recibo-${invoiceId}-thermal.pdf`;
         link.click();
     };
 
@@ -54,7 +54,7 @@ export function ThermalPrintModal({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Icon name="Printer" className="h-5 w-5" />
-                        Impressão Térmica - Fatura Recibo
+                        Impressão térmica da factura-recibo
                     </DialogTitle>
                 </DialogHeader>
 
@@ -73,7 +73,7 @@ export function ThermalPrintModal({
                         className="gap-2"
                     >
                         <Icon name="Download" className="h-4 w-4" />
-                        Baixar PDF
+                        Descarregar PDF
                     </Button>
 
                     <Button

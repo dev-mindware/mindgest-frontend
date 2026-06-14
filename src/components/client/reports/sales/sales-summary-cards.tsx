@@ -14,7 +14,7 @@ export function SalesSummaryCards({ summary }: SalesSummaryCardsProps) {
   //                 <EmptyState
   //                     icon="SearchX"
   //                     title="Nenhuma venda encontrada"
-  //                     description="Não existem dados de vendas para o período selecionado."
+  //                     description="Não existem dados de vendas para o período seleccionado."
   //                 />
   //             </CardContent>
   //         </Card>
@@ -32,7 +32,7 @@ export function SalesSummaryCards({ summary }: SalesSummaryCardsProps) {
 
       <DynamicMetricCard
         title={summary.totalTransactions.toLocaleString("pt-AO")}
-        subtitle="Total de Transações"
+        subtitle="Total de transacções"
         description="Número de vendas realizadas"
         icon="ShoppingCart"
       />
@@ -40,7 +40,7 @@ export function SalesSummaryCards({ summary }: SalesSummaryCardsProps) {
       <DynamicMetricCard
         title={formatCurrency(summary.averageTicket)}
         subtitle="Ticket Médio"
-        description="Valor médio por transação"
+        description="Valor médio por transacção"
         icon="Receipt"
       />
     </div>

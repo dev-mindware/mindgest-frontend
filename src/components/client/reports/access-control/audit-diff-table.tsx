@@ -104,7 +104,7 @@ export function AuditDiffTable({ action, changes, oldValues, newValues }: AuditD
 
   return (
     <div className="p-6 border border-dashed rounded-lg text-center text-muted-foreground text-sm">
-      Nenhuma alteração de valores registrada para esta ação.
+      Não foi registada qualquer alteração de valores para esta acção.
     </div>
   );
 }

@@ -9,7 +9,7 @@ export function useUpdateCreditNote() {
     mutationFn: ({ id, data }: { id: string; data: any }) =>
       creditNoteService.updateCreditNote(id, data),
     onSuccess: () => {
-      SucessMessage("Nota de crédito atualizada com sucesso!");
+      SucessMessage("Nota de crédito actualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["credit-notes"] });
     },
   });

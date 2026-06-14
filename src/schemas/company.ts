@@ -10,7 +10,7 @@ export const companySchema = z.object({
     .min(3, "No minimo 3 caracters"),
   address: z.string().min(3, "No minimo 3 caracters").trim().nonempty("Campo obrigatorio"),
   phone: phoneNumberSchema,
-  email: z.string().trim().email("Email invalido"),
+  email: z.string().trim().email("Email inválido"),
   website: z.string().trim().optional().nullable(),
   logo: z.string().trim().optional(),
 });

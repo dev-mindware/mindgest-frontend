@@ -43,7 +43,7 @@ export function PosWorkspaceSettings() {
                     </div>
                 </div>
                 <p className="px-1 text-[11px] text-muted-foreground leading-relaxed mt-2 italic">
-                    Configurações aplicadas apenas a este navegador e estação de trabalho.
+                    Estas configurações aplicam-se apenas a este navegador e a esta estação de trabalho.
                 </p>
             </div>
         </div>

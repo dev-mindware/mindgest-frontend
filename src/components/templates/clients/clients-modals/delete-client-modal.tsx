@@ -36,7 +36,7 @@ export function DeleteClientModal() {
       className="!w-max"
       id="delete-client"
       title={`Tem certeza que deseja apagar o cliente ${currentClient?.name}?`}
-      description="Lembre-se que esta ação não pode ser desfeita."
+      description="Esta acção não pode ser anulada."
     >
       <div className="flex justify-end gap-4">
         <Button onClick={() => closeModal("delete-client")} variant="outline">

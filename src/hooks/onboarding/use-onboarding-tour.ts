@@ -217,7 +217,7 @@ function clickFirstExistingOption(root: ParentNode | null) {
       !text.includes("criar") &&
       !text.includes("adicionar") &&
       !text.includes("nenhum") &&
-      !text.includes("buscando") &&
+      !text.includes("a pesquisar") &&
       !text.includes("digite")
     );
   });

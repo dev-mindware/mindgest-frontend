@@ -127,7 +127,7 @@ interface ChartAreaInteractiveProps {
 export function ChartAreaInteractive({
   data,
   title = "Area Chart - Interactive",
-  description = "Showing performance over time",
+  description = "Evolução do desempenho ao longo do tempo",
   dataKey = "revenue"
 }: ChartAreaInteractiveProps) {
   const [timeRange, setTimeRange] = React.useState("all")

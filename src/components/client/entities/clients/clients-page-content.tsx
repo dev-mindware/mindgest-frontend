@@ -6,7 +6,7 @@ export function ClientsPageContent() {
   return (
     <>
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-center" data-tour="clients-header">
-        <TitleList title="Clientes" suTitle="Adicione e gerencie seus clientes" />
+        <TitleList title="Clientes" suTitle="Adicione e gira os seus clientes" />
         <div data-tour="clients-create">
           <ButtonAddClient />
         </div>

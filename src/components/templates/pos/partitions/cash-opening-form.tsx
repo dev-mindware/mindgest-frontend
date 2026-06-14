@@ -51,8 +51,8 @@ export const CashOpeningForm: React.FC<CashOpeningFormProps> = ({
       <CardHeader>
         <CardTitle className="text-lg">Abertura de Caixa</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Faça a abertura de caixa aqui e controle o fluxo de vendas dos seus
-          funcionários. Clique nos cards dos caixas para adicioná-los.
+          Abra o caixa e acompanhe o fluxo de vendas dos seus colaboradores.
+          Seleccione os cartões dos caixas que pretende adicionar.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -79,13 +79,13 @@ export const CashOpeningForm: React.FC<CashOpeningFormProps> = ({
 
         <div className="space-y-3">
           <h3 className="text-sm font-medium">
-            Caixas Selecionados ({openCashRegisters.length})
+            Caixas seleccionados ({openCashRegisters.length})
           </h3>
           {openCashRegisters.length === 0 ? (
             <div className="py-4 text-center text-gray-500">
-              <p>Nenhum caixa selecionado</p>
+              <p>Nenhum caixa seleccionado</p>
               <p className="mt-1 text-xs">
-                Clique nos cards dos caixas para adicioná-los
+                Seleccione os cartões dos caixas para os adicionar
               </p>
             </div>
           ) : (
@@ -133,7 +133,7 @@ export const CashOpeningForm: React.FC<CashOpeningFormProps> = ({
             disabled={openCashRegisters.length === 0}
             onClick={handleSubmit}
           >
-            Salvar
+            Guardar
           </Button>
         </div>
       </CardContent>

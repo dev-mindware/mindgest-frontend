@@ -125,7 +125,7 @@ export function AgtSeriesList() {
       return <Badge variant="destructive" className="text-xs">Esgotada</Badge>;
     }
     
-    return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs">Ativa</Badge>;
+    return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs">Activa</Badge>;
   };
 
   const calculateProgress = (s: AgtSeries) => {
@@ -172,7 +172,7 @@ export function AgtSeriesList() {
                     onValueChange={(v) => setNewSeries({...newSeries, documentType: v})}
                   >
                     <SelectTrigger id="type" className="h-10 text-sm">
-                      <SelectValue placeholder="Selecione o tipo" />
+                      <SelectValue placeholder="Seleccione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="FT">Factura (FT)</SelectItem>
@@ -327,7 +327,7 @@ export function AgtSeriesList() {
           <CardHeader className="p-4 pb-2">
             <div className="flex items-center gap-2 text-blue-500">
               <LayoutGrid size={16} />
-              <CardTitle className="text-xs uppercase tracking-wider">Total Ativas</CardTitle>
+              <CardTitle className="text-xs uppercase tracking-wider">Total de activas</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-0">

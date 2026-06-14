@@ -37,7 +37,7 @@ export function DeleteCashierModal() {
       className="!w-max"
       id="delete-cashier"
       title={`Tem certeza que deseja apagar o caixa ${currentCashier?.name}?`}
-      description="Lembre-se que esta ação não pode ser desfeita."
+      description="Esta acção não pode ser anulada."
     >
       <div className="flex justify-end gap-4">
         <Button

@@ -23,7 +23,7 @@ export function InventoryDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Items em Estoque
+              Itens em stock
             </CardTitle>
             <Badge variant="secondary" className="text-green-600 bg-green-50">
               <Icon name="TrendingUp" className="w-3 h-3 mr-1" />
@@ -33,7 +33,7 @@ export function InventoryDashboard() {
           <CardContent>
             <div className="text-3xl font-bold">10.000</div>
             <div className="flex items-center mt-1 text-muted-foreground">
-              <span className="text-lg">Estoque em alta</span>
+              <span className="text-lg">Stock elevado</span>
               <Icon name="TrendingUp" className="ml-1" size={14} />
             </div>
             <p className="text-md text-muted-foreground">

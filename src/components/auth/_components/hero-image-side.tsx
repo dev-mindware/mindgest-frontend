@@ -9,8 +9,8 @@ interface HeroImageSideProps {
 
 export function HeroImageSide({
   source,
-  title = "MindGest - O futuro da gestão empresarial.",
-  subtitle = "Um ERP inovador para gestão da sua empresa de forma simples e robusta.",
+  title = "Mindgest: o futuro da gestão empresarial.",
+  subtitle = "Gestão empresarial simples para empresas que querem vender, controlar e crescer.",
   badge = "MINDWARE - Comércio & Serviços",
 }: HeroImageSideProps) {
   return (
@@ -32,7 +32,7 @@ export function HeroImageSide({
           <Image
             src={"/mindgest.png"}
             fill
-            alt="Mindgest Logo"
+            alt="Logótipo do Mindgest"
             className="object-contain object-left"
             priority
           />
@@ -49,10 +49,11 @@ export function HeroImageSide({
 
         {badge && (
           <div className="flex items-center gap-4">
-            <div className="h-px w-12 bg-primary/80" />
+            <div className="h-px w-8 bg-primary/80" />
             <span className="text-sm font-semibold text-white/70 tracking-widest uppercase">
               {badge}
             </span>
+            <div className="h-px w-8 bg-primary/80" />
           </div>
         )}
       </div>

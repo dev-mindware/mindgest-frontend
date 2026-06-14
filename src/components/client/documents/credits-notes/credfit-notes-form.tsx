@@ -33,10 +33,10 @@ const getFriendlyErrorMessages = (errors: any): string[] => {
     "invoiceBody.client.address": "Endereço do Cliente",
     "invoiceBody.issueDate": "Data de Emissão",
     "invoiceBody.dueDate": "Data de Vencimento",
-    "invoiceBody.subtotal": "Subtotal da Fatura",
+    "invoiceBody.subtotal": "Subtotal da factura",
     "invoiceBody.taxAmount": "Valor do Imposto",
     "invoiceBody.discountAmount": "Valor do Desconto",
-    "invoiceBody.total": "Total da Fatura",
+    "invoiceBody.total": "Total da factura",
     "creditNote.subtotal": "Subtotal da Nota de Crédito",
     "creditNote.taxAmount": "Imposto da Nota de Crédito",
     "creditNote.discountAmount": "Desconto da Nota de Crédito",
@@ -143,7 +143,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
     [setValue]
   );
 
-  // Inicializar cliente selecionado
+  // Inicializa o cliente seleccionado.
   useEffect(() => {
     if (invoice.client) {
       setValue("invoiceBody.client.id", invoice.client.id);

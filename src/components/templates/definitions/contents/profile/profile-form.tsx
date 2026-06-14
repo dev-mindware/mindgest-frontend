@@ -42,19 +42,19 @@ export function ProfileForm({ user }: { user: User | null }) {
     if (data.phone && data.phone !== user?.phone) updateData.phone = data.phone;
 
     if (Object.keys(updateData).length === 0) {
-      SucessMessage("Perfil atualizado com sucesso!");
+      SucessMessage("Perfil actualizado com sucesso!");
       setIsEditing(false);
       return;
     }
 
     await updateProfile(updateData, {
       onSuccess: () => {
-        SucessMessage("Perfil atualizado com sucesso!");
+        SucessMessage("Perfil actualizado com sucesso!");
         setIsEditing(false);
       },
       onError: (error: any) => {
         ErrorMessage(
-          error?.response?.data?.message || "Erro ao atualizar perfil",
+          error?.response?.data?.message || "Não foi possível actualizar o perfil",
         );
       },
     });

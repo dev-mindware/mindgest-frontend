@@ -23,7 +23,7 @@ export function useUpdateClient() {
     mutationFn: ({ id, data }: { id: string; data: Partial<ItemData> }) =>
       clientsService.updateClient(id, data as any),
     onSuccess: () => {
-      SucessMessage("Cliente atualizado com sucesso!");
+      SucessMessage("Cliente actualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
@@ -35,7 +35,7 @@ export function useToggleStatusClient() {
   return useMutation({
     mutationFn: (id: string) => clientsService.toggleStatusClient(id),
     onSuccess: () => {
-      SucessMessage("Cliente desativado com sucesso!");
+      SucessMessage("Cliente desactivado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });

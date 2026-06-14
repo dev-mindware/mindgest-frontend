@@ -30,8 +30,14 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
     user?.role === "OWNER" ||
     user?.role === "MANAGER";
   const currentPlan = user?.company?.subscription?.plan?.name;
-  const shouldHideOpeningRequest =
-    user?.role === "CASHIER" && currentPlan === "Smart";
+  const isSmartPlan = currentPlan === "Smart";
+
+  // Razão pela qual "Solicitar" está desabilitado (null = habilitado)
+  const requestDisabledReason: string | null = isManagement
+    ? "Gestores e proprietários não precisam de solicitar abertura. Use a opção \"Abrir\" diretamente."
+    : isSmartPlan
+      ? "A solicitação remota não está disponível no plano Smart. Faça upgrade para Pro ou superior."
+      : null;
 
   const actionCards = [
     {
@@ -41,7 +47,9 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
       icon: "ClipboardList",
       tourKey: "pos-settings-request-opening",
       variant: "action" as const,
-      onClick: () => openModal("pos-request-opening-modal"),
+      onClick: requestDisabledReason ? undefined : () => openModal("pos-request-opening-modal"),
+      disabled: !!requestDisabledReason,
+      disabledReason: requestDisabledReason,
     },
     {
       title: isOpen ? "Sessão" : "Abrir",
@@ -60,7 +68,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
     {
       title: "Fechar",
       subtitle: "Encerrar sessão",
-      description: "Finalizar o turno do caixa",
+      description: "Encerrar o turno do caixa",
       icon: "Power",
       tourKey: "pos-settings-close-session",
       variant: isOpen ? ("action" as const) : ("default" as const),
@@ -79,13 +87,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
       onClick: isOpen ? () => openModal("pos-register-expense-modal") : undefined,
       disabled: !isOpen,
     },
-  ].filter((card) => {
-    if (shouldHideOpeningRequest && card.tourKey === "pos-settings-request-opening") {
-      return false;
-    }
-
-    return true;
-  });
+  ];
 
   return (
     <div className="space-y-8 pb-12" data-tour="pos-settings-general">
@@ -93,50 +95,87 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
         className="grid grid-cols-2 md:grid-cols-4 gap-3"
         data-tour="pos-settings-actions"
       >
-        {actionCards.map((card) => (
-          <button
-            key={card.tourKey}
-            type="button"
-            data-tour={card.tourKey}
-            onClick={card.onClick}
-            disabled={card.disabled}
-            className={cn(
-              "flex flex-col items-center justify-center p-4 rounded-2xl transition-all active:scale-95 text-center gap-2 border shadow-sm",
-              card.disabled
-                ? "opacity-40 grayscale pointer-events-none bg-muted/20 border-border/50"
-                : card.colors === "destructive"
-                  ? "bg-destructive/5 hover:bg-destructive/10 border-destructive/10 text-destructive"
-                  : "bg-background hover:bg-muted/30 border-border/50 text-foreground",
-            )}
-          >
+        {actionCards.map((card) => {
+          const isDisabled = (card as any).disabled;
+          const disabledReason = (card as any).disabledReason as string | undefined;
+
+          const buttonContent = (
             <div
               className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center mb-1",
-                card.colors === "destructive"
-                  ? "bg-destructive/10"
-                  : "bg-primary/10",
+                "flex flex-col items-center justify-center p-4 rounded-2xl transition-all text-center gap-2 border shadow-sm w-full h-full",
+                isDisabled
+                  ? "opacity-40 grayscale cursor-not-allowed bg-muted/20 border-border/50"
+                  : card.colors === "destructive"
+                    ? "bg-destructive/5 hover:bg-destructive/10 border-destructive/10 text-destructive active:scale-95"
+                    : "bg-background hover:bg-muted/30 border-border/50 text-foreground active:scale-95",
               )}
             >
-              <Icon
-                name={card.icon as any}
-                size={20}
-                className={
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center mb-1",
                   card.colors === "destructive"
-                    ? "text-destructive"
-                    : "text-primary"
-                }
-              />
+                    ? "bg-destructive/10"
+                    : "bg-primary/10",
+                )}
+              >
+                <Icon
+                  name={card.icon as any}
+                  size={20}
+                  className={
+                    card.colors === "destructive"
+                      ? "text-destructive"
+                      : "text-primary"
+                  }
+                />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-xs font-bold leading-tight uppercase tracking-wide opacity-70">
+                  {card.title}
+                </p>
+                <p className="text-sm font-bold truncate max-w-[130px]">
+                  {card.subtitle}
+                </p>
+              </div>
             </div>
-            <div className="space-y-0.5">
-              <p className="text-xs font-bold leading-tight uppercase tracking-wide opacity-70">
-                {card.title}
-              </p>
-              <p className="text-sm font-bold truncate max-w-[130px]">
-                {card.subtitle}
-              </p>
-            </div>
-          </button>
-        ))}
+          );
+
+          // Quando desabilitado por razão específica, usa wrapper com tooltip nativo
+          if (disabledReason) {
+            return (
+              <div
+                key={card.tourKey}
+                data-tour={card.tourKey}
+                title={disabledReason}
+                className="relative group cursor-not-allowed"
+              >
+                {buttonContent}
+                {/* Tooltip personalizado */}
+                <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-56 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="bg-popover text-popover-foreground text-xs font-medium rounded-xl border border-border/60 shadow-xl px-3 py-2 leading-relaxed text-center">
+                    {disabledReason}
+                  </div>
+                  <div className="w-2.5 h-2.5 bg-popover border-r border-b border-border/60 rotate-45 mx-auto -mt-[5px]" />
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={card.tourKey}
+              type="button"
+              data-tour={card.tourKey}
+              onClick={card.onClick}
+              disabled={isDisabled}
+              className={cn(
+                "rounded-2xl transition-all",
+                isDisabled && "pointer-events-none",
+              )}
+            >
+              {buttonContent}
+            </button>
+          );
+        })}
       </div>
 
       {currentSession && (
@@ -326,7 +365,14 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
         </div>
       )}
 
-      <PosOpeningModal />
+      <PosOpeningModal
+        selfSessionMode
+        onSuccess={() => {
+          queryClient.invalidateQueries({
+            queryKey: ["current-cash-session", currentStore?.id],
+          });
+        }}
+      />
       <PosOpeningCashierModal
         onSuccess={() => {
           queryClient.invalidateQueries({

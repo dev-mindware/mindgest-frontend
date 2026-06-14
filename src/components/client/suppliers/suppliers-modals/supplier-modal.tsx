@@ -30,7 +30,7 @@ export function SupplierModal() {
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-          "Ocorreu um erro ao salvar o fornecedor.",
+          "Não foi possível guardar o fornecedor.",
       );
     }
   }

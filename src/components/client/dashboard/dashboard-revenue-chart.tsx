@@ -11,7 +11,7 @@ export function DashboardRevenueChart({ data }: DashboardRevenueChartProps) {
     return (
         <ChartAreaInteractive
             data={data}
-            title="Evolução de Faturamento"
+            title="Evolução da facturação"
             description="Visualização global do desempenho mensal"
             dataKey="revenue"
         />

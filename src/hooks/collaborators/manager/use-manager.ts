@@ -22,7 +22,7 @@ export function useUpdateManager() {
     mutationFn: ({ id, data }: { id: string; data: Partial<ManagerData> }) =>
       managerService.updateManager(id, data as any),
     onSuccess: () => {
-      SucessMessage("Gerente atualizado com sucesso!");
+      SucessMessage("Gestor actualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["managers"] });
     },
   });

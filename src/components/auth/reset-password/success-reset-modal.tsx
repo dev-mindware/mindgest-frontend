@@ -22,18 +22,18 @@ export function SuccessResetModal() {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
             <CheckCircle2 className="h-8 w-8" />
           </div>
-          <span className="text-2xl font-bold">Senha Alterada!</span>
+          <span className="text-2xl font-bold">Palavra-passe alterada</span>
         </div>
       }
       description={
         <span className="text-base text-muted-foreground flex text-center">
-          A sua senha foi redefinida com sucesso. Já pode aceder à sua conta com
-          a nova senha.
+          A palavra-passe foi redefinida com sucesso. Já pode aceder à sua conta
+          com a nova palavra-passe.
         </span>
       }
     >
       <Button className="w-full mt-4" onClick={handleGoToLogin}>
-        Ir para o Login
+        Iniciar sessão
       </Button>
     </GlobalModal>
   );

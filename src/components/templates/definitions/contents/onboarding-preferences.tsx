@@ -38,7 +38,7 @@ export function OnboardingPreferences() {
       <div className="space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">Guias e tours</h2>
         <p className="text-sm text-muted-foreground">
-          Controle quando os guias aparecem e repita os tours sempre que precisar.
+          Defina quando os guias devem aparecer e repita os tours sempre que necessário.
         </p>
       </div>
 
@@ -78,7 +78,7 @@ export function OnboardingPreferences() {
               <div>
                 <h3 className="font-semibold">Mostrar botão “Ver tour”</h3>
                 <p className="text-sm text-muted-foreground">
-                  Quando estiver desativado, o botão manual deixa de aparecer nas páginas com guia.
+                  Quando estiver desactivado, o botão manual deixa de aparecer nas páginas com guia.
                 </p>
               </div>
             </div>

@@ -33,7 +33,7 @@ export function useUpdateStock() {
       data: Partial<StockCreateData>;
     }) => stockService.updateStock(id, data),
     onSuccess: () => {
-      SucessMessage("Stock atualizado com sucesso!");
+      SucessMessage("Stock actualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["stocks"] });
     },
   });

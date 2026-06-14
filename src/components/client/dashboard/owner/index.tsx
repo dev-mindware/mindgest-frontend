@@ -33,7 +33,7 @@ export function OwnerDashboardView() {
         return (
             <EmptyState
                 title="Dashboard sem dados"
-                description="Ainda não existem vendas ou movimentações registradas para gerar o dashboard."
+                description="Ainda não existem vendas nem movimentos registados para gerar o painel."
                 icon="TrendingUp"
             />
         );

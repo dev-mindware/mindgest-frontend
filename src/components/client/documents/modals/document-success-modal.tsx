@@ -112,7 +112,7 @@ export function DocumentSuccessModal() {
             id="document-success"
             canClose
             title="Documento Criado!"
-            description={isThermal ? "Visualize abaixo o talão do seu documento." : "Visualize abaixo a versão A4 do seu documento."}
+            description={isThermal ? "Consulte abaixo o talão do documento." : "Consulte abaixo a versão A4 do documento."}
             className={isThermal ? "max-w-md max-h-[90vh] overflow-y-auto" : "max-w-4xl max-h-[90vh] overflow-y-auto"}
         >
             <div className="flex flex-col gap-4 mt-4">
@@ -122,7 +122,7 @@ export function DocumentSuccessModal() {
                             <Skeleton className="w-full h-full" />
                             <div className="absolute flex flex-col items-center gap-2">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                                <p className="text-sm text-muted-foreground">Carregando visualização...</p>
+                                <p className="text-sm text-muted-foreground">A carregar a pré-visualização...</p>
                             </div>
                         </div>
                     )}
@@ -141,7 +141,7 @@ export function DocumentSuccessModal() {
                         <iframe
                             src={`${blobUrl}#toolbar=0&navpanes=0&scrollbar=0`}
                             className="w-full h-full border-none"
-                            title="Visualização do Documento"
+                            title="Pré-visualização do documento"
                         />
                     )}
                 </div>

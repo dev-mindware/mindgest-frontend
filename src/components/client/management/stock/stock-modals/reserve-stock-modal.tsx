@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/utils/messages";
@@ -36,9 +36,20 @@ export function ReserveStockModal() {
     useUpdateReservation();
   const {
     clientOptions,
+    clients,
     pagination: clientPagination,
     setPage: setClientPage,
   } = useGetClients();
+
+  const filteredClientOptions = useMemo(() => {
+    return (clientOptions || []).filter((opt) => {
+      const client = clients?.find((c) => c.id === opt.value);
+      return (
+        client?.name?.toLowerCase() !== "consumidor final" &&
+        !opt.label.toLowerCase().startsWith("consumidor final")
+      );
+    });
+  }, [clientOptions, clients]);
 
   const isEditing = !!currentReservation;
 
@@ -155,47 +166,52 @@ export function ReserveStockModal() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <Controller
-            control={control}
-            name="quantity"
-            render={({ field }) => (
-              <div>
-                <Input
-                  type="quantity"
-                  label="Quantidade"
-                  placeholder="Ex: 5"
-                  value={field.value ?? 0}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                  error={errors.quantity?.message}
-                />
-                {!isEditing && currentStock && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Máximo: {currentStock.available}
-                  </p>
-                )}
-              </div>
-            )}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="sm:col-span-1">
+            <Controller
+              control={control}
+              name="quantity"
+              render={({ field }) => (
+                <div>
+                  <Input
+                    type="quantity"
+                    label="Quantidade"
+                    placeholder="Ex: 5"
+                    value={field.value ?? 0}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    error={errors.quantity?.message}
+                  />
+                  {!isEditing && currentStock && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Máximo: {currentStock.available}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+          </div>
 
-          <Controller
-            control={control}
-            name="clientId"
-            render={({ field: { onChange, value } }) => (
-              <PaginatedSelect
-                label="Cliente"
-                value={value}
-                options={clientOptions}
-                onChange={onChange}
-                pagination={clientPagination}
-                onPageChange={setClientPage}
-                placeholder="Selecione um cliente"
-                className="w-full"
-                error={errors.clientId?.message}
-                disabled={isEditing}
-              />
-            )}
-          />
+          <div className="sm:col-span-2">
+            <Controller
+              control={control}
+              name="clientId"
+              render={({ field: { onChange, value } }) => (
+                <PaginatedSelect
+                  label="Cliente"
+                  value={value}
+                  options={filteredClientOptions}
+                  onChange={onChange}
+                  pagination={clientPagination}
+                  onPageChange={setClientPage}
+                  placeholder="Seleccione um cliente"
+                  className="w-full"
+                  error={errors.clientId?.message}
+                  disabled={isEditing}
+                  fullWidth
+                />
+              )}
+            />
+          </div>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -283,7 +299,7 @@ export function ReserveStockModal() {
             className="w-max"
             isLoading={isSubmitting || isReserving || isUpdating}
           >
-            {isEditing ? "Salvar Alterações" : "Reservar Stock"}
+            {isEditing ? "Guardar alterações" : "Reservar stock"}
           </ButtonSubmit>
         </div>
       </form>

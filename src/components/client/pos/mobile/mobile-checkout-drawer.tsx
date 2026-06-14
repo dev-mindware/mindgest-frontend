@@ -64,7 +64,7 @@ export function MobileCheckoutDrawer({
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="max-h-[90vh]">
           <DrawerHeader>
-            <DrawerTitle>Finalizar Transação</DrawerTitle>
+            <DrawerTitle>Finalizar transacção</DrawerTitle>
           </DrawerHeader>
           
           <div className="px-4 overflow-y-auto pb-4 space-y-6" data-tour="pos-checkout">
@@ -106,7 +106,7 @@ export function MobileCheckoutDrawer({
                 disabled={isPending}
                 data-tour="pos-submit"
             >
-                {isPending ? "Processando..." : "Confirmar Pagamento"}
+                {isPending ? "A processar..." : "Confirmar pagamento"}
             </Button>
           </DrawerFooter>
         </DrawerContent>

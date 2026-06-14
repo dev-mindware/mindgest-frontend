@@ -47,7 +47,7 @@ function ResetPasswordForm() {
   async function onChangePassword(data: ResetPasswordFormData) {
     if (!token) {
       ErrorMessage(
-        "Token de recuperação de senha não encontrado ou inválido. Por favor, solicite a recuperação novamente.",
+        "O código de recuperação da palavra-passe não foi encontrado ou é inválido. Solicite uma nova recuperação.",
       );
       return;
     }
@@ -61,7 +61,7 @@ function ResetPasswordForm() {
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-        "Ocorreu um erro ao alterar a senha. Tente mais tarde.",
+        "Não foi possível alterar a palavra-passe. Tente novamente mais tarde.",
       );
     }
   }
@@ -74,8 +74,8 @@ function ResetPasswordForm() {
             <Image src={Logo} alt="Logo" className="size-20" />
           </div>
           <AuthHeader
-            title="Nova Senha"
-            description="Digite a sua nova senha e confirme para recuperar o acesso à sua conta."
+            title="Nova palavra-passe"
+            description="Introduza e confirme a nova palavra-passe para recuperar o acesso à conta."
           />
         </div>
 
@@ -83,13 +83,13 @@ function ResetPasswordForm() {
           <div className="space-y-2">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-foreground">
-                Nova Senha
+                Nova palavra-passe
               </label>
               <div className="flex items-center gap-2">
                 <div className="flex-1">
                   <Input
                     type="password"
-                    placeholder="Digite sua nova senha"
+                    placeholder="Introduza a nova palavra-passe"
                     {...register("newPassword")}
                   />
                 </div>
@@ -98,7 +98,7 @@ function ResetPasswordForm() {
                   variant="outline"
                   size="icon"
                   className="shrink-0"
-                  title="Gerar senha forte"
+                  title="Gerar uma palavra-passe segura"
                   onClick={generateStrongPassword}
                 >
                   <Wand2 className="size-4" />
@@ -115,8 +115,8 @@ function ResetPasswordForm() {
 
           <Input
             type="password"
-            label="Confirmar Nova Senha"
-            placeholder="Confirme sua nova senha"
+            label="Confirmar nova palavra-passe"
+            placeholder="Confirme a nova palavra-passe"
             {...register("confirmPassword")}
             error={
               errors.confirmPassword &&

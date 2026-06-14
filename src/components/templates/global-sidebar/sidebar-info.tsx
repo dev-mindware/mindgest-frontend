@@ -77,7 +77,7 @@ export function SidebarCompanyInfo() {
                   {currentStore?.name || "Empresa"}
                 </span>
                 <span className="text-xs truncate">
-                  {currentStore ? "Loja Selecionada" : "Selecione uma loja"}
+                  {currentStore ? "Loja seleccionada" : "Seleccione uma loja"}
                 </span>
               </div>
               <Icon name="ChevronsUpDown" className="ml-auto" />

@@ -87,7 +87,7 @@ export function CartCheckoutForm({
                     disabled={isPending}
                     data-tour="pos-submit"
                 >
-                    {isPending ? "Processando..." : "Confirmar Pagamento"}
+                    {isPending ? "A processar..." : "Confirmar pagamento"}
                 </Button>
             </div>
 

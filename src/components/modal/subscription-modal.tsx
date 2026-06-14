@@ -38,7 +38,7 @@ export function SubscriptionModal() {
               Subscrição Expirada
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              Olá {user?.name || "Usuário"}, o seu plano{" "}
+              Olá {user?.name || "Utilizador"}, o seu plano{" "}
               <strong>
                 {user?.company?.subscription?.plan?.name || "Premium"}
               </strong>{" "}

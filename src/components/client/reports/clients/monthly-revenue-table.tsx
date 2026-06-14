@@ -56,7 +56,7 @@ export function MonthlyRevenueTable({ monthlyTrend }: MonthlyRevenueTableProps) 
                     <EmptyState
                         icon="CalendarDays"
                         title="Sem histórico mensal"
-                        description="Nenhuma transação registada nos últimos meses."
+                        description="Não foi registada nenhuma transacção nos últimos meses."
                         className="py-12"
                     />
                 ) : (

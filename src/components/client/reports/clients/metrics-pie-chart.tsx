@@ -41,7 +41,7 @@ export function MetricsPieChart({ summary }: MetricsPieChartProps) {
                     <EmptyState
                         icon="ChartPie"
                         title="Sem dados para exibir"
-                        description="Não foram encontradas métricas para o período selecionado."
+                        description="Não foram encontradas métricas para o período seleccionado."
                         className="py-12"
                     />
                 ) : (

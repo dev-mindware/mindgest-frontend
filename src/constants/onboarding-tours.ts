@@ -189,7 +189,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "setup-guides-content",
         "Guias e tours",
-        "Controle se os guias aparecem automaticamente e reponha tours já vistos.",
+        "Defina se os guias devem aparecer automaticamente e reponha os tours já vistos.",
         { side: "left" },
       ),
     ],
@@ -206,7 +206,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "clients-header",
         "Clientes",
-        "Use esta área para centralizar os dados dos clientes usados em faturas e relatórios.",
+        "Utilize esta área para centralizar os dados dos clientes usados em facturas e relatórios.",
         { side: "bottom" },
       ),
       tourStep(
@@ -235,7 +235,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "items-header",
         "Catálogo comercial",
-        "Produtos e serviços alimentam faturas, POS, stock e relatórios.",
+        "Os produtos e serviços alimentam facturas, o POS, o stock e os relatórios.",
         { side: "bottom" },
       ),
       tourStep(
@@ -247,12 +247,12 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "items-create",
         "Criar item",
-        "Crie o item manualmente ou, no plano Pro, use o código de barras para acelerar o cadastro.",
+        "Crie o item manualmente ou, no plano Pro, utilize o código de barras para acelerar o registo.",
         { side: "left" },
       ),
       tourStep(
         "product-modal",
-        "Cadastro de produto",
+        "Registo do produto",
         "Preencha nome, preço, imposto e categoria antes de guardar.",
         { side: "left", demo: "product-form-basics" },
       ),
@@ -282,25 +282,25 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "documents-header",
         "Central de documentos",
-        "Aqui acompanha faturas, faturas-recibo, proformas, recibos e notas de crédito.",
+        "Aqui pode acompanhar facturas, facturas-recibo, proformas, recibos e notas de crédito.",
         { side: "bottom" },
       ),
       tourStep(
         "documents-tabs",
         "Tipos de documento",
-        "Cada separador mostra um tipo fiscal ou comercial, com estados e ações próprias.",
+        "Cada separador apresenta um tipo de documento fiscal ou comercial, com estados e acções próprias.",
         { side: "bottom" },
       ),
       tourStep(
         "documents-create",
         "Criar documento",
-        "Inicia o fluxo de emissão no tipo selecionado. As notas de crédito são geradas a partir de documentos existentes.",
+        "Inicia o fluxo de emissão no tipo seleccionado. As notas de crédito são geradas a partir de documentos existentes.",
         { side: "left" },
       ),
       tourStep(
         "documents-list",
-        "Listagem e ações",
-        "Use filtros e menus da tabela para ver, baixar, clonar, cancelar ou converter documentos.",
+        "Listagem e acções",
+        "Utilize os filtros e os menus da tabela para consultar, descarregar, duplicar, cancelar ou converter documentos.",
         { side: "top" },
       ),
       tourStep(
@@ -313,7 +313,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
   }),
 
   "normal-invoice": defineTour("normal-invoice", {
-    title: "Criar fatura",
+    title: "Criar factura",
     group: "core",
     type: "core",
     priority: 5,
@@ -323,7 +323,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "normal-invoice-document-type",
         "Tipo de documento",
-        "Comece pela aba Fatura. As outras abas servem para recibos e proformas.",
+        "Comece pelo separador Factura. Os outros separadores destinam-se a recibos e proformas.",
         { side: "bottom", align: "start" },
       ),
       tourStep(
@@ -335,19 +335,19 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "normal-invoice-client",
         "Cliente existente",
-        "Primeiro cenário: pesquise por nome, telefone ou email e escolha um cliente já cadastrado.",
+        "Primeiro cenário: pesquise por nome, telefone ou email e seleccione um cliente já registado.",
         { side: "bottom", demo: "normal-client-existing" },
       ),
       tourStep(
         "normal-invoice-client",
         "Novo cliente",
-        "Segundo cenário: quando o cliente não existe, escreva o nome e use a opção de criação no seletor.",
+        "Segundo cenário: quando o cliente não existir, escreva o nome e utilize a opção de criação no selector.",
         { side: "bottom", demo: "normal-client-new" },
       ),
       tourStep(
         "normal-invoice-client-details",
         "Dados do novo cliente",
-        "Depois de criar o nome no seletor, complete o NIF, o telefone e o endereço antes de emitir a fatura.",
+        "Depois de introduzir o nome no selector, preencha o NIF, o telefone e o endereço antes de emitir a factura.",
         { side: "bottom", demo: "normal-client-details" },
       ),
       tourStep(
@@ -359,13 +359,13 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "normal-invoice-item-select",
         "Novo produto ou serviço",
-        "Segundo cenário: se o item ainda não existe, escreva o nome e crie-o diretamente na fatura.",
+        "Segundo cenário: se o item ainda não existir, escreva o nome e crie-o directamente na factura.",
         { side: "top", demo: "normal-product-new" },
       ),
       tourStep(
         "normal-invoice-new-item-fields",
         "Dados do novo item",
-        "Para itens novos, informe a quantidade, o preço, o tipo e o imposto antes de adicionar à fatura.",
+        "Para itens novos, indique a quantidade, o preço, o tipo e o imposto antes de os adicionar à factura.",
         { side: "top", demo: "normal-product-details" },
       ),
       tourStep(
@@ -382,8 +382,8 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       ),
       tourStep(
         "normal-invoice-submit",
-        "Criar fatura",
-        "Quando tudo estiver validado, este botão emite a fatura. O tour não clica nem submete por si.",
+        "Criar factura",
+        "Quando todos os dados estiverem validados, este botão emite a factura. O tour não clica nem submete o formulário.",
         { side: "top", align: "end" },
       ),
     ],
@@ -417,15 +417,15 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       ),
       tourStep(
         "stock-table",
-        "Tabela e ações",
-        "Abra o menu de ações para ver detalhes, ajustar stock, reservar ou liberar reservas.",
+        "Tabela e acções",
+        "Abra o menu de acções para consultar detalhes, ajustar o stock, criar reservas ou libertá-las.",
         { side: "top" },
       ),
     ],
   }),
 
   "pos-invoice": defineTour("pos-invoice", {
-    title: "Faturar no POS",
+    title: "Facturar no POS",
     group: "operation",
     type: "core",
     priority: 7,
@@ -453,13 +453,13 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-product-add",
         "Adicionar ao carrinho",
-        "Clique no produto ou no botão de adicionar para enviar o item para o carrinho.",
+        "Seleccione o produto ou o botão de adição para o colocar no carrinho.",
         { side: "left" },
       ),
       tourStep(
         "pos-product-quantity",
         "Quantidade do produto",
-        "Depois de adicionar um produto, ajuste a quantidade no próprio cartão antes de finalizar a venda.",
+        "Depois de adicionar um produto, ajuste a quantidade no próprio cartão antes de concluir a venda.",
         { side: "left" },
       ),
       tourStep(
@@ -501,7 +501,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-payment-methods",
         "Pagamento",
-        "Escolha o método de pagamento e, em dinheiro, informe o valor entregue para calcular o troco.",
+        "Escolha o método de pagamento e, para pagamentos em numerário, introduza o valor recebido para calcular o troco.",
         { side: "left" },
       ),
       tourStep(
@@ -631,13 +631,13 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-movements-tabs",
         "Tipos de movimento",
-        "Alterne entre faturas-recibo, proformas e notas de crédito do caixa.",
+        "Alterne entre facturas-recibo, proformas e notas de crédito do caixa.",
         { side: "bottom" },
       ),
       tourStep(
         "pos-movements-list",
         "Listagem",
-        "Use as ações da lista para consultar, baixar ou acompanhar documentos emitidos.",
+        "Utilize as acções da lista para consultar, descarregar ou acompanhar os documentos emitidos.",
         { side: "top" },
       ),
     ],
@@ -672,7 +672,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "pos-management-list",
         "Sessões de caixa",
-        "Abra detalhes, pedidos e ações administrativas sem afetar vendas em curso.",
+        "Abra detalhes, pedidos e acções administrativas sem afectar as vendas em curso.",
         { side: "top" },
       ),
     ],
@@ -718,7 +718,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "reservations-header",
         "Gestão de reservas",
-        "Controle reservas através do calendário e acompanhe a disponibilidade.",
+        "Gira as reservas através do calendário e acompanhe a disponibilidade.",
         { side: "bottom" },
       ),
       tourStep(
@@ -759,7 +759,7 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "reports-sales-export",
         "Exportação fiscal",
-        "Quando estiver disponível no plano, use a exportação para apoiar obrigações fiscais.",
+        "Quando estiver disponível no plano, utilize a exportação para apoiar o cumprimento das obrigações fiscais.",
         { side: "left" },
       ),
     ],
@@ -811,13 +811,13 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
       tourStep(
         "reports-access-header",
         "Auditoria",
-        "Monitore ações, entidades alteradas, utilizadores e origem das operações.",
+        "Acompanhe acções, entidades alteradas, utilizadores e a origem das operações.",
         { side: "bottom" },
       ),
       tourStep(
         "reports-access-filters",
         "Filtros de auditoria",
-        "Filtre por ação, entidade, utilizador e período para investigar eventos.",
+        "Filtre por acção, entidade, utilizador e período para analisar os eventos.",
         { side: "bottom" },
       ),
       tourStep(

@@ -26,8 +26,13 @@ import {
   UnreserveStockModal,
 } from "./stock-modals";
 import { useModal } from "@/stores";
+import { useAuth } from "@/hooks/auth";
 
 export function StockList() {
+  const { user } = useAuth();
+  const currentPlan = user?.company?.subscription?.plan?.name;
+  const isSmartPlan = currentPlan === "Smart";
+
   const { search } = useURLSearchParams("search");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useStockFilters();
@@ -70,9 +75,9 @@ export function StockList() {
     };
 
     const labels: Record<string, string> = {
-      IN_STOCK: "Em Estoque",
-      LOW_STOCK: "Estoque Baixo",
-      OUT_OF_STOCK: "Fora de Estoque",
+      IN_STOCK: "Em stock",
+      LOW_STOCK: "Stock baixo",
+      OUT_OF_STOCK: "Sem stock",
     };
 
     return (
@@ -139,7 +144,7 @@ export function StockList() {
     },
     {
       key: "updatedAt",
-      header: "Última Atualização",
+      header: "Última actualização",
       render: (_, item) => (
         <span className="text-sm text-muted-foreground">
           {formatDateTime(item.updatedAt)}
@@ -148,46 +153,55 @@ export function StockList() {
     },
     {
       key: "actions",
-      header: "Ações",
-      render: (_, item) => (
-        <ButtonOnlyAction
-          data={item}
-          actions={[
-            {
-              label: "Ver Detalhes",
-              onClick: handlerDetailsStock,
-              icon: "Eye",
-              variant: "default",
-            },
-            {
-              label: "Deletar",
-              onClick: handlerDeleteStock,
-              variant: "destructive",
-              icon: "Trash2",
-            },
-            { type: "separator" },
-            {
-              label: "Ajustar Stock",
-              onClick: handlerAdjustStock,
-              icon: "SlidersHorizontal",
-              variant: "default",
-            },
-            { type: "separator" },
+      header: "Acções",
+      render: (_, item) => {
+        const baseActions: any[] = [
+          {
+            label: "Ver Detalhes",
+            onClick: handlerDetailsStock,
+            icon: "Eye" as const,
+            variant: "default" as const,
+          },
+          {
+            label: "Apagar",
+            onClick: handlerDeleteStock,
+            variant: "destructive" as const,
+            icon: "Trash2" as const,
+          },
+          { type: "separator" as const },
+          {
+            label: "Ajustar Stock",
+            onClick: handlerAdjustStock,
+            icon: "SlidersHorizontal" as const,
+            variant: "default" as const,
+          },
+        ];
+
+        if (!isSmartPlan) {
+          baseActions.push(
+            { type: "separator" as const },
             {
               label: "Reservar",
               onClick: handlerReserveStock,
-              icon: "CircleArrowUp",
-              variant: "default",
+              icon: "CircleArrowUp" as const,
+              variant: "default" as const,
             },
             {
               label: "Liberar Reserva",
               onClick: handlerUnreserveStock,
-              icon: "CircleArrowDown",
-              variant: "default",
-            },
-          ]}
-        />
-      ),
+              icon: "CircleArrowDown" as const,
+              variant: "default" as const,
+            }
+          );
+        }
+
+        return (
+          <ButtonOnlyAction
+            data={item}
+            actions={baseActions}
+          />
+        );
+      },
     },
   ];
 
@@ -200,7 +214,7 @@ export function StockList() {
           <h3 className="text-lg font-semibold mb-4">Filtros</h3>
           <StockFilters />
         </div>
-        <RequestError refetch={refetch} message="Erro ao carregar o estoque" />
+        <RequestError refetch={refetch} message="Erro ao carregar o stock" />
       </div>
     );
   }
@@ -213,8 +227,8 @@ export function StockList() {
           <StockFilters />
         </div>
         <EmptyState
-          description="Nenhum item em estoque encontrado"
-          title="Sem Estoque"
+          description="Não foi encontrado nenhum item em stock."
+          title="Sem stock"
           icon="Boxes"
         />
       </div>
@@ -243,7 +257,7 @@ export function StockList() {
           setPage={setPage}
           goToNextPage={goToNextPage}
           goToPreviousPage={goToPreviousPage}
-          emptyMessage="Nenhum item em estoque encontrado"
+          emptyMessage="Não foi encontrado nenhum item em stock."
         />
 
         {totalPages > 1 && (

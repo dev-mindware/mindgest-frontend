@@ -28,7 +28,7 @@ export function Agt() {
             <h2 className="text-2xl font-bold tracking-tight">Painel AGT</h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Controle a integração com a Administração Geral Tributária.
+            Gira a integração com a Administração Geral Tributária.
           </p>
         </div>
       </div>

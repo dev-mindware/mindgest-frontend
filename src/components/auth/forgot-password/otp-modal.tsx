@@ -28,7 +28,7 @@ export function OTPModal({ message }: { message: string }) {
       description={
         <span className="text-base text-muted-foreground flex text-center">
           {message ||
-            "Enviámos as instruções para a recuperação de senha. Por favor, verifique a sua caixa de entrada ou pasta de spam."}
+            "Enviámos as instruções para recuperar a palavra-passe. Verifique a caixa de entrada e a pasta de correio não solicitado."}
         </span>
       }
     >

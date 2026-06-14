@@ -22,15 +22,15 @@ export function Notification() {
         <div>
           <h2 className="text-xl font-semibold">Notificações</h2>
           <p className="text-sm text-muted-foreground">
-            Personalize a forma como recebe notificações no MindGest.
+            Personalize a forma como recebe notificações no Mindgest.
           </p>
         </div>
         <Separator />
 
         <div className="space-y-6 md:p-8">
           <SettingRow
-            label="Ativar notificações"
-            description="Receber notificações de todas as mensagens, faturas, documentos..."
+            label="Activar notificações"
+            description="Receber notificações sobre mensagens, facturas e documentos."
             control={
               <Switch checked={pushEnabled} onCheckedChange={setPushEnabled} />
             }
@@ -39,7 +39,7 @@ export function Notification() {
           <Separator />
 
           <SettingRow
-            label="Ativar selo de notificação não lida"
+            label="Activar indicador de notificação não lida"
             description="Apresentar um emblema no ícone de notificação quando tem mensagens não lidas"
             disabled={!pushEnabled}
             control={

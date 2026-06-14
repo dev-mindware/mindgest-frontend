@@ -52,7 +52,7 @@ export function AuditDetailModal() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-muted/40 rounded-lg border">
           <div>
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              Autor da Ação
+              Autor da acção
             </h4>
             <div className="space-y-1">
               <p className="font-medium text-foreground">{auditItem.user?.name || "N/A"}</p>
@@ -62,7 +62,7 @@ export function AuditDetailModal() {
 
           <div>
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              Registro Técnico
+              Registo técnico
             </h4>
             <div className="space-y-1 text-xs text-muted-foreground">
               <p>

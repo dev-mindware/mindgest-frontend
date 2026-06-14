@@ -83,7 +83,7 @@ export function SubscriptionSummary({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <InfoRow label="Plano selecionado:">
+          <InfoRow label="Plano seleccionado:">
             <Badge className="bg-primary-500 text-white">
               {selectedPlan.name}
             </Badge>

@@ -23,7 +23,7 @@ export function useUpdateReservation() {
     mutationFn: ({ id, data }: { id: string; data: StockReserveData }) =>
       stockReservationsService.updateReservation(id, data),
     onSuccess: () => {
-      SucessMessage("Reserva atualizada com sucesso!");
+      SucessMessage("Reserva actualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["stock-reservations"] });
     },
   });

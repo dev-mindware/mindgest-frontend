@@ -1,4 +1,4 @@
-# Entidades, Itens e Planos MindGest
+# Entidades, itens e planos Mindgest
 
 Este documento mapeia os principais recursos de clientes, produtos, serviços, fornecedores, stock e POS por plano de subscrição.
 

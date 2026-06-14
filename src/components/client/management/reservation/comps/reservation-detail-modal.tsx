@@ -30,7 +30,7 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
     const getStatusInfo = (status: string) => {
         switch (status) {
             case "SCHEDULED": return { label: "Agendada", variant: "pending" as const };
-            case "ACTIVE": return { label: "Ativa", variant: "default" as const };
+            case "ACTIVE": return { label: "Activa", variant: "default" as const };
             case "COMPLETED": return { label: "Concluída", variant: "success" as const };
             case "CANCELLED": return { label: "Cancelada", variant: "destructive" as const };
             default: return { label: status, variant: "outline" as const };
@@ -103,7 +103,7 @@ export function ReservationDetailModal({ reservation }: ReservationDetailModalPr
                                     <p className="text-muted-foreground text-xs uppercase font-bold tracking-wider">Criado Por</p>
                                     {isLoadingCreator ? (
                                         <div className="flex items-center gap-2 text-xs py-1">
-                                            <Loader2 className="h-3 w-3 animate-spin" /> Carregando...
+                                            <Loader2 className="h-3 w-3 animate-spin" /> A carregar...
                                         </div>
                                     ) : (
                                         <p className="font-medium">{creator?.name || "Desconhecido"}</p>

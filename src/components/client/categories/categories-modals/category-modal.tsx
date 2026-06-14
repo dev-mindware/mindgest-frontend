@@ -58,7 +58,7 @@ export function CategoryModal({ action }: CategoryModalProps) {
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-        "Ocorreu um erro ao salvar a categoria"
+        "Não foi possível guardar a categoria."
       );
     }
   }
@@ -109,7 +109,7 @@ export function CategoryModal({ action }: CategoryModalProps) {
             className="w-max"
             isLoading={isSubmitting || isAdding || isEditing}
           >
-            {action === "add" ? "Adicionar" : "Salvar alterações"}
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
           </ButtonSubmit>
         </div>
       </form>

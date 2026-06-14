@@ -83,7 +83,7 @@ export function ManagerModal({ action }: ManagerModalProps) {
       handleCancel();
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Ocorreu um erro ao salvar o gerente."
+        error?.response?.data?.message || "Não foi possível guardar o gerente."
       );
     }
   }
@@ -134,7 +134,7 @@ export function ManagerModal({ action }: ManagerModalProps) {
               />
 
               <Input
-                label="Senha"
+                label="Palavra-passe"
                 startIcon="Lock"
                 placeholder="Ex: 12345678"
                 {...register("password")}
@@ -173,7 +173,7 @@ export function ManagerModal({ action }: ManagerModalProps) {
             className="w-max"
             isLoading={isSubmitting || isAdding || isEditing}
           >
-            {action === "add" ? "Adicionar" : "Salvar Alterações"}
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
           </ButtonSubmit>
         </div>
       </form>
