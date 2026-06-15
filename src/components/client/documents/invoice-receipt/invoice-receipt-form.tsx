@@ -12,9 +12,10 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  NifVerificationField,
 } from "@/components";
 import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
-import { useCreateInvoiceReceipt, useInvoiceTotals } from "@/hooks";
+import { useCreateInvoiceReceipt, useInvoiceTotals, useNifFormVerification } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { useClientSelection } from "@/hooks/invoice";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
@@ -58,12 +59,22 @@ export function InvoiceReceiptForm() {
     formState: { errors, isSubmitting },
     reset,
     setValue,
+    setError,
+    clearErrors,
   } = form;
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
+  const clientTaxNumber = watch("client.taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "client.taxNumber",
+    nameField: "client.name",
+  });
 
   const fieldArray = useFieldArray<InvoiceReceiptFormData, "items">({
     control,
@@ -265,9 +276,19 @@ export function InvoiceReceiptForm() {
 
       {clientState.hasClient && (
         <div className="grid gap-6 md:grid-cols-3">
-          <Input
+          <NifVerificationField
             label="NIF"
-            {...register("client.taxNumber")}
+            value={clientTaxNumber}
+            onChange={(value) =>
+              setValue("client.taxNumber", value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
+            onVerified={handleVerified}
+            onStatusChange={handleStatusChange}
+            verificationEnabled={clientState.isNewClient}
             error={errors.client?.taxNumber?.message}
             disabled={!clientState.isNewClient}
             placeholder="000000000"

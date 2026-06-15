@@ -6,7 +6,8 @@ import { ErrorMessage } from "@/utils/messages";
 import { useModal, currentClientStore } from "@/stores";
 import { ClientFormData, clientSchema } from "@/schemas";
 import { useAddClient, useUpdateClient } from "@/hooks/entities";
-import { Button, Input, GlobalModal, ButtonSubmit } from "@/components";
+import { Button, Input, GlobalModal, ButtonSubmit, NifVerificationField } from "@/components";
+import { useNifFormVerification } from "@/hooks";
 
 type ClientModalProps = {
   action: "add" | "edit";
@@ -22,10 +23,22 @@ export function ClientModal({ action }: ClientModalProps) {
     reset,
     register,
     handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     mode: "onChange",
+  });
+  const taxNumber = watch("taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "taxNumber",
+    nameField: "name",
   });
 
   useEffect(() => {
@@ -82,17 +95,24 @@ export function ClientModal({ action }: ClientModalProps) {
           <Input
             label="Nome"
             startIcon="User"
-            placeholder="Ex: Ceara Coveney"
+            placeholder="Ex: John Doe"
             {...register("name")}
             error={errors.name?.message}
           />
 
-          <Input
+          <NifVerificationField
             label="NIF"
-            startIcon="IdCard"
             placeholder="Ex: 546829403"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("taxNumber")}
+            value={taxNumber}
+            onChange={(value) =>
+              setValue("taxNumber", value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
+            onVerified={handleVerified}
+            onStatusChange={handleStatusChange}
             error={errors.taxNumber?.message}
           />
 

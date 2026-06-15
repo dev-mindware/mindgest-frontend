@@ -3,12 +3,13 @@ import { ErrorMessage } from "@/utils/messages";
 import { useCallback, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, RHFSelect, Textarea } from "@/components";
+import { Button, Input, NifVerificationField, RHFSelect, Textarea } from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import {
   useClientSelection,
   useCreateInvoice,
   useInvoiceTotals,
+  useNifFormVerification,
 } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
@@ -50,12 +51,22 @@ export function InvoiceForm() {
     formState: { errors, isSubmitting },
     reset,
     setValue,
+    setError,
+    clearErrors,
   } = form;
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
+  const clientTaxNumber = watch("client.taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "client.taxNumber",
+    nameField: "client.name",
+  });
 
   const fieldArray = useFieldArray<InvoiceFormData, "items">({
     control,
@@ -232,9 +243,19 @@ export function InvoiceForm() {
           className="grid gap-6 md:grid-cols-3 animate-in fade-in duration-300"
           data-tour="normal-invoice-client-details"
         >
-          <Input
+          <NifVerificationField
             label="NIF"
-            {...register("client.taxNumber")}
+            value={clientTaxNumber}
+            onChange={(value) =>
+              setValue("client.taxNumber", value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
+            onVerified={handleVerified}
+            onStatusChange={handleStatusChange}
+            verificationEnabled={clientState.isNewClient}
             error={errors.client?.taxNumber?.message}
             disabled={!clientState.isNewClient}
             placeholder="000000000"

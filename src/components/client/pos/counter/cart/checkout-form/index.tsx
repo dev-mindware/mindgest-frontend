@@ -33,6 +33,13 @@ export function CartCheckoutForm({
         setIsCustomerExpanded,
         newCustomerPhone,
         setNewCustomerPhone,
+        newCustomerName,
+        setNewCustomerName,
+        newCustomerTaxNumber,
+        setNewCustomerTaxNumber,
+        newCustomerAddress,
+        setNewCustomerAddress,
+        setNewCustomerVerification,
         selectedClient,
         handleClientChange,
         handleQuickCash,
@@ -66,6 +73,13 @@ export function CartCheckoutForm({
                     onClientChange={handleClientChange}
                     newCustomerPhone={newCustomerPhone}
                     onPhoneChange={setNewCustomerPhone}
+                    newCustomerName={newCustomerName}
+                    onNameChange={setNewCustomerName}
+                    newCustomerTaxNumber={newCustomerTaxNumber}
+                    onTaxNumberChange={setNewCustomerTaxNumber}
+                    newCustomerAddress={newCustomerAddress}
+                    onAddressChange={setNewCustomerAddress}
+                    onVerificationStatusChange={setNewCustomerVerification}
                 />
 
                 <PaymentMethods

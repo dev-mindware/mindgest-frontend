@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, GlobalModal, Input } from "@/components";
+import { Button, GlobalModal, Input, NifVerificationField } from "@/components";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EditSupplierFormData, editSupplierSchema } from "@/schemas";
@@ -17,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useFetch } from "@/hooks/common/use-fetch";
 import { ErrorMessage, SucessMessage } from "@/utils";
+import { useNifFormVerification } from "@/hooks";
 
 export function EditSupplierModal() {
   const { closeModal, open } = useModal();
@@ -44,10 +45,23 @@ export function EditSupplierModal() {
     handleSubmit,
     reset,
     control,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<EditSupplierFormData>({
     resolver: zodResolver(editSupplierSchema),
     mode: "onChange",
+  });
+  const taxNumber = watch("taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "taxNumber",
+    nameField: "name",
+    blockNotFound: false,
   });
 
   useEffect(() => {
@@ -144,10 +158,18 @@ export function EditSupplierModal() {
             error={errors.email?.message}
           />
 
-          <Input
+          <NifVerificationField
             label="NIF"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("taxNumber")}
+            value={taxNumber}
+            onChange={(value) =>
+              setValue("taxNumber", value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
+            onVerified={handleVerified}
+            onStatusChange={handleStatusChange}
             error={errors.taxNumber?.message}
           />
 

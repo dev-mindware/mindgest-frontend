@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib";
 import { useState } from "react";
-import { Button, Input } from "@/components";
+import { Button, Input, NifVerificationField } from "@/components";
 import type { CompanyFormData } from "@/schemas/company";
 import { useForm } from "react-hook-form";
 import { User } from "@/types";
@@ -10,6 +10,7 @@ import { useUpdateCompany } from "@/hooks";
 import { ErrorMessage, SucessMessage } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { companySchema } from "@/schemas/company";
+import { useNifFormVerification } from "@/hooks";
 
 export function CompanyForm({ user }: { user: User }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -20,6 +21,10 @@ export function CompanyForm({ user }: { user: User }) {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<CompanyFormData>({
     resolver: zodResolver(companySchema),
@@ -32,6 +37,14 @@ export function CompanyForm({ user }: { user: User }) {
       email: user?.company?.email || "",
       website: user?.company?.website || null,
     },
+  });
+  const taxNumber = watch("taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "taxNumber",
+    nameField: "name",
   });
 
   async function handleCompanySubmit(data: CompanyFormData) {
@@ -116,15 +129,22 @@ export function CompanyForm({ user }: { user: User }) {
           error={errors?.address?.message}
         />
 
-        <Input
-          {...register("taxNumber")}
+        <NifVerificationField
           label="NIF"
           placeholder="NIF empresarial ou pessoal"
-          maxLength={14}
-          autoCapitalize="characters"
-          spellCheck={false}
+          value={taxNumber}
+          onChange={(value) =>
+            setValue("taxNumber", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+          onVerified={handleVerified}
+          onStatusChange={handleStatusChange}
+          verificationEnabled={isEditing}
           className="bg-background shadow-none"
-          readOnly={!isEditing}
+          disabled={!isEditing}
           error={errors?.taxNumber?.message}
         />
 

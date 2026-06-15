@@ -1,11 +1,12 @@
 "use client";
 
-import { Button, GlobalModal, Input } from "@/components";
+import { Button, GlobalModal, Input, NifVerificationField } from "@/components";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SupplierFormData, supplierSchema } from "@/schemas";
 import { useAddSupplier } from "@/hooks/entities/use-suppliers";
 import { useModal } from "@/stores";
+import { useNifFormVerification } from "@/hooks";
 
 
 export function AddSupplierModal() {
@@ -15,9 +16,22 @@ export function AddSupplierModal() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<SupplierFormData>({
     resolver: zodResolver(supplierSchema),
+  });
+  const taxNumber = watch("taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "taxNumber",
+    nameField: "name",
+    blockNotFound: false,
   });
 
   async function onSubmit(data: SupplierFormData) {
@@ -41,7 +55,7 @@ export function AddSupplierModal() {
           <Input
             label="Nome"
             type="text"
-            placeholder="Ex: Ceara Coveney"
+            placeholder="Ex: John Doe"
             {...register("name")}
             error={errors.name?.message}
           />
@@ -62,11 +76,19 @@ export function AddSupplierModal() {
             error={errors.email?.message}
           />
 
-          <Input
+          <NifVerificationField
             label="NIF"
             placeholder="Ex: 546829403"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("taxNumber")}
+            value={taxNumber}
+            onChange={(value) =>
+              setValue("taxNumber", value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
+            onVerified={handleVerified}
+            onStatusChange={handleStatusChange}
             error={errors.taxNumber?.message}
           />
 
