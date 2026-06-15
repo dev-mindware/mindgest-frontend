@@ -1,7 +1,8 @@
-import { Icon } from "@/components";
+import { Icon, NifVerificationField } from "@/components";
 import { Input } from "@/components/ui/input";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { isSelectableClient } from "@/utils";
+import type { ContributorVerificationStatus } from "@/types";
 
 const phoneRegex = /^(92|99|91|95|93|94|97)\d{7}$/;
 
@@ -12,6 +13,13 @@ interface CustomerSelectionProps {
     onClientChange: (client: any) => void;
     newCustomerPhone: string;
     onPhoneChange: (phone: string) => void;
+    newCustomerName: string;
+    onNameChange: (name: string) => void;
+    newCustomerTaxNumber: string;
+    onTaxNumberChange: (taxNumber: string) => void;
+    newCustomerAddress: string;
+    onAddressChange: (address: string) => void;
+    onVerificationStatusChange: (status: ContributorVerificationStatus) => void;
 }
 
 export function CustomerSelection({
@@ -21,6 +29,13 @@ export function CustomerSelection({
     onClientChange,
     newCustomerPhone,
     onPhoneChange,
+    newCustomerName,
+    onNameChange,
+    newCustomerTaxNumber,
+    onTaxNumberChange,
+    newCustomerAddress,
+    onAddressChange,
+    onVerificationStatusChange,
 }: CustomerSelectionProps) {
     const normalizedPhone = newCustomerPhone.replace(/\D/g, "").slice(0, 9);
     const phoneError =
@@ -72,15 +87,25 @@ export function CustomerSelection({
                         />
                     </div>
 
-                    {/* If no selected customer or it's a new one, show phone field */}
-                    {(!selectedClient || selectedClient.__isNew__) && (
+                    {selectedClient?.__isNew__ && (
                         <div
-                            className="space-y-2 pt-2 border-t border-dashed"
+                            className="grid gap-4 pt-2 border-t border-dashed sm:grid-cols-2"
                             data-tour="pos-new-customer-phone"
                         >
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                Telefone do Cliente (Novo)
-                            </label>
+                            <NifVerificationField
+                                label="NIF do cliente"
+                                value={newCustomerTaxNumber}
+                                onChange={onTaxNumberChange}
+                                onVerified={(contributor) => onNameChange(contributor.name)}
+                                onStatusChange={onVerificationStatusChange}
+                            />
+                            <Input
+                                startIcon="User"
+                                type="text"
+                                placeholder="Nome fiscal do cliente"
+                                value={newCustomerName}
+                                onChange={(event) => onNameChange(event.target.value)}
+                            />
                             <Input
                                 startIcon="Phone"
                                 type="text"
@@ -94,6 +119,13 @@ export function CustomerSelection({
                                 maxLength={9}
                                 aria-invalid={!!phoneError}
                                 className={phoneError ? "bg-muted/30 border-destructive" : "bg-muted/30"}
+                            />
+                            <Input
+                                startIcon="MapPin"
+                                type="text"
+                                placeholder="Endereço do cliente"
+                                value={newCustomerAddress}
+                                onChange={(event) => onAddressChange(event.target.value)}
                             />
                             {phoneError && (
                                 <p className="text-xs text-destructive">{phoneError}</p>

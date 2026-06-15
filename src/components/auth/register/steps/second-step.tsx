@@ -1,15 +1,28 @@
 "use client"
 import { cn } from "@/lib/utils";
-import { Input } from "@/components";
+import { Input, NifVerificationField } from "@/components";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
+import { useNifFormVerification } from "@/hooks";
 
 export function SecondStep() {
   const {
     register,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useFormContext<RegisterFormData>();
+  const taxNumber = watch("step2.company.taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "step2.company.taxNumber",
+    nameField: "step2.company.name",
+  });
 
   return (
     <div className={cn("flex flex-col gap-6")}>
@@ -20,14 +33,19 @@ export function SecondStep() {
         </p>
       </div>
       <div className="grid gap-6">
-        <Input
+        <NifVerificationField
           label="NIF do Contribuinte"
-          startIcon="IdCard"
           placeholder="Introduza o NIF empresarial ou pessoal"
-          maxLength={14}
-          autoCapitalize="characters"
-          spellCheck={false}
-          {...register("step2.company.taxNumber")}
+          value={taxNumber}
+          onChange={(value) =>
+            setValue("step2.company.taxNumber", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+          onVerified={handleVerified}
+          onStatusChange={handleStatusChange}
           error={
             errors?.step2?.company?.taxNumber &&
             errors?.step2?.company?.taxNumber?.message

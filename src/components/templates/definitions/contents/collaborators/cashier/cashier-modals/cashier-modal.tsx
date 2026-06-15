@@ -158,7 +158,7 @@ export function CashierModal({ action }: CashierModalProps) {
           <Input
             label="Nome"
             startIcon="User"
-            placeholder="Ex: Ceara Coveney"
+            placeholder="Ex: John Doe"
             {...register("name")}
             error={errors.name?.message}
           />

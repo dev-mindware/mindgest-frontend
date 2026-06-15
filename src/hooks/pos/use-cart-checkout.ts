@@ -7,9 +7,10 @@ import { currentStoreStore, useAuthStore } from "@/stores";
 import { ErrorMessage, printPosDocument } from "@/utils";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
-import { DocumentType, Product } from "@/types";
+import { ContributorVerificationStatus, DocumentType, Product } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useWorkspaceStore } from "@/stores/pos/workspace-store";
+import { isValidAngolanTaxNumber } from "@/lib/contributor";
 
 export interface CartItem extends Product {
   qty: number;
@@ -44,6 +45,11 @@ export function useCartCheckout({
 
   const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
+  const [newCustomerName, setNewCustomerName] = useState("");
+  const [newCustomerTaxNumber, setNewCustomerTaxNumber] = useState("");
+  const [newCustomerAddress, setNewCustomerAddress] = useState("");
+  const [newCustomerVerification, setNewCustomerVerification] =
+    useState<ContributorVerificationStatus>("idle");
   const [printDocument, setPrintDocument] = useState<{
     id: string;
     type: DocumentType;
@@ -86,6 +92,7 @@ export function useCartCheckout({
     handleBaseClientChange(option);
 
     if (option?.__isNew__) {
+      setNewCustomerName(option.label || "");
       setValue("client", undefined, {
         shouldValidate: false,
         shouldDirty: true,
@@ -193,6 +200,23 @@ export function useCartCheckout({
       return;
     }
 
+    if (isCreatingClient && !isValidAngolanTaxNumber(newCustomerTaxNumber)) {
+      ErrorMessage("Introduza um NIF válido para o novo cliente.");
+      return;
+    }
+
+    if (
+      isCreatingClient &&
+      ["idle", "checking", "not_found"].includes(newCustomerVerification)
+    ) {
+      ErrorMessage(
+        newCustomerVerification === "not_found"
+          ? "Não foi encontrado um contribuinte com este NIF."
+          : "Aguarde pela verificação do NIF.",
+      );
+      return;
+    }
+
     // Prepare payload
     const simplifiedItems = data.items.map((item: any) => ({
       id: item.id,
@@ -219,11 +243,11 @@ export function useCartCheckout({
     // Custom adjustments for client
     if (selectedClient?.__isNew__) {
       payload.client = {
-        name: selectedClient.label,
+        name: newCustomerName,
         phone: normalizedNewCustomerPhone,
-        email: "consumidor@final.com",
-        address: "Loja",
-        taxNumber: "999999999",
+        email: "",
+        address: newCustomerAddress,
+        taxNumber: newCustomerTaxNumber,
       };
     } else if (!selectedClient && normalizedNewCustomerPhone) {
       payload.client = {
@@ -276,6 +300,10 @@ export function useCartCheckout({
       setCashGiven("");
       setSelectedClient(null);
       setNewCustomerPhone("");
+      setNewCustomerName("");
+      setNewCustomerTaxNumber("");
+      setNewCustomerAddress("");
+      setNewCustomerVerification("idle");
       reset();
       onSuccess?.();
 
@@ -335,6 +363,13 @@ export function useCartCheckout({
     setIsCustomerExpanded,
     newCustomerPhone,
     setNewCustomerPhone,
+    newCustomerName,
+    setNewCustomerName,
+    newCustomerTaxNumber,
+    setNewCustomerTaxNumber,
+    newCustomerAddress,
+    setNewCustomerAddress,
+    setNewCustomerVerification,
     selectedClient,
     handleClientChange,
     handleQuickCash,

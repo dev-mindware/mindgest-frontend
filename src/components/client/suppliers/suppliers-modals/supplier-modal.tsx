@@ -4,8 +4,9 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SupplierFormData, supplierSchema } from "@/schemas";
-import { Button, Input, GlobalModal, ButtonSubmit } from "@/components";
+import { Button, Input, GlobalModal, ButtonSubmit, NifVerificationField } from "@/components";
 import { useAddSupplier } from "@/hooks/entities/use-suppliers";
+import { useNifFormVerification } from "@/hooks";
 
 export function SupplierModal() {
   const { closeModal, open } = useModal();
@@ -16,10 +17,23 @@ export function SupplierModal() {
     reset,
     register,
     handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<SupplierFormData>({
     resolver: zodResolver(supplierSchema),
     mode: "onChange",
+  });
+  const taxNumber = watch("taxNumber") || "";
+  const { handleStatusChange, handleVerified } = useNifFormVerification({
+    setValue,
+    setError,
+    clearErrors,
+    taxNumberField: "taxNumber",
+    nameField: "name",
+    blockNotFound: false,
   });
 
   async function onSubmit(data: SupplierFormData) {
@@ -59,12 +73,19 @@ export function SupplierModal() {
             error={errors.name?.message}
           />
 
-          <Input
+          <NifVerificationField
             label="NIF"
-            startIcon="IdCard"
             placeholder="Ex: 546829403"
-            className="appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            {...register("taxNumber")}
+            value={taxNumber}
+            onChange={(value) =>
+              setValue("taxNumber", value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
+            onVerified={handleVerified}
+            onStatusChange={handleStatusChange}
             error={errors.taxNumber?.message}
           />
 
