@@ -17,14 +17,10 @@ export interface CashSession {
   authorizedById: string;
   authorizedByName: string;
   remainingTime: string;
-  // Relationships
-  user?: {
-    name: string;
-    email: string;
-  };
   store?: {
     name: string;
   };
+  cashierName: string;
 }
 
 export interface CashSessionFilters {

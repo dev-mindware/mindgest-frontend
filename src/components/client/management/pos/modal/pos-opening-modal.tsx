@@ -7,10 +7,7 @@ import {
   Input,
   Button,
   Icon,
-  Label,
   RequestError,
-  TimeField,
-  DateInput,
   InputCurrency,
   Textarea,
 } from "@/components";
@@ -24,17 +21,8 @@ import { PaginatedSelect } from "@/components/shared/filters/paginated-select";
 import { MultiSelect } from "@/components/common/input-fetch/async-multi-select";
 import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils";
+import TimeInput from "@/components/custom/time-input";
 import { parseTime } from "@internationalized/date";
-
-function safeParseTime(timeStr: string) {
-  try {
-    if (!timeStr || timeStr.length < 5) return parseTime("08:00");
-    return parseTime(timeStr.slice(0, 5));
-  } catch (e) {
-    return parseTime("08:00");
-  }
-}
-
 
 interface PosOpeningModalProps {
   selfSessionMode?: boolean;
@@ -164,7 +152,6 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
     try {
       if (isEdit && currentCashier) {
         const payload = {
-          openingCash: parseFloat(data.initialCapital) || 0,
           initialCapital: data.initialCapital,
           reason: data.reason || "",
           workTime: data.workTime,
@@ -177,7 +164,6 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         const { reason, ...restData } = data;
         const payload = {
           ...restData,
-          openingCash: parseFloat(data.initialCapital) || 0,
           fundType: data.fundType?.toUpperCase(),
           ...(isFromRequest && (currentCashier as any)?._requestId
             ? { requestId: (currentCashier as any)._requestId }
@@ -260,24 +246,21 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
             <Controller
               name="workTime"
               control={control}
-              render={({ field }) => (
+              render={({ field: { onChange, value } }) => (
                 <div className="space-y-2">
-                  <Label>Tempo de expediente</Label>
-                  <TimeField
-                    aria-label="Tempo de expediente"
-                    hourCycle={24}
+                  <label className="block mb-1 text-sm font-medium text-foreground">
+                    Tempo de expediente
+                  </label>
+                  <TimeInput
+                    id="work-time-input"
                     className="w-full"
+                    hourCycle={24}
                     isDisabled={isEdit}
-                    value={safeParseTime(field.value)}
-                    onChange={(time) => {
-                      if (time) field.onChange(time.toString().slice(0, 5));
-                    }}
-                  >
-                    <div className="relative">
-                      <DateInput id="work-time-input" className="bg-background" />
-                      <Icon name="Clock" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                    </div>
-                  </TimeField>
+                    value={value ? parseTime(value) : undefined}
+                    onChange={(time: any) =>
+                      onChange(time ? time.toString().slice(0, 5) : "")
+                    }
+                  />
                   {errors.workTime && (
                     <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
                       {errors.workTime.message}

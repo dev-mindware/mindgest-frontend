@@ -82,8 +82,8 @@ export function PosCashierList({
             />
           </div>
           <div>
-            <p className="font-bold">{item.user?.name || "N/A"}</p>
-            <p className="text-xs text-muted-foreground">{item.user?.email || item.userId}</p>
+            <p className="font-bold">{item.cashierName || "N/A"}</p>
+            <p className="text-xs text-muted-foreground">{item.userId}</p>
           </div>
         </div>
       ),
@@ -164,7 +164,7 @@ export function PosCashierList({
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg group-hover:scale-110 transition-transform duration-500 border border-primary/20 shadow-inner">
-                      {session.user?.name?.charAt(0) || "O"}
+                      {session.cashierName?.charAt(0) || "O"}
                     </div>
                     <div className={cn(
                       "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background shadow-sm",
@@ -173,7 +173,7 @@ export function PosCashierList({
                   </div>
                   <div className="space-y-0.5">
                     <h4 className="font-bold text-sm tracking-tight text-foreground/90 leading-tight">
-                      {session.user?.name || "Operador Desconhecido"}
+                      {session.cashierName || "Operador Desconhecido"}
                     </h4>
                     <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
                       <Icon name="Calendar" size={12} className="opacity-50" />

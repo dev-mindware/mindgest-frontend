@@ -4,11 +4,11 @@
 
 import { NextRequest } from "next/server";
 import { POST } from "@/app/api/contributors/verify/route";
-import axios from "axios";
+import { getContributorByDocument } from "@/services/setic/setic-client";
 
-jest.mock("axios");
+jest.mock("@/services/setic/setic-client");
 
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockedGetContributor = getContributorByDocument as jest.Mock;
 
 function createRequest(taxNumber = "5000012345", origin = "http://localhost:3000") {
   return new NextRequest("http://localhost:3000/api/contributors/verify", {
@@ -29,26 +29,30 @@ describe("POST /api/contributors/verify", () => {
     process.env.SIGT_USERNAME = "username";
     process.env.SIGT_PASSWORD = "password";
     jest.restoreAllMocks();
-    mockedAxios.get.mockReset();
+    mockedGetContributor.mockReset();
+
+    // Default mock behavior
+    mockedGetContributor.mockImplementation(() => {
+      if (!process.env.SIGT_BASE_URL || !process.env.SIGT_USERNAME || !process.env.SIGT_PASSWORD) {
+        throw new Error("Configuração SETIC-FP incompleta.");
+      }
+      return Promise.resolve({
+        ObterContribuinte: {
+          mensagem: "Consulta realizada com sucesso.",
+          contribuinte: {
+            numeroNIF: "5000012345",
+            nome: "Contribuinte de Teste",
+            tipoContribuinte: "COLLECTIVE",
+            estadoContribuinte: "A",
+            regimeIva: "GNAD",
+            indicadorNaoResidente: false,
+          },
+        },
+      });
+    });
   });
 
   it("normaliza um contribuinte activo", async () => {
-    mockedAxios.get.mockResolvedValue({
-      status: 200,
-      data: {
-          ObterContribuinte: {
-            contribuinte: {
-              numeroNIF: "5000012345",
-              nome: "Contribuinte de Teste",
-              tipoContribuinte: "COLLECTIVE",
-              estadoContribuinte: "A",
-              regimeIva: "GNAD",
-              indicadorNaoResidente: false,
-            },
-          },
-      },
-    } as never);
-
     const response = await POST(createRequest());
     const body = await response.json();
 
@@ -60,35 +64,26 @@ describe("POST /api/contributors/verify", () => {
       hasRestrictions: false,
     });
     expect(response.headers.get("cache-control")).toContain("no-store");
-    expect(mockedAxios.get).toHaveBeenCalledWith(
-      expect.stringContaining("numeroDocumento=5000012345"),
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          Username: "username",
-          Password: "password",
-        }),
-        proxy: false,
-        timeout: 10000,
-      }),
-    );
+    expect(mockedGetContributor).toHaveBeenCalledWith({
+      tipoDocumento: "NIF",
+      numeroDocumento: "5000012345",
+    });
   });
 
   it("assinala um contribuinte com restrições sem rejeitar a consulta", async () => {
-    mockedAxios.get.mockResolvedValue({
-      status: 200,
-      data: {
-          ObterContribuinte: {
-            contribuinte: {
-              numeroNIF: "5000012345",
-              nome: "Contribuinte Suspenso",
-              tipoContribuinte: "SINGULAR",
-              estadoContribuinte: "G",
-              regimeIva: "SIMP",
-              indicadorNaoResidente: false,
-            },
-          },
+    mockedGetContributor.mockResolvedValue({
+      ObterContribuinte: {
+        mensagem: "Consulta realizada com sucesso.",
+        contribuinte: {
+          numeroNIF: "5000012345",
+          nome: "Contribuinte Suspenso",
+          tipoContribuinte: "SINGULAR",
+          estadoContribuinte: "G",
+          regimeIva: "SIMP",
+          indicadorNaoResidente: false,
+        },
       },
-    } as never);
+    });
 
     const response = await POST(createRequest());
     const body = await response.json();
@@ -99,7 +94,7 @@ describe("POST /api/contributors/verify", () => {
   });
 
   it("devolve 404 quando o contribuinte não existe", async () => {
-    mockedAxios.get.mockResolvedValue({ status: 404, data: null } as never);
+    mockedGetContributor.mockRejectedValue(new Error("SETIC-FP respondeu com erro 404: Not Found"));
 
     const response = await POST(createRequest());
     const body = await response.json();
@@ -109,7 +104,7 @@ describe("POST /api/contributors/verify", () => {
   });
 
   it("trata credenciais recusadas como serviço indisponível", async () => {
-    mockedAxios.get.mockResolvedValue({ status: 401, data: "Unauthorized" } as never);
+    mockedGetContributor.mockRejectedValue(new Error("SETIC-FP respondeu com erro 401: Unauthorized"));
 
     const response = await POST(createRequest());
     const body = await response.json();
@@ -125,7 +120,7 @@ describe("POST /api/contributors/verify", () => {
 
     expect(response.status).toBe(400);
     expect(body.code).toBe("INVALID_TAX_NUMBER");
-    expect(mockedAxios.get).not.toHaveBeenCalled();
+    expect(mockedGetContributor).not.toHaveBeenCalled();
   });
 
   it("não expõe detalhes quando a configuração está ausente", async () => {
@@ -136,7 +131,7 @@ describe("POST /api/contributors/verify", () => {
 
     expect(response.status).toBe(503);
     expect(body).toEqual({
-      message: "O serviço de verificação está temporariamente indisponível.",
+      message: "Não foi possível comunicar com o serviço SETIC-FP. Verifique URL, DNS, VPN, whitelist ou disponibilidade do serviço.",
       code: "SERVICE_UNAVAILABLE",
     });
     expect(JSON.stringify(body)).not.toContain("username");

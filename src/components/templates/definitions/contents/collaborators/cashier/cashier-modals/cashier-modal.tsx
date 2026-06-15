@@ -22,8 +22,6 @@ import {
   useAddCashier,
   useUpdateCashier,
 } from "@/hooks/collaborators/cashier/use-cashier";
-import { generateBarcode } from "@/utils";
-import { Wand2 } from "lucide-react";
 
 
 type CashierModalProps = {
@@ -76,7 +74,6 @@ export function CashierModal({ action }: CashierModalProps) {
       reset({
         name: currentCashier.name,
         phone: currentCashier.phone || "",
-        barcode: currentCashier.barcode || "",
         role: currentCashier.role as "CASHIER",
         storeId: currentCashier.storeId,
       });
@@ -86,7 +83,6 @@ export function CashierModal({ action }: CashierModalProps) {
         phone: "",
         email: "",
         password: "",
-        barcode: generateBarcode(),
         role: "CASHIER",
         storeId: "",
       });
@@ -109,7 +105,6 @@ export function CashierModal({ action }: CashierModalProps) {
           data: {
             name: finalData.name,
             phone: finalData.phone,
-            barcode: finalData.barcode,
             role: finalData.role,
             storeId: data.storeId,
           },
@@ -127,13 +122,6 @@ export function CashierModal({ action }: CashierModalProps) {
   const handleCancel = () => {
     reset();
     closeModal(action === "add" ? "add-cashier" : "edit-cashier");
-  };
-
-  const handleGenerateBarcode = () => {
-    setValue("barcode", generateBarcode(), {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
   };
 
   if ((action === "edit" && !currentCashier) || !isOpen) return null;
@@ -193,30 +181,7 @@ export function CashierModal({ action }: CashierModalProps) {
             </>
           )}
 
-          <div className="space-y-1.5 sm:col-span-2">
-            <label className="text-sm font-medium text-foreground">
-              Código de barras
-            </label>
-            <div className="flex items-start gap-2">
-              <Input
-                startIcon="Barcode"
-                placeholder="Introduza ou gere o código de barras"
-                {...register("barcode")}
-                error={errors.barcode?.message}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="shrink-0"
-                title="Gerar código de barras"
-                aria-label="Gerar código de barras"
-                onClick={handleGenerateBarcode}
-              >
-                <Wand2 className="size-4" />
-              </Button>
-            </div>
-          </div>
+
 
           <div className="w-full col-span-2">
             <Controller

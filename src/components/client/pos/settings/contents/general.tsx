@@ -226,7 +226,6 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                 label: "Responsável",
                 value:
                   currentSession.authorizedByName ||
-                  currentSession.user?.name ||
                   "-",
                 icon: "User",
                 color: "text-primary-500",
@@ -329,7 +328,6 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                 label: "Responsável",
                 value:
                   currentSession.authorizedByName ||
-                  currentSession.user?.name ||
                   "-",
                 icon: "User",
                 iconColor: "text-gray-500",

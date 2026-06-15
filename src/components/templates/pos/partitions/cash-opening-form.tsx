@@ -16,6 +16,8 @@ import {
 import DatePickerInput from "@/components/custom/date-picker-input";
 import PriceInput from "@/components/custom/price-input";
 import { CashOpeningFormProps } from "@/types/cashier";
+import TimeInput from "@/components/custom/time-input";
+import { parseTime } from "@internationalized/date";
 
 export const CashOpeningForm: React.FC<CashOpeningFormProps> = ({
   openCashRegisters,
@@ -63,25 +65,29 @@ export const CashOpeningForm: React.FC<CashOpeningFormProps> = ({
           </div>
           <div className="space-y-2">
             <Label htmlFor="expediente">Tempo de Expediente</Label>
-            <Input
+            <TimeInput
               id="expediente"
-              type="time"
-              startIcon="Clock"
-              value={formData.shiftTime}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, shiftTime: e.target.value }))
+              hourCycle={24}
+              value={formData.shiftTime ? parseTime(formData.shiftTime) : undefined}
+              onChange={(time: any) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  shiftTime: time ? time.toString().slice(0, 5) : "",
+                }))
               }
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="hora">Hora de Abertura</Label>
-            <Input
+            <TimeInput
               id="hora"
-              type="time"
-              startIcon="Clock"
-              value={formData.openingTime}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, openingTime: e.target.value }))
+              hourCycle={24}
+              value={formData.openingTime ? parseTime(formData.openingTime) : undefined}
+              onChange={(time: any) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  openingTime: time ? time.toString().slice(0, 5) : "",
+                }))
               }
             />
           </div>

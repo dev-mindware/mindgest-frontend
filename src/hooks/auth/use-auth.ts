@@ -6,7 +6,7 @@ export function useAuth() {
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthenticating = useAuthStore((state) => state.isAuthenticating);
 
-  const subscriptionStatus: SubscriptionStatus = user?.company.subscription.status!;
+  const subscriptionStatus = user?.company?.subscription?.status;
 
   return { user, setUser, isAuthenticating, subscriptionStatus };
 }

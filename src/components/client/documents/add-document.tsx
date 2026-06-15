@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { TitleList } from "@/components/common";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -7,6 +7,9 @@ import { InvoiceForm } from "./invoice-normal";
 import { InvoiceReceiptForm } from "./invoice-receipt";
 import { ProformaForm } from "./invoice-proforma";
 import { DocumentSuccessModal } from "./modals/document-success-modal";
+import { useAuth } from "@/hooks/auth";
+import { useModal } from "@/stores";
+import { SubscriptionStatus } from "@/types";
 
 type TabsAloweds = "invoice" | "invoice-receipt" | "proforma";
 
@@ -14,6 +17,9 @@ export function AddDocuments() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current_Tab = useSearchParams().get("tab");
+  const { subscriptionStatus, isAuthenticating, user } = useAuth();
+  const { openModal } = useModal();
+
   const [currentTab] = useState<TabsAloweds>(() => {
     if (current_Tab && (current_Tab === "invoice" || current_Tab === "invoice-receipt" || current_Tab === "proforma")) {
       return current_Tab as TabsAloweds;
@@ -29,6 +35,40 @@ export function AddDocuments() {
     },
     [router, searchParams]
   );
+
+  useEffect(() => {
+    if (isAuthenticating) return;
+    if (!user) return;
+
+    const hasActiveSubscription =
+      subscriptionStatus === SubscriptionStatus.ACTIVE ||
+      subscriptionStatus === SubscriptionStatus.TRIALING;
+
+    if (!hasActiveSubscription) {
+      if (subscriptionStatus === SubscriptionStatus.PENDING) {
+        openModal("pending-subscription-modal");
+      } else {
+        openModal("subscription-expired-modal");
+      }
+      router.replace("/documents");
+    }
+  }, [subscriptionStatus, isAuthenticating, user, openModal, router]);
+
+  if (isAuthenticating || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const hasActiveSubscription =
+    subscriptionStatus === SubscriptionStatus.ACTIVE ||
+    subscriptionStatus === SubscriptionStatus.TRIALING;
+
+  if (!hasActiveSubscription) {
+    return null;
+  }
 
   return (
     <div className="space-y-6">

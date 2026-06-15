@@ -20,6 +20,8 @@ import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import { useAuth } from "@/hooks/auth";
 import { ManagerAuthModal, MODAL_MANAGER_AUTH_ID } from "../..";
 import { formatCurrency, parseCurrency } from "@/utils";
+import TimeInput from "@/components/custom/time-input";
+import { parseTime } from "@internationalized/date";
 
 interface PosOpeningCashierModalProps {
   onSuccess?: () => void;
@@ -177,14 +179,25 @@ export function PosOpeningCashierModal({
                   name="workTime"
                   control={control}
                   render={({ field: { onChange, value } }) => (
-                    <Input
-                      type="time"
-                      label="Tempo de Expediente"
-                      startIcon="Clock"
-                      value={(value as string) || ""}
-                      onChange={(e) => onChange(e.target.value)}
-                      error={errors.workTime?.message}
-                    />
+                    <div className="space-y-2">
+                      <label className="block mb-1 text-sm font-medium text-foreground">
+                        Tempo de Expediente
+                      </label>
+                      <TimeInput
+                        id="work-time-input-cashier"
+                        className="w-full"
+                        hourCycle={24}
+                        value={value ? parseTime(value) : undefined}
+                        onChange={(time: any) =>
+                          onChange(time ? time.toString().slice(0, 5) : "")
+                        }
+                      />
+                      {errors.workTime && (
+                        <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+                          {errors.workTime.message}
+                        </p>
+                      )}
+                    </div>
                   )}
                 />
               </div>
