@@ -4,7 +4,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="h-dvh w-full overflow-hidden">
+    <main className="min-h-screen min-h-dvh w-full overflow-hidden bg-background">
       <>{children}</>
     </main>
   );

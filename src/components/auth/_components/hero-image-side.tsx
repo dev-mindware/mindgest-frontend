@@ -14,11 +14,11 @@ export function HeroImageSide({
   badge = "MINDWARE - Comércio & Serviços",
 }: HeroImageSideProps) {
   return (
-    <div className="relative hidden h-full min-h-0 w-full flex-col justify-between overflow-hidden bg-black lg:flex">
+    <div className="relative hidden min-h-dvh w-full flex-col justify-between overflow-hidden bg-black lg:flex">
       <div className="absolute inset-0 z-0">
         <Image
           fill
-          src={"/login.png"}
+          src={source}
           alt="Hero Background"
           className="object-cover opacity-60"
           sizes="50vw"
