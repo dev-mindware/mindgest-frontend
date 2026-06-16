@@ -16,6 +16,8 @@ export function FirstStep() {
 
   const password = watch("step1.password") || "";
 
+  const phoneField = register("step1.phone");
+
   const generateStrongPassword = () => {
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
     let pass = "";
@@ -49,9 +51,15 @@ export function FirstStep() {
         <Input
           label="Telefone"
           maxLength={9}
+          inputMode="numeric"
           startIcon="Phone"
           placeholder="Introduza o seu número de telefone"
-          {...register("step1.phone")}
+          {...phoneField}
+          onChange={(e) => {
+            // Bloqueia tudo o que não for dígito antes de chegar ao input/form
+            e.target.value = e.target.value.replace(/\D/g, "");
+            phoneField.onChange(e);
+          }}
           error={errors?.step1?.phone?.message}
         />
 

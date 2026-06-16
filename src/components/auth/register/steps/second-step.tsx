@@ -16,6 +16,7 @@ export function SecondStep() {
     formState: { errors },
   } = useFormContext<RegisterFormData>();
   const taxNumber = watch("step2.company.taxNumber") || "";
+  const companyPhoneField = register("step2.company.phone");
   const { handleStatusChange, handleVerified } = useNifFormVerification({
     setValue,
     setError,
@@ -74,9 +75,15 @@ export function SecondStep() {
         />
         <Input
           label="Telefone"
+          inputMode="numeric"
           startIcon="Phone"
           placeholder="Introduza o número de telefone"
-          {...register("step2.company.phone")}
+          {...companyPhoneField}
+          onChange={(e) => {
+            // Bloqueia tudo o que não for dígito antes de chegar ao input/form
+            e.target.value = e.target.value.replace(/\D/g, "");
+            companyPhoneField.onChange(e);
+          }}
           error={
             errors?.step2?.company?.phone &&
             errors?.step2?.company?.phone?.message
