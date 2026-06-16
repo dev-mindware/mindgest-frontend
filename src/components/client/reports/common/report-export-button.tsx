@@ -3,8 +3,13 @@
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { Button, Icon } from "@/components";
-import { useReportExport } from "@/hooks/reports";
+import { EmptyReportExportError, useReportExport } from "@/hooks/reports";
 import type { ReportExportType } from "@/types/reports";
+
+const EXCEL_EXPORT_CONFIG = {
+  extension: "xlsx",
+  mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+};
 
 interface ReportExportButtonProps {
   reportType: ReportExportType;
@@ -12,6 +17,7 @@ interface ReportExportButtonProps {
   endDate?: Date;
   filenamePrefix?: string;
   className?: string;
+  hasData?: boolean;
 }
 
 export function ReportExportButton({
@@ -20,6 +26,7 @@ export function ReportExportButton({
   endDate,
   filenamePrefix,
   className,
+  hasData,
 }: ReportExportButtonProps) {
   const { mutate, isPending } = useReportExport();
   const hasRequiredDates = Boolean(startDate && endDate);
@@ -30,19 +37,28 @@ export function ReportExportButton({
       return;
     }
 
+    if (hasData === false) {
+      toast.error("Não existem dados para exportar no período selecionado.");
+      return;
+    }
+
     const formattedStartDate = format(startDate, "yyyy-MM-dd");
     const formattedEndDate = format(endDate, "yyyy-MM-dd");
-
     mutate(
       {
         reportType,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
-        filename: `${filenamePrefix ?? reportType.toLowerCase()}-${formattedStartDate}-${formattedEndDate}.pdf`,
+        filename: `${filenamePrefix ?? reportType.toLowerCase()}-${formattedStartDate}-${formattedEndDate}.${EXCEL_EXPORT_CONFIG.extension}`,
+        mimeType: EXCEL_EXPORT_CONFIG.mimeType,
       },
       {
-        onError: () => {
-          toast.error("Não foi possível exportar o relatório.");
+        onError: (error) => {
+          toast.error(
+            error instanceof EmptyReportExportError
+              ? error.message
+              : "Não foi possível exportar o relatório.",
+          );
         },
       },
     );

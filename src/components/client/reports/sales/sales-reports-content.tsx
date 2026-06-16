@@ -27,6 +27,16 @@ export function SalesReportsContent() {
   if (isError || !data) 
     return <RequestSalesError refetch={refetch} />;
 
+  const hasSalesData =
+    data.summary.totalTransactions > 0 ||
+    data.summary.totalRevenue > 0 ||
+    data.data.some(
+      (item) =>
+        item.transactionCount > 0 ||
+        item.totalSales > 0 ||
+        item.totalRevenue > 0,
+    );
+
   return (
     <div className="space-y-6">
       <div data-tour="reports-sales-header">
@@ -76,6 +86,7 @@ export function SalesReportsContent() {
               endDate={endDate}
               filenamePrefix="relatorio-vendas"
               className="w-full lg:w-auto"
+              hasData={hasSalesData}
             />
           </div>
         </div>

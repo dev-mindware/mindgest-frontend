@@ -24,6 +24,9 @@ export const reportsService = {
     return api.get<Blob>("/reports/export", {
       params,
       responseType: "blob",
+      headers: {
+        Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      },
     });
   },
 };
