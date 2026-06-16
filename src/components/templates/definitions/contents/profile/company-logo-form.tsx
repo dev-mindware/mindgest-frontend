@@ -82,7 +82,7 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
 
       {!user?.company?.logo || isEditingLogo ? (
         <div className="flex flex-col gap-4 w-full sm:max-w-md animate-in fade-in duration-200">
-          <div className="rounded-xl border border-dashed border-border p-1 bg-muted/5">
+          <div className="rounded-xl p-1 bg-muted/5">
             <PhotoUpload
               name="companyLogo"
               control={control}
