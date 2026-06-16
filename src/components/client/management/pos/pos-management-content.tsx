@@ -14,9 +14,13 @@ import { summaryCards } from "./data";
 import { DynamicMetricCard } from "@/components";
 import { useCurrentCashierStore } from "@/stores/pos/current-cashier-store";
 import { PosFilters } from "./pos-filters";
-import { useGetCashSessions, useCashSessionFilters, useGetOpeningRequests } from "@/hooks/entities";
+import {
+  useGetCashSessions,
+  useCashSessionFilters,
+  useGetOpeningRequests,
+} from "@/hooks/entities";
+import { usePosManagementDashboard } from "@/hooks/reports";
 import { currentStoreStore } from "@/stores/store/current-store-store";
-import { CashSession } from "@/types/cash-session";
 
 export function PosManagementContent() {
   const { openModal } = useModal();
@@ -41,20 +45,25 @@ export function PosManagementContent() {
   const { data: requests } = useGetOpeningRequests({
     status: "PENDING",
   });
+  const { data: dashboard } = usePosManagementDashboard();
 
-  const totalSales = sessions.reduce((acc: number, s: CashSession) => acc + (s.totalSales || 0), 0);
-  const requestsCount = Array.isArray(requests) ? requests.length : 0;
+  const summary = dashboard?.summary;
+  const requestsCount =
+    summary?.pendingRequestsCount ?? (Array.isArray(requests) ? requests.length : 0);
   const hasPendingRequests = requestsCount > 0;
 
   const dynamicSummaryCards = summaryCards.map((card) => {
     if (card.title === "Receitas") {
-      return { ...card, value: totalSales };
+      return { ...card, value: summary?.dailyRevenue ?? 0 };
+    }
+    if (card.title === "Despesas") {
+      return { ...card, value: summary?.dailyExpenses ?? 0 };
     }
     if (card.modalId === "pos-requests") {
       return { ...card, value: requestsCount };
     }
     if (card.modalId === "opening-cashier") {
-      return { ...card, value: total || 0 };
+      return { ...card, value: summary?.totalSessions ?? total ?? 0 };
     }
     return card;
   });

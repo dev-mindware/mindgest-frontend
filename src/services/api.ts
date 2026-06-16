@@ -73,6 +73,7 @@ const STORE_DEPENDENT_ROUTES: (
     { path: "stocks", methods: ["get"] },
     { path: "cash-sessions", methods: ["get", "post"] },
     "reports/dashboard",
+    { path: "reports/export", methods: ["get"] },
     "receipt",
     "documents",
     "dashboard",

@@ -13,21 +13,18 @@ export interface SummaryCard {
 export const summaryCards: SummaryCard[] = [
   {
     title: "Receitas",
-    value: 121000,
     type: "default",
     icon: "TrendingUp",
     description: "Receitas totais do dia",
   },
   {
     title: "Despesas",
-    value: 13100,
     type: "default",
     icon: "TrendingDown",
     description: "Despesas totais do dia",
   },
   {
     title: "Pedidos",
-    value: 3,
     type: "interactive",
     modalId: "pos-requests",
     icon: "Bell",

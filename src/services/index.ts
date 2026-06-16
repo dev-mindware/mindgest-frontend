@@ -21,3 +21,4 @@ export * from "./stock-reservations-service";
 export * from "./audit-trail-service";
 export * from "./onboarding-service";
 export * from "./contributor-service";
+export * from "./reports-service";
