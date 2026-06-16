@@ -18,6 +18,7 @@ import {
 } from "@/components";
 import { cn } from "@/lib/utils";
 import { useNotificationSettingsStore } from "@/stores";
+import { playSoundEffect, primeAudioPlayback } from "@/utils";
 import { ErrorMessage, SucessMessage } from "@/utils/messages";
 
 const SOUND_OPTIONS = [
@@ -60,15 +61,23 @@ export function Notification() {
     useState<BrowserPermission>("unsupported");
 
   useEffect(() => {
-    setBrowserPermission(getBrowserPermission());
+    const permission = getBrowserPermission();
+    setBrowserPermission(permission);
+
+    if (permission === "granted" && !browserNotificationsEnabled) {
+      setBrowserNotificationsEnabled(true);
+    }
   }, []);
 
-  const previewSound = () => {
-    const audio = new Audio(soundType);
-    audio.volume = 0.5;
-    audio.play().catch(() => {
+  useEffect(() => {
+    void primeAudioPlayback(soundType);
+  }, [soundType]);
+
+  const previewSound = async () => {
+    const didPlay = await playSoundEffect(soundType, 0.5);
+    if (!didPlay) {
       ErrorMessage("O navegador não permitiu reproduzir o som.");
-    });
+    }
   };
 
   const requestBrowserPermission = async () => {
@@ -193,7 +202,7 @@ export function Notification() {
         <SettingRow
           icon="MonitorUp"
           label="Notificações do navegador"
-          description="Apresentar um aviso do sistema quando o Mindgest estiver aberto em segundo plano."
+          description="Apresentar um aviso do sistema sempre que chegar uma nova notificação."
           disabled={!browserNotificationsAvailable || browserNotificationsBlocked}
           control={
             <Switch

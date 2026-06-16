@@ -112,10 +112,6 @@ export function NifVerificationField({
         id: toastId,
         description: `${errorMessage} Pode continuar e preencher os dados manualmente.`,
         duration: 10_000,
-        action: {
-          label: "Repetir",
-          onClick: () => void verify(),
-        },
       });
       updateStatus("unavailable");
     }

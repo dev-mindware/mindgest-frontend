@@ -1,5 +1,10 @@
 import { Plan } from "@/types";
-import { formatCurrency, getPlanFeatures } from "@/utils";
+import {
+  formatCurrency,
+  getPlanFeatures,
+  isCustomPricedPlan,
+  PRO_PLAN_NEGOTIATION_EMAIL,
+} from "@/utils";
 import type { ComponentType, ReactNode } from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components";
 import { Shield, Check } from "lucide-react";
@@ -64,6 +69,7 @@ export function SubscriptionSummary({
   
   if (!selectedPlan) return null;
 
+  const isCustomPlan = isCustomPricedPlan(selectedPlan);
   const price = parseFloat(selectedPlan.priceMonthly);
   const isAnnual = frequency === "ANNUAL";
   const actualMonths = isAnnual ? 12 : months;
@@ -97,11 +103,19 @@ export function SubscriptionSummary({
 
           <InfoRow label="Preço mensal:">
             <span className="font-bold text-primary-600">
-              {formatCurrency(price)}
+              {isCustomPlan ? "Personalizável" : formatCurrency(price)}
             </span>
           </InfoRow>
 
-          {isAnnual && (
+          {isCustomPlan && (
+            <InfoRow label="Negociação:">
+              <span className="font-medium text-foreground">
+                {PRO_PLAN_NEGOTIATION_EMAIL}
+              </span>
+            </InfoRow>
+          )}
+
+          {isAnnual && !isCustomPlan && (
             <InfoRow label="Desconto anual:">
               <span className="font-medium text-green-600">
                 - {formatCurrency(discount)}
@@ -111,13 +125,13 @@ export function SubscriptionSummary({
 
           <InfoRow label="Total a pagar:">
             <div className="text-right">
-              {isAnnual && (
+              {isAnnual && !isCustomPlan && (
                 <p className="text-xs text-muted-foreground line-through">
                   {formatCurrency(subtotal)}
                 </p>
               )}
               <p className="font-bold text-primary-600 text-lg">
-                {formatCurrency(totalToPay)}
+                {isCustomPlan ? "Personalizável" : formatCurrency(totalToPay)}
               </p>
             </div>
           </InfoRow>

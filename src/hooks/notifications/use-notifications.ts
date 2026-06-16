@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { useModal } from "@/stores/modal/use-modal-store";
+import { playSoundEffect, primeAudioPlayback } from "@/utils";
 import {
   useCurrentNotificationStore,
   useNotificationSettingsStore,
@@ -25,39 +26,72 @@ export function useNotifications(
   const { soundEnabled, soundType, browserNotificationsEnabled } =
     useNotificationSettingsStore();
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   // Ref para evitar stale closure dentro do handler do socket —
   // sem isto, o toggle de som não teria efeito sem reconectar o socket.
   const soundEnabledRef = useRef(soundEnabled);
+  const soundTypeRef = useRef(soundType);
   const browserNotificationsEnabledRef = useRef(browserNotificationsEnabled);
+  const seenNotificationIdsRef = useRef<Set<string>>(new Set());
+  const hasInitializedNotificationsRef = useRef(false);
 
   useEffect(() => {
     soundEnabledRef.current = soundEnabled;
   }, [soundEnabled]);
 
   useEffect(() => {
+    soundTypeRef.current = soundType;
+  }, [soundType]);
+
+  useEffect(() => {
     browserNotificationsEnabledRef.current = browserNotificationsEnabled;
   }, [browserNotificationsEnabled]);
 
   useEffect(() => {
-    audioRef.current = new Audio(soundType);
-    audioRef.current.volume = 0.5;
+    if (
+      typeof Notification !== "undefined" &&
+      Notification.permission === "granted" &&
+      !browserNotificationsEnabled
+    ) {
+      useNotificationSettingsStore.setState({
+        browserNotificationsEnabled: true,
+      });
+    }
+  }, [browserNotificationsEnabled]);
+
+  useEffect(() => {
+    void primeAudioPlayback(soundType);
   }, [soundType]);
 
-  const playNotificationSound = () => {
-    if (!audioRef.current || !soundEnabledRef.current) return;
-    audioRef.current.currentTime = 0;
-    audioRef.current.play().catch((err) => {
-      console.warn("Navegador bloqueou a reprodução automática do som:", err);
-    });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const unlockAudio = async () => {
+      await primeAudioPlayback(soundTypeRef.current);
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { passive: true });
+    window.addEventListener("keydown", unlockAudio);
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+    };
+  }, []);
+
+  const playNotificationSound = async () => {
+    if (!soundEnabledRef.current) return;
+
+    const didPlay = await playSoundEffect(soundTypeRef.current, 0.5);
+    if (!didPlay) {
+      console.warn("Navegador não permitiu reproduzir o som da notificação.");
+    }
   };
 
   const showBrowserNotification = (notification: NotificationType) => {
     if (
       !browserNotificationsEnabledRef.current ||
       typeof Notification === "undefined" ||
-      Notification.permission !== "granted" ||
-      document.visibilityState === "visible"
+      Notification.permission !== "granted"
     ) {
       return;
     }
@@ -105,6 +139,28 @@ export function useNotifications(
 
   const notifications = data?.pages.flatMap((page) => page.data) ?? [];
 
+  useEffect(() => {
+    const notificationIds = new Set(notifications.map((notification) => notification.id));
+
+    if (!hasInitializedNotificationsRef.current) {
+      seenNotificationIdsRef.current = notificationIds;
+      hasInitializedNotificationsRef.current = true;
+      return;
+    }
+
+    const freshNotifications = notifications.filter(
+      (notification) => !seenNotificationIdsRef.current.has(notification.id),
+    );
+
+    if (freshNotifications.length > 0) {
+      const latestNotification = freshNotifications[0];
+      void playNotificationSound();
+      showBrowserNotification(latestNotification);
+    }
+
+    seenNotificationIdsRef.current = notificationIds;
+  }, [notifications]);
+
   // Socket.IO Connection
   useEffect(() => {
     // Only connect if URL is defined
@@ -119,10 +175,6 @@ export function useNotifications(
     });
 
     socket.on("new_notification", (newNotification: NotificationType) => {
-      // Som tocado aqui — fora do updater do setQueryData que deve ser puro
-      playNotificationSound();
-      showBrowserNotification(newNotification);
-
       // Invalida os pedidos de abertura para atualizar instantaneamente na tela do gerente
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
 
