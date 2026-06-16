@@ -129,8 +129,8 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
                             variant="ghost"
                             onClick={() => logout()}
                         >
-                            <Icon name="House" className="h-4 w-4" />
-                            Voltar ao Início
+                            <Icon name="LogOut" className="h-4 w-4" />
+                            Terminar Sessão
                         </Button>
                     </div>
                 </div>

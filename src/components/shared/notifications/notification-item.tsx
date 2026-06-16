@@ -3,6 +3,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { parseRawDate } from "@/utils";
 import { NotificationType } from "@/types";
 import { Icon, Button } from "@/components";
 import { icons } from "lucide-react";
@@ -25,7 +26,7 @@ export function NotificationItem({
   onClick,
   onDelete,
 }: NotificationItemProps) {
-  const timeAgo = formatDistanceToNow(new Date(notification.createdAt), {
+  const timeAgo = formatDistanceToNow(parseRawDate(notification.createdAt), {
     addSuffix: true,
     locale: ptBR,
   });

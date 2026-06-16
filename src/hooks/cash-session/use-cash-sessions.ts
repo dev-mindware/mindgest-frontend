@@ -157,8 +157,19 @@ export function useCloseCashSession() {
     mutationFn: ({ id, data }: { id: string; data: any }) =>
       cashSessionsService.closeSession(id, data),
     onSuccess: () => {
+      // O endpoint /cash-sessions/current devolve 404 quando deixa de haver
+      // sessão aberta. Com uma simples invalidação, o refetch falha e (com
+      // retry: false) o react-query mantém os dados anteriores — a sessão
+      // continuava a aparecer como aberta até recarregar a página. Limpamos
+      // o cache para a UI reflectir o encerramento imediatamente.
+      queryClient.setQueriesData(
+        { queryKey: ["current-cash-session"] },
+        () => null,
+      );
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
-      queryClient.invalidateQueries({ queryKey: ["current-cash-session"] });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", "dashboard", "pos-management"],
+      });
       SucessMessage("Sessão fechada com sucesso!");
     },
     onError: (error: any) => {
@@ -176,6 +187,9 @@ export function useDeleteCashSession() {
     mutationFn: (id: string) => cashSessionsService.deleteSession(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cash-sessions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", "dashboard", "pos-management"],
+      });
       SucessMessage("Sessão excluída com sucesso");
     },
     onError: (error: any) => {

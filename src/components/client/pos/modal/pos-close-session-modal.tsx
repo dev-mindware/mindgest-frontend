@@ -16,7 +16,6 @@ import { useModal } from "@/stores";
 import { useCloseCashSession } from "@/hooks";
 import { CashSession } from "@/types/cash-session";
 import { formatCurrency } from "@/utils";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const MODAL_POS_CLOSE_SESSION_ID = "pos-close-session-modal";
 
@@ -35,7 +34,6 @@ interface PosCloseSessionModalProps {
 export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalProps) {
     const { closeModal } = useModal();
     const { mutateAsync: closeSession, isPending: isLoading } = useCloseCashSession();
-    const queryClient = useQueryClient();
 
     const {
         register,
@@ -72,13 +70,6 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
                     totalSales: data.totalSales,
                     notes: data.notes || "",
                 },
-            });
-            // Force dynamic and immediate query invalidation
-            await queryClient.invalidateQueries({
-                queryKey: ["current-cash-session", currentSession.storeId],
-            });
-            await queryClient.invalidateQueries({
-                queryKey: ["cash-sessions"],
             });
             closeModal(MODAL_POS_CLOSE_SESSION_ID);
             reset();
