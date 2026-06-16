@@ -125,6 +125,9 @@ export function useRejectOpeningRequest() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
+      queryClient.invalidateQueries({
+        queryKey: ["reports", "dashboard", "pos-management"],
+      });
     },
   });
 }

@@ -16,3 +16,4 @@ export * from "./tax";
 export * from "./print-pos-document";
 export * from "./credit-note-correction";
 export * from "./cash-session";
+export * from "./plan-pricing";

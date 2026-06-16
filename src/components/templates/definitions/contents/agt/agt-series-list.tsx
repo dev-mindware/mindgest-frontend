@@ -177,9 +177,8 @@ export function AgtSeriesList() {
                     <SelectContent>
                       <SelectItem value="FT">Factura (FT)</SelectItem>
                       <SelectItem value="FR">Factura-Recibo (FR)</SelectItem>
-                      <SelectItem value="VD">Venda a Dinheiro (VD)</SelectItem>
+                      <SelectItem value="RC">Recibo (RC)</SelectItem>
                       <SelectItem value="NC">Nota de Crédito (NC)</SelectItem>
-                      <SelectItem value="ND">Nota de Débito (ND)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
