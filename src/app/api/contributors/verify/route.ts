@@ -165,6 +165,13 @@ export async function POST(request: NextRequest) {
     console.error("[SETIC-FP] Falha de comunicação:", error);
 
     const message = error instanceof Error ? error.message : "Erro desconhecido.";
+    const errorName =
+      error instanceof Error
+        ? error.name
+        : typeof error === "object" && error !== null && "name" in error
+          ? String((error as { name?: unknown }).name || "")
+          : "";
+    const errorText = String(error);
 
     if (message.includes("404")) {
       return errorResponse(
@@ -192,8 +199,11 @@ export async function POST(request: NextRequest) {
 
     if (
       message.includes("ENOTFOUND") ||
+      message.includes("EAI_AGAIN") ||
       message.includes("fetch failed") ||
       message.includes("aborted") ||
+      errorText.includes("AbortError") ||
+      errorName === "AbortError" ||
       message.includes("timeout") ||
       message.includes("502") ||
       message.includes("503")

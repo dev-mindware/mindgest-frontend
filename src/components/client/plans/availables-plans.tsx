@@ -14,7 +14,12 @@ import {
 import { Plan } from "@/types";
 import { useAuth, usePlans } from "@/hooks";
 import { useCurrentPlanStore } from "@/stores";
-import { formatCurrency, getPlanFeatures } from "@/utils";
+import {
+  formatCurrency,
+  getPlanFeatures,
+  isCustomPricedPlan,
+  PRO_PLAN_NEGOTIATION_EMAIL,
+} from "@/utils";
 import { PlanInclusionFeatures } from "./plan-inclusion-features";
 import { useRouter } from "next/navigation";
 
@@ -53,6 +58,7 @@ export function AvailablePlans() {
               {plans.map((plan, index) => {
                 const isPopular = index === 1;
                 const isCurrent = isCurrentPlan(plan);
+                const isCustomPlan = isCustomPricedPlan(plan);
 
                 const features: string[] = getPlanFeatures(plan);
 
@@ -78,12 +84,15 @@ export function AvailablePlans() {
                         {plan.name}
                       </CardTitle>
                       <div className="text-4xl font-bold text-primary-600 mb-2">
-                        {formatCurrency(Number(plan.priceMonthly))}
-                        <span className="text-base text-muted-foreground font-normal">
-                          {" "}
-                          /mês
-                        </span>
+                        {isCustomPlan
+                          ? "Personalizável"
+                          : formatCurrency(Number(plan.priceMonthly))}
                       </div>
+                      {isCustomPlan && (
+                        <p className="text-sm text-muted-foreground">
+                          Negociação: {PRO_PLAN_NEGOTIATION_EMAIL}
+                        </p>
+                      )}
                     </CardHeader>
 
                     <CardContent className="flex-grow">

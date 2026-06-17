@@ -3,7 +3,12 @@ import { useState, useMemo } from "react";
 import { Icon } from "@/components";
 import { Badge } from "@/components/ui";
 import { Plan } from "@/types";
-import { formatCurrency, getPlanFeatures } from "@/utils";
+import {
+  formatCurrency,
+  getPlanFeatures,
+  isCustomPricedPlan,
+  PRO_PLAN_NEGOTIATION_EMAIL,
+} from "@/utils";
 
 interface PlanCardProps {
   plan: Plan;
@@ -23,6 +28,7 @@ export function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
   const visibleFeatures = showAll
     ? featuresList
     : featuresList.slice(0, MAX_VISIBLE_FEATURES);
+  const isCustomPlan = isCustomPricedPlan(plan);
 
   const remainingCount =
     featuresList.length - MAX_VISIBLE_FEATURES;
@@ -48,9 +54,13 @@ export function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
 
       <div className="mb-4">
         <div className="text-2xl font-bold text-primary-600">
-          {formatCurrency(plan.priceMonthly)}
-          <span className="text-base text-foreground"> /mês</span>
+          {isCustomPlan ? "Personalizável" : formatCurrency(plan.priceMonthly)}
         </div>
+        {isCustomPlan && (
+          <p className="text-sm text-muted-foreground mt-1">
+            Negociação: {PRO_PLAN_NEGOTIATION_EMAIL}
+          </p>
+        )}
       </div>
 
       <ul className="space-y-2 mb-4 text-sm">
