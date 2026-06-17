@@ -57,6 +57,7 @@ export interface AuditTrailFilters {
   action?: AuditTrailAction;
   userId?: string;
   entityId?: string;
+  search?: string;
   dateFrom?: string;
   dateTo?: string;
   page?: number;

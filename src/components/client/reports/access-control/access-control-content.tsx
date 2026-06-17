@@ -19,6 +19,7 @@ import { AuditDetailModal } from "./audit-detail-modal";
 import { AuditTrailResponse } from "@/types";
 import { formatDateTime } from "@/utils";
 import { ACTION_BADGES, ENTITY_LABELS } from "./constants";
+import { getEntityIdentifier } from "./audit-diff-table";
 
 export function AccessControlContent() {
   const { filters, page, setPage } = useAuditFilters();
@@ -65,16 +66,25 @@ export function AccessControlContent() {
     {
       key: "entity",
       header: "Entidade",
-      render: (_, item) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-foreground">
-            {ENTITY_LABELS[item.entity] || item.entity}
-          </span>
-          <span className="text-xs text-muted-foreground font-mono truncate max-w-[180px]" title={item.entityId}>
-            ID: {item.entityId}
-          </span>
-        </div>
-      ),
+      render: (_, item) => {
+        const identifier = getEntityIdentifier(item);
+        return (
+          <div className="flex flex-col">
+            <span className="font-medium text-foreground">
+              {ENTITY_LABELS[item.entity] || item.entity}
+            </span>
+            {identifier ? (
+              <span className="text-xs text-primary font-medium truncate max-w-[180px]" title={identifier}>
+                {identifier}
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground font-mono truncate max-w-[180px]" title={item.entityId}>
+                ID: {item.entityId}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "ipAddress",

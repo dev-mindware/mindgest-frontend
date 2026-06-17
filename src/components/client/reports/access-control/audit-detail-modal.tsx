@@ -4,7 +4,7 @@ import { Icon, Button, GlobalModal, Badge } from "@/components";
 import { formatDateTime } from "@/utils";
 import { AuditTrailResponse } from "@/types";
 import { ACTION_BADGES, ENTITY_LABELS } from "./constants";
-import { AuditDiffTable } from "./audit-diff-table";
+import { AuditDiffTable, getEntityIdentifier } from "./audit-diff-table";
 
 export function AuditDetailModal() {
   const { closeModal, open, modalData } = useModal();
@@ -72,6 +72,12 @@ export function AuditDetailModal() {
               {auditItem.ipAddress && (
                 <p>
                   <span className="font-semibold text-foreground">Endereço IP:</span> {auditItem.ipAddress}
+                </p>
+              )}
+              {getEntityIdentifier(auditItem) && (
+                <p>
+                  <span className="font-semibold text-foreground">Identificador:</span>{" "}
+                  {getEntityIdentifier(auditItem)}
                 </p>
               )}
               <p>
