@@ -1,8 +1,22 @@
 import { z } from "zod";
-import { clientSchema } from "./add-client";
+import { optionalTaxNumberSchema, phoneNumberSchema } from "./helps";
+
+const posClientSchema = z.object({
+  name: z.string().trim().optional().or(z.literal("")),
+  taxNumber: optionalTaxNumberSchema,
+  phone: phoneNumberSchema.optional().or(z.literal("")),
+  email: z
+    .string()
+    .trim()
+    .email("Email inválido")
+    .optional()
+    .or(z.literal("")),
+  address: z.string().trim().optional().or(z.literal("")),
+});
 
 export const PosSalesSchema = z.object({
-  client: clientSchema.optional(),
+  client: posClientSchema.optional(),
+  clientId: z.string().trim().optional(),
   issueDate: z.string().trim().min(1, "A data de emissão é obrigatória"),
   items: z
     .array(

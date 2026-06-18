@@ -15,6 +15,7 @@ import { useModal, currentStoreStore } from "@/stores";
 import { cashSessionsService } from "@/services/cash-sessions-service";
 import { SucessMessage } from "@/utils/messages";
 import { CashSession } from "@/types/cash-session";
+import { ErrorMessage, getApiErrorMessage } from "@/utils";
 
 export const MODAL_POS_REGISTER_EXPENSE_ID = "pos-register-expense-modal";
 
@@ -61,6 +62,7 @@ export function PosRegisterExpenseModal({ currentSession }: PosRegisterExpenseMo
             reset();
         } catch (err: any) {
             console.error(err);
+            ErrorMessage(getApiErrorMessage(err, "Não foi possível registar a despesa."));
         } finally {
             setIsLoading(false);
         }

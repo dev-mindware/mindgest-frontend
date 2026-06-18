@@ -8,10 +8,8 @@ import { toast } from "sonner";
 jest.mock("sonner", () => ({
   toast: {
     warning: jest.fn(),
-    dismiss: jest.fn(),
   },
 }));
-
 jest.mock("@/services/contributor-service", () => {
   const actual = jest.requireActual("@/services/contributor-service");
   return {
@@ -41,6 +39,7 @@ describe("NifVerificationField", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockedVerify.mockReset();
+    (toast.warning as jest.Mock).mockReset();
   });
 
   afterEach(() => {
@@ -100,14 +99,9 @@ describe("NifVerificationField", () => {
       await Promise.resolve();
     });
 
-    expect(toast.warning).toHaveBeenCalledWith(
-      "Não foi possível verificar o NIF",
-      expect.objectContaining({
-        id: "nif-verification-5000012345",
-        description: expect.stringContaining("Serviço indisponível."),
-        action: expect.objectContaining({ label: "Repetir" }),
-      }),
-    );
-    expect(screen.queryByText(/Pode continuar e preencher/i)).not.toBeInTheDocument();
+    expect(toast.warning).toHaveBeenCalledWith("Serviço indisponível.");
+    expect(
+      screen.getByRole("button", { name: "Repetir" }),
+    ).toBeInTheDocument();
   });
 });

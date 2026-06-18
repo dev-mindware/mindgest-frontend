@@ -15,7 +15,7 @@ import {
 import { useModal } from "@/stores";
 import { useCloseCashSession } from "@/hooks";
 import { CashSession } from "@/types/cash-session";
-import { formatCurrency } from "@/utils";
+import { ErrorMessage, formatCurrency, getApiErrorMessage } from "@/utils";
 
 export const MODAL_POS_CLOSE_SESSION_ID = "pos-close-session-modal";
 
@@ -75,6 +75,7 @@ export function PosCloseSessionModal({ currentSession }: PosCloseSessionModalPro
             reset();
         } catch (err: any) {
             console.error(err);
+            ErrorMessage(getApiErrorMessage(err, "Não foi possível fechar a sessão de caixa."));
         }
     };
 

@@ -66,6 +66,17 @@ export function MobileCheckoutDrawer({
     onOpenChange(false);
   }, cashSessionId });
 
+  const handleValidationError = (errors: any) => {
+    console.error("Form Validation Errors:", errors);
+
+    if (errors?.items) {
+      ErrorMessage("Adicione pelo menos um produto ao carrinho antes de criar a factura-recibo.");
+      return;
+    }
+
+    ErrorMessage("Verifique os campos obrigatórios.");
+  };
+
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange}>
@@ -113,10 +124,7 @@ export function MobileCheckoutDrawer({
           <DrawerFooter className="pt-0">
             <Button
                 className="w-full h-12 text-base font-bold"
-                onClick={handleSubmit(handleCheckout, (errors) => {
-                    console.error("Form Validation Errors:", errors);
-                    ErrorMessage("Verifique os campos obrigatórios");
-                })}
+                onClick={handleSubmit(handleCheckout, handleValidationError)}
                 disabled={isPending}
                 data-tour="pos-submit"
             >

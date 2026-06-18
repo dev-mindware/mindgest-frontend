@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateInvoiceReceipt, useCreateProforma } from "@/hooks";
 import { currentStoreStore, useAuthStore } from "@/stores";
-import { ErrorMessage, printPosDocument } from "@/utils";
+import { ErrorMessage, WarningMessage, printPosDocument } from "@/utils";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
 import { ContributorVerificationStatus, DocumentType, Product } from "@/types";
@@ -69,6 +69,7 @@ export function useCartCheckout({
       issueDate: new Date().toLocaleDateString("en-CA"),
       items: [],
       client: undefined,
+      clientId: "",
       storeId: currentStore?.id || user?.store?.id || "",
       total: 0,
       subtotal: 0,
@@ -207,14 +208,21 @@ export function useCartCheckout({
 
     if (
       isCreatingClient &&
-      ["idle", "checking", "not_found"].includes(newCustomerVerification)
+      ["idle", "checking"].includes(newCustomerVerification)
     ) {
       ErrorMessage(
-        newCustomerVerification === "not_found"
-          ? "Não foi encontrado um contribuinte com este NIF."
-          : "Aguarde pela verificação do NIF.",
+        "Aguarde pela verificação do NIF.",
       );
       return;
+    }
+
+    if (
+      isCreatingClient &&
+      ["not_found", "unavailable"].includes(newCustomerVerification)
+    ) {
+      WarningMessage(
+        "A factura será criada, mas se o NIF não existir a AGT poderá não validar o documento.",
+      );
     }
 
     // Prepare payload
@@ -224,9 +232,15 @@ export function useCartCheckout({
     }));
 
     const payload: PosSalesFormData = {
-      ...data,
+      issueDate: data.issueDate,
       items: simplifiedItems,
       client: data.client,
+      total: data.total,
+      subtotal: data.subtotal,
+      taxAmount: data.taxAmount,
+      discountAmount: data.discountAmount,
+      receivedValue: data.receivedValue,
+      paymentMethod: data.paymentMethod,
       storeId: currentStore?.id || user?.store?.id || data.storeId,
       change:
         typeof data.change === "number" && !isNaN(data.change)
@@ -241,12 +255,15 @@ export function useCartCheckout({
     }
 
     // Custom adjustments for client
-    if (selectedClient?.__isNew__) {
+    if (data.clientId) {
       payload.client = {
-        name: newCustomerName,
+        id: data.clientId,
+      } as PosSalesFormData["client"];
+    } else if (selectedClient?.__isNew__) {
+      payload.client = {
+        name: newCustomerName || selectedClient.label,
         phone: normalizedNewCustomerPhone,
-        email: "",
-        address: newCustomerAddress,
+        address: undefined,
         taxNumber: newCustomerTaxNumber,
       };
     } else if (!selectedClient && normalizedNewCustomerPhone) {
@@ -264,7 +281,6 @@ export function useCartCheckout({
 
   const performSubmit = async (payload: PosSalesFormData) => {
     try {
-      console.log("SUBMITTING PAYLOAD:", JSON.stringify(payload, null, 2));
       if (type === "invoice") {
         const response = await createInvoiceReceipt(payload as any);
         const invoiceId = response?.data?.id;
@@ -304,7 +320,21 @@ export function useCartCheckout({
       setNewCustomerTaxNumber("");
       setNewCustomerAddress("");
       setNewCustomerVerification("idle");
-      reset();
+      reset({
+        issueDate: new Date().toLocaleDateString("en-CA"),
+        items: [],
+        client: undefined,
+        clientId: "",
+        storeId: currentStore?.id || user?.store?.id || "",
+        total: 0,
+        subtotal: 0,
+        taxAmount: 0,
+        discountAmount: 0,
+        receivedValue: 0,
+        change: 0,
+        paymentMethod: "CARD",
+        cashSessionId,
+      });
       onSuccess?.();
 
       // Invalidate items queries so stock quantities update without page refresh

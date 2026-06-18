@@ -16,6 +16,7 @@ import {
 } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { agtService } from "@/services";
+import { getApiErrorMessage } from "@/utils";
 import { toast } from "sonner";
 import { ShieldCheck, ShieldAlert, Key, Info } from "lucide-react";
 
@@ -67,9 +68,8 @@ export function AgtKeySettings() {
       toast.success("Chave privada da AGT actualizada com sucesso!");
       setPrivateKey("");
       fetchStatus();
-    } catch (error: any) {
-      const message = error.response?.data?.message || "Não foi possível actualizar a chave.";
-      toast.error(message);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Não foi possível actualizar a chave."));
     } finally {
       setIsLoading(false);
     }

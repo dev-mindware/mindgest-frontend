@@ -89,7 +89,7 @@ export function CustomerSelection({
 
                     {selectedClient?.__isNew__ && (
                         <div
-                            className="grid gap-4 pt-2 border-t border-dashed sm:grid-cols-2"
+                            className=" gap-4 pt-2 border-t border-dashed space-y-4"
                             data-tour="pos-new-customer-phone"
                         >
                             <NifVerificationField
@@ -98,16 +98,12 @@ export function CustomerSelection({
                                 onChange={onTaxNumberChange}
                                 onVerified={(contributor) => onNameChange(contributor.name)}
                                 onStatusChange={onVerificationStatusChange}
-                            />
-                            <Input
-                                startIcon="User"
-                                type="text"
-                                placeholder="Nome fiscal do cliente"
-                                value={newCustomerName}
-                                onChange={(event) => onNameChange(event.target.value)}
+                                allowProceedWithoutVerification
+                                proceedWarningMessage="Não foi possível verificar o NIF, pode prosseguir com a criação, porém se o NIF não existir a AGT não validaŕa a factura."
                             />
                             <Input
                                 startIcon="Phone"
+                                label="Número de Telefone"
                                 type="text"
                                 inputMode="none"
                                 data-layout="numeric"
@@ -120,15 +116,8 @@ export function CustomerSelection({
                                 aria-invalid={!!phoneError}
                                 className={phoneError ? "bg-muted/30 border-destructive" : "bg-muted/30"}
                             />
-                            <Input
-                                startIcon="MapPin"
-                                type="text"
-                                placeholder="Endereço do cliente"
-                                value={newCustomerAddress}
-                                onChange={(event) => onAddressChange(event.target.value)}
-                            />
                             {phoneError && (
-                                <p className="text-xs text-destructive">{phoneError}</p>
+                                <p className="sm:col-span-2 text-xs text-destructive">{phoneError}</p>
                             )}
                         </div>
                     )}

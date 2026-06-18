@@ -7,6 +7,7 @@ import { SupplierFormData, supplierSchema } from "@/schemas";
 import { useAddSupplier } from "@/hooks/entities/use-suppliers";
 import { useModal } from "@/stores";
 import { useNifFormVerification } from "@/hooks";
+import { ErrorMessage, getApiErrorMessage } from "@/utils";
 
 
 export function AddSupplierModal() {
@@ -40,6 +41,7 @@ export function AddSupplierModal() {
       closeModal("add-supplier");
     } catch (error) {
       console.error("Erro ao adicionar fornecedor:", error);
+      ErrorMessage(getApiErrorMessage(error, "Não foi possível adicionar o fornecedor."));
     }
   }
 

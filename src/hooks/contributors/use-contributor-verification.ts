@@ -6,6 +6,7 @@ import { contributorService } from "@/services/contributor-service";
 export function useContributorVerification() {
   return useMutation({
     mutationKey: ["contributor-verification"],
+    retry: false,
     mutationFn: ({
       taxNumber,
       signal,
