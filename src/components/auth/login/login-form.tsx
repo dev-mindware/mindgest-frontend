@@ -10,6 +10,7 @@ import { ButtonSubmit, Input } from "@/components";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
 import { queryClient } from "@/lib";
+import { getApiErrorMessage } from "@/utils";
 
 export function LoginForm() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export function LoginForm() {
       router.replace(res.redirectPath || "/");
     } catch (error) {
       setIsAuthenticating(false);
-      ErrorMessage("Ocorreu um erro inesperado. Tente novamente.");
+      ErrorMessage(getApiErrorMessage(error, "Ocorreu um erro inesperado. Tente novamente."));
     }
   }
 

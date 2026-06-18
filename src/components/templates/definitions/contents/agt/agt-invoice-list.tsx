@@ -24,6 +24,7 @@ import {
 } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { agtService } from "@/services";
+import { getApiErrorMessage } from "@/utils";
 import { toast } from "sonner";
 import { Search, FileText, Calendar, RefreshCw, Eye, Filter } from "lucide-react";
 import { format } from "date-fns";
@@ -74,7 +75,7 @@ export function AgtInvoiceList({ onConsult }: { onConsult: (docNo: string) => vo
       setPage(data.page);
     } catch (error) {
       console.error("Failed to fetch AGT invoices:", error);
-      toast.error("Erro ao carregar as facturas da AGT.");
+      toast.error(getApiErrorMessage(error, "Erro ao carregar as facturas da AGT."));
     } finally {
       setIsLoading(false);
     }

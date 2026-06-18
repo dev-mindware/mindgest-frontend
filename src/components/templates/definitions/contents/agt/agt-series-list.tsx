@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { agtService, storesService } from "@/services";
 import type { StoreResponse } from "@/types";
+import { getApiErrorMessage } from "@/utils";
 import { toast } from "sonner";
 import { Plus, ListFilter, RefreshCcw, LayoutGrid, Calendar, Hash } from "lucide-react";
 import { 
@@ -72,7 +73,7 @@ export function AgtSeriesList() {
       setSeries(data);
     } catch (error) {
       console.error("Failed to fetch AGT series:", error);
-      toast.error("Erro ao carregar as séries da AGT.");
+      toast.error(getApiErrorMessage(error, "Erro ao carregar as séries da AGT."));
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +87,7 @@ export function AgtSeriesList() {
       setStores(storeList);
     } catch (error) {
       console.error("Failed to fetch stores:", error);
-      toast.error("Erro ao carregar as lojas para solicitar AGT.");
+      toast.error(getApiErrorMessage(error, "Erro ao carregar as lojas para solicitar AGT."));
     } finally {
       setIsStoresLoading(false);
     }
@@ -109,9 +110,8 @@ export function AgtSeriesList() {
       toast.success("Nova série solicitada com sucesso!");
       setOpen(false);
       fetchSeries();
-    } catch (error: any) {
-      const message = error.response?.data?.message || "Erro ao solicitar nova série.";
-      toast.error(message);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Erro ao solicitar nova série."));
     } finally {
       setIsRequesting(false);
     }
