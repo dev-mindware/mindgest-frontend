@@ -93,7 +93,7 @@ export function RegisterForm() {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative grid h-dvh min-h-0 overflow-hidden lg:grid-cols-2">
-          <HeroImageSide source="/login2.jpg" />
+          <HeroImageSide source="/login.png" />
 
           <div className="relative z-20 flex min-h-0 flex-col p-4 md:p-6">
             <div className="mx-auto w-full max-w-md text-center">
