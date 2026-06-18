@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { playSoundEffect, primeAudioPlayback } from "@/utils";
@@ -16,11 +16,16 @@ import {
 } from "@tanstack/react-query";
 
 let socket: Socket;
+const globallySeenNotificationIds = new Set<string>();
+const globallyAlertedNotificationIds = new Set<string>();
 
 export function useNotifications(
   initialFilters: Omit<NotificationParams, "skip" | "take"> = {},
 ) {
   const queryClient = useQueryClient();
+  const filtersKey = JSON.stringify(initialFilters);
+  const filters = useMemo(() => initialFilters, [filtersKey]);
+  const queryKey = useMemo(() => ["notifications", filters] as const, [filters]);
   const { openModal } = useModal();
   const { setCurrentNotification } = useCurrentNotificationStore();
   const { soundEnabled, soundType, browserNotificationsEnabled } =
@@ -121,10 +126,10 @@ export function useNotifications(
     refetch,
   } = useInfiniteQuery({
     // A query key DEPENDE dos filtros, assim quando os filtros mudarem, o cache buscará os novos dados corretos da API
-    queryKey: ["notifications", initialFilters],
+    queryKey,
     queryFn: ({ pageParam = 0 }) =>
       notificationsService.getNotifications({
-        ...initialFilters,
+        ...filters,
         skip: pageParam as number,
         take: TAKE,
       }),
@@ -140,25 +145,21 @@ export function useNotifications(
   const notifications = data?.pages.flatMap((page) => page.data) ?? [];
 
   useEffect(() => {
-    const notificationIds = new Set(notifications.map((notification) => notification.id));
+    if (notifications.length === 0) return;
 
     if (!hasInitializedNotificationsRef.current) {
-      seenNotificationIdsRef.current = notificationIds;
+      notifications.forEach((notification) => {
+        seenNotificationIdsRef.current.add(notification.id);
+        globallySeenNotificationIds.add(notification.id);
+      });
       hasInitializedNotificationsRef.current = true;
       return;
     }
 
-    const freshNotifications = notifications.filter(
-      (notification) => !seenNotificationIdsRef.current.has(notification.id),
-    );
-
-    if (freshNotifications.length > 0) {
-      const latestNotification = freshNotifications[0];
-      void playNotificationSound();
-      showBrowserNotification(latestNotification);
-    }
-
-    seenNotificationIdsRef.current = notificationIds;
+    notifications.forEach((notification) => {
+      seenNotificationIdsRef.current.add(notification.id);
+      globallySeenNotificationIds.add(notification.id);
+    });
   }, [notifications]);
 
   // Socket.IO Connection
@@ -178,15 +179,33 @@ export function useNotifications(
       // Invalida os pedidos de abertura para atualizar instantaneamente na tela do gerente
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
 
+      const shouldAlert =
+        !globallySeenNotificationIds.has(newNotification.id) &&
+        !globallyAlertedNotificationIds.has(newNotification.id);
+
+      globallySeenNotificationIds.add(newNotification.id);
+      globallyAlertedNotificationIds.add(newNotification.id);
+      seenNotificationIdsRef.current.add(newNotification.id);
+
+      if (shouldAlert) {
+        void playNotificationSound();
+        showBrowserNotification(newNotification);
+      }
+
       queryClient.setQueryData<any>(
-        ["notifications", initialFilters],
+        queryKey,
         (oldData: any) => {
           if (!oldData) return oldData;
           const newPages = [...oldData.pages];
           if (newPages.length > 0) {
+            const firstPage = newPages[0].data as NotificationType[];
+            if (firstPage.some((notification) => notification.id === newNotification.id)) {
+              return oldData;
+            }
+
             newPages[0] = {
               ...newPages[0],
-              data: [newNotification, ...newPages[0].data],
+              data: [newNotification, ...firstPage],
             };
           }
           return { ...oldData, pages: newPages };
@@ -197,7 +216,7 @@ export function useNotifications(
     return () => {
       if (socket) socket.disconnect();
     };
-  }, [queryClient, initialFilters]);
+  }, [queryClient, queryKey]);
 
   // Mutations
   const { mutateAsync: markAsRead } = useMutation({
@@ -208,7 +227,7 @@ export function useNotifications(
       // Let's manually update cache for responsiveness
 
       queryClient.setQueryData<any>(
-        ["notifications", initialFilters],
+        queryKey,
         (oldData: any) => {
           if (!oldData) return oldData;
           return {
@@ -233,7 +252,7 @@ export function useNotifications(
     mutationFn: notificationsService.deleteNotification,
     onMutate: async (id) => {
       queryClient.setQueryData<any>(
-        ["notifications", initialFilters],
+        queryKey,
         (oldData: any) => {
           if (!oldData) return oldData;
           return {

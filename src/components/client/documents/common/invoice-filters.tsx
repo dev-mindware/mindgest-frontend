@@ -31,7 +31,7 @@ export function InvoiceFiltersTSX({ type }: Props) {
   const showStatusFilter = type === "invoice";
 
   return (
-    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0" data-tour="documents-filters">
       <div className="w-full flex flex-col gap-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div data-tour="documents-filter-search">

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Icon, Separator, Switch } from "@/components";
-import { onboardingTours } from "@/constants/onboarding-tours";
+import { onboardingTours, type OnboardingTourId } from "@/constants/onboarding-tours";
 import { useAuth } from "@/hooks/auth";
 import { useOnboardingPreferencesStore } from "@/stores";
 import { useOnboardingPreferencesPersistence } from "@/hooks/onboarding/use-onboarding-preferences";
@@ -31,12 +31,24 @@ export function OnboardingPreferences() {
   const setTourButtonEnabled = useOnboardingPreferencesStore(
     (state) => state.setTourButtonEnabled,
   );
-  const resetAllTours = useOnboardingPreferencesStore(
-    (state) => state.resetAllTours,
-  );
-
   const seenCount = Object.keys(preferences.seenTours).length;
   const totalTours = Object.keys(onboardingTours).length;
+  const seenTourEntries = Object.entries(preferences.seenTours)
+    .map(([tourId, status]) => {
+      const id = tourId as OnboardingTourId;
+      const tour = onboardingTours[id];
+      if (!tour) return null;
+
+      return {
+        id,
+        status,
+        title: tour.title,
+        priority: tour.priority,
+        group: tour.group,
+      };
+    })
+    .filter((tour): tour is NonNullable<typeof tour> => Boolean(tour))
+    .sort((a, b) => a.priority - b.priority || a.title.localeCompare(b.title));
 
   return (
     <section className="space-y-6" data-tour="setup-guides-content">
@@ -118,7 +130,6 @@ export function OnboardingPreferences() {
             variant="outline"
             className="w-full gap-2 sm:w-auto"
             onClick={() => {
-              resetAllTours(scope);
               persistence.persistResetAllTours();
             }}
           >
@@ -126,6 +137,50 @@ export function OnboardingPreferences() {
             Repor guias
           </Button>
         </div>
+
+        {seenTourEntries.length > 0 && (
+          <>
+            <Separator className="my-5" />
+
+            <div className="space-y-3">
+              <div>
+                <h3 className="text-sm font-semibold">Guias concluídos</h3>
+                <p className="text-sm text-muted-foreground">
+                  Reponha apenas o guia que quer ver novamente.
+                </p>
+              </div>
+
+              <div className="divide-y rounded-md border">
+                {seenTourEntries.map((tour) => (
+                  <div
+                    key={tour.id}
+                    className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{tour.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {tour.status === "completed" ? "Concluído" : "Ignorado"} · {tour.group}
+                      </p>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-2 sm:w-auto"
+                      onClick={() => {
+                        persistence.persistResetTour(tour.id);
+                      }}
+                    >
+                      <Icon name="RotateCcw" className="h-3.5 w-3.5" />
+                      Repor
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

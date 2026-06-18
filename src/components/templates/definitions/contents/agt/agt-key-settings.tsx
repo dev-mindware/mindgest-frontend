@@ -1,34 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button, Icon } from "@/components";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Textarea,
-  Label,
-  Badge,
   Alert,
   AlertDescription,
   AlertTitle,
+  Badge,
+  Label,
+  Separator,
+  Textarea,
 } from "@/components/ui";
-import { Button } from "@/components/ui/button";
 import { agtService } from "@/services";
 import { getApiErrorMessage } from "@/utils";
 import { toast } from "sonner";
-import { ShieldCheck, ShieldAlert, Key, Info } from "lucide-react";
 
 export function AgtKeySettings() {
   const [privateKey, setPrivateKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingStatus, setIsFetchingStatus] = useState(true);
   const [hasKey, setHasKey] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    fetchStatus();
-  }, []);
 
   const fetchStatus = async () => {
     try {
@@ -40,6 +31,10 @@ export function AgtKeySettings() {
       setIsFetchingStatus(false);
     }
   };
+
+  useEffect(() => {
+    void fetchStatus();
+  }, []);
 
   const validateKey = (key: string) => {
     const trimmed = key.trim();
@@ -65,84 +60,77 @@ export function AgtKeySettings() {
     setIsLoading(true);
     try {
       await agtService.updatePrivateKey(privateKey);
-      toast.success("Chave privada da AGT actualizada com sucesso!");
+      toast.success("Chave privada da AGT actualizada com sucesso.");
       setPrivateKey("");
-      fetchStatus();
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Não foi possível actualizar a chave."));
+      void fetchStatus();
+    } catch (requestError) {
+      toast.error(
+        getApiErrorMessage(requestError, "Não foi possível actualizar a chave."),
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h3 className="text-lg font-medium">Configurações da chave</h3>
+    <div className="space-y-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">Chave privada</h3>
           <p className="text-sm text-muted-foreground">
-            Gerir a chave privada de assinatura digital da empresa.
+            Configure a chave PEM usada na assinatura digital da empresa.
           </p>
         </div>
-        <div className="flex justify-center md:justify-end">
-          {isFetchingStatus ? (
-            <Badge variant="outline" className="animate-pulse">Verificando...</Badge>
-          ) : hasKey ? (
-            <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 flex gap-1.5 items-center px-3 py-1">
-              <ShieldCheck size={14} />
-              Configurado
-            </Badge>
-          ) : (
-            <Badge variant="destructive" className="flex gap-1.5 items-center px-3 py-1">
-              <ShieldAlert size={14} />
-              Não Configurado
-            </Badge>
-          )}
-        </div>
+
+        {isFetchingStatus ? (
+          <Badge variant="outline">A verificar...</Badge>
+        ) : hasKey ? (
+          <Badge variant="secondary" className="gap-1.5">
+            <Icon name="ShieldCheck" className="h-3.5 w-3.5" />
+            Configurada
+          </Badge>
+        ) : (
+          <Badge variant="destructive" className="gap-1.5">
+            <Icon name="ShieldAlert" className="h-3.5 w-3.5" />
+            Não configurada
+          </Badge>
+        )}
       </div>
 
-      <div className="grid gap-6">
-        <Alert variant="default" className="bg-primary/5 border-primary/20">
-          <Info className="h-4 w-4 text-primary" />
-          <AlertTitle className="text-primary font-semibold text-sm">Segurança de Dados</AlertTitle>
-          <AlertDescription className="text-xs opacity-90">
-            A chave privada é encriptada no servidor antes de ser armazenada. Por motivos de segurança, ela não pode ser recuperada após o envio.
-          </AlertDescription>
-        </Alert>
+      <Alert>
+        <Icon name="Info" />
+        <AlertTitle>Segurança</AlertTitle>
+        <AlertDescription>
+          A chave privada é encriptada no servidor antes de ser armazenada. Por segurança, não é possível recuperá-la depois do envio.
+        </AlertDescription>
+      </Alert>
 
-        <Card className="border-muted shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <Key className="w-4 h-4 text-muted-foreground" />
-              <CardTitle className="text-base">Nova Chave PEM</CardTitle>
-            </div>
-            <CardDescription className="text-xs">
-              Cole abaixo o conteúdo do ficheiro .pem para actualizar a assinatura.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="private-key" className="text-xs font-medium">Conteúdo da Chave</Label>
-              <Textarea
-                id="private-key"
-                placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-                className="min-h-[200px] font-mono text-[10px] resize-none bg-muted/20 focus-visible:ring-primary/20"
-                value={privateKey}
-                onChange={(e) => setPrivateKey(e.target.value)}
-              />
-            </div>
+      <div className="rounded-md border bg-background p-4">
+        <div className="space-y-2">
+          <Label htmlFor="private-key">Conteúdo da chave</Label>
+          <Textarea
+            id="private-key"
+            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+            className="min-h-52 resize-none font-mono text-xs"
+            value={privateKey}
+            onChange={(event) => setPrivateKey(event.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Cole o conteúdo completo do ficheiro PEM para substituir a chave actualmente configurada.
+          </p>
+        </div>
 
-            <div className="flex justify-end pt-2">
-              <Button 
-                onClick={handleUpdateKey} 
-                disabled={isLoading || !privateKey.trim()}
-                className="h-9 px-6 text-xs"
-              >
-                {isLoading ? "A processar..." : "Actualizar chave"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <Separator className="my-4" />
+
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            onClick={handleUpdateKey}
+            disabled={isLoading || !privateKey.trim()}
+          >
+            {isLoading ? "A processar..." : "Actualizar chave"}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ export function ItemsFiltersTSX({ prefix }: { prefix: string }) {
     );
 
   return (
-    <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
+    <div className="w-full flex flex-col gap-4 px-2 sm:px-0" data-tour="items-filters">
       <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-baseline">
         <SearchHandlerWrapper
           search={search}

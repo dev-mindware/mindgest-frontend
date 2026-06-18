@@ -10,12 +10,14 @@ import {
   type OnboardingTourId,
   type OnboardingTourMode,
 } from "@/constants/onboarding-tours";
-import { useAuthStore, useOnboardingPreferencesStore } from "@/stores";
+import { useAuthStore, useModal, useOnboardingPreferencesStore } from "@/stores";
 import { PLAN_HIERARCHY, type User } from "@/types";
 import { useOnboardingPreferencesPersistence } from "./use-onboarding-preferences";
 
 const ELEMENT_TIMEOUT_MS = 6000;
 const ELEMENT_POLL_INTERVAL_MS = 150;
+const STEP_TARGET_TIMEOUT_MS = 3000;
+const SKIPPED_STEP_TARGET_TIMEOUT_MS = 1000;
 const TYPING_DELAY_MS = 70;
 const MOBILE_UNSUPPORTED_STEP_MARKERS = [
   "setup-workplace-tabs",
@@ -41,6 +43,39 @@ let activeDemoCleanup: (() => void) | null = null;
 let activeTourResult: "completed" | "skipped" | null = null;
 let activeOriginalUrl: string | null = null;
 let activeTourMode: OnboardingTourMode = "normal";
+let isTransitioning = false;
+let lastActiveIndex: number | undefined = undefined;
+let activeCompletionHandler: ((lastStepIndex?: number) => void) | null = null;
+let activeCompletionPersisted = false;
+
+function completeActiveTour({
+  scope,
+  tourId,
+  mode,
+  tourVersion,
+  lastStepIndex,
+  markTourCompleted,
+  persistTour,
+}: {
+  scope: string;
+  tourId: OnboardingTourId;
+  mode: OnboardingTourMode;
+  tourVersion: number;
+  lastStepIndex?: number;
+  markTourCompleted: (scope: string, tourId: OnboardingTourId) => void;
+  persistTour: (
+    tourId: OnboardingTourId,
+    status: "completed",
+    mode: OnboardingTourMode,
+    tourVersion: number,
+    lastStepIndex?: number,
+  ) => void;
+}) {
+  if (activeCompletionPersisted) return;
+  activeCompletionPersisted = true;
+  markTourCompleted(scope, tourId);
+  persistTour(tourId, "completed", mode, tourVersion, lastStepIndex);
+}
 
 function prefersReducedMotion() {
   return (
@@ -311,19 +346,25 @@ function openPosCustomerSection(root: Element) {
 }
 
 function clickSettingsTab(tabId: string) {
-  clickSafe(
-    document.querySelector<HTMLElement>(`[data-tour="setup-tab-${tabId}"]`),
-  );
+  const tabTrigger = document.querySelector<HTMLElement>(`[data-tour="setup-tab-${tabId}"]`);
+  if (tabTrigger && tabTrigger.getAttribute("data-state") !== "active") {
+    clickSafe(tabTrigger);
+  }
 }
 
 function clickPosSettingsTab(tabId: string) {
-  clickSafe(
-    document.querySelector<HTMLElement>(`[data-tour="pos-settings-tab-${tabId}"]`),
-  );
+  const tabTrigger = document.querySelector<HTMLElement>(`[data-tour="pos-settings-tab-${tabId}"]`);
+  if (tabTrigger && tabTrigger.getAttribute("data-state") !== "active") {
+    clickSafe(tabTrigger);
+  }
 }
 
 async function openProductModalForTour() {
   if (findVisibleElement('[data-tour="product-modal"]')) return;
+
+  useModal.getState().openModal("add-product");
+  const openedModal = await waitForElement('[data-tour="product-modal"]', 2500);
+  if (openedModal) return;
 
   clickSafe(
     document.querySelector<HTMLElement>('[data-tour="items-create"] button'),
@@ -503,9 +544,6 @@ const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
     typeIntoSelector('[data-tour="product-form-name"] input', "Produto de Demonstração");
     typeIntoSelector('[data-tour="product-form-price"] input', "15000");
     typeIntoSelector('[data-tour="product-form-cost"] input', "10000");
-    clickSafe(
-      document.querySelector<HTMLElement>('[data-tour="product-form-category"] button'),
-    );
   },
   "product-form-stock": () => {
     typeIntoSelector('[data-tour="product-form-quantity"] input', "5");
@@ -573,7 +611,7 @@ const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
   },
 };
 
-async function prepareTarget(selector: string) {
+async function prepareTarget(selector: string, timeoutMs = STEP_TARGET_TIMEOUT_MS) {
   let targetElement = findVisibleElement(selector);
   if (targetElement) return targetElement;
 
@@ -614,7 +652,12 @@ async function prepareTarget(selector: string) {
   }
 
   if (selector.includes("normal-invoice") && !selector.includes("document-type")) {
-    document.querySelector<HTMLButtonElement>('button[value="invoice"]')?.click();
+    const invoiceTabTrigger = document.querySelector<HTMLButtonElement>(
+      'button[value="invoice"], button[data-value="invoice"]'
+    );
+    if (invoiceTabTrigger && invoiceTabTrigger.getAttribute("data-state") !== "active") {
+      invoiceTabTrigger.click();
+    }
   }
 
   if (
@@ -628,14 +671,26 @@ async function prepareTarget(selector: string) {
       selector.includes("pos-payment-change") ||
       selector.includes("pos-submit"))
   ) {
-    document.querySelector<HTMLButtonElement>('[data-tour="pos-cart"]')?.click();
+    const cartButton = document.querySelector<HTMLButtonElement>('button[data-tour="pos-cart"]');
+    if (
+      cartButton &&
+      cartButton.getAttribute("data-state") !== "active" &&
+      cartButton.getAttribute("aria-selected") !== "true"
+    ) {
+      cartButton.click();
+    }
   }
 
   if (
     selector.includes("pos-payment-cash-received") ||
     selector.includes("pos-payment-change")
   ) {
-    document.querySelector<HTMLButtonElement>('[data-tour="pos-payment-method-cash"]')?.click();
+    const cashMethodButton = document.querySelector<HTMLButtonElement>(
+      'button[data-tour="pos-payment-method-cash"]'
+    );
+    if (cashMethodButton && cashMethodButton.classList.contains("text-muted-foreground")) {
+      cashMethodButton.click();
+    }
   }
 
   if (
@@ -647,7 +702,7 @@ async function prepareTarget(selector: string) {
     document.querySelector<HTMLButtonElement>('[data-tour="pos-back-to-menu"]')?.click();
   }
 
-  targetElement = await waitForElement(selector, 2500);
+  targetElement = await waitForElement(selector, timeoutMs);
 
   if (selector.includes("pos-new-customer-phone")) {
     const customerSection = document.querySelector('[data-tour="pos-customer"]');
@@ -665,8 +720,24 @@ async function handleNextClick(
   step: DriveStep,
   { driver }: { driver: Driver },
 ) {
-  const currentIndex = driver.getActiveIndex() ?? 0;
+  // getActiveIndex() pode retornar null/undefined em certas versões do Driver.js
+  // Usamos o comprimento dos steps para garantir que detectamos o último passo
+  const steps = driver.getConfig().steps ?? [];
+  const currentIndex = driver.getActiveIndex() ?? steps.length - 1;
+  const isLastStep = currentIndex >= steps.length - 1;
+
   cleanupActiveDemo();
+
+  if (isLastStep) {
+    // Botão "Concluir": encerra o tour explicitamente como completo
+    if (!isTransitioning) {
+      activeTourResult = "completed";
+      activeCompletionHandler?.(steps.length - 1);
+      driver.destroy();
+    }
+    return;
+  }
+
   await moveToPreparedStep(driver, currentIndex + 1, 1);
 }
 
@@ -685,38 +756,74 @@ async function moveToPreparedStep(
   startIndex: number,
   direction: 1 | -1,
 ) {
-  const steps = driver.getConfig().steps ?? [];
-  let targetIndex = startIndex;
+  if (isTransitioning) return;
+  isTransitioning = true;
 
-  while (targetIndex >= 0 && targetIndex < steps.length) {
-    const targetStep = steps[targetIndex];
-    const selector =
-      (targetStep as OnboardingDriveStep).selector ||
-      (typeof targetStep.element === "string" ? targetStep.element : undefined);
+  try {
+    const steps = driver.getConfig().steps ?? [];
+    let targetIndex = startIndex;
 
-    if (!selector) {
-      driver.moveTo(targetIndex);
-      return;
+    while (targetIndex >= 0 && targetIndex < steps.length) {
+      try {
+        const targetStep = steps[targetIndex];
+        const selector =
+          (targetStep as OnboardingDriveStep).selector ||
+          (typeof targetStep.element === "string" ? targetStep.element : undefined);
+
+        if (!selector) {
+          driver.moveTo(targetIndex);
+          return;
+        }
+
+        const preparedTarget = await prepareTarget(
+          selector,
+          targetIndex === startIndex
+            ? STEP_TARGET_TIMEOUT_MS
+            : SKIPPED_STEP_TARGET_TIMEOUT_MS,
+        );
+        if (preparedTarget) {
+          targetStep.element = preparedTarget;
+          driver.moveTo(targetIndex);
+          return;
+        }
+
+        // Se não conseguiu preparar, verifica se é um passo condicional
+        const isConditional = CONDITIONAL_STEP_MARKERS.some((marker) =>
+          selector.includes(marker),
+        );
+        if (!isConditional) {
+          if (process.env.NODE_ENV !== "production") {
+            console.warn(`Passo obrigatório não encontrado: ${selector}. Mantendo no passo atual.`);
+          }
+          return; // Não avança nem pula
+        }
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn("Não foi possível preparar o próximo passo do guia.", error);
+        }
+      }
+
+      targetIndex += direction;
     }
 
-    const preparedTarget = await prepareTarget(selector);
-    if (preparedTarget) {
-      targetStep.element = preparedTarget;
-      driver.moveTo(targetIndex);
-      return;
+    if (direction === 1) {
+      activeTourResult = "completed";
+      driver.destroy();
     }
-
-    targetIndex += direction;
-  }
-
-  if (direction === 1) {
-    activeTourResult = "completed";
-    driver.destroy();
+  } finally {
+    isTransitioning = false;
   }
 }
 
 function handleHighlighted(element: Element | undefined, step: DriveStep) {
   cleanupActiveDemo();
+  if (activeDriver) {
+    try {
+      lastActiveIndex = activeDriver.getActiveIndex();
+    } catch (e) {
+      // ignore
+    }
+  }
   if (!element) return;
   if (activeTourMode !== "demo") return;
 
@@ -743,9 +850,6 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
   const markTourCompleted = useOnboardingPreferencesStore(
     (state) => state.markTourCompleted,
   );
-  const markTourSkipped = useOnboardingPreferencesStore(
-    (state) => state.markTourSkipped,
-  );
   const scopedPreferences = useOnboardingPreferencesStore(
     (state) => state.preferencesByScope[scope],
   );
@@ -762,13 +866,18 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
   }, [markTourCompleted, scope, tourId]);
 
   const startTour = useCallback(async (mode: OnboardingTourMode = "normal") => {
-    if (typeof window === "undefined") return;
-    if (!canUserAccessOnboardingTour(tourId, user)) return;
+    if (typeof window === "undefined") return false;
+    if (!canUserAccessOnboardingTour(tourId, user)) return false;
+    // Garantir que estado residual de tours anteriores está limpo
     activeTourResult = null;
     activeTourMode = mode;
+    isTransitioning = false;
+    lastActiveIndex = undefined;
+    activeCompletionHandler = null;
+    activeCompletionPersisted = false;
 
     const steps = resolveSteps(tourId);
-    if (steps.length === 0) return;
+    if (steps.length === 0) return false;
 
     let initialStepIndex = 0;
     while (initialStepIndex < steps.length) {
@@ -785,10 +894,21 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
         break;
       }
 
+      // Se não encontrou o primeiro passo, verifica se ele é condicional
+      const isConditional = CONDITIONAL_STEP_MARKERS.some((marker) =>
+        firstSelector.includes(marker),
+      );
+      if (!isConditional) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Passo inicial obrigatório não encontrado: ${firstSelector}. Falhando ao iniciar tour.`);
+        }
+        return false;
+      }
+
       initialStepIndex += 1;
     }
 
-    if (initialStepIndex >= steps.length) return;
+    if (initialStepIndex >= steps.length) return false;
 
     persistTour(
       tourId,
@@ -799,6 +919,17 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
     );
 
     activeDriver?.destroy();
+
+    activeCompletionHandler = (lastStepIndex?: number) =>
+      completeActiveTour({
+        scope,
+        tourId,
+        mode: activeTourMode,
+        tourVersion: onboardingTours[tourId].version,
+        lastStepIndex,
+        markTourCompleted,
+        persistTour,
+      });
 
     activeDriver = driver({
       steps,
@@ -821,6 +952,7 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
       onPrevClick: handlePrevClick,
       onCloseClick: (_, __, { driver }) => {
         activeTourResult = "skipped";
+        activeCompletionHandler?.(lastActiveIndex);
         driver.destroy();
       },
       onPopoverRender: (popover) => {
@@ -831,36 +963,38 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
       onDeselected: cleanupActiveDemo,
       onDestroyed: () => {
         cleanupActiveDemo();
-        if (activeTourResult === "completed") {
-          markTourCompleted(scope, tourId);
-          persistTour(
-            tourId,
-            "completed",
-            activeTourMode,
-            onboardingTours[tourId].version,
-            steps.length - 1,
-          );
-        } else if (getPreferences(scope).seenTours[tourId] !== "completed") {
-          markTourSkipped(scope, tourId);
-          persistTour(
-            tourId,
-            "skipped",
-            activeTourMode,
-            onboardingTours[tourId].version,
-            activeDriver?.getActiveIndex() ?? undefined,
-          );
+        isTransitioning = false;
+
+        const result = activeTourResult;
+        const tourPreferences = getPreferences(scope);
+
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[Tour onDestroyed] tourId=${tourId} result=${result}`);
         }
+
+        if (result === "completed") {
+          activeCompletionHandler?.(steps.length - 1);
+        } else if (result === "skipped") {
+          activeCompletionHandler?.(lastActiveIndex);
+        } else if (tourPreferences.seenTours[tourId] !== "completed") {
+          activeCompletionHandler?.(lastActiveIndex);
+        }
+
         activeDriver = null;
         activeTourResult = null;
         activeTourMode = "normal";
+        lastActiveIndex = undefined;
+        activeCompletionHandler = null;
+        activeCompletionPersisted = false;
       },
     });
 
     activeDriver.drive(initialStepIndex);
+    lastActiveIndex = initialStepIndex;
+    return true;
   }, [
     getPreferences,
     markTourCompleted,
-    markTourSkipped,
     markTourAsSeen,
     persistTour,
     scope,
@@ -911,14 +1045,34 @@ export function useAutoOnboardingTour(
     }
     if (typeof window === "undefined") return;
 
-    autoStartRef.current = true;
+    let cancelled = false;
+    let attempt = 0;
+    const timeouts: number[] = [];
 
-    const timeout = window.setTimeout(() => {
-      startTour("normal");
-    }, 700);
+    const tryStartTour = () => {
+      const timeout = window.setTimeout(async () => {
+        if (cancelled || autoStartRef.current || hasSeenTour()) return;
+
+        attempt += 1;
+        const started = await startTour("normal");
+        if (started) {
+          autoStartRef.current = true;
+          return;
+        }
+
+        if (attempt < 4) {
+          tryStartTour();
+        }
+      }, attempt === 0 ? 700 : 1000);
+
+      timeouts.push(timeout);
+    };
+
+    tryStartTour();
 
     return () => {
-      window.clearTimeout(timeout);
+      cancelled = true;
+      timeouts.forEach((timeout) => window.clearTimeout(timeout));
     };
   }, [
     autoStartEnabled,

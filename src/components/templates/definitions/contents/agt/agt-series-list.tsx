@@ -1,42 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button, Icon } from "@/components";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
   Badge,
-  Separator,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
   Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui";
-import { Button } from "@/components/ui/button";
 import { agtService, storesService } from "@/services";
 import type { StoreResponse } from "@/types";
 import { getApiErrorMessage } from "@/utils";
 import { toast } from "sonner";
-import { Plus, ListFilter, RefreshCcw, LayoutGrid, Calendar, Hash } from "lucide-react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from "@/components/ui/dialog";
 
 interface AgtSeries {
   id: string;
@@ -57,8 +49,6 @@ export function AgtSeriesList() {
   const [isStoresLoading, setIsStoresLoading] = useState(true);
   const [isRequesting, setIsRequesting] = useState(false);
   const [open, setOpen] = useState(false);
-
-  // Form for new series
   const [newSeries, setNewSeries] = useState({
     documentType: "FT",
     seriesYear: new Date().getFullYear().toString(),
@@ -72,7 +62,6 @@ export function AgtSeriesList() {
       const data = await agtService.getSeries();
       setSeries(data);
     } catch (error) {
-      console.error("Failed to fetch AGT series:", error);
       toast.error(getApiErrorMessage(error, "Erro ao carregar as séries da AGT."));
     } finally {
       setIsLoading(false);
@@ -83,10 +72,8 @@ export function AgtSeriesList() {
     setIsStoresLoading(true);
     try {
       const response = await storesService.getStores();
-      const storeList = response.data?.data || [];
-      setStores(storeList);
+      setStores(response.data?.data || []);
     } catch (error) {
-      console.error("Failed to fetch stores:", error);
       toast.error(getApiErrorMessage(error, "Erro ao carregar as lojas para solicitar AGT."));
     } finally {
       setIsStoresLoading(false);
@@ -94,8 +81,8 @@ export function AgtSeriesList() {
   };
 
   useEffect(() => {
-    fetchSeries();
-    fetchStores();
+    void fetchSeries();
+    void fetchStores();
   }, []);
 
   const handleRequestSeries = async () => {
@@ -107,9 +94,9 @@ export function AgtSeriesList() {
         storeId: newSeries.storeId || undefined,
         establishmentNumber: newSeries.establishmentNumber || undefined,
       });
-      toast.success("Nova série solicitada com sucesso!");
+      toast.success("Nova série solicitada com sucesso.");
       setOpen(false);
-      fetchSeries();
+      void fetchSeries();
     } catch (error) {
       toast.error(getApiErrorMessage(error, "Erro ao solicitar nova série."));
     } finally {
@@ -117,91 +104,115 @@ export function AgtSeriesList() {
     }
   };
 
-  const getStatusBadge = (s: AgtSeries) => {
-    if (!s.isActive) return <Badge variant="outline" className="text-xs opacity-50">Inativa</Badge>;
-    
-    // Check if exhausted (simplified)
-    if (s.lastDocumentNo && s.currentSequence >= parseInt(s.lastDocumentNo)) {
-      return <Badge variant="destructive" className="text-xs">Esgotada</Badge>;
+  const getStatusBadge = (currentSeries: AgtSeries) => {
+    if (!currentSeries.isActive) {
+      return <Badge variant="outline">Inativa</Badge>;
     }
-    
-    return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs">Activa</Badge>;
+
+    if (
+      currentSeries.lastDocumentNo &&
+      currentSeries.currentSequence >= Number.parseInt(currentSeries.lastDocumentNo, 10)
+    ) {
+      return <Badge variant="destructive">Esgotada</Badge>;
+    }
+
+    return <Badge variant="secondary">Activa</Badge>;
   };
 
-  const calculateProgress = (s: AgtSeries) => {
-    if (!s.lastDocumentNo || s.lastDocumentNo === "999999999999") return 0;
-    const last = parseInt(s.lastDocumentNo);
-    if (isNaN(last) || last === 0) return 0;
-    return Math.min((s.currentSequence / last) * 100, 100);
+  const calculateProgress = (currentSeries: AgtSeries) => {
+    if (!currentSeries.lastDocumentNo || currentSeries.lastDocumentNo === "999999999999") {
+      return 0;
+    }
+
+    const lastDocumentNo = Number.parseInt(currentSeries.lastDocumentNo, 10);
+    if (Number.isNaN(lastDocumentNo) || lastDocumentNo === 0) return 0;
+    return Math.min((currentSeries.currentSequence / lastDocumentNo) * 100, 100);
   };
+
+  const activeSeries = series.filter((item) => item.isActive).length;
+  const documentTypes = new Set(series.map((item) => item.documentType)).size;
+  const issuedDocuments = series.reduce(
+    (total, item) => total + item.currentSequence,
+    0,
+  );
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h3 className="text-lg font-medium">Gestão de Séries</h3>
+    <div className="space-y-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">Séries fiscais</h3>
           <p className="text-sm text-muted-foreground">
             Acompanhe a utilização das séries de numeração autorizadas pela AGT.
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchSeries} disabled={isLoading} className="h-9 px-3">
-            <RefreshCcw size={14} className={isLoading ? "animate-spin" : ""} />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void fetchSeries()}
+            disabled={isLoading}
+            aria-label="Actualizar séries"
+          >
+            <Icon
+              name="RefreshCcw"
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
           </Button>
 
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="h-9 flex gap-2">
-                <Plus size={16} />
-                Solicitar Série
+              <Button type="button" size="sm" className="gap-2">
+                <Icon name="Plus" className="h-4 w-4" />
+                Solicitar série
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[460px]">
               <DialogHeader>
-                <DialogTitle>Nova Série AGT</DialogTitle>
+                <DialogTitle>Nova série AGT</DialogTitle>
                 <DialogDescription>
-                  Solicite uma nova numeração oficial para os seus documentos.
+                  Solicite uma numeração oficial para documentos fiscais.
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
+
+              <div className="grid gap-4 py-2">
                 <div className="grid gap-2">
-                  <Label htmlFor="type" className="text-xs font-medium uppercase tracking-wider opacity-70">Tipo de Documento</Label>
-                  <Select 
-                    value={newSeries.documentType} 
-                    onValueChange={(v) => setNewSeries({...newSeries, documentType: v})}
+                  <Label htmlFor="agt-series-type">Tipo de documento</Label>
+                  <Select
+                    value={newSeries.documentType}
+                    onValueChange={(documentType) =>
+                      setNewSeries({ ...newSeries, documentType })
+                    }
                   >
-                    <SelectTrigger id="type" className="h-10 text-sm">
+                    <SelectTrigger id="agt-series-type">
                       <SelectValue placeholder="Seleccione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="FT">Factura (FT)</SelectItem>
-                      <SelectItem value="FR">Factura-Recibo (FR)</SelectItem>
+                      <SelectItem value="FR">Factura-recibo (FR)</SelectItem>
                       <SelectItem value="RC">Recibo (RC)</SelectItem>
-                      <SelectItem value="NC">Nota de Crédito (NC)</SelectItem>
+                      <SelectItem value="NC">Nota de crédito (NC)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="year" className="text-xs font-medium uppercase tracking-wider opacity-70">Ano Fiscal</Label>
-                    <input
-                    id="year"
-                    type="text"
-                    value={newSeries.seriesYear}
-                    disabled
-                    className="h-10 w-full rounded-md border border-input bg-muted px-3 text-sm text-foreground"
-                  />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="est" className="text-xs font-medium uppercase tracking-wider opacity-70">Estabelecimento</Label>
-                    <Select 
-                      value={newSeries.storeId} 
-                      onValueChange={(value) => {
-                        const selectedStore = stores.find(
-                          (store) => store.id === value,
-                        );
 
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor="agt-series-year">Ano fiscal</Label>
+                    <Input
+                      id="agt-series-year"
+                      value={newSeries.seriesYear}
+                      disabled
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="agt-series-store">Loja</Label>
+                    <Select
+                      value={newSeries.storeId}
+                      onValueChange={(value) => {
+                        const selectedStore = stores.find((store) => store.id === value);
                         setNewSeries({
                           ...newSeries,
                           storeId: value,
@@ -209,28 +220,30 @@ export function AgtSeriesList() {
                         });
                       }}
                     >
-                      <SelectTrigger id="est" className="h-10 text-xs">
-                        <SelectValue placeholder={isStoresLoading ? "Carregando lojas..." : "Selecione a loja (opcional)"} />
+                      <SelectTrigger id="agt-series-store">
+                        <SelectValue
+                          placeholder={
+                            isStoresLoading ? "A carregar lojas..." : "Seleccionar loja"
+                          }
+                        />
                       </SelectTrigger>
-                      <SelectContent className="text-xs">
-                        {stores.length === 0 ? (
-                          <SelectItem value="" disabled>Nenhuma loja disponível</SelectItem>
-                        ) : (
-                          stores.map((store) => (
-                            <SelectItem key={store.id} value={store.id} className="text-xs">
-                              {`${store.code || "SEDE"} — ${store.name}`}
-                            </SelectItem>
-                          ))
-                        )}
+                      <SelectContent>
+                        {stores.map((store) => (
+                          <SelectItem key={store.id} value={store.id}>
+                            {`${store.code || "SEDE"} - ${store.name}`}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
+
                 <div className="grid gap-2">
-                  <Label htmlFor="establishment" className="text-xs font-medium uppercase tracking-wider opacity-70">Código do Estabelecimento</Label>
-                  <input
-                    id="establishment"
-                    type="text"
+                  <Label htmlFor="agt-series-establishment">
+                    Código do estabelecimento
+                  </Label>
+                  <Input
+                    id="agt-series-establishment"
                     value={newSeries.establishmentNumber}
                     onChange={(event) =>
                       setNewSeries({
@@ -239,26 +252,33 @@ export function AgtSeriesList() {
                       })
                     }
                     maxLength={20}
-                    placeholder="Digite o código do estabelecimento (ex: SEDE)"
-                    className="h-10 w-full rounded-md border border-input px-3 text-sm text-foreground"
+                    placeholder="Ex: SEDE"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Informe o código do estabelecimento manualmente ou selecione uma loja com código configurado.
+                    Use o código configurado na loja ou informe manualmente.
                   </p>
                 </div>
               </div>
+
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)} disabled={isRequesting} className="h-10">Cancelar</Button>
                 <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  disabled={isRequesting}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="button"
                   onClick={handleRequestSeries}
                   disabled={
                     isRequesting ||
                     isStoresLoading ||
                     (!newSeries.storeId && !newSeries.establishmentNumber)
                   }
-                  className="h-10 min-w-[120px]"
                 >
-                  {isRequesting ? "Solicitando..." : "Confirmar Pedido"}
+                  {isRequesting ? "A solicitar..." : "Confirmar"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -266,116 +286,92 @@ export function AgtSeriesList() {
         </div>
       </div>
 
-      <Card className="border-muted shadow-sm overflow-hidden">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader className="bg-muted/30">
-              <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="w-[100px] text-[10px] uppercase font-bold text-muted-foreground py-3 px-4">Tipo</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-muted-foreground py-3">Código / Ano</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-muted-foreground py-3">Sequência</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-muted-foreground py-3">Estado</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-muted-foreground py-3 text-right pr-4">Consumo</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 3 }).map((_, i) => (
-                  <TableRow key={i} className="animate-pulse border-muted/50">
-                    <TableCell colSpan={5} className="h-16 bg-muted/5" />
-                  </TableRow>
-                ))
-              ) : series.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="h-32 text-center text-muted-foreground text-sm italic">
-                    Nenhuma série encontrada. Solicite a sua primeira série.
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Metric label="Séries activas" value={activeSeries.toString()} />
+        <Metric label="Tipos de documento" value={documentTypes.toString()} />
+        <Metric label="Documentos emitidos" value={issuedDocuments.toLocaleString()} />
+      </div>
+
+      <div className="overflow-hidden rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Código / ano</TableHead>
+              <TableHead>Sequência</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead className="text-right">Consumo</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell colSpan={5} className="h-14 text-muted-foreground">
+                    A carregar séries...
                   </TableCell>
                 </TableRow>
-              ) : (
-                series.map((s) => (
-                  <TableRow key={s.id} className="group hover:bg-muted/10 border-muted/50 transition-colors">
-                    <TableCell className="px-4 py-4 font-bold text-primary">
-                      {s.documentType}
-                    </TableCell>
+              ))
+            ) : series.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-28 text-center text-muted-foreground">
+                  Nenhuma série encontrada.
+                </TableCell>
+              </TableRow>
+            ) : (
+              series.map((item) => {
+                const progress = calculateProgress(item);
+
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.documentType}</TableCell>
                     <TableCell>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">{s.seriesCode}</span>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                          <Calendar size={10} /> {s.seriesYear}
-                        </span>
+                      <div className="space-y-0.5">
+                        <p className="font-medium">{item.seriesCode}</p>
+                        <p className="text-xs text-muted-foreground">{item.seriesYear}</p>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="font-mono text-[11px] h-6">
-                          #{s.currentSequence}
-                        </Badge>
-                        <span className="text-[10px] text-muted-foreground">/ {s.lastDocumentNo === "999999999999" ? "∞" : s.lastDocumentNo}</span>
-                      </div>
+                      <span className="font-mono text-sm">
+                        {item.currentSequence}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {" / "}
+                        {item.lastDocumentNo === "999999999999"
+                          ? "sem limite"
+                          : item.lastDocumentNo || "-"}
+                      </span>
                     </TableCell>
-                    <TableCell>
-                      {getStatusBadge(s)}
-                    </TableCell>
-                    <TableCell className="text-right pr-4">
-                      <div className="flex flex-col items-end gap-1.5">
-                        <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary transition-all duration-1000" 
-                            style={{ width: `${calculateProgress(s)}%` }}
+                    <TableCell>{getStatusBadge(item)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="ml-auto flex max-w-32 flex-col items-end gap-1.5">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                          <div
+                            className="h-full bg-primary"
+                            style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <span className="text-[10px] text-muted-foreground">
-                          {calculateProgress(s).toFixed(1)}% usado
+                        <span className="text-xs text-muted-foreground">
+                          {progress.toFixed(1)}%
                         </span>
                       </div>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-blue-500/5 border-blue-500/10">
-          <CardHeader className="p-4 pb-2">
-            <div className="flex items-center gap-2 text-blue-500">
-              <LayoutGrid size={16} />
-              <CardTitle className="text-xs uppercase tracking-wider">Total de activas</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <span className="text-2xl font-bold">{series.filter(s => s.isActive).length}</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-amber-500/5 border-amber-500/10">
-          <CardHeader className="p-4 pb-2">
-            <div className="flex items-center gap-2 text-amber-500">
-              <ListFilter size={16} />
-              <CardTitle className="text-xs uppercase tracking-wider">Tipos Únicos</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <span className="text-2xl font-bold">{new Set(series.map(s => s.documentType)).size}</span>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-emerald-500/5 border-emerald-500/10">
-          <CardHeader className="p-4 pb-2">
-            <div className="flex items-center gap-2 text-emerald-500">
-              <Hash size={16} />
-              <CardTitle className="text-xs uppercase tracking-wider">Docs Emitidos</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <span className="text-2xl font-bold">
-              {series.reduce((acc, s) => acc + s.currentSequence, 0).toLocaleString()}
-            </span>
-          </CardContent>
-        </Card>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
       </div>
+    </div>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border bg-background p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 text-xl font-semibold">{value}</p>
     </div>
   );
 }
