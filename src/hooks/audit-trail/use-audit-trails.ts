@@ -13,6 +13,7 @@ export function useAuditFilters() {
     action: (query.get("action") as any) || undefined,
     userId: query.get("userId") || undefined,
     entityId: query.get("entityId") || undefined,
+    search: query.get("search") || undefined,
     dateFrom: query.get("dateFrom") || undefined,
     dateTo: query.get("dateTo") || undefined,
   };
@@ -27,6 +28,7 @@ export function useAuditFilters() {
     if (updated.action) searchParams.set("action", updated.action);
     if (updated.userId) searchParams.set("userId", updated.userId);
     if (updated.entityId) searchParams.set("entityId", updated.entityId);
+    if (updated.search) searchParams.set("search", updated.search);
     if (updated.dateFrom) searchParams.set("dateFrom", updated.dateFrom);
     if (updated.dateTo) searchParams.set("dateTo", updated.dateTo);
 

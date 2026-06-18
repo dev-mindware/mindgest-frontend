@@ -29,9 +29,9 @@ export function AuditFilters() {
       <div className="flex flex-wrap items-center gap-2">
         <div className="w-full sm:w-64">
           <Input
-            placeholder="Buscar por ID da Entidade..."
-            value={filters.entityId || ""}
-            onChange={(e) => setFilters({ entityId: e.target.value || undefined })}
+            placeholder="Buscar por Nome, Nº ou Termo..."
+            value={filters.search || ""}
+            onChange={(e) => setFilters({ search: e.target.value || undefined })}
             className="h-10 bg-background/50 focus-visible:bg-background transition-colors"
           />
         </div>
