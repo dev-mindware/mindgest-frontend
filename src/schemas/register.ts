@@ -10,7 +10,10 @@ export const registerSchema = z.object({
         .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
-      email: z.string().trim().email("Email inválido"),
+      email: z
+        .string()
+        .email("Email inválido")
+        .transform((email) => email.toLowerCase().trim()),
       phone: phoneNumberSchema,
       password: passwordSchema,
       passwordConfirmation: z

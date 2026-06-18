@@ -260,7 +260,6 @@ export function PosManagementContent() {
           </div>
         </section>
       </div>
-
       <PosOpeningModal />
       <PosRequestsModal />
       <PosDeleteModal />

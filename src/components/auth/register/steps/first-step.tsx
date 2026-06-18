@@ -16,6 +16,8 @@ export function FirstStep() {
 
   const password = watch("step1.password") || "";
 
+  // Isolando os campos para customizar o onChange
+  const emailField = register("step1.email");
   const phoneField = register("step1.phone");
 
   const generateStrongPassword = () => {
@@ -41,13 +43,20 @@ export function FirstStep() {
           {...register("step1.name")}
           error={errors?.step1?.name?.message}
         />
+        
         <Input
           label="Email"
           startIcon="Mail"
           placeholder="Introduza o seu endereço de email"
-          {...register("step1.email")}
+          {...emailField}
+          onChange={(e) => {
+            // Transforma o texto em minúsculas em tempo real
+            e.target.value = e.target.value.toLowerCase();
+            emailField.onChange(e);
+          }}
           error={errors?.step1?.email?.message}
         />
+
         <Input
           label="Telefone"
           maxLength={9}
