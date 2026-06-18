@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Icon, Input } from "@/components";
+import { Button, Icon, Input } from "@/components";
 import { toast } from "sonner";
 import {
   FINAL_CONSUMER_TAX_NUMBER,
@@ -30,6 +30,8 @@ interface NifVerificationFieldProps {
   className?: string;
   name?: string;
   verificationEnabled?: boolean;
+  allowProceedWithoutVerification?: boolean;
+  proceedWarningMessage?: string;
 }
 
 export function NifVerificationField({
@@ -44,25 +46,44 @@ export function NifVerificationField({
   className,
   name,
   verificationEnabled = true,
+  allowProceedWithoutVerification = false,
+  proceedWarningMessage,
 }: NifVerificationFieldProps) {
   const [status, setStatus] = useState<ContributorVerificationStatus>("idle");
   const [contributor, setContributor] = useState<VerifiedContributor | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const requestSequence = useRef(0);
   const controller = useRef<AbortController | null>(null);
+  const onVerifiedRef = useRef(onVerified);
+  const onStatusChangeRef = useRef(onStatusChange);
   const { mutateAsync: verifyContributor } = useContributorVerification();
+
+  useEffect(() => {
+    onVerifiedRef.current = onVerified;
+  }, [onVerified]);
+
+  useEffect(() => {
+    onStatusChangeRef.current = onStatusChange;
+  }, [onStatusChange]);
 
   const updateStatus = useCallback(
     (nextStatus: ContributorVerificationStatus) => {
       setStatus(nextStatus);
-      onStatusChange?.(nextStatus);
+      onStatusChangeRef.current?.(nextStatus);
     },
-    [onStatusChange],
+    [],
   );
+
+  const cancelVerification = useCallback(() => {
+    requestSequence.current += 1;
+    controller.current?.abort();
+    controller.current = null;
+    setMessage(null);
+    updateStatus("idle");
+  }, [updateStatus]);
 
   const verify = useCallback(async () => {
     const normalized = normalizeTaxNumber(value);
-    const toastId = `nif-verification-${normalized}`;
     if (
       !verificationEnabled ||
       normalized === FINAL_CONSUMER_TAX_NUMBER ||
@@ -88,9 +109,8 @@ export function NifVerificationField({
       if (sequence !== requestSequence.current) return;
 
       setContributor(result);
-      toast.dismiss(toastId);
       updateStatus(result.hasRestrictions ? "restricted" : "verified");
-      onVerified(result);
+      onVerifiedRef.current(result);
     } catch (error) {
       if (currentController.signal.aborted || sequence !== requestSequence.current) return;
 
@@ -108,14 +128,11 @@ export function NifVerificationField({
           ? error.message
           : "Não foi possível verificar o NIF neste momento.";
 
-      toast.warning("Não foi possível verificar o NIF", {
-        id: toastId,
-        description: `${errorMessage} Pode continuar e preencher os dados manualmente.`,
-        duration: 10_000,
-      });
+      setMessage(errorMessage);
+      toast.warning(errorMessage);
       updateStatus("unavailable");
     }
-  }, [onVerified, updateStatus, value, verificationEnabled, verifyContributor]);
+  }, [updateStatus, value, verificationEnabled, verifyContributor]);
 
   useEffect(() => {
     const normalized = normalizeTaxNumber(value);
@@ -158,10 +175,19 @@ export function NifVerificationField({
       />
 
       {status === "checking" && (
-        <p className="flex items-center gap-2 text-xs text-muted-foreground" role="status">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground" role="status">
           <Icon name="LoaderCircle" className="h-3.5 w-3.5 animate-spin" />
-          A verificar o NIF na SETIC-FP...
-        </p>
+          <span>A verificar o NIF na SETIC-FP...</span>
+          <button
+            type="button"
+            onClick={cancelVerification}
+            className="inline-flex items-center justify-center rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+            aria-label="Cancelar validação do NIF"
+            title="Cancelar validação"
+          >
+            <Icon name="X" className="h-3 w-3" />
+          </button>
+        </div>
       )}
 
       {(status === "verified" || status === "restricted") && contributor && (
@@ -190,10 +216,34 @@ export function NifVerificationField({
       )}
 
       {status === "not_found" && (
-        <p className="flex items-center gap-2 text-xs text-destructive" role="alert">
-          <Icon name="CircleX" className="h-3.5 w-3.5" />
-          {message}
-        </p>
+        <div className="space-y-2" role="alert">
+          <p className="flex items-center gap-2 text-xs text-destructive">
+            <Icon name="CircleX" className="h-3.5 w-3.5" />
+            {message}
+          </p>
+          {allowProceedWithoutVerification && proceedWarningMessage && (
+            <p className="text-xs text-amber-700 dark:text-amber-300">
+              {proceedWarningMessage}
+            </p>
+          )}
+          <Button type="button" variant="outline" size="sm" onClick={() => void verify()}>
+            Repetir
+          </Button>
+        </div>
+      )}
+
+      {status === "unavailable" && (
+        <div className="space-y-2" role="alert">
+          {allowProceedWithoutVerification && proceedWarningMessage && (
+            <p className="flex max-w-full items-start gap-2 whitespace-normal break-words text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+              <Icon name="TriangleAlert" className="h-3.5 w-3.5" />
+              <span className="min-w-0 flex-1">{proceedWarningMessage}</span>
+            </p>
+          )}
+          <Button type="button" variant="outline" size="sm" onClick={() => void verify()}>
+            Repetir
+          </Button>
+        </div>
       )}
 
     </div>

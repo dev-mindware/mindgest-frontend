@@ -51,6 +51,17 @@ export function CartCheckoutForm({
         isPending,
     } = useCartCheckout({ cartItems, type, onSuccess, cashSessionId });
 
+    const handleValidationError = (errors: any) => {
+        console.error("Form Validation Errors:", errors);
+
+        if (errors?.items) {
+            ErrorMessage("Adicione pelo menos um produto ao carrinho antes de criar a factura-recibo.");
+            return;
+        }
+
+        ErrorMessage("Verifique os campos obrigatórios.");
+    };
+
     return (
         <>
             <div
@@ -93,10 +104,7 @@ export function CartCheckoutForm({
 
                 <Button
                     className="w-full"
-                    onClick={handleSubmit(handleCheckout, (errors) => {
-                        console.error("Form Validation Errors:", errors);
-                        ErrorMessage("Verifique os campos obrigatórios");
-                    })}
+                    onClick={handleSubmit(handleCheckout, handleValidationError)}
                     disabled={isPending}
                     data-tour="pos-submit"
                 >
