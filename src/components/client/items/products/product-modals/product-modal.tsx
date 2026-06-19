@@ -82,6 +82,8 @@ function AddProductFormContent() {
     isLoading: isTaxesLoading,
     pagination: taxPagination,
     setPage: setTaxPage,
+    taxSearch,
+    setTaxSearch,
   } = useTaxesSelect();
 
   const currentPlan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
@@ -213,6 +215,9 @@ function AddProductFormContent() {
                     isLoading={isTaxesLoading}
                     pagination={taxPagination}
                     onPageChange={setTaxPage}
+                    searchValue={taxSearch}
+                    onSearchChange={setTaxSearch}
+                    searchPlaceholder="Pesquisar imposto..."
                     placeholder="Seleccione um imposto"
                     error={errors.taxId?.message}
                     fullWidth

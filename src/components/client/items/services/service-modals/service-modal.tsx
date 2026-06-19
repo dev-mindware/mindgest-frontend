@@ -58,6 +58,8 @@ export function ServiceModal({ action }: ServiceModalProps) {
     isLoading: isTaxesLoading,
     pagination: taxPagination,
     setPage: setTaxPage,
+    taxSearch,
+    setTaxSearch,
   } = useTaxesSelect();
   const isOpen = open[modalId];
 
@@ -225,6 +227,9 @@ export function ServiceModal({ action }: ServiceModalProps) {
                     isLoading={isTaxesLoading}
                     pagination={taxPagination}
                     onPageChange={setTaxPage}
+                    searchValue={taxSearch}
+                    onSearchChange={setTaxSearch}
+                    searchPlaceholder="Pesquisar imposto..."
                     placeholder="Seleccione um imposto"
                     className="!w-full"
                     error={errors.taxId?.message}

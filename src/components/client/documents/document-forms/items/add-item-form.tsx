@@ -40,6 +40,8 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       taxOptions,
       pagination: taxPagination,
       setPage: setTaxPage,
+      taxSearch,
+      setTaxSearch,
     } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
       useState<ProductOption | null>(null);
@@ -316,6 +318,9 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   onChange={onChange}
                   pagination={taxPagination}
                   onPageChange={setTaxPage}
+                  searchValue={taxSearch}
+                  onSearchChange={setTaxSearch}
+                  searchPlaceholder="Pesquisar imposto..."
                   placeholder="Seleccione um imposto"
                   className="w-full"
                   error={errors.taxId?.message}
