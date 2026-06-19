@@ -58,7 +58,9 @@ export function CancelInvoiceModal() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Cliente:</span>
-                <span className="font-medium">{currentInvoice?.clientId}</span>
+                <span className="font-medium">
+                  {currentInvoice?.client?.name ?? currentInvoice?.clientId}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Valor:</span>

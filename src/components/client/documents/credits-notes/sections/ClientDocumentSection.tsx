@@ -6,6 +6,7 @@ import type { CreditNoteFormData } from "@/schemas";
 import type { Client } from "@/types/clients";
 import { Button, Icon, Input } from "@/components";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CONSUMIDOR_FINAL_CLIENT } from "@/utils/credit-notes";
 
 interface ClientDocumentSectionProps {
   register: UseFormRegister<CreditNoteFormData>;
@@ -22,6 +23,8 @@ export function ClientDocumentSection({
   docType,
   client,
 }: ClientDocumentSectionProps) {
+  // Sem cliente registado (factura ao consumidor final), mostra os dados genéricos.
+  const c: any = client ?? CONSUMIDOR_FINAL_CLIENT;
   return (
     <section className="rounded-lg border bg-card p-5 shadow-sm">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -53,13 +56,15 @@ export function ClientDocumentSection({
       <input type="hidden" {...register("invoiceBody.client.name")} />
       <input type="hidden" {...register("invoiceBody.client.taxNumber")} />
       <input type="hidden" {...register("invoiceBody.client.phone")} />
+      <input type="hidden" {...register("invoiceBody.client.email")} />
       <input type="hidden" {...register("invoiceBody.client.address")} />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Input label="Nome" value={client?.name || "Consumidor Final"} readOnly />
-        <Input label="NIF" value={client?.taxNumber || "999999999"} readOnly />
-        <Input label="Telefone" value={client?.phone || "Não informado"} readOnly />
-        <Input label="Endereço" value={client?.address || "Não informado"} readOnly />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Input label="Nome" value={c.name || "Consumidor Final"} readOnly />
+        <Input label="NIF" value={c.taxNumber || "Não informado"} readOnly />
+        <Input label="Email" value={c.email || "Não informado"} readOnly />
+        <Input label="Telefone" value={c.phone || "Não informado"} readOnly />
+        <Input label="Endereço" value={c.address || "Não informado"} readOnly />
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">

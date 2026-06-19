@@ -6,7 +6,7 @@ import {
   TitleList,
 } from "@/components/common";
 import { useFetchById } from "@/hooks/common";
-import { CreditNoteForm } from "./credfit-notes-form";
+import { CreditNoteForm } from "./credit-notes-form";
 import { InvoiceDetails } from "@/types/credit-note";
 
 type CreditNotesProps = {

@@ -1,15 +1,17 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreditNoteSchema, CreditNoteFormData } from "@/schemas";
 import { useCreateCreditNote, useAnnulationNote } from "@/hooks";
 import { InvoiceDetails, ReceiptDetails } from "@/types/credit-note";
-import { isInvoice, isReceipt } from "@/types/credit-notes-guards";
+import { isInvoice } from "@/types/credit-notes-guards";
 import { mapDocumentToCreditNoteDefaults } from "@/utils/credit-notes";
 import { calculateCreditNoteCorrection } from "@/utils";
 import { ButtonSubmit } from "@/components";
+import { ManagerAuthModal, MODAL_MANAGER_AUTH_ID } from "@/components/client/pos";
+import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
 import { ReasonNotesSection } from "./sections/ReasonNotesSection";
 import { ClientDocumentSection } from "./sections/ClientDocumentSection";
@@ -87,6 +89,7 @@ type Props = {
 
 export function CreditNoteForm({ invoice, docType }: Props) {
   const router = useRouter();
+  const { openModal } = useModal();
   const { mutateAsync: annulationNote } = useAnnulationNote();
   const { mutateAsync: createCreditNote } = useCreateCreditNote();
 
@@ -97,6 +100,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
     control,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<CreditNoteFormData>({
     resolver: zodResolver(CreditNoteSchema),
@@ -115,7 +119,10 @@ export function CreditNoteForm({ invoice, docType }: Props) {
       setValue("invoiceBody.client.taxNumber", (invoice.client as any).taxNumber || "");
       setValue("invoiceBody.client.address", (invoice.client as any).address || "");
       setValue("invoiceBody.client.phone", (invoice.client as any).phone || "");
+      setValue("invoiceBody.client.email", (invoice.client as any).email || "");
     }
+    // Sem cliente registado, ficam os valores genéricos de consumidor final
+    // definidos nos defaults (ver mapDocumentToCreditNoteDefaults).
   }, [invoice, setValue]);
 
   // Recalculo dos totais e delta (creditNote)
@@ -124,12 +131,26 @@ export function CreditNoteForm({ invoice, docType }: Props) {
 
     const correction = calculateCreditNoteCorrection(
       {
-        items: isInvoice(invoice) ? invoice.items : [],
+        items: isInvoice(invoice)
+          ? invoice.items.map((item) => ({
+              id: item.id,
+              name: item.name,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              tax: (item as any).tax != null ? Number((item as any).tax) : undefined,
+            }))
+          : [],
         subtotal: invoice.subtotal,
         taxAmount: invoice.taxAmount,
         discountAmount: invoice.discountAmount,
       },
-      watchedItems || [],
+      (watchedItems || []).map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        tax: item.tax,
+      })),
     );
 
     setValue("invoiceBody.subtotal", correction.invoiceBody.subtotal);
@@ -144,34 +165,77 @@ export function CreditNoteForm({ invoice, docType }: Props) {
     name: "invoiceBody.items",
   });
 
-  async function onSubmit(data: CreditNoteFormData) {
+  // Anulação total: a autorização do gerente é recolhida pelo ManagerAuthModal
+  // (scanner) e só então a nota de crédito de anulação é criada.
+  async function handleManagerAuthenticated(barcode: string) {
+    const data = getValues();
     try {
-      if (data.reason === "ANNULMENT") {
-        await annulationNote({
-          id: invoice.id,
-          reason: data.reason,
-          notes: data.notes ?? "",
-          managerBarcode: data.managerBarcode,
-        });
-      } else {
-        const originalTotal = invoice.total ?? invoice.totalAmount ?? 0;
-        if (data.invoiceBody.total > originalTotal + 0.01) {
-          ErrorMessage(
-            "O total corrigido não pode ser superior ao total do documento original.",
-          );
-          return;
-        }
-
-        await createCreditNote({
-          id: invoice.id,
-          data,
-        });
-      }
-
+      await annulationNote({
+        id: invoice.id,
+        reason: "ANNULMENT",
+        notes: data.notes ?? "",
+        managerBarcode: barcode,
+      });
       router.replace("/documents?tab=credit-notes");
     } catch (error: any) {
       ErrorMessage(
-        error?.response?.data?.message || "Erro ao emitir nota de crédito"
+        error?.response?.data?.message || "Erro ao emitir nota de crédito",
+      );
+      // Relança para o modal limpar o buffer e permitir nova leitura.
+      throw error;
+    }
+  }
+
+  async function onSubmit(data: CreditNoteFormData) {
+    if (data.reason === "ANNULMENT") {
+      // Pede autorização do gerente; a anulação acontece em handleManagerAuthenticated.
+      openModal(MODAL_MANAGER_AUTH_ID);
+      return;
+    }
+
+    // Correção/rectificação: a nota de crédito só pode reduzir valor (art. 3.º l)).
+    const originalTotal = invoice.total ?? invoice.totalAmount ?? 0;
+    if (data.invoiceBody.total > originalTotal + 0.01) {
+      ErrorMessage(
+        "O total corrigido não pode ser superior ao total do documento original.",
+      );
+      return;
+    }
+    if (data.creditNote.total <= 0) {
+      ErrorMessage("A nota de crédito não altera o valor do documento.");
+      return;
+    }
+    const hasLineIncrease = data.creditNote.items.some(
+      (item) =>
+        item.newPrice > item.originalPrice + 0.01 ||
+        item.quantity > item.originalQuantity,
+    );
+    if (hasLineIncrease) {
+      ErrorMessage(
+        "Uma nota de crédito só pode reduzir: não aumente a quantidade nem o preço dos itens.",
+      );
+      return;
+    }
+
+    // `tax`/`taxId` só servem para o cálculo no frontend; não fazem parte do
+    // contrato de invoiceBody.items, por isso são removidos antes do envio.
+    const payload = {
+      ...data,
+      invoiceBody: {
+        ...data.invoiceBody,
+        items: data.invoiceBody.items.map(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ({ tax, taxId, ...item }) => item,
+        ),
+      },
+    };
+
+    try {
+      await createCreditNote({ id: invoice.id, data: payload });
+      router.replace("/documents?tab=credit-notes");
+    } catch (error: any) {
+      ErrorMessage(
+        error?.response?.data?.message || "Erro ao emitir nota de crédito",
       );
     }
   }
@@ -179,7 +243,6 @@ export function CreditNoteForm({ invoice, docType }: Props) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => {
-        console.log("Validation errors in CreditNoteForm:", errors);
         const errorList = getFriendlyErrorMessages(errors);
         if (errorList.length > 0) {
           ErrorMessage(`Erro de validação: ${errorList.join(" | ")}`);
@@ -198,7 +261,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
         />
       </section>
 
-      {reason === "CORRECTION" && (
+      {reason !== "ANNULMENT" && (
         <div className="space-y-6">
           <div data-tour="credit-note-client">
             <ClientDocumentSection
@@ -230,6 +293,8 @@ export function CreditNoteForm({ invoice, docType }: Props) {
             : "Emitir Nota de Crédito"}
         </ButtonSubmit>
       </div>
+
+      <ManagerAuthModal onAuthenticated={handleManagerAuthenticated} />
     </form>
   );
 }

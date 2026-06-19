@@ -15,6 +15,7 @@ export * from "./client";
 export * from "./tax";
 export * from "./print-pos-document";
 export * from "./credit-note-correction";
+export * from "./credit-note-reasons";
 export * from "./cash-session";
 export * from "./plan-pricing";
 export * from "./api-error";

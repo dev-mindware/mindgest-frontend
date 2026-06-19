@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import {
   Controller,
   useWatch,
@@ -8,30 +7,18 @@ import {
   type UseFieldArrayAppend,
   type UseFormRegister,
 } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import type { CreditNoteFormData } from "@/schemas";
 import { Button, Input, InputCurrency, Separator } from "@/components";
-import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { formatCurrency } from "@/utils";
-
-type ItemOption = {
-  value: string | number;
-  label: string;
-  data?: {
-    id: string;
-    name: string;
-    price: number;
-    type: "PRODUCT" | "SERVICE";
-  };
-  __isNew__?: boolean;
-};
 
 interface ItemsSummarySectionProps {
   control: Control<CreditNoteFormData>;
   register: UseFormRegister<CreditNoteFormData>;
   errors: any;
   fields: any[];
-  append: UseFieldArrayAppend<CreditNoteFormData, "invoiceBody.items">;
+  // Mantido na interface por compatibilidade; a nota de crédito não acrescenta itens.
+  append?: UseFieldArrayAppend<CreditNoteFormData, "invoiceBody.items">;
   remove: (index: number) => void;
 }
 
@@ -40,10 +27,8 @@ export function ItemsSummarySection({
   register,
   errors,
   fields,
-  append,
   remove,
 }: ItemsSummarySectionProps) {
-  const [selectedItem, setSelectedItem] = useState<ItemOption | null>(null);
   const watchedItems = useWatch({ control, name: "invoiceBody.items" });
   const creditNoteSubtotal = useWatch({ control, name: "creditNote.subtotal" });
   const creditNoteTaxAmount = useWatch({ control, name: "creditNote.taxAmount" });
@@ -51,73 +36,14 @@ export function ItemsSummarySection({
   const invoiceBodySubtotal = useWatch({ control, name: "invoiceBody.subtotal" });
   const invoiceBodyTotal = useWatch({ control, name: "invoiceBody.total" });
 
-  const existingIds = useMemo(
-    () => new Set((watchedItems || []).map((item) => String(item.id))),
-    [watchedItems],
-  );
-  const selectedAlreadyExists = selectedItem
-    ? existingIds.has(String(selectedItem.value))
-    : false;
-  const canAdd = Boolean(
-    selectedItem?.data &&
-      Number(selectedItem.data.price) > 0 &&
-      !selectedItem.__isNew__ &&
-      !selectedAlreadyExists,
-  );
-
-  const handleAddItem = () => {
-    if (!selectedItem?.data || !canAdd) return;
-
-    append({
-      id: String(selectedItem.data.id || selectedItem.value),
-      name: selectedItem.data.name || selectedItem.label,
-      quantity: 1,
-      price: Number(selectedItem.data.price || 0),
-      type: selectedItem.data.type,
-    });
-    setSelectedItem(null);
-  };
-
   return (
     <section className="space-y-6 rounded-lg border bg-card p-5 shadow-sm">
       <div>
         <h2 className="text-base font-semibold">Itens corrigidos</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ajuste a quantidade ou o preço dos itens existentes. Também pode
-          acrescentar um produto ou serviço do catálogo.
+          Reduza a quantidade ou o preço dos itens, ou remova-os. Uma nota de
+          crédito só pode reduzir o valor do documento — não acrescenta itens.
         </p>
-      </div>
-
-      <div className="grid gap-3 rounded-lg border border-dashed bg-muted/20 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-        <AsyncCreatableSelectField
-          endpoint="/items"
-          label="Adicionar produto ou serviço"
-          placeholder="Pesquisar no catálogo..."
-          value={selectedItem}
-          onChange={setSelectedItem}
-          displayFields={["name", "description"]}
-          minChars={2}
-          formatCreateLabel={(value) => `O item "${value}" não existe no catálogo`}
-        />
-        <Button
-          type="button"
-          onClick={handleAddItem}
-          disabled={!canAdd}
-          className="gap-2 md:min-w-32"
-        >
-          <Plus className="h-4 w-4" />
-          Adicionar
-        </Button>
-        {selectedAlreadyExists && (
-          <p className="text-sm text-destructive md:col-span-2">
-            Este item já faz parte do documento corrigido.
-          </p>
-        )}
-        {selectedItem?.__isNew__ && (
-          <p className="text-sm text-muted-foreground md:col-span-2">
-            Crie primeiro o item na página de produtos ou serviços.
-          </p>
-        )}
       </div>
 
       <div className="space-y-3">

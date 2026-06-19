@@ -1,8 +1,1103 @@
 {
-  "status": "interrupted",
-  "failedTests": [
-    "41d3fd2474a19feb00a1-77ae1c228501fcae1bcb",
-    "41d3fd2474a19feb00a1-d8289c8b27a865e4e94f",
-    "41d3fd2474a19feb00a1-2a5060bc63f2dadb48a6"
-  ]
+  "data": [
+    {
+      "id": "cmqjacj1k001y01nslzcrw4cm",
+      "email": "johnsimonjs22@gmail.com",
+      "name": "João Kanda Simão JS",
+      "phone": "922691187",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "7412214327652",
+      "terminalNumber": "011",
+      "createdAt": "2026-06-18T10:16:28+01:00",
+      "updatedAt": "2026-06-18T10:16:28+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmqfe4mkb000o01o0xrcxr7a8",
+          "name": "Mindware Cuca",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmqja0ll4001v01nst9vdb15l",
+      "email": "domingosangelo31@gmail.com",
+      "name": "Ângelo",
+      "phone": "934567823",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmpsak5j8008g01o9teyhtasw",
+      "barcode": null,
+      "terminalNumber": "005",
+      "createdAt": "2026-06-18T10:07:12+01:00",
+      "updatedAt": "2026-06-18T10:07:12+01:00",
+      "company": {
+        "id": "cmpsak5j8008g01o9teyhtasw",
+        "name": "AngoTech",
+        "email": "domingosvalentim515@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpsbwrn5009501o9m066we1b",
+          "name": "Loja benfica",
+          "email": "domingosvalentim515@gmail.com"
+        }
+      ]
+    },
+    {
+      "id": "cmqj9wlge001u01nsu1f9lcpn",
+      "email": "domingosangelo12@gmail.com",
+      "name": "John  Simon",
+      "phone": "923849438",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmpsak5j8008g01o9teyhtasw",
+      "barcode": "9519058062140",
+      "terminalNumber": "004",
+      "createdAt": "2026-06-18T10:04:05+01:00",
+      "updatedAt": "2026-06-18T10:04:05+01:00",
+      "company": {
+        "id": "cmpsak5j8008g01o9teyhtasw",
+        "name": "AngoTech",
+        "email": "domingosvalentim515@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmqj9qhap001o01nst1x3k6sq",
+          "name": "Loja central",
+          "email": "fillial21@gmail.com"
+        }
+      ]
+    },
+    {
+      "id": "cmqj9qy6o001p01nshiumdoxr",
+      "email": "marketautoangola2024@gmail.com",
+      "name": "Nkazikanda Simão NS",
+      "phone": "924643435",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "6429005480404",
+      "terminalNumber": "010",
+      "createdAt": "2026-06-18T09:59:42+01:00",
+      "updatedAt": "2026-06-18T09:59:42+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmqfe4mkb000o01o0xrcxr7a8",
+          "name": "Mindware Cuca",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmqgheeb4000x01maikqob72c",
+      "email": "kisscake.geral@gmail.com",
+      "name": "KISS CAKE",
+      "phone": "947250299",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmqghee0j000w01madb36d2ln",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-16T11:10:34+01:00",
+      "updatedAt": "2026-06-16T11:10:43+01:00",
+      "company": {
+        "id": "cmqghee0j000w01madb36d2ln",
+        "name": "KISS CAKE COMERCIO E SERVICO, LED",
+        "email": "kisscake.geral@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmqgaf1he000d01mat6n2meig",
+      "email": "domingosangelo3@gmail.com",
+      "name": "Ângelo",
+      "phone": "934608251",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmqgaf16v000c01mar3jv8ogh",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-16T07:55:07+01:00",
+      "updatedAt": "2026-06-16T07:55:11+01:00",
+      "company": {
+        "id": "cmqgaf16v000c01mar3jv8ogh",
+        "name": "Ângelo Tchiwano Domingos",
+        "email": "domingosange1@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmqfs551u000101nqr13rofks",
+      "email": "miguelpanda2p@gmail.com",
+      "name": "Miguel Panda",
+      "phone": "943831569",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "6878769899500",
+      "terminalNumber": "009",
+      "createdAt": "2026-06-15T23:23:32+01:00",
+      "updatedAt": "2026-06-16T19:47:35+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "st-mindware-1",
+          "name": "Mindware Talatona",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmqfs3xp4000001nq2ev55n91",
+      "email": "javasimonscript@gmail.com",
+      "name": "Nkazikanda Simão",
+      "phone": "924643434",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "1634280576963",
+      "terminalNumber": "008",
+      "createdAt": "2026-06-15T23:22:36+01:00",
+      "updatedAt": "2026-06-15T23:22:36+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmqfe4mkb000o01o0xrcxr7a8",
+          "name": "Mindware Cuca",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmqfrrjj0000001qc93auoti4",
+      "email": "jenna.ortega@gmail.com",
+      "name": "Jenna Ortega",
+      "phone": "950387593",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": null,
+      "terminalNumber": "007",
+      "createdAt": "2026-06-15T23:12:58+01:00",
+      "updatedAt": "2026-06-15T23:12:58+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmqfe4mkb000o01o0xrcxr7a8",
+          "name": "Mindware Cuca",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmqfbky4x000j01o0urej7q75",
+      "email": "SUPORTECGERAL@GMAIL.COM",
+      "name": "SUPORTEC",
+      "phone": "926590544",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmqfbkxvz000i01o04q1ofjrk",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-15T15:39:56+01:00",
+      "updatedAt": "2026-06-18T14:57:20+01:00",
+      "company": {
+        "id": "cmqfbkxvz000i01o04q1ofjrk",
+        "name": "Suportec comercio e serviços lda",
+        "email": "suportecgeral@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmqfag9py000301o00752o823",
+      "email": "adaoantonioservice@gmail.com",
+      "name": "Adão António Ganga",
+      "phone": "946808324",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmqfag9fx000201o0d9payphh",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-15T15:08:18+01:00",
+      "updatedAt": "2026-06-16T18:23:11+01:00",
+      "company": {
+        "id": "cmqfag9fx000201o0d9payphh",
+        "name": "DLACMAKERS",
+        "email": "adaoantonioservice@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmqdxhglo000301qrvanoal92",
+      "email": "johnsimonjs@gmail.com",
+      "name": "John Simon",
+      "phone": "922691188",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmqdxhgc6000201qr0tscf1br",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-14T16:17:33+01:00",
+      "updatedAt": "2026-06-15T23:31:08+01:00",
+      "company": {
+        "id": "cmqdxhgc6000201qr0tscf1br",
+        "name": "Smart Broker",
+        "email": "smartbroker@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmqclk3o000cq01pdv0b82cny",
+      "email": "leo.silva@gmail.com",
+      "name": "Leo da Silva",
+      "phone": "957749395",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmqclk3dk00cp01pd4p4agf8v",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-13T17:55:54+01:00",
+      "updatedAt": "2026-06-13T17:55:58+01:00",
+      "company": {
+        "id": "cmqclk3dk00cp01pd4p4agf8v",
+        "name": "Leo - Sexy Shop",
+        "email": "leo.doctrav@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmqchdesk00bu01pdjzufbw2h",
+      "email": "thiago.ornelas@gmail.com",
+      "name": "Thiago Ornelas",
+      "phone": "939142767",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmq6g146s007001pdogr2jou2",
+      "barcode": null,
+      "terminalNumber": "003",
+      "createdAt": "2026-06-13T15:58:44+01:00",
+      "updatedAt": "2026-06-17T10:29:12+01:00",
+      "company": {
+        "id": "cmq6g146s007001pdogr2jou2",
+        "name": "ULA YETU",
+        "email": "afonsodasilvavicente1@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmq6g14h4007401pd0u3optsf",
+          "name": "ULA YETU",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq89lxfa009j01pdfcmkmrmf",
+      "email": "hermes.cardoso@gmail.com",
+      "name": "Hermes Cardoso",
+      "phone": "953009384",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmouf23qf000001nyaana3xbq",
+      "barcode": null,
+      "terminalNumber": "003",
+      "createdAt": "2026-06-10T17:10:19+01:00",
+      "updatedAt": "2026-06-10T17:42:00+01:00",
+      "company": {
+        "id": "cmouf23qf000001nyaana3xbq",
+        "name": "Zenit Skype",
+        "email": "zenitskype@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmouf242c000401nyxpzh75ze",
+          "name": "Zenit Skype",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq84849l009101pde8tdq72v",
+      "email": "teste@gmail.com",
+      "name": "tesst",
+      "phone": "945332211",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmpixonns001901rtcsqqvvug",
+      "barcode": null,
+      "terminalNumber": "005",
+      "createdAt": "2026-06-10T14:39:37+01:00",
+      "updatedAt": "2026-06-10T15:50:31+01:00",
+      "company": {
+        "id": "cmpixonns001901rtcsqqvvug",
+        "name": "NTENZELO INC",
+        "email": "jose@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpixony8001d01rtgiq71zhj",
+          "name": "NTENZELO INC",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq83rpze008z01pdsdi06l4n",
+      "email": "jones@gmail.com",
+      "name": "jones Adão",
+      "phone": "945678932",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmpixonns001901rtcsqqvvug",
+      "barcode": null,
+      "terminalNumber": "004",
+      "createdAt": "2026-06-10T14:26:52+01:00",
+      "updatedAt": "2026-06-10T15:05:37+01:00",
+      "company": {
+        "id": "cmpixonns001901rtcsqqvvug",
+        "name": "NTENZELO INC",
+        "email": "jose@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpixony8001d01rtgiq71zhj",
+          "name": "NTENZELO INC",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq8353jo008u01pd798f5m37",
+      "email": "john@mindgest.com",
+      "name": "JOHNNY CARDOSO",
+      "phone": "945551113",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmpixonns001901rtcsqqvvug",
+      "barcode": null,
+      "terminalNumber": "003",
+      "createdAt": "2026-06-10T14:09:16+01:00",
+      "updatedAt": "2026-06-10T14:09:16+01:00",
+      "company": {
+        "id": "cmpixonns001901rtcsqqvvug",
+        "name": "NTENZELO INC",
+        "email": "jose@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpixony8001d01rtgiq71zhj",
+          "name": "NTENZELO INC",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq7rhb2a008q01pdu6q5xfn3",
+      "email": "testecaixa@gamil.com",
+      "name": "Caixa de Teste",
+      "phone": "922345678",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmpixonns001901rtcsqqvvug",
+      "barcode": null,
+      "terminalNumber": "002",
+      "createdAt": "2026-06-10T08:42:51+01:00",
+      "updatedAt": "2026-06-10T08:42:51+01:00",
+      "company": {
+        "id": "cmpixonns001901rtcsqqvvug",
+        "name": "NTENZELO INC",
+        "email": "jose@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpixony8001d01rtgiq71zhj",
+          "name": "NTENZELO INC",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq7443a6008g01pdb86dj6vs",
+      "email": "getsaibor@gmail.com",
+      "name": "Josemar Frederico",
+      "phone": "923078795",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmq6g146s007001pdogr2jou2",
+      "barcode": "3641193532380",
+      "terminalNumber": "002",
+      "createdAt": "2026-06-09T21:48:43+01:00",
+      "updatedAt": "2026-06-16T19:29:57+01:00",
+      "company": {
+        "id": "cmq6g146s007001pdogr2jou2",
+        "name": "ULA YETU",
+        "email": "afonsodasilvavicente1@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmq6g14h4007401pd0u3optsf",
+          "name": "ULA YETU",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmq6njlmh007t01pd4sw48ttf",
+      "email": "vampersiejoaoantonio@gmail.com",
+      "name": "João josé",
+      "phone": "945763204",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmq6njldq007s01pdyilf06nm",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-09T14:04:53+01:00",
+      "updatedAt": "2026-06-10T16:27:00+01:00",
+      "company": {
+        "id": "cmq6njldq007s01pdyilf06nm",
+        "name": "JOÃO JOSÉ J. ANTÓNIO",
+        "email": "vampersiejoaoantonio@gmail.co"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmq6l96a4007f01pdik9xjoo6",
+      "email": "maurodinisraimundo@gmail.com",
+      "name": "Mauro Dinis Raimundo",
+      "phone": "945551357",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmq6l95zu007e01pd7523150x",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-09T13:00:47+01:00",
+      "updatedAt": "2026-06-09T13:01:29+01:00",
+      "company": {
+        "id": "cmq6l95zu007e01pd7523150x",
+        "name": "IMACODE PROG",
+        "email": "imacode@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmq6huars007901pd48b9s8hk",
+      "email": "maurotwister475@gmail.com",
+      "name": "MAURO DENIS",
+      "phone": "945551191",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmq6huaip007801pdorviz4th",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-09T11:25:15+01:00",
+      "updatedAt": "2026-06-18T15:13:01+01:00",
+      "company": {
+        "id": "cmq6huaip007801pdorviz4th",
+        "name": "MAURO E FILHOS",
+        "email": "imacode@gmail.cpm"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmq6g14fy007101pdohphr56y",
+      "email": "afonsodasilvavicente1@gmail.com",
+      "name": "Homem de Ferro",
+      "phone": "926274701",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmq6g146s007001pdogr2jou2",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-09T10:34:34+01:00",
+      "updatedAt": "2026-06-17T10:50:31+01:00",
+      "company": {
+        "id": "cmq6g146s007001pdogr2jou2",
+        "name": "ULA YETU",
+        "email": "afonsodasilvavicente1@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmq5ijwiu006l01pd8x62cg4n",
+      "email": "rufinotb07@gmail.com",
+      "name": "RUny afonso",
+      "phone": "927 065 790",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmq5ijw91006k01pd47g6kc78",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-08T18:57:23+01:00",
+      "updatedAt": "2026-06-08T19:49:13+01:00",
+      "company": {
+        "id": "cmq5ijw91006k01pd47g6kc78",
+        "name": "DOMINGAS SERVES - COMERCIO GERAL E PRESTAÇAO DE SERVIÇO, LDA",
+        "email": "rufinotb07@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmq3ik2vr000u01s5k1jksenu",
+      "email": "afonsodasilva0308@gmail.com",
+      "name": "Afonso Vicente",
+      "phone": "943100922",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmq3ik2l6000t01s5lswc455z",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-07T09:21:59+01:00",
+      "updatedAt": "2026-06-08T18:08:25+01:00",
+      "company": {
+        "id": "cmq3ik2l6000t01s5lswc455z",
+        "name": "BANTU ULA",
+        "email": "afonsodasilva0308@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpzztb32000m01s5t8fb05pk",
+      "email": "domingosangelo1@gmail.com",
+      "name": "Ângelo",
+      "phone": "943933515",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmpsak5j8008g01o9teyhtasw",
+      "barcode": null,
+      "terminalNumber": "003",
+      "createdAt": "2026-06-04T22:13:58+01:00",
+      "updatedAt": "2026-06-13T15:01:01+01:00",
+      "company": {
+        "id": "cmpsak5j8008g01o9teyhtasw",
+        "name": "AngoTech",
+        "email": "domingosvalentim515@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpsak5t4008k01o9g5vvknzz",
+          "name": "AngoTech",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmpvfp7z4000101s5j65yw6t6",
+      "email": "silvinorco@gmail.com",
+      "name": "Silvino António Fortunato",
+      "phone": "943467757",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpvfp7px000001s5hvy4xzn6",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-06-01T17:39:50+01:00",
+      "updatedAt": "2026-06-01T17:40:00+01:00",
+      "company": {
+        "id": "cmpvfp7px000001s5hvy4xzn6",
+        "name": "Bel fashion",
+        "email": "silvinorco@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpsak5sb008h01o98t0oices",
+      "email": "domingosangelo02@gmail.com",
+      "name": "angelo domingos",
+      "phone": "949933515",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpsak5j8008g01o9teyhtasw",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-30T12:52:38+01:00",
+      "updatedAt": "2026-06-18T11:29:24+01:00",
+      "company": {
+        "id": "cmpsak5j8008g01o9teyhtasw",
+        "name": "AngoTech",
+        "email": "domingosvalentim515@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpnw3t2k005v01o9ph8q6za0",
+      "email": "leodasilva.geral.ao@gmail.com",
+      "name": "Leo da Silva",
+      "phone": "999999999",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpnw3stp005u01o9fcurj8lh",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-27T10:56:55+01:00",
+      "updatedAt": "2026-06-09T08:27:22+01:00",
+      "company": {
+        "id": "cmpnw3stp005u01o9fcurj8lh",
+        "name": "Mindgest",
+        "email": "mindgest.geral@midgest.ao"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpmcn1vb005d01o92zpupfaq",
+      "email": "jones.mindware@mindgest.com",
+      "name": "JONES ADÃO",
+      "phone": "939270194",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpmcn1ma005c01o995dgfwsb",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-26T09:04:15+01:00",
+      "updatedAt": "2026-05-26T09:04:18+01:00",
+      "company": {
+        "id": "cmpmcn1ma005c01o995dgfwsb",
+        "name": "JONES E FILHOS",
+        "email": "jones.mindware@mindgest.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpkxc4sg003c01o9svqkfr30",
+      "email": "otnielcarvalho12@gmail.com",
+      "name": "Otniel",
+      "phone": "929068567",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpkxc4ic003b01o9a4qmv7fd",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-25T09:08:05+01:00",
+      "updatedAt": "2026-05-28T20:06:07+01:00",
+      "company": {
+        "id": "cmpkxc4ic003b01o9a4qmv7fd",
+        "name": "OTECH - TECNOLOGIA E SERVIÇOS DE IT",
+        "email": "otnieljorge65@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpixonx1001a01rtef5afx5d",
+      "email": "jose.mindware@mindgest.com",
+      "name": "JOSE LEVI NTEZOLO",
+      "phone": "945551192",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpixonns001901rtcsqqvvug",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-23T23:42:17+01:00",
+      "updatedAt": "2026-06-18T13:21:43+01:00",
+      "company": {
+        "id": "cmpixonns001901rtcsqqvvug",
+        "name": "NTENZELO INC",
+        "email": "jose@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmpbm6ido030901mxnn0ckl6p",
+      "email": "ludmila.lopes@gmail.com",
+      "name": "Ludmila Lopes",
+      "phone": "943342909",
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmpbjmwmj02zr01mxdyw9xclm",
+      "barcode": null,
+      "terminalNumber": "003",
+      "createdAt": "2026-05-18T20:45:51+01:00",
+      "updatedAt": "2026-06-12T11:54:45+01:00",
+      "company": {
+        "id": "cmpbjmwmj02zr01mxdyw9xclm",
+        "name": "Mpetelo Messani",
+        "email": "joaomario365@hotmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpbjmwxi02zv01mxon8djxps",
+          "name": "Cybernati",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmpbm3g9m030801mx8fo1a8yc",
+      "email": "agostinhofamorosa@gmail.com",
+      "name": "Agostinho Famorosa",
+      "phone": "945332002",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmpbjmwmj02zr01mxdyw9xclm",
+      "barcode": null,
+      "terminalNumber": "002",
+      "createdAt": "2026-05-18T20:43:29+01:00",
+      "updatedAt": "2026-05-18T20:49:32+01:00",
+      "company": {
+        "id": "cmpbjmwmj02zr01mxdyw9xclm",
+        "name": "Mpetelo Messani",
+        "email": "joaomario365@hotmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmpbjmwxi02zv01mxon8djxps",
+          "name": "Cybernati",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmpbjmww702zs01mxlqivu5ti",
+      "email": "joaomario365@hotmail.com",
+      "name": "João de Carvalho",
+      "phone": "925359595",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmpbjmwmj02zr01mxdyw9xclm",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-18T19:34:38+01:00",
+      "updatedAt": "2026-06-15T17:46:28+01:00",
+      "company": {
+        "id": "cmpbjmwmj02zr01mxdyw9xclm",
+        "name": "Mpetelo Messani",
+        "email": "joaomario365@hotmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmoy8a5v4000201nzb354ttn7",
+      "email": "minwareofficial@mail.com",
+      "name": "Sérgio Seba",
+      "phone": "939142753",
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmouf23qf000001nyaana3xbq",
+      "barcode": null,
+      "terminalNumber": "002",
+      "createdAt": "2026-05-09T11:55:47+01:00",
+      "updatedAt": "2026-05-09T11:55:47+01:00",
+      "company": {
+        "id": "cmouf23qf000001nyaana3xbq",
+        "name": "Zenit Skype",
+        "email": "zenitskype@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "cmouhtv0k000k01nyj1i3z9hg",
+          "name": "KGMD",
+          "email": "kgm@gmail.com"
+        }
+      ]
+    },
+    {
+      "id": "cmovsvbgr001f01nyey9fqc10",
+      "email": "johnsimonjs21@gmail.com",
+      "name": "John Simon",
+      "phone": "922691189",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmovsvb79001e01nynpn3vrnf",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-07T19:08:48+01:00",
+      "updatedAt": "2026-06-17T11:59:08+01:00",
+      "company": {
+        "id": "cmovsvb79001e01nynpn3vrnf",
+        "name": "Joystline",
+        "email": "joystline@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmovdeajj000v01nykuzhzzh0",
+      "email": "runyyaquibuco@gmail.com",
+      "name": "Runy",
+      "phone": "936590019",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmovdea8r000u01nylqw6f4mv",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-07T11:55:39+01:00",
+      "updatedAt": "2026-06-09T17:02:21+01:00",
+      "company": {
+        "id": "cmovdea8r000u01nylqw6f4mv",
+        "name": "Young Escórcio",
+        "email": "youngescorcio@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmouf240m000101nyiv48ygbj",
+      "email": "jonataosacapia@gmail.com",
+      "name": "Jonatão Sacápia Cardoso",
+      "phone": "939142754",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmouf23qf000001nyaana3xbq",
+      "barcode": null,
+      "terminalNumber": "001",
+      "createdAt": "2026-05-06T19:54:24+01:00",
+      "updatedAt": "2026-06-16T22:58:25+01:00",
+      "company": {
+        "id": "cmouf23qf000001nyaana3xbq",
+        "name": "Zenit Skype",
+        "email": "zenitskype@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmoro7qwd001k2epo3t7wmgak",
+      "email": "cashier1.kandandu@mindgest.com",
+      "name": "Kandandu Supermercados - Operador 1",
+      "phone": null,
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmoro7qn3001g2epowe2wd73x",
+      "barcode": "10201",
+      "terminalNumber": "003",
+      "createdAt": "2026-05-04T21:47:25+01:00",
+      "updatedAt": "2026-05-04T21:47:25+01:00",
+      "company": {
+        "id": "cmoro7qn3001g2epowe2wd73x",
+        "name": "Kandandu Supermercados",
+        "email": "kandandu@mindgest.com"
+      },
+      "stores": [
+        {
+          "id": "st-kandandu-1",
+          "name": "Kandandu Morro Bento",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoro7qw6001j2epoo764151r",
+      "email": "manager1.kandandu@mindgest.com",
+      "name": "Kandandu Supermercados - Gerente 1",
+      "phone": null,
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmoro7qn3001g2epowe2wd73x",
+      "barcode": "10101",
+      "terminalNumber": "002",
+      "createdAt": "2026-05-04T21:47:25+01:00",
+      "updatedAt": "2026-05-04T21:47:25+01:00",
+      "company": {
+        "id": "cmoro7qn3001g2epowe2wd73x",
+        "name": "Kandandu Supermercados",
+        "email": "kandandu@mindgest.com"
+      },
+      "stores": [
+        {
+          "id": "st-kandandu-1",
+          "name": "Kandandu Morro Bento",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoro7qw0001i2epomcmbf88w",
+      "email": "owner.kandandu@mindgest.com",
+      "name": "Kandandu Supermercados - Proprietário",
+      "phone": null,
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmoro7qn3001g2epowe2wd73x",
+      "barcode": "10000",
+      "terminalNumber": "001",
+      "createdAt": "2026-05-04T21:47:25+01:00",
+      "updatedAt": "2026-06-13T15:43:18+01:00",
+      "company": {
+        "id": "cmoro7qn3001g2epowe2wd73x",
+        "name": "Kandandu Supermercados",
+        "email": "kandandu@mindgest.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmoqh7u30002c01malle1at9m",
+      "email": "cashier3.mindware@mindgest.com",
+      "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA - Operador 3",
+      "phone": null,
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "20203",
+      "terminalNumber": "006",
+      "createdAt": "2026-05-04T01:43:45+01:00",
+      "updatedAt": "2026-06-15T22:32:51+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "st-mindware-1",
+          "name": "Mindware Talatona",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoqh7u2v002b01ma51eihx69",
+      "email": "cashier2.mindware@mindgest.com",
+      "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA - Operador 2",
+      "phone": null,
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "20202",
+      "terminalNumber": "005",
+      "createdAt": "2026-05-04T01:43:45+01:00",
+      "updatedAt": "2026-06-15T23:31:15+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "st-mindware-1",
+          "name": "Mindware Talatona",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoqh7u2q002a01mafy7h53y5",
+      "email": "cashier1.mindware@mindgest.com",
+      "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA - Operador 1",
+      "phone": null,
+      "role": "CASHIER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "20201",
+      "terminalNumber": "004",
+      "createdAt": "2026-05-04T01:43:45+01:00",
+      "updatedAt": "2026-06-18T12:00:16+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "st-mindware-1",
+          "name": "Mindware Talatona",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoqh7u2l002901majnxi75g6",
+      "email": "manager2.mindware@mindgest.com",
+      "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA - Gerente 2",
+      "phone": null,
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "20102",
+      "terminalNumber": "003",
+      "createdAt": "2026-05-04T01:43:45+01:00",
+      "updatedAt": "2026-06-14T17:47:15+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "st-mindware-1",
+          "name": "Mindware Talatona",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoqh7u2g002801mah216pkah",
+      "email": "manager1.mindware@mindgest.com",
+      "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA - Gerente 1",
+      "phone": null,
+      "role": "MANAGER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "20101",
+      "terminalNumber": "002",
+      "createdAt": "2026-05-04T01:43:45+01:00",
+      "updatedAt": "2026-06-18T12:49:43+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": [
+        {
+          "id": "st-mindware-1",
+          "name": "Mindware Talatona",
+          "email": null
+        }
+      ]
+    },
+    {
+      "id": "cmoqh7u2d002701man8durhx6",
+      "email": "owner.mindware@mindgest.com",
+      "name": "MAURO DINIS RAIMUNDO",
+      "phone": "933456732",
+      "role": "OWNER",
+      "status": "ACTIVE",
+      "companyId": "cmoqh7tti002501ma0wryimyw",
+      "barcode": "20000",
+      "terminalNumber": "001",
+      "createdAt": "2026-05-04T01:43:45+01:00",
+      "updatedAt": "2026-06-18T13:56:28+01:00",
+      "company": {
+        "id": "cmoqh7tti002501ma0wryimyw",
+        "name": "MINDWARE - COMÉRCIO E SERVIÇOS, LDA",
+        "email": "minwareofficial@gmail.com"
+      },
+      "stores": []
+    },
+    {
+      "id": "cmoqh7tcj000301ma1hv167x7",
+      "email": "minwareofficial@gmail.com",
+      "name": "System Administrator",
+      "phone": "+244 926 665 793",
+      "role": "ADMIN",
+      "status": "ACTIVE",
+      "companyId": null,
+      "barcode": "0000000000000",
+      "terminalNumber": "001",
+      "createdAt": "2026-05-04T01:43:44+01:00",
+      "updatedAt": "2026-06-18T15:26:15+01:00",
+      "company": null,
+      "stores": []
+    }
+  ],
+  "total": 50,
+  "page": 1,
+  "limit": 50
 }

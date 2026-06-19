@@ -111,7 +111,9 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
                 } as const,
               ]
               : []),
-            ...(item.status === "PAID"
+            // Art. 8.º n.º 4 do D.P. 71/25: qualquer factura já emitida/enviada
+            // só se rectifica ou anula por nota de crédito (não só as pagas).
+            ...(item.status !== "DRAFT" && item.status !== "CANCELLED"
               ? [
                 {
                   label: "Emitir Nota",
@@ -121,6 +123,10 @@ export function InvoiceList({ storeId }: { storeId?: string }) {
                   icon: "StickyNote",
                   variant: "default",
                 } as const,
+              ]
+              : []),
+            ...(item.status === "PAID"
+              ? [
                 {
                   label: "Clonar Factura",
                   onClick: handlerCloneInvoice,

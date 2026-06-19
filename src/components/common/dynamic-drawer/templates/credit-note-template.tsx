@@ -1,5 +1,5 @@
 import { CreditNotesResponse } from "@/types/credit-note";
-import { formatCurrency, formatDateTime } from "@/utils";
+import { formatCurrency, formatDateTime, creditNoteReasonLabel } from "@/utils";
 import { Separator } from "@/components/ui/separator";
 import { DocumentStatusBadge, DownloadDocumentButton } from "@/components/client/documents/common";
 
@@ -47,7 +47,7 @@ export function CreditNoteTemplate({ data }: Props) {
         <h3 className="font-semibold mb-1 text-muted-foreground">
           Motivo da Nota de Crédito
         </h3>
-        <p>{data.reason === "CORRECTION" ? "Correção" : "Cancelamento"}</p>
+        <p>{creditNoteReasonLabel(data.reason)}</p>
       </div>
 
       <div className="border rounded-lg overflow-hidden">
@@ -64,7 +64,7 @@ export function CreditNoteTemplate({ data }: Props) {
           <tbody className="divide-y">
             {data.items.map((item) => (
               <tr key={item.id}>
-                <td className="px-4 py-2">{item.itemsId}</td>
+                <td className="px-4 py-2">{item.name ?? item.itemsId}</td>
                 <td className="px-4 py-2 text-right">{item.quantity}</td>
                 <td className="px-4 py-2 text-right">
                   {formatCurrency(Number(item.price))}

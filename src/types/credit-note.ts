@@ -74,6 +74,9 @@ export interface CreditNotesResponse {
 
 export interface ItemSimple {
   id: string;
+  // Nome legível do item (art. 10.º n.º 1 c) — discriminação clara).
+  // 🚩 Backend: a resposta de GET /credit-note deve incluir este campo.
+  name?: string;
   quantity: number;
   price: string;
   total: string;

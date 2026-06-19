@@ -18,7 +18,6 @@ import { CreditNotesList } from "./credits-notes";
 import { cn } from "@/lib";
 import { currentStoreStore } from "@/stores";
 import { ProtectedAction } from "@/components/guards";
-import { ReportExportPanel } from "@/components/client/reports/common";
 
 type DocumentTab =
   | "invoice"
@@ -50,11 +49,6 @@ export function DocumentList() {
           suTitle="Crie documentos que ajudarão no controlo das suas atividades"
         />
       </div>
-      <ReportExportPanel
-        reportType="BILLING"
-        filenamePrefix="relatorio-faturacao"
-        className="rounded-lg border p-4"
-      />
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

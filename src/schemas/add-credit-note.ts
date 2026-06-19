@@ -2,17 +2,25 @@ import { z } from "zod";
 import { optionalTaxNumberSchema } from "./helps";
 
 const BaseCreditNoteSchema = z.object({
-  notes: z.string().trim().optional(),
-  managerBarcode: z.string().trim().optional(),
+  // Art. 8.º n.º 4 do D.P. 71/25: a nota de crédito deve indicar o motivo.
+  notes: z.string().trim().min(1, "Indique o motivo da nota de crédito"),
 });
 
+// Motivos de correção/rectificação (art. 3.º l) do D.P. 71/25):
+// rectificação genérica, devolução de bens ou desconto.
+export const CORRECTION_REASONS = ["CORRECTION", "RETURN", "DISCOUNT"] as const;
+
 export const CorrectionSchema = BaseCreditNoteSchema.extend({
-  reason: z.literal("CORRECTION"),
+  reason: z.enum(CORRECTION_REASONS),
+  managerBarcode: z.string().trim().optional(),
   invoiceBody: z.object({
     client: z.object({
-      id: z.string().trim().nonempty("Seleccione um cliente registado"),
+      // O cliente é herdado da factura original (não é escolhido aqui). Fica
+      // opcional para suportar facturas ao consumidor final (sem registo).
+      id: z.string().trim().optional().or(z.literal("")),
       name: z.string().trim().optional().or(z.literal("")),
       phone: z.string().trim().optional().or(z.literal("")),
+      email: z.string().trim().optional().or(z.literal("")),
       address: z.string().trim().optional().or(z.literal("")),
       taxNumber: optionalTaxNumberSchema,
     }),
@@ -28,7 +36,10 @@ export const CorrectionSchema = BaseCreditNoteSchema.extend({
         cost: z.number().optional(),
         type: z.enum(["PRODUCT", "SERVICE"]).optional(),
         unit: z.string().optional(),
-        // Adicione outros campos se necessário, mas os básicos já estão aqui
+        // Taxa de imposto do item (em %) e respectivo id — usados para o
+        // cálculo separado por taxa (art. 10.º n.º 2 do D.P. 71/25).
+        tax: z.number().optional(),
+        taxId: z.string().optional(),
       }),
     ).min(1, "Adicione, pelo menos, um item ao documento corrigido"),
     issueDate: z.string().trim().date(),
@@ -64,12 +75,13 @@ export const CorrectionSchema = BaseCreditNoteSchema.extend({
 
 export const AnnulmentSchema = BaseCreditNoteSchema.extend({
   reason: z.literal("ANNULMENT"),
+  // A autorização do gerente é obrigatória na anulação, mas é recolhida via
+  // ManagerAuthModal (scanner) já depois da validação do formulário; por isso
+  // fica opcional no schema — a presença é garantida pelo modal.
+  managerBarcode: z.string().trim().optional(),
   // invoiceBody is allowed but ignored for simple annulment payload
 });
 
-export const CreditNoteSchema = z.discriminatedUnion("reason", [
-  CorrectionSchema,
-  AnnulmentSchema,
-]);
+export const CreditNoteSchema = z.union([CorrectionSchema, AnnulmentSchema]);
 
 export type CreditNoteFormData = z.infer<typeof CreditNoteSchema>;

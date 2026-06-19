@@ -56,4 +56,50 @@ describe("calculateCreditNoteCorrection", () => {
       }),
     );
   });
+
+  it("usa o subtotal dos itens, não o subtotal guardado quando divergem", () => {
+    // Factura com subtotal guardado errado (50) mas itens que somam 450.
+    const staleDocument = {
+      items: [
+        { id: "item-1", name: "Produto A", quantity: 9, unitPrice: 50, tax: 14 },
+      ],
+      subtotal: 50, // desactualizado
+      taxAmount: 7, // 50 * 14% (também desactualizado, mas a razão 14% mantém-se)
+      discountAmount: 0,
+    };
+
+    // Remove o item: o crédito deve ser o valor real dos itens (450), não 50.
+    const result = calculateCreditNoteCorrection(staleDocument, []);
+
+    expect(result.creditNote.subtotal).toBe(450);
+    expect(result.creditNote.taxAmount).toBe(63);
+    expect(result.creditNote.total).toBe(513);
+  });
+
+  it("aplica a taxa de imposto de cada item quando há taxas diferentes", () => {
+    // item-1 a 14%, item-2 isento (0%) — art. 10.º n.º 2 do D.P. 71/25.
+    const mixedDocument = {
+      items: [
+        { id: "item-1", name: "Produto A", quantity: 2, unitPrice: 100, tax: 14 },
+        { id: "item-2", name: "Serviço B", quantity: 1, unitPrice: 100, tax: 0 },
+      ],
+      subtotal: 300,
+      taxAmount: 28, // 200 * 14% + 100 * 0%
+      discountAmount: 0,
+    };
+
+    // Reduz o item-1 para 1 unidade; o item-2 mantém-se.
+    const result = calculateCreditNoteCorrection(mixedDocument, [
+      { id: "item-1", name: "Produto A", quantity: 1, price: 100, tax: 14 },
+      { id: "item-2", name: "Serviço B", quantity: 1, price: 100, tax: 0 },
+    ]);
+
+    // Documento corrigido: subtotal 200, imposto 14 (100*14% + 100*0%).
+    expect(result.invoiceBody.subtotal).toBe(200);
+    expect(result.invoiceBody.taxAmount).toBe(14);
+    // Crédito: subtotal 100, imposto 14 (a parte retirada é toda do item a 14%).
+    expect(result.creditNote.subtotal).toBe(100);
+    expect(result.creditNote.taxAmount).toBe(14);
+    expect(result.creditNote.total).toBe(114);
+  });
 });

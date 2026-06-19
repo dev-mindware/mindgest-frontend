@@ -79,7 +79,7 @@ export function useAnnulationNote() {
       managerBarcode?: string;
     }) => invoiceService.annulationNote(id, reason, notes, managerBarcode),
     onSuccess: () => {
-      SucessMessage("Nota de crédito anulada com sucesso!");
+      SucessMessage("Documento anulado com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
     },
   });

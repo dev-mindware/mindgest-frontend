@@ -2,6 +2,10 @@
 import { Control, UseFormRegister, FieldErrors } from "react-hook-form";
 import { CreditNoteFormData } from "@/schemas";
 import { RHFSelect, Textarea } from "@/components";
+import {
+  CREDIT_NOTE_CORRECTION_OPTIONS,
+  CREDIT_NOTE_ANNULMENT_OPTION,
+} from "@/utils";
 
 interface ReasonNotesSectionProps {
   control: Control<CreditNoteFormData>;
@@ -23,15 +27,16 @@ export function ReasonNotesSection({
         name="reason"
         control={control}
         options={[
-          ...(isInvoiceDoc ? [{ value: "CORRECTION", label: "Correção" }] : []),
-          { value: "ANNULMENT", label: "Anulação Total" },
+          ...(isInvoiceDoc ? CREDIT_NOTE_CORRECTION_OPTIONS : []),
+          CREDIT_NOTE_ANNULMENT_OPTION,
         ]}
       />
 
       <Textarea
-        label="Notas"
+        label="Justificação do motivo"
         {...register("notes")}
         error={errors?.notes?.message}
+        placeholder="Informe a justificação"
       />
     </div>
   );

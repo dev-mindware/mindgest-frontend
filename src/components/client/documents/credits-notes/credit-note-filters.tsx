@@ -51,9 +51,10 @@ export function CreditNotesFiltersTSX() {
           label="Motivo"
           value={filters.reason}
           options={[
-            { label: "Anulação", value: "ANNULMENT" },
-            { label: "Correção", value: "CORRECTION" },
+            { label: "Rectificação", value: "CORRECTION" },
+            { label: "Devolução", value: "RETURN" },
             { label: "Desconto", value: "DISCOUNT" },
+            { label: "Anulação", value: "ANNULMENT" },
           ]}
           onChange={(reason) => setFilters({ reason })}
         />

@@ -9,7 +9,10 @@ export function DocumentStatusBadge({ status }: DocumentoStatusBadgeProps) {
     DRAFT: "Pendente",
     CANCELLED: "Cancelada",
     PAID: "Paga",
-    CORRECTION: "Correção",
+    // Motivos de nota de crédito (D.P. 71/25).
+    CORRECTION: "Rectificação",
+    RETURN: "Devolução",
+    DISCOUNT: "Desconto",
     ANNULMENT: "Anulação",
   };
 
@@ -18,6 +21,8 @@ export function DocumentStatusBadge({ status }: DocumentoStatusBadgeProps) {
     CANCELLED: "destructive",
     PAID: "success",
     CORRECTION: "outline",
+    RETURN: "outline",
+    DISCOUNT: "outline",
     ANNULMENT: "destructive",
   };
 
