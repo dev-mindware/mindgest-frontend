@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components";
 import type { User, File as MyFile } from "@/types";
@@ -9,10 +9,14 @@ import { useFileUpload } from "@/hooks/common/use-upload";
 import { ErrorMessage, SucessMessage } from "@/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { Camera, RefreshCw, X } from "lucide-react";
+import { getApiAssetUrlCandidates, withCacheBuster } from "@/lib/utils";
 
 export function CompanyLogoForm({ user }: { user: User | null }) {
   const [isEditingLogo, setIsEditingLogo] = useState(false);
   const [logoTimestamp, setLogoTimestamp] = useState(Date.now());
+  const [logoCandidateIndex, setLogoCandidateIndex] = useState(0);
+  const [logoFailed, setLogoFailed] = useState(false);
+  const logoRefreshAttemptedRef = useRef(false);
   const queryClient = useQueryClient();
 
   const { control, watch, setValue } = useForm<{ companyLogo?: MyFile | null }>();
@@ -23,6 +27,21 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
     "companies",
     "PUT",
   );
+
+  const logoCandidates = useMemo(
+    () =>
+      getApiAssetUrlCandidates(user?.company?.logo).map((url) =>
+        withCacheBuster(url, logoTimestamp),
+      ),
+    [user?.company?.logo, logoTimestamp],
+  );
+  const logoSrc = logoCandidates[logoCandidateIndex] || "";
+
+  useEffect(() => {
+    setLogoCandidateIndex(0);
+    setLogoFailed(false);
+    logoRefreshAttemptedRef.current = false;
+  }, [user?.company?.logo, logoTimestamp]);
 
   const handleUpload = async () => {
     if (!companyLogo) return ErrorMessage("Seleccione um ficheiro antes de actualizar.");
@@ -122,11 +141,39 @@ export function CompanyLogoForm({ user }: { user: User | null }) {
             }}
           />
 
-          <img
-            src={user.company.logo ? `${user.company.logo}?t=${logoTimestamp}` : ""}
-            alt="Logo da empresa"
-            className="h-full w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105"
-          />
+          {!logoFailed && logoSrc ? (
+            <img
+              src={logoSrc}
+              alt="Logo da empresa"
+              className="h-full w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105"
+              onError={() => {
+                setLogoCandidateIndex((currentIndex) => {
+                  const nextIndex = currentIndex + 1;
+
+                  if (nextIndex >= logoCandidates.length) {
+                    const isSignedLogo = logoCandidates.some((url) =>
+                      /[?&](X-Amz-Signature|X-Amz-Credential|Expires|Signature)=/i.test(url),
+                    );
+
+                    if (isSignedLogo && !logoRefreshAttemptedRef.current) {
+                      logoRefreshAttemptedRef.current = true;
+                      queryClient.invalidateQueries({ queryKey: ["user"] });
+                    }
+
+                    setLogoFailed(true);
+                    return currentIndex;
+                  }
+
+                  return nextIndex;
+                });
+              }}
+            />
+          ) : (
+            <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+              <Camera className="h-8 w-8" />
+              <span className="text-sm font-medium">Não foi possível carregar o logótipo</span>
+            </div>
+          )}
 
           {/* Overlay de edição com desfoque e animação premium */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 text-white z-20">
