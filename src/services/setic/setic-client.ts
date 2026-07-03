@@ -16,6 +16,11 @@ function validateConfig() {
   }
 }
 
+function buildAuthHeader(): string {
+  const credentials = `${USERNAME}:${PASSWORD}`;
+  return `Basic ${Buffer.from(credentials).toString("base64")}`;
+}
+
 async function seticFetch<T>(url: URL): Promise<T> {
   validateConfig();
 
@@ -27,8 +32,7 @@ async function seticFetch<T>(url: URL): Promise<T> {
       method: "GET",
       headers: {
         Accept: "application/json",
-        Username: USERNAME!,
-        Password: PASSWORD!,
+        Authorization: buildAuthHeader(),
       },
       signal: controller.signal,
       cache: "no-store",

@@ -24,7 +24,7 @@ export interface SeticContributor {
   tipoContribuinte: "COLLECTIVE" | "SINGULAR" | string;
   estadoContribuinte: ContributorStatus | string;
   regimeIva: ContributorVatRegime | string;
-  indicadorNaoResidente: boolean;
+  indicadorNaoResidente: boolean | string;
 }
 
 export interface SeticGetContributorResponse {

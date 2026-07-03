@@ -53,4 +53,23 @@ describeIfLive("POST /api/contributors/verify (live)", () => {
       }),
     );
   }, 20_000);
+
+  it("consulta ponta a ponta o NIF 007875745LA046 no serviço SETIC-FP", async () => {
+    const taxNumber = "007875745LA046";
+
+    const response = await POST(createLiveRequest(taxNumber));
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual(
+      expect.objectContaining({
+        taxNumber,
+        name: expect.any(String),
+        status: "A",
+        taxpayerType: "SINGULAR",
+        nonResident: false,
+        hasRestrictions: false,
+      }),
+    );
+  }, 20_000);
 });
