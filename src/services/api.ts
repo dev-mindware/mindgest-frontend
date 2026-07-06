@@ -136,6 +136,7 @@ export const api = axios.create({
     process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api",
   headers: {
     "Content-Type": "application/json",
+    ...(process.env.NEXT_PUBLIC_API_KEY ? { "x-api-key": process.env.NEXT_PUBLIC_API_KEY } : {}),
   },
   timeout: 30000,
 });
