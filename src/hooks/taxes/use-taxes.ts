@@ -12,7 +12,7 @@ export function useGetTaxes() {
     endpoint: "/taxes",
     queryKey: "taxes",
     queryParams: {
-      sortBy: "createdAt",
+      sortBy: "rate",
       sortOrder: "desc",
       ...(search ? { search } : {}),
     },
@@ -49,7 +49,7 @@ export function useTaxesSelect() {
     endpoint: "/taxes",
     queryKey: "taxes_select",
     queryParams: {
-      sortBy: "createdAt",
+      sortBy: "rate",
       sortOrder: "desc",
       ...(search ? { search } : {}),
     },

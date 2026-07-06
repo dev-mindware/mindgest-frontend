@@ -115,7 +115,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "Store",
       component: <StoresPageContent />,
       category: "workplace",
-      isVisible: isActive && hasPlanAccess(currentPlan, "Smart") && isOwner,
+      isVisible: isActive && isOwner,
     },
     {
       id: "banks",

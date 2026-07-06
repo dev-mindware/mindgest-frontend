@@ -10,6 +10,9 @@ export function getSidebarForUser(
 ): MenuItem[] {
 
   if (subscription.status === SubscriptionStatus.PENDING) {
+    // Filter by the pending plan so Base/Smart pending users don't see Pro menus
+    const pendingPlanLevel = plan ? PLAN_HIERARCHY[plan] : 0;
+
     return items
       .filter((item) => !item.roles || item.roles.includes(role))
       .map((item) => {
@@ -18,11 +21,21 @@ export function getSidebarForUser(
 
         if (isPlans || isSettings) return item;
 
+        const itemPlanLevel = item.minPlan ? PLAN_HIERARCHY[item.minPlan] : 0;
+        const planOk = itemPlanLevel <= pendingPlanLevel;
+
+        if (!planOk) return null;
+
         return {
           ...item,
           showUpgrade: true,
+          items: item.items?.filter((sub) => {
+            const subPlanLevel = sub.minPlan ? PLAN_HIERARCHY[sub.minPlan] : 0;
+            return subPlanLevel <= pendingPlanLevel;
+          }),
         };
-      });
+      })
+      .filter(Boolean) as typeof items;
   }
 
   // Fallback to Base level conceptually if no plan is provided

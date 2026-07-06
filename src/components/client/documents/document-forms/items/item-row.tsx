@@ -19,8 +19,7 @@ export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove, onQuan
   const hasMaximumQuantity =
     Number.isFinite(maximumQuantity) && maximumQuantity > 0;
   const canIncrement =
-    !isService &&
-    (!hasMaximumQuantity || Number(item.quantity) < maximumQuantity);
+    !hasMaximumQuantity || Number(item.quantity) < maximumQuantity;
 
   return (
     <tr>
@@ -53,7 +52,7 @@ export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove, onQuan
             type="button"
             className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
             onClick={() => onQuantityChange(index, Number(item.quantity) - 1)}
-            disabled={isService || Number(item.quantity) <= 1}
+            disabled={Number(item.quantity) <= 1}
             aria-label={`Diminuir quantidade de ${item.description}`}
           >
             <Minus className="h-3.5 w-3.5" />
@@ -64,7 +63,6 @@ export const ItemRow = React.memo<ItemRowProps>(({ item, index, onRemove, onQuan
             max={hasMaximumQuantity ? maximumQuantity : undefined}
             step={1}
             value={item.quantity}
-            disabled={isService}
             onChange={(event) =>
               onQuantityChange(index, Number(event.target.value) || 1)
             }

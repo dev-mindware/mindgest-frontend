@@ -58,7 +58,7 @@ export function InvoiceItems({
   const handleQuantityChange = useCallback(
     (index: number, quantity: number) => {
       const item = fields[index] as any;
-      if (!item || item.type === "SERVICE") return;
+      if (!item) return;
       const { id: _fieldId, ...itemValue } = item;
 
       const maximum = Number(item.availableQuantity);

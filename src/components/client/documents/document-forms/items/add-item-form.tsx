@@ -87,16 +87,13 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         } else if (option.data) {
           setValue("price", Number(option.data.price));
           setValue("type", option.data.type);
-          // Ensure quantity is at least 1, but capped by stock if product
+          // For products, cap initial quantity by available stock
           if (option.data.type === "PRODUCT") {
             const available = option.data.quantity ?? 0;
-            if (available > 0) {
-              setValue("quantity", 1);
-            } else {
-              setValue("quantity", 0);
-            }
+            setValue("quantity", available > 0 ? 1 : 0);
+          } else {
+            setValue("quantity", 1);
           }
-
           setValue(
             "taxId",
             String(option.data.taxId ?? option.data.tax?.id ?? ""),
@@ -204,7 +201,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       !isOverStock &&
       !isAlreadyAdded;
 
-    // Lock quantity input for services (default is already 1)
+    // Lock quantity to available stock for products only
     const isService = watchedType === "SERVICE";
 
     return (
@@ -238,16 +235,14 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   max={availableStock !== Infinity ? availableStock : undefined}
                   type="quantity"
                   label="Quantidade"
-                  disabled={isService}
                   onChange={(e) => {
-                    if (isService) return;
                     const val = Number(e.target.value);
                     const cappedVal =
                       watchedType === "PRODUCT" && availableStock !== Infinity
                         ? Math.min(val, availableStock)
                         : val;
                     field.onChange(
-                      Math.max(watchedType === "PRODUCT" ? 0 : 1, cappedVal),
+                      Math.max(1, cappedVal),
                     );
                   }}
                   error={isOverStock ? `Máximo: ${availableStock}` : undefined}
