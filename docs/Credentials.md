@@ -22,5 +22,6 @@ Este documento contém as credenciais de acesso para as empresas e perfis de tes
 | 💵 **Caixa 1**      | `cashier1.ncr@mindgest.com` | `20201`          |
 | 💵 **Caixa 2**      | `cashier2.ncr@mindgest.com` | `20202`          |
 | 💵 **Caixa 3**      | `cashier3.ncr@mindgest.com` | `20203`          |
+testando
 
 ---
