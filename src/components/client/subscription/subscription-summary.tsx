@@ -2,8 +2,6 @@ import { Plan } from "@/types";
 import {
   formatCurrency,
   getPlanFeatures,
-  isCustomPricedPlan,
-  PRO_PLAN_NEGOTIATION_EMAIL,
 } from "@/utils";
 import type { ComponentType, ReactNode } from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components";
@@ -69,7 +67,6 @@ export function SubscriptionSummary({
   
   if (!selectedPlan) return null;
 
-  const isCustomPlan = isCustomPricedPlan(selectedPlan);
   const price = parseFloat(selectedPlan.priceMonthly);
   const isAnnual = frequency === "ANNUAL";
   const actualMonths = isAnnual ? 12 : months;
@@ -103,19 +100,11 @@ export function SubscriptionSummary({
 
           <InfoRow label="Preço mensal:">
             <span className="font-bold text-primary-600">
-              {isCustomPlan ? "Personalizável" : formatCurrency(price)}
+              {formatCurrency(price)}
             </span>
           </InfoRow>
 
-          {isCustomPlan && (
-            <InfoRow label="Negociação:">
-              <span className="font-medium text-foreground">
-                {PRO_PLAN_NEGOTIATION_EMAIL}
-              </span>
-            </InfoRow>
-          )}
-
-          {isAnnual && !isCustomPlan && (
+          {isAnnual && (
             <InfoRow label="Desconto anual:">
               <span className="font-medium text-green-600">
                 - {formatCurrency(discount)}
@@ -125,13 +114,13 @@ export function SubscriptionSummary({
 
           <InfoRow label="Total a pagar:">
             <div className="text-right">
-              {isAnnual && !isCustomPlan && (
+              {isAnnual && (
                 <p className="text-xs text-muted-foreground line-through">
                   {formatCurrency(subtotal)}
                 </p>
               )}
               <p className="font-bold text-primary-600 text-lg">
-                {isCustomPlan ? "Personalizável" : formatCurrency(totalToPay)}
+                {formatCurrency(totalToPay)}
               </p>
             </div>
           </InfoRow>
