@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { playSoundEffect, primeAudioPlayback } from "@/utils";
@@ -14,10 +14,9 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { notificationAlertState } from "./notification-alert-state";
 
 let socket: Socket;
-const globallySeenNotificationIds = new Set<string>();
-const globallyAlertedNotificationIds = new Set<string>();
 
 export function useNotifications(
   initialFilters: Omit<NotificationParams, "skip" | "take"> = {},
@@ -31,13 +30,10 @@ export function useNotifications(
   const { soundEnabled, soundType, browserNotificationsEnabled } =
     useNotificationSettingsStore();
 
-  // Ref para evitar stale closure dentro do handler do socket —
-  // sem isto, o toggle de som não teria efeito sem reconectar o socket.
   const soundEnabledRef = useRef(soundEnabled);
   const soundTypeRef = useRef(soundType);
   const browserNotificationsEnabledRef = useRef(browserNotificationsEnabled);
-  const seenNotificationIdsRef = useRef<Set<string>>(new Set());
-  const hasInitializedNotificationsRef = useRef(false);
+  const hasEstablishedBaselineRef = useRef(false);
 
   useEffect(() => {
     soundEnabledRef.current = soundEnabled;
@@ -83,16 +79,16 @@ export function useNotifications(
     };
   }, []);
 
-  const playNotificationSound = async () => {
+  const playNotificationSound = useCallback(async () => {
     if (!soundEnabledRef.current) return;
 
     const didPlay = await playSoundEffect(soundTypeRef.current, 0.5);
     if (!didPlay) {
       console.warn("Navegador não permitiu reproduzir o som da notificação.");
     }
-  };
+  }, []);
 
-  const showBrowserNotification = (notification: NotificationType) => {
+  const showBrowserNotification = useCallback((notification: NotificationType) => {
     if (
       !browserNotificationsEnabledRef.current ||
       typeof Notification === "undefined" ||
@@ -111,7 +107,17 @@ export function useNotifications(
       window.focus();
       browserNotification.close();
     };
-  };
+  }, []);
+
+  const alertForNewNotification = useCallback(
+    (notification: NotificationType) => {
+      if (!notificationAlertState.shouldAlert(notification.id)) return;
+
+      void playNotificationSound();
+      showBrowserNotification(notification);
+    },
+    [playNotificationSound, showBrowserNotification],
+  );
 
   const TAKE = 5;
 
@@ -125,7 +131,6 @@ export function useNotifications(
     error,
     refetch,
   } = useInfiniteQuery({
-    // A query key DEPENDE dos filtros, assim quando os filtros mudarem, o cache buscará os novos dados corretos da API
     queryKey,
     queryFn: ({ pageParam = 0 }) =>
       notificationsService.getNotifications({
@@ -145,26 +150,25 @@ export function useNotifications(
   const notifications = data?.pages.flatMap((page) => page.data) ?? [];
 
   useEffect(() => {
-    if (notifications.length === 0) return;
+    if (!data || hasEstablishedBaselineRef.current) return;
 
-    if (!hasInitializedNotificationsRef.current) {
-      notifications.forEach((notification) => {
-        seenNotificationIdsRef.current.add(notification.id);
-        globallySeenNotificationIds.add(notification.id);
-      });
-      hasInitializedNotificationsRef.current = true;
-      return;
-    }
+    const existingIds = data.pages.flatMap((page) =>
+      page.data.map((notification) => notification.id),
+    );
+
+    notificationAlertState.establishBaseline(existingIds);
+    hasEstablishedBaselineRef.current = true;
+  }, [data]);
+
+  useEffect(() => {
+    if (!notificationAlertState.isBaselineEstablished()) return;
 
     notifications.forEach((notification) => {
-      seenNotificationIdsRef.current.add(notification.id);
-      globallySeenNotificationIds.add(notification.id);
+      alertForNewNotification(notification);
     });
-  }, [notifications]);
+  }, [notifications, alertForNewNotification]);
 
-  // Socket.IO Connection
   useEffect(() => {
-    // Only connect if URL is defined
     if (!process.env.NEXT_PUBLIC_API_URL) return;
 
     socket = io(process.env.NEXT_PUBLIC_API_URL, {
@@ -176,21 +180,8 @@ export function useNotifications(
     });
 
     socket.on("new_notification", (newNotification: NotificationType) => {
-      // Invalida os pedidos de abertura para atualizar instantaneamente na tela do gerente
       queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
-
-      const shouldAlert =
-        !globallySeenNotificationIds.has(newNotification.id) &&
-        !globallyAlertedNotificationIds.has(newNotification.id);
-
-      globallySeenNotificationIds.add(newNotification.id);
-      globallyAlertedNotificationIds.add(newNotification.id);
-      seenNotificationIdsRef.current.add(newNotification.id);
-
-      if (shouldAlert) {
-        void playNotificationSound();
-        showBrowserNotification(newNotification);
-      }
+      alertForNewNotification(newNotification);
 
       queryClient.setQueryData<any>(
         queryKey,
@@ -216,7 +207,7 @@ export function useNotifications(
     return () => {
       if (socket) socket.disconnect();
     };
-  }, [queryClient, queryKey]);
+  }, [alertForNewNotification, queryClient, queryKey]);
 
   // Mutations
   const { mutateAsync: markAsRead } = useMutation({
