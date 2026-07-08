@@ -87,7 +87,13 @@ export function PosOpeningCashierModal({
     if (isValid) {
       const data = getValues();
       setPendingData(data);
-      openModal(MODAL_MANAGER_AUTH_ID);
+
+      if (user?.role === "OWNER" || user?.role === "MANAGER") {
+        // OWNER/MANAGER não precisam de autorização por barcode
+        await handleAuthenticated("");
+      } else {
+        openModal(MODAL_MANAGER_AUTH_ID);
+      }
     } else {
       console.log("Validation errors:", errors);
     }
@@ -242,7 +248,7 @@ export function PosOpeningCashierModal({
         </div>
       </GlobalModal>
 
-      <ManagerAuthModal onAuthenticated={handleAuthenticated} />
+      <ManagerAuthModal bypass={user?.role !== "CASHIER"} onAuthenticated={handleAuthenticated} />
     </>
   );
 }

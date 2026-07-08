@@ -8,18 +8,30 @@ import { playScannerBeep } from "@/utils/audio";
 import { cn } from "@/lib/utils";
 
 interface ManagerAuthModalProps {
-  onAuthenticated: (code: string) => void;
+  onAuthenticated: (code: string) => void | Promise<void>;
+  /** When true the modal is skipped and onAuthenticated is called immediately.
+   *  Use this for OWNER/MANAGER roles that don't need barcode authorisation. */
+  bypass?: boolean;
 }
 
 export const MODAL_MANAGER_AUTH_ID = "manager-auth-modal";
 
-export function ManagerAuthModal({ onAuthenticated }: ManagerAuthModalProps) {
-  const { open, closeModal } = useModal();
+export function ManagerAuthModal({ onAuthenticated, bypass = false }: ManagerAuthModalProps) {
+  const { open, closeModal, openModal } = useModal();
   const isOpen = open[MODAL_MANAGER_AUTH_ID] || false;
   const [isLoading, startTransition] = useTransition();
   const [buffer, setBuffer] = useState("");
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualCode, setManualCode] = useState("");
+
+  // When bypass is enabled, call onAuthenticated immediately whenever the modal
+  // would normally open, then close it right away so no UI is shown.
+  useEffect(() => {
+    if (bypass && isOpen) {
+      onAuthenticated("");
+      closeModal(MODAL_MANAGER_AUTH_ID);
+    }
+  }, [bypass, isOpen, onAuthenticated, closeModal]);
 
   // Barcode listener for the modal
   useEffect(() => {

@@ -12,6 +12,7 @@ import { calculateCreditNoteCorrection } from "@/utils";
 import { ButtonSubmit } from "@/components";
 import { ManagerAuthModal, MODAL_MANAGER_AUTH_ID } from "@/components/client/pos";
 import { useModal } from "@/stores/modal/use-modal-store";
+import { useAuth } from "@/hooks/auth";
 import { ErrorMessage } from "@/utils/messages";
 import { ReasonNotesSection } from "./sections/ReasonNotesSection";
 import { ClientDocumentSection } from "./sections/ClientDocumentSection";
@@ -90,6 +91,7 @@ type Props = {
 export function CreditNoteForm({ invoice, docType }: Props) {
   const router = useRouter();
   const { openModal } = useModal();
+  const { user } = useAuth();
   const { mutateAsync: annulationNote } = useAnnulationNote();
   const { mutateAsync: createCreditNote } = useCreateCreditNote();
 
@@ -188,8 +190,13 @@ export function CreditNoteForm({ invoice, docType }: Props) {
 
   async function onSubmit(data: CreditNoteFormData) {
     if (data.reason === "ANNULMENT") {
-      // Pede autorização do gerente; a anulação acontece em handleManagerAuthenticated.
-      openModal(MODAL_MANAGER_AUTH_ID);
+      if (user?.role === "OWNER" || user?.role === "MANAGER") {
+        // OWNER/MANAGER não precisam de autorização por barcode
+        await handleManagerAuthenticated("");
+      } else {
+        // CASHIER: pede autorização do gerente via barcode
+        openModal(MODAL_MANAGER_AUTH_ID);
+      }
       return;
     }
 
@@ -294,7 +301,7 @@ export function CreditNoteForm({ invoice, docType }: Props) {
         </ButtonSubmit>
       </div>
 
-      <ManagerAuthModal onAuthenticated={handleManagerAuthenticated} />
+      <ManagerAuthModal bypass={user?.role !== "CASHIER"} onAuthenticated={handleManagerAuthenticated} />
     </form>
   );
 }
