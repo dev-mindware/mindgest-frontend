@@ -17,10 +17,10 @@ export function getPlanFeatures(plan: Plan): string[] {
   ];
 
   const smartBackendFeatures = [
+    plan.features.hasPrintFormats && "Impressão em A4 e Talão",
     plan.features.hasStock && "Gestão de stock",
     plan.features.hasPos && "Ponto de Venda",
     plan.features.hasAppearance && "Personalização de Aparência",
-    plan.features.hasPrintFormats && "Impressão em A4 e Talão",
   ];
 
   const proBackendFeatures = [

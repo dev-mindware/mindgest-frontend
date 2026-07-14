@@ -64,7 +64,6 @@ export const planFeatureMatrix: Record<PlanType, PlanFeatureGroup> = {
       "Registo de produtos com código de barras",
       "Relatórios de Clientes",
       "Personalização de Aparência",
-      "Assistente MIND - 15 mensagens",
     ],
   },
   Pro: {
@@ -76,7 +75,6 @@ export const planFeatureMatrix: Record<PlanType, PlanFeatureGroup> = {
       "Relatórios avançados",
       "Relatórios de Acesso e Auditoria",
       "Gestão Completa para Operações Multi-loja",
-      "Assistente MIND - 20 mensagens",
     ],
   },
 };

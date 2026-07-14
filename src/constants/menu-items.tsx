@@ -106,7 +106,7 @@ export const menuItems: MenuStructure = {
       minPlan: "Base",
       items: [
         {
-          name: "Vendas",
+          name: "Vendas e Facturação",
           url: "/reports/sales",
         },
         {
