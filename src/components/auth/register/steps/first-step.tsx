@@ -114,6 +114,15 @@ export function FirstStep() {
           {...register("step1.passwordConfirmation")}
           error={errors?.step1?.passwordConfirmation?.message}
         />
+
+        <Input
+          type="text"
+          startIcon="Tag"
+          placeholder="MWD-AO-1234"
+          label="Código de Afiliado (Opcional)"
+          {...register("step1.affiliateCode")}
+          error={errors?.step1?.affiliateCode?.message}
+        />
       </div>
     </div>
   );
