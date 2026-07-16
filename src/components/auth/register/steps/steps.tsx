@@ -1,5 +1,6 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { FirstStep } from "./first-step";
 import { SecondStep } from "./second-step";
 import {
@@ -31,6 +32,18 @@ export function RegisterForm() {
     mode: "onChange",
   });
 
+  // Captura automaticamente o codigo do afiliado a partir do link de convite
+  // (ex.: /auth/register?ref=MWD-AO-1234). Aceita ?ref ou ?code.
+  const searchParams = useSearchParams();
+  const affiliateFromUrl = (searchParams.get("ref") || searchParams.get("code") || "").trim();
+  const affiliateLocked = affiliateFromUrl.length > 0;
+
+  useEffect(() => {
+    if (affiliateFromUrl) {
+      form.setValue("step1.affiliateCode", affiliateFromUrl, { shouldValidate: true });
+    }
+  }, [affiliateFromUrl]);
+
   const validateCurrentStep = async () => {
     switch (currentStep) {
       case 1:
@@ -59,7 +72,7 @@ export function RegisterForm() {
   const renderCurrentForm = () => {
     switch (currentStep) {
       case 1:
-        return <FirstStep />;
+        return <FirstStep affiliateLocked={affiliateLocked} />;
       case 2:
         return <SecondStep />;
       case 3:
