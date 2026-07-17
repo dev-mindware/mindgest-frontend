@@ -1,14 +1,18 @@
 "use client";
+import { useState } from "react";
 import { TitleList, RequestError, SalesSkeleton } from "@/components/common";
 import { SalesAreaChart } from "./sales-area-chart";
 import { SalesSummaryCards } from "./sales-summary-cards";
 
 import { ReportExportButton, ReportFilters } from "../common";
 import { useSalesReports } from "@/hooks/reports";
-import { SalesPeriod } from "@/types/reports";
+import { SalesPeriod, ReportExportType } from "@/types/reports";
 import { RequestSalesError } from "./request-sales-error";
 
 export function SalesReportsContent() {
+  const [exportReportType, setExportReportType] =
+    useState<ReportExportType>("SALES");
+
   const {
     data,
     isLoading,
@@ -41,8 +45,8 @@ export function SalesReportsContent() {
     <div className="space-y-6">
       <div data-tour="reports-sales-header">
         <TitleList
-          title="Relatórios de Vendas"
-          suTitle="Analise receitas, volume e evolução por período de forma clara."
+          title="Vendas e Facturação"
+          suTitle="Analise receitas, volume, facturação e evolução por período de forma clara."
         />
       </div>
 
@@ -50,6 +54,18 @@ export function SalesReportsContent() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <ReportFilters
             filters={[
+              {
+                type: "select",
+                label: "Tipo de Relatório",
+                value: exportReportType,
+                onChange: (value) =>
+                  setExportReportType(value as ReportExportType),
+                options: [
+                  { value: "SALES", label: "Vendas" },
+                  { value: "BILLING", label: "Facturação" },
+                ],
+                placeholder: "Seleccione o tipo",
+              },
               {
                 type: "select",
                 label: "Período",
@@ -81,10 +97,10 @@ export function SalesReportsContent() {
           />
           <div data-tour="reports-sales-export">
             <ReportExportButton
-              reportType="SALES"
+              reportType={exportReportType}
               startDate={startDate}
               endDate={endDate}
-              filenamePrefix="relatorio-vendas"
+              filenamePrefix={exportReportType === "BILLING" ? "Relatorio-de-Facturacao" : "Relatorio-de-Vendas"}
               className="w-full lg:w-auto"
               hasData={hasSalesData}
             />

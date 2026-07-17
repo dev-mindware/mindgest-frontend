@@ -1,6 +1,11 @@
 "use client"
+import { Suspense } from "react";
 import { RegisterForm } from "@/components/auth";
 
 export default function page() {
-  return <RegisterForm />
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
+  );
 }

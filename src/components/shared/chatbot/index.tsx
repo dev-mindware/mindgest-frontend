@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button, Icon } from "@/components";
-import { mindMessageLimitByPlan } from "@/constants/plan-features";
+import { MIND_WEEKLY_MESSAGE_LIMIT, countWeeklyUserMessages } from "@/constants/mind-ai";
 import { useAuthStore } from "@/stores";
 import { useSendChatMessage } from "@/hooks";
-import { ChatHistoryItem, PlanType } from "@/types";
+import { ChatHistoryItem } from "@/types";
 import { ProtectedAction } from "@/components/guards";
 import { ErrorMessage } from "@/utils/messages";
 
@@ -217,9 +217,7 @@ export function ChatbotSheet() {
     ? `${user.company.name.replace(/\s+/g, "_").toLowerCase()}_${user.id}_${new Date().toISOString().split("T")[0]}`
     : "";
   const { mutate: sendMessage, isPending } = useSendChatMessage();
-  const currentPlan =
-    (user?.company?.subscription?.plan?.name as PlanType) || "Base";
-  const mindMessageLimit = mindMessageLimitByPlan[currentPlan] ?? 10;
+  const mindMessageLimit = MIND_WEEKLY_MESSAGE_LIMIT;
 
   // Carregar dados do IndexedDB no Mount
   useEffect(() => {
@@ -348,7 +346,7 @@ export function ChatbotSheet() {
 
     if (totalMessagesUsed >= mindMessageLimit) {
       ErrorMessage(
-        `Limite de ${mindMessageLimit} mensagens do MIND atingido no plano ${currentPlan}.`,
+        `Limite de ${mindMessageLimit} mensagens por semana do MIND atingido. O limite renova no início da próxima semana.`,
       );
       return;
     }
@@ -425,13 +423,10 @@ export function ChatbotSheet() {
     setActiveTab("chat");
   };
 
-  const totalMessagesUsed = useMemo(() => {
-    return sessions.reduce(
-      (acc, session) =>
-        acc + session.messages.filter((m) => m.role === "user").length,
-      0,
-    );
-  }, [sessions]);
+  const totalMessagesUsed = useMemo(
+    () => countWeeklyUserMessages(sessions),
+    [sessions],
+  );
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>

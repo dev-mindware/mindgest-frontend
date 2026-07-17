@@ -10,9 +10,7 @@ export const ProductStockInfo = ({ product }: { product: Product }) => {
   return (
     <FeatureGate minPlan="Smart">
       <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>
-          {product.maxStock} no Stock - {product.maxStock}
-        </span>
+        <span>{product.quantity} no Stock</span>
         <span>Expira em: ({formattedExpiryDate})</span>
       </div>
     </FeatureGate>

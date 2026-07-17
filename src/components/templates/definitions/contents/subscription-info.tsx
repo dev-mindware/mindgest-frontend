@@ -10,11 +10,7 @@ import {
   Icon,
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
-import {
-  formatCurrency,
-  isCustomPricedPlan,
-  PRO_PLAN_NEGOTIATION_EMAIL,
-} from "@/utils";
+import { formatCurrency } from "@/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Link from "next/link";
@@ -47,7 +43,6 @@ export function SubscriptionInfo() {
 
   const isTrial = subscription.status === "TRIALING";
   const isPending = subscription.status === "PENDING";
-  const isCustomPlan = isCustomPricedPlan(plan);
   const endDate = isTrial
     ? subscription.trialEndsAt
     : subscription.periodEndsAt;
@@ -75,15 +70,8 @@ export function SubscriptionInfo() {
             <div>
               <p className="text-sm text-muted-foreground">Preço Mensal</p>
               <p className="text-2xl font-bold text-primary">
-                {isCustomPlan
-                  ? "Personalizável"
-                  : formatCurrency(Number(plan.priceMonthly))}
+                {formatCurrency(Number(plan.priceMonthly))}
               </p>
-              {isCustomPlan && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  Negociação: {PRO_PLAN_NEGOTIATION_EMAIL}
-                </p>
-              )}
             </div>
 
             <div>

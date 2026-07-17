@@ -110,7 +110,6 @@ export function DetailsProductModal() {
             <div className="grid gap-2 pl-1">
               <DetailRow label="Stock actual" value={currentProduct.quantity} />
               <DetailRow label="Stock mínimo" value={currentProduct.minStock} />
-              <DetailRow label="Stock máximo" value={currentProduct.maxStock} />
             </div>
           </section>
         </FeatureGate>
