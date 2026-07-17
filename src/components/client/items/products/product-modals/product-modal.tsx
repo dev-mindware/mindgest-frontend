@@ -127,7 +127,6 @@ function AddProductFormContent() {
       supplierId: "none",
       unit: "",
       minStock: 0,
-      maxStock: 0,
       taxId: "",
     },
   });
@@ -140,7 +139,6 @@ function AddProductFormContent() {
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
-      maxStock: data.maxStock ?? undefined,
       supplierId:
         !data.supplierId || data.supplierId === "none" ? null : data.supplierId,
       unit: data.unit === "none" || !data.unit ? undefined : data.unit,
@@ -331,22 +329,6 @@ function AddProductFormContent() {
                           value={field.value ?? 0}
                           onChange={(e) => field.onChange(Number(e.target.value))}
                           error={errors.minStock?.message}
-                        />
-                      </div>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="maxStock"
-                    render={({ field }) => (
-                      <div data-tour="product-form-max-stock">
-                        <Input
-                          type="quantity"
-                          startIcon="Scale"
-                          label="Stock Máximo"
-                          value={field.value ?? 0}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                          error={errors.maxStock?.message}
                         />
                       </div>
                     )}

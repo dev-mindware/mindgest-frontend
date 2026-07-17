@@ -143,7 +143,6 @@ export function ServiceModal({ action }: ServiceModalProps) {
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
-      maxStock: data.maxStock ?? undefined,
       daysToExpiry: data.daysToExpiry ?? undefined,
     } as any;
   };
