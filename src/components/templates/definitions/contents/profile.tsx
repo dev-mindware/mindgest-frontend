@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/auth";
 import { ProfileForm } from "./profile/profile-form";
 import { CompanyForm } from "./profile/company-form";
 import { CompanyLogoForm } from "./profile/company-logo-form";
+import { DocumentBrandingForm } from "./profile/document-branding-form";
 
 export function Profile() {
   const { user } = useAuth();
@@ -25,6 +26,8 @@ export function Profile() {
       </div>
 
       <CompanyLogoForm user={user} />
+
+      <DocumentBrandingForm />
     </div>
   );
 }
