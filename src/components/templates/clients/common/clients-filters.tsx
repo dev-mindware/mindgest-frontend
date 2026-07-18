@@ -23,6 +23,11 @@ export function ClientsFiltersTSX({
     filters.createdBefore ||
     search.length > 0;
 
+  const handleClear = () => {
+    void setSearch("");
+    clearAllFilters();
+  };
+
   return (
     <div className="w-full flex flex-col gap-4 px-2 sm:px-0">
       {children && (
@@ -93,7 +98,7 @@ export function ClientsFiltersTSX({
           <Button
             size="sm"
             variant="outline"
-            onClick={clearAllFilters}
+            onClick={handleClear}
             className="h-10 text-destructive hover:text-destructive w-full sm:w-auto"
           >
             <Icon name="X" className="w-4 h-4 mr-2" />

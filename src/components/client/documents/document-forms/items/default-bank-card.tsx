@@ -4,7 +4,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDefaultBank } from "@/hooks/banks";
 import { Button } from "@/components";
 import { useModal } from "@/stores";
-import { BankModal } from "@/components/templates/definitions/contents/banks/banks-modals";
 
 function Row({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string | null }) {
     if (!value) return null;
@@ -56,7 +55,6 @@ export function DefaultBankCard() {
                 >
                     + Adicionar Banco
                 </Button>
-                <BankModal action="add" />
             </div>
         );
     }
@@ -95,7 +93,6 @@ export function DefaultBankCard() {
                 label="Express"
                 value={defaultBank.phone}
             />
-            <BankModal action="add" />
         </div>
     );
 }

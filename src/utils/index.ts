@@ -11,6 +11,7 @@ export * from "./messages";
 export * from "./audio";
 export * from "./get-plan-features";
 export * from "./generate-barcode";
+export * from "./download-barcode-png";
 export * from "./client";
 export * from "./tax";
 export * from "./print-pos-document";

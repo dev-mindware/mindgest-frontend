@@ -1,133 +1,143 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Icon } from "@/components";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Icon, Input, Label, Separator, Badge } from "@/components";
 import {
-  Badge,
-  Input,
-  Label,
-  Separator,
-} from "@/components/ui";
-import { agtService } from "@/services";
-import { toast } from "sonner";
+  getConsultedDocument,
+  useAgtActions,
+  useConsultAgtInvoice,
+  useValidateAgtDocument,
+} from "@/hooks/agt";
+import {
+  consultAgtInvoiceSchema,
+  type ConsultAgtInvoiceFormData,
+} from "@/schemas/agt-schema";
+import type { AgtConsultDocument } from "@/types";
+import { formatCurrency } from "@/utils";
+import { useSearchParams } from "next/navigation";
 
-export function AgtConsultation({
-  externalDocNo,
-  clearExternalDocNo,
-}: {
-  externalDocNo?: string;
-  clearExternalDocNo: () => void;
-}) {
-  const [documentNo, setDocumentNo] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
-  const [docResult, setDocResult] = useState<any>(null);
-  const [vatPercentage, setVatPercentage] = useState("100");
+export function AgtConsultation() {
+  const searchParams = useSearchParams();
+  const { clearDocNo } = useAgtActions();
+  const docNoFromUrl = searchParams.get("docNo");
+
+  const [docResult, setDocResult] = useState<AgtConsultDocument | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [vatPercentage, setVatPercentage] = useState("100");
 
-  const handleConsult = async (targetDocNo?: unknown) => {
-    const finalDocNo = typeof targetDocNo === "string" ? targetDocNo : documentNo;
-    if (!finalDocNo.trim()) return;
+  const { mutateAsync: consultInvoice, isPending: isLoading } =
+    useConsultAgtInvoice();
+  const { mutateAsync: validateDocument, isPending: isValidating } =
+    useValidateAgtDocument();
 
-    setIsLoading(true);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ConsultAgtInvoiceFormData>({
+    resolver: zodResolver(consultAgtInvoiceSchema),
+    defaultValues: { documentNo: "" },
+  });
+
+  const documentNo = watch("documentNo");
+
+  async function runConsult(targetDocNo: string) {
+    const trimmed = targetDocNo.trim();
+    if (!trimmed) return;
+
     setDocResult(null);
-    try {
-      const data = await agtService.consultInvoice(finalDocNo.trim());
-      const result = data.statusResult || data;
+    setIsConfirming(false);
 
-      if (result && (result.documentNo || result.documentResult)) {
-        setDocResult(result.documentResult || result);
-        toast.success("Documento encontrado no repositório AGT.");
-      } else if (data.errorList?.length > 0) {
-        toast.error(data.errorList[0].descriptionError || "Erro na consulta.");
-      } else {
-        toast.error("Documento não encontrado.");
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao consultar documento.");
-    } finally {
-      setIsLoading(false);
+    try {
+      const data = await consultInvoice(trimmed);
+      const document = getConsultedDocument(data);
+      setDocResult(document);
+    } catch {
+      setDocResult(null);
     }
-  };
+  }
 
   useEffect(() => {
-    if (!externalDocNo) return;
+    if (!docNoFromUrl) return;
 
-    setDocumentNo(externalDocNo);
-    void handleConsult(externalDocNo);
-    clearExternalDocNo();
-  }, [externalDocNo]);
+    setValue("documentNo", docNoFromUrl);
+    void runConsult(docNoFromUrl);
+    clearDocNo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to URL docNo
+  }, [docNoFromUrl]);
 
-  const handleValidate = async (action: "CONFIRMAR" | "REJEITAR") => {
-    setIsValidating(true);
+  async function onConsult(data: ConsultAgtInvoiceFormData) {
+    await runConsult(data.documentNo);
+  }
+
+  async function handleValidate(action: "CONFIRMAR" | "REJEITAR") {
+    if (!docResult?.documentNo) return;
+
     try {
-      const params: any = {
+      await validateDocument({
         documentNo: docResult.documentNo,
         action,
-      };
-
-      if (action === "CONFIRMAR") {
-        params.deductibleVATPercentage = Number.parseFloat(vatPercentage);
-      }
-
-      await agtService.validateDocument(params);
-      toast.success(
-        `Documento ${action === "CONFIRMAR" ? "confirmado" : "rejeitado"} com sucesso.`,
-      );
-      void handleConsult();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao validar documento.");
-    } finally {
-      setIsValidating(false);
+        deductibleVATPercentage:
+          action === "CONFIRMAR"
+            ? Number.parseFloat(vatPercentage)
+            : undefined,
+      });
       setIsConfirming(false);
+      await runConsult(docResult.documentNo);
+    } catch {
+      // errors handled in mutation
     }
-  };
+  }
 
   const isValidDocument =
     docResult?.documentStatus === "V" || docResult?.documentStatus === "N";
 
   return (
-    <div className="space-y-5">
+    <div className="justify-start mt-6 space-y-8">
       <div className="space-y-1">
         <h3 className="text-lg font-semibold">Consulta e validação</h3>
         <p className="text-sm text-muted-foreground">
-          Pesquise documentos no repositório fiscal e valide facturas de fornecedores.
+          Pesquise documentos no repositório fiscal e valide facturas de
+          fornecedores.
         </p>
       </div>
 
-      <div className="rounded-md border bg-background p-4">
-        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <div className="grid gap-2">
-            <Label htmlFor="agt-document-no">Número do documento</Label>
-            <Input
-              id="agt-document-no"
-              placeholder="Ex: FT FT2024/001"
-              value={documentNo}
-              onChange={(event) => setDocumentNo(event.target.value)}
-              onKeyDown={(event) => event.key === "Enter" && void handleConsult()}
-            />
-          </div>
-
-          <Button
-            type="button"
-            className="gap-2"
-            onClick={() => void handleConsult()}
-            disabled={isLoading || !documentNo.trim()}
-          >
-            {isLoading ? (
-              <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
-            ) : (
-              <Icon name="Search" className="h-4 w-4" />
-            )}
-            Consultar
-          </Button>
+      <form
+        onSubmit={handleSubmit(onConsult)}
+        className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"
+      >
+        <div className="grid gap-2">
+          <Label htmlFor="agt-document-no">Número do documento</Label>
+          <Input
+            id="agt-document-no"
+            placeholder="Ex: FT FT2024/001"
+            {...register("documentNo")}
+            error={errors.documentNo?.message}
+          />
         </div>
-      </div>
+
+        <Button
+          type="submit"
+          className="gap-2"
+          disabled={isLoading || !documentNo?.trim()}
+        >
+          {isLoading ? (
+            <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
+          ) : (
+            <Icon name="Search" className="h-4 w-4" />
+          )}
+          Consultar
+        </Button>
+      </form>
 
       {docResult && (
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="rounded-md border bg-background">
-            <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0 space-y-1">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">
@@ -150,17 +160,16 @@ export function AgtConsultation({
               <div className="text-left sm:text-right">
                 <p className="text-xs text-muted-foreground">Total líquido</p>
                 <p className="text-lg font-semibold">
-                  {new Intl.NumberFormat("pt-AO", {
-                    style: "currency",
-                    currency: "AOA",
-                  }).format(Number.parseFloat(docResult.netTotal) || 0)}
+                  {formatCurrency(
+                    Number.parseFloat(String(docResult.netTotal ?? 0)) || 0,
+                  )}
                 </p>
               </div>
             </div>
 
             <Separator />
 
-            <div className="grid gap-4 p-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <InfoItem
                 label="Emitente (NIF)"
                 value={docResult.taxRegistrationNumber || "-"}
@@ -168,7 +177,11 @@ export function AgtConsultation({
               <InfoItem label="ID do repositório" value={docResult.id || "-"} />
               <InfoItem
                 label="Estado fiscal"
-                value={docResult.documentStatusDescription || docResult.documentStatus || "-"}
+                value={
+                  docResult.documentStatusDescription ||
+                  docResult.documentStatus ||
+                  "-"
+                }
               />
               <InfoItem
                 label="Tipo de documento"
@@ -177,7 +190,7 @@ export function AgtConsultation({
             </div>
           </div>
 
-          <div className="rounded-md border bg-background p-4">
+          <div className="space-y-4">
             <div className="space-y-1">
               <h4 className="font-semibold">Validação do adquirente</h4>
               <p className="text-sm text-muted-foreground">
@@ -185,7 +198,7 @@ export function AgtConsultation({
               </p>
             </div>
 
-            <Separator className="my-4" />
+            <Separator />
 
             {!isConfirming ? (
               <div className="grid gap-2">
@@ -226,7 +239,8 @@ export function AgtConsultation({
                     onChange={(event) => setVatPercentage(event.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Indique a percentagem do IVA que pretende deduzir fiscalmente.
+                    Indique a percentagem do IVA que pretende deduzir
+                    fiscalmente.
                   </p>
                 </div>
 
@@ -252,8 +266,9 @@ export function AgtConsultation({
               </div>
             )}
 
-            <p className="mt-4 text-xs text-muted-foreground">
-              Ao confirmar um documento, declara à AGT que aceita a validade fiscal desta operação.
+            <p className="text-xs text-muted-foreground">
+              Ao confirmar um documento, declara à AGT que aceita a validade
+              fiscal desta operação.
             </p>
           </div>
         </div>

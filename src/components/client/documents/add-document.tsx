@@ -7,6 +7,7 @@ import { InvoiceForm } from "./invoice-normal";
 import { InvoiceReceiptForm } from "./invoice-receipt";
 import { ProformaForm } from "./invoice-proforma";
 import { DocumentSuccessModal } from "./modals/document-success-modal";
+import { BankModal } from "@/components/templates/definitions/contents/banks/banks-modals";
 import { useAuth } from "@/hooks/auth";
 import { useModal } from "@/stores";
 import { SubscriptionStatus } from "@/types";
@@ -103,6 +104,8 @@ export function AddDocuments() {
       </Tabs>
 
       <DocumentSuccessModal />
+      {/* Mounted outside document forms to avoid nested <form> submitting the invoice */}
+      <BankModal action="add" />
     </div>
   );
 }

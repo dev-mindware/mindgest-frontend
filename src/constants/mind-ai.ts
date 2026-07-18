@@ -12,7 +12,9 @@ export function getCurrentWeekStart(date = new Date()): Date {
 }
 
 export function countWeeklyUserMessages(
-  sessions: Array<{ messages: Array<{ role: string; created_at?: string }> }>,
+  sessions: Array<{
+    messages: Array<{ role: string; created_at?: string; failed?: boolean }>;
+  }>,
 ): number {
   const weekStart = getCurrentWeekStart().getTime();
 
@@ -22,9 +24,13 @@ export function countWeeklyUserMessages(
       session.messages.filter(
         (message) =>
           message.role === "user" &&
+          !message.failed &&
           Boolean(message.created_at) &&
           new Date(message.created_at as string).getTime() >= weekStart,
       ).length
     );
   }, 0);
 }
+
+export const MIND_RETRY_ERROR_MESSAGE =
+  "Não foi possível obter resposta (limite de tokens ou erro temporário). Esta mensagem não conta no limite semanal — edite o texto e tente novamente, ou tente mais tarde.";

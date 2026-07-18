@@ -15,6 +15,7 @@ export type User = {
   name: string;
   role: Role;
   phone: string,
+  barcode?: string | null;
   company: Company;
   store?: Store;
   subscription?: Subscription;
