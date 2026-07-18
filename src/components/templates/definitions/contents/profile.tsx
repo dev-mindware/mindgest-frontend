@@ -4,9 +4,12 @@ import { ProfileForm } from "./profile/profile-form";
 import { CompanyForm } from "./profile/company-form";
 import { CompanyLogoForm } from "./profile/company-logo-form";
 import { DocumentBrandingForm } from "./profile/document-branding-form";
+import { ProfileBarcodeForm } from "./profile/profile-barcode-form";
 
 export function Profile() {
   const { user } = useAuth();
+  const canManageBarcode =
+    user?.role === "OWNER" || user?.role === "MANAGER";
 
   return (
     <div className="space-y-6" suppressHydrationWarning>
@@ -20,6 +23,8 @@ export function Profile() {
       </div>
 
       <ProfileForm user={user} />
+
+      {canManageBarcode && user && <ProfileBarcodeForm user={user} />}
 
       <div data-tour="setup-company-profile">
         <CompanyForm user={user!} />
