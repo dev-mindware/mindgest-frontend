@@ -3,6 +3,12 @@ export interface ChatbotMessageRequest {
   empresa: string;
   userName: string;
   sessionId: string;
+  companyId: string;
+  userId: string;
+  storeId?: string | null;
+  role?: string;
+  /** Prior turns in this session (without the current message). */
+  history?: Array<{ role: "user" | "assistant"; content: string }>;
 }
 
 export interface ChatbotResponse {

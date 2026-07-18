@@ -27,6 +27,31 @@ describe("mind ai weekly limit", () => {
 
     expect(total).toBe(1);
   });
+
+  it("não conta mensagens do utilizador que falharam (sem resposta da IA)", () => {
+    const weekStart = getCurrentWeekStart();
+
+    const total = countWeeklyUserMessages([
+      {
+        messages: [
+          { role: "user", created_at: weekStart.toISOString() },
+          { role: "assistant", created_at: weekStart.toISOString() },
+          {
+            role: "user",
+            created_at: weekStart.toISOString(),
+            failed: true,
+          },
+          {
+            role: "assistant",
+            created_at: weekStart.toISOString(),
+            failed: true,
+          },
+        ],
+      },
+    ]);
+
+    expect(total).toBe(1);
+  });
 });
 
 describe("notification alert state", () => {
