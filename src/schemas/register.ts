@@ -21,6 +21,15 @@ export const registerSchema = z.object({
         .trim()
         .nonempty("Campo obrigatorio")
         .min(3, "No minimo 3 caracters"),
+      affiliateCode: z
+        .string()
+        .trim()
+        .optional()
+        .or(z.literal(""))
+        .refine(
+          (val) => !val || /^MWD-AO-\d+$/.test(val),
+          { message: "Código inválido. Formato correto: MWD-AO-1234" }
+        ),
     })
     .refine((data) => data.password === data.passwordConfirmation, {
       message: "As palavras-passe não coincidem",

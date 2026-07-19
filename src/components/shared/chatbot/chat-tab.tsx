@@ -4,12 +4,18 @@ import { TabsContent } from "@/components/ui/tabs";
 import { LocalChatHistoryItem } from "./index";
 
 export const QUICK_ACTIONS = [
+    { label: "Como está a minha faturação este mês?" },
     { label: "Como emitir uma Factura Recibo (FR)?" },
+    { label: "Tenho alertas de stock?" },
     { label: "Como converter Proforma em Factura?" },
-    { label: "Como efectuar uma reserva de stock?" },
-    { label: "Como configurar os dados do banco?" },
 ];
-export const SUGGESTION_CHIPS = ["Facturação", "Stock", "Relatórios", "Clientes", "Definições"];
+export const SUGGESTION_CHIPS = [
+    "Facturação",
+    "Stock",
+    "POS / Caixa",
+    "Clientes",
+    "Como faço…",
+];
 
 export const RenderAIMessage = ({ content, isTyping }: { content: string, isTyping?: boolean }) => {
     const paragraphs = content.split('\n');
@@ -88,6 +94,11 @@ export function ChatTab({
 
     return (
         <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 outline-none data-[state=inactive]:hidden">
+            <div className="mx-6 mt-1 rounded-lg border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">Limite semanal do MIND:</span>{" "}
+                {totalMessagesUsed}/{messageLimit} mensagens utilizadas esta semana. O limite renova todas as segundas-feiras.
+            </div>
+
             <div className="flex-1 overflow-y-auto px-6 py-2 space-y-4">
                 {messages.length === 0 ? (
                     <div className="flex flex-col gap-4 mt-2">
@@ -108,7 +119,17 @@ export function ChatTab({
                     <div className="flex flex-col gap-4 pb-4">
                         {messages.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                <div className={`max-w-[85%] rounded-2xl p-3 px-4 ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-br-sm" : "bg-muted text-foreground rounded-bl-sm"}`}>
+                                <div
+                                    className={`max-w-[85%] rounded-2xl p-3 px-4 ${
+                                        msg.role === "user"
+                                            ? msg.failed
+                                                ? "bg-primary/60 text-primary-foreground rounded-br-sm opacity-80"
+                                                : "bg-primary text-primary-foreground rounded-br-sm"
+                                            : msg.failed
+                                              ? "bg-destructive/10 text-destructive border border-destructive/30 rounded-bl-sm"
+                                              : "bg-muted text-foreground rounded-bl-sm"
+                                    }`}
+                                >
                                     {msg.role === "user" ? (
                                         <p className="text-sm">{msg.content}</p>
                                     ) : (
@@ -160,13 +181,13 @@ export function ChatTab({
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         className="w-full min-h-[100px] max-h-[160px] p-4 pr-12 bg-transparent border-0 resize-none focus:outline-none text-sm placeholder:text-muted-foreground font-medium"
-                        placeholder={limitReached ? "Limite de mensagens atingido" : "Pergunte qualquer coisa..."}
+                        placeholder={limitReached ? "Limite semanal de mensagens atingido" : "Pergunte qualquer coisa..."}
                         disabled={isPending || limitReached}
                     />
                     <div className="absolute left-4 bottom-3 flex gap-3 text-[10px] text-muted-foreground/60 font-medium">
                         <span>{input.length}/150</span>
                         <span className={limitReached ? "text-destructive font-semibold" : ""}>
-                            Mensagens: {totalMessagesUsed}/{messageLimit}
+                            Esta semana: {totalMessagesUsed}/{messageLimit}
                         </span>
                     </div>
                     <button

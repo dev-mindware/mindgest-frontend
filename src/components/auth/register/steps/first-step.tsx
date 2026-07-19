@@ -1,12 +1,17 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { Input, Button, PasswordStrengthBar, AlertError } from "@/components";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
 import { Wand2 } from "lucide-react";
 
-export function FirstStep() {
+type FirstStepProps = {
+  affiliateLocked?: boolean;
+};
+
+export function FirstStep({ affiliateLocked = false }: FirstStepProps) {
   const {
     register,
     setValue,
@@ -114,6 +119,42 @@ export function FirstStep() {
           {...register("step1.passwordConfirmation")}
           error={errors?.step1?.passwordConfirmation?.message}
         />
+
+        {affiliateLocked ? (
+          <TooltipProvider delayDuration={150}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="cursor-help">
+                  <Input
+                    type="text"
+                    startIcon="Tag"
+                    endIcon="BadgeCheck"
+                    placeholder="MWD-AO-1234"
+                    label="Código de Afiliado"
+                    readOnly
+                    className="bg-muted/40"
+                    title="Este é o código do parceiro que o convidou para o Mindgest."
+                    {...register("step1.affiliateCode")}
+                    error={errors?.step1?.affiliateCode?.message}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs text-center">
+                Este é o código do parceiro que o trouxe ao Mindgest. Foi preenchido
+                automaticamente através do link de convite e não pode ser alterado.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <Input
+            type="text"
+            startIcon="Tag"
+            placeholder="MWD-AO-1234"
+            label="Código de Afiliado (Opcional)"
+            {...register("step1.affiliateCode")}
+            error={errors?.step1?.affiliateCode?.message}
+          />
+        )}
       </div>
     </div>
   );

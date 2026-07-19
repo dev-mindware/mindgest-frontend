@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button, Icon } from "@/components";
-import { mindMessageLimitByPlan } from "@/constants/plan-features";
-import { useAuthStore } from "@/stores";
+import { MIND_WEEKLY_MESSAGE_LIMIT, countWeeklyUserMessages, MIND_RETRY_ERROR_MESSAGE } from "@/constants/mind-ai";
+import { useAuthStore, currentStoreStore } from "@/stores";
 import { useSendChatMessage } from "@/hooks";
-import { ChatHistoryItem, PlanType } from "@/types";
+import { ChatHistoryItem } from "@/types";
 import { ProtectedAction } from "@/components/guards";
 import { ErrorMessage } from "@/utils/messages";
 
@@ -25,7 +25,12 @@ import { HistoryTab } from "./history-tab";
 
 const EXPIRATION_DAYS = 7;
 
-export type LocalChatHistoryItem = ChatHistoryItem & { isTyping?: boolean };
+export type LocalChatHistoryItem = ChatHistoryItem & {
+  isTyping?: boolean;
+  /** True when the assistant failed to reply — must not count toward weekly limit */
+  failed?: boolean;
+};
+
 
 export interface LocalChatSession {
   id: string;
@@ -109,6 +114,7 @@ export function ChatbotSheet() {
   const isFirstCycleRef = useRef(true);
 
   const user = useAuthStore((state) => state.user);
+  const { currentStore } = currentStoreStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Deteta de forma segura a preferência de acessibilidade "reduced motion" no client-side
@@ -217,9 +223,7 @@ export function ChatbotSheet() {
     ? `${user.company.name.replace(/\s+/g, "_").toLowerCase()}_${user.id}_${new Date().toISOString().split("T")[0]}`
     : "";
   const { mutate: sendMessage, isPending } = useSendChatMessage();
-  const currentPlan =
-    (user?.company?.subscription?.plan?.name as PlanType) || "Base";
-  const mindMessageLimit = mindMessageLimitByPlan[currentPlan] ?? 10;
+  const mindMessageLimit = MIND_WEEKLY_MESSAGE_LIMIT;
 
   // Carregar dados do IndexedDB no Mount
   useEffect(() => {
@@ -348,13 +352,24 @@ export function ChatbotSheet() {
 
     if (totalMessagesUsed >= mindMessageLimit) {
       ErrorMessage(
-        `Limite de ${mindMessageLimit} mensagens do MIND atingido no plano ${currentPlan}.`,
+        `Limite de ${mindMessageLimit} mensagens por semana do MIND atingido. O limite renova no início da próxima semana.`,
       );
       return;
     }
 
     const userMsg = input.trim();
     setInput("");
+
+    // Snapshot history BEFORE appending the new user message (backend sliding window)
+    const historyPayload = messages
+      .filter(
+        (m) =>
+          (m.role === "user" || m.role === "assistant") &&
+          !m.failed,
+      )
+      .slice(-8)
+      .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+
     setMessages((prev) => [
       ...prev,
       { role: "user", content: userMsg, created_at: new Date().toISOString() },
@@ -366,6 +381,11 @@ export function ChatbotSheet() {
         empresa: user.company.name,
         userName: user.name,
         sessionId,
+        companyId: user.company.id,
+        userId: user.id,
+        storeId: currentStore?.id ?? user.store?.id ?? null,
+        role: user.role,
+        history: historyPayload,
       },
       {
         onSuccess: (data) => {
@@ -379,18 +399,58 @@ export function ChatbotSheet() {
                 isTyping: true,
               },
             ]);
+            return;
           }
+
+          // Soft failure (no reply / success false) — do not count toward limit
+          setInput(userMsg);
+          ErrorMessage(MIND_RETRY_ERROR_MESSAGE);
+          setMessages((prev) => {
+            const updated = [...prev];
+            for (let i = updated.length - 1; i >= 0; i--) {
+              if (updated[i].role === "user" && updated[i].content === userMsg) {
+                updated[i] = { ...updated[i], failed: true };
+                break;
+              }
+            }
+            return [
+              ...updated,
+              {
+                role: "assistant",
+                content: MIND_RETRY_ERROR_MESSAGE,
+                created_at: new Date().toISOString(),
+                isTyping: true,
+                failed: true,
+              },
+            ];
+          });
         },
-        onError: () => {
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: "assistant",
-              content: "Não foi possível processar a sua mensagem. Tente novamente.",
-              created_at: new Date().toISOString(),
-              isTyping: true,
-            },
-          ]);
+        onError: (error) => {
+          setInput(userMsg);
+          const detail =
+            error?.message && error.message !== "Failed to send message to Chatbot"
+              ? `${MIND_RETRY_ERROR_MESSAGE} (${error.message})`
+              : MIND_RETRY_ERROR_MESSAGE;
+          ErrorMessage(detail);
+          setMessages((prev) => {
+            const updated = [...prev];
+            for (let i = updated.length - 1; i >= 0; i--) {
+              if (updated[i].role === "user" && updated[i].content === userMsg) {
+                updated[i] = { ...updated[i], failed: true };
+                break;
+              }
+            }
+            return [
+              ...updated,
+              {
+                role: "assistant",
+                content: MIND_RETRY_ERROR_MESSAGE,
+                created_at: new Date().toISOString(),
+                isTyping: true,
+                failed: true,
+              },
+            ];
+          });
         },
       },
     );
@@ -425,13 +485,10 @@ export function ChatbotSheet() {
     setActiveTab("chat");
   };
 
-  const totalMessagesUsed = useMemo(() => {
-    return sessions.reduce(
-      (acc, session) =>
-        acc + session.messages.filter((m) => m.role === "user").length,
-      0,
-    );
-  }, [sessions]);
+  const totalMessagesUsed = useMemo(
+    () => countWeeklyUserMessages(sessions),
+    [sessions],
+  );
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>

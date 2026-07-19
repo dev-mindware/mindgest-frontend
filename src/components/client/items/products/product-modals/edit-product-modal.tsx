@@ -195,7 +195,6 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       cost: product.cost != null ? Number(product.cost) : 0,
       quantity: product.quantity != null ? Number(product.quantity) : 0,
       minStock: product.minStock != null ? Number(product.minStock) : 0,
-      maxStock: product.maxStock != null ? Number(product.maxStock) : 0,
       unit: product.unit || "",
       weight: product.weight != null ? Number(product.weight) : undefined,
       dimensions: product.dimensions || "",
@@ -216,7 +215,6 @@ function EditProductFormContent({ product }: EditProductModalProps) {
       quantity: data.quantity ?? undefined,
       weight: data.weight ?? undefined,
       minStock: data.minStock ?? undefined,
-      maxStock: data.maxStock ?? undefined,
       supplierId:
         !data.supplierId || data.supplierId === "none" ? null : data.supplierId,
       unit: data.unit === "none" || !data.unit ? undefined : data.unit,
@@ -392,20 +390,6 @@ function EditProductFormContent({ product }: EditProductModalProps) {
                       value={field.value ?? 0}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                       error={errors.minStock?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="maxStock"
-                  render={({ field }) => (
-                    <Input
-                      type="quantity"
-                      startIcon="Scale"
-                      label="Stock Máximo"
-                      value={field.value ?? 0}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      error={errors.maxStock?.message}
                     />
                   )}
                 />

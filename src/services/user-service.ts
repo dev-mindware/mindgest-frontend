@@ -15,6 +15,7 @@ export interface UpdateUserProfilePayload {
   name?: string;
   email?: string;
   phone?: string;
+  barcode?: string;
 }
 
 export interface ChangeUserPasswordPayload {

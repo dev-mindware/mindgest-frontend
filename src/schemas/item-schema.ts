@@ -11,7 +11,6 @@ export const itemSchema = z
     quantity: z.number().nullable().optional(),
 
     minStock: z.number().nullable().optional(),
-    maxStock: z.number().nullable().optional(),
 
     unit: z.string().trim().optional(),
     weight: z.number({ invalid_type_error: "O peso deve ser um número válido" }).positive("O peso deve ser positivo").optional(),
@@ -46,23 +45,6 @@ export const itemSchema = z
     taxId: z.string().trim().min(1, "Seleccione um imposto"),
   })
 
-  .refine(
-    (data) => {
-      if (
-        data.maxStock !== undefined &&
-        data.maxStock !== null &&
-        data.minStock !== undefined &&
-        data.minStock !== null
-      ) {
-        return data.maxStock >= data.minStock;
-      }
-      return true;
-    },
-    {
-      message: "O stock máximo deve ser maior ou igual ao stock mínimo",
-      path: ["maxStock"],
-    },
-  )
   .refine(
     (data) => {
       if (
