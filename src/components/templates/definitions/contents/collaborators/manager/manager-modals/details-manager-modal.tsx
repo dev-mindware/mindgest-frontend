@@ -1,6 +1,6 @@
 "use client";
 import { useModal } from "@/stores/modal/use-modal-store";
-import { Icon, Button, DetailRow, GlobalModal, Badge } from "@/components";
+import { Icon, Button, DetailRow, GlobalModal, Badge, FeatureGate } from "@/components";
 import { formatDateTime } from "@/utils";
 import { currentManagerStore } from "@/stores";
 
@@ -64,7 +64,9 @@ export function DetailsManagerModal() {
               Identificação e Empresa
             </h3>
             <DetailRow label="Empresa" value={currentManager.companyId} />
-            <DetailRow label="Código de Barras" value={currentManager.barcode} />
+            <FeatureGate minPlan="Smart" fallback="hidden">
+              <DetailRow label="Código de Barras" value={currentManager.barcode} />
+            </FeatureGate>
             <DetailRow
               label="Lojas"
               value={

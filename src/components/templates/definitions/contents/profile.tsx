@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/hooks/auth";
+import { FeatureGate } from "@/components/common";
 import { ProfileForm } from "./profile/profile-form";
 import { CompanyForm } from "./profile/company-form";
 import { CompanyLogoForm } from "./profile/company-logo-form";
@@ -24,7 +25,11 @@ export function Profile() {
 
       <ProfileForm user={user} />
 
-      {canManageBarcode && user && <ProfileBarcodeForm user={user} />}
+      {canManageBarcode && user && (
+        <FeatureGate minPlan="Smart" fallback="hidden">
+          <ProfileBarcodeForm user={user} />
+        </FeatureGate>
+      )}
 
       <div data-tour="setup-company-profile">
         <CompanyForm user={user!} />

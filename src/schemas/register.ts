@@ -24,12 +24,11 @@ export const registerSchema = z.object({
       affiliateCode: z
         .string()
         .trim()
+        .transform((val) => (val === "" ? undefined : val))
         .optional()
-        .or(z.literal(""))
-        .refine(
-          (val) => !val || /^MWD-AO-\d+$/.test(val),
-          { message: "Código inválido. Formato correto: MWD-AO-1234" }
-        ),
+        .refine((val) => !val || /^MWD-AO-\d+$/.test(val), {
+          message: "Código inválido. Formato correto: MWD-AO-1234",
+        }),
     })
     .refine((data) => data.password === data.passwordConfirmation, {
       message: "As palavras-passe não coincidem",
