@@ -191,8 +191,8 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       !isNewProduct && selectedProduct
         ? existingItemIds.has(selectedProduct.value)
         : false;
-    // Price is locked for catalogue items — edit from the items page if needed
-    const isPriceLocked = !isNewProduct && selectedProduct !== null;
+    // Price is always editable — users can override catalogue price per-document
+    const isPriceLocked = false;
     const canAdd =
       selectedProduct &&
       watchedQuantity > 0 &&
@@ -279,7 +279,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
                   decimalScale={2}
                   fixedDecimalScale
                   allowNegative={false}
-                  disabled={isPriceLocked}
+                  disabled={false}
                 />
               </div>
             )}

@@ -81,6 +81,21 @@ export function InvoiceItems({
     [fields, update],
   );
 
+  const handlePriceChange = useCallback(
+    (index: number, price: number) => {
+      const item = fields[index] as any;
+      if (!item) return;
+      const { id: _fieldId, ...itemValue } = item;
+
+      update(index, {
+        ...itemValue,
+        unitPrice: price,
+        total: price * Number(item.quantity),
+      });
+    },
+    [fields, update],
+  );
+
   return (
     <div className="space-y-6" data-tour="normal-invoice-items">
       <div className="flex items-center justify-between">
@@ -122,6 +137,7 @@ export function InvoiceItems({
             items={fields}
             onRemove={handleRemoveItem}
             onQuantityChange={handleQuantityChange}
+            onPriceChange={handlePriceChange}
           />
           <div
             className="grid grid-cols-1 gap-6 md:grid-cols-2"

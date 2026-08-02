@@ -5,10 +5,11 @@ interface ItemListProps {
   items: any[];
   onRemove: (index: number) => void;
   onQuantityChange: (index: number, quantity: number) => void;
+  onPriceChange: (index: number, price: number) => void;
 }
 
 export const ItemList = memo<ItemListProps>(
-  ({ items, onRemove, onQuantityChange }) => {
+  ({ items, onRemove, onQuantityChange, onPriceChange }) => {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -50,6 +51,7 @@ export const ItemList = memo<ItemListProps>(
                   index={index}
                   onRemove={onRemove}
                   onQuantityChange={onQuantityChange}
+                  onPriceChange={onPriceChange}
                 />
               ))}
             </tbody>

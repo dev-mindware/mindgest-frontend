@@ -74,8 +74,8 @@ export type InvoicePayload = {
     | {
         id: string;
         quantity: number;
+        price?: number;
         name?: undefined;
-        price?: undefined;
         type?: undefined;
       }
     | {
@@ -117,8 +117,8 @@ export type InvoiceReceiptPayload = {
     | {
         id: string;
         quantity: number;
+        price?: number;
         name?: undefined;
-        price?: undefined;
         type?: undefined;
       }
     | {

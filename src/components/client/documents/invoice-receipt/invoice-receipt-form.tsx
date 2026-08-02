@@ -157,6 +157,7 @@ export function InvoiceReceiptForm() {
             return {
               id: item.apiId,
               quantity: item.quantity,
+              price: item.unitPrice,
             };
           }
           return {
