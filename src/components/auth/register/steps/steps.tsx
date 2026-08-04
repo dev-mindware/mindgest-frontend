@@ -85,8 +85,12 @@ export function RegisterForm() {
   function onSubmit(data: RegisterFormData) {
     startTransition(async () => {
       try {
-        const { passwordConfirmation, ...rest } = data.step1;
-        const finalData = { ...rest, ...data.step2 };
+        const { passwordConfirmation, affiliateCode, ...rest } = data.step1;
+        const finalData = {
+          ...rest,
+          ...data.step2,
+          ...(affiliateCode ? { affiliateCode } : {}),
+        };
 
         await addCompany(finalData);
       } catch (error: any) {

@@ -134,7 +134,11 @@ export function InvoiceForm() {
 
         const itemsPayload = data.items.map((item) => {
           if (item.isFromAPI && item.apiId) {
-            return { id: item.apiId, quantity: item.quantity };
+            return {
+              id: item.apiId,
+              quantity: item.quantity,
+              price: item.unitPrice,
+            };
           }
 
           return {
