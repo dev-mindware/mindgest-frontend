@@ -1,6 +1,6 @@
 "use client"
 import { DinamicBreadcrumb } from "@/components/custom";
-import { NotificationDropdown, ChatbotSheet } from "@/components/shared";
+import { NotificationDropdown, ChatbotSheet, TutorialsModal } from "@/components/shared";
 import { Separator, SidebarTrigger } from "@/components/ui";
 import { useQueryState } from "nuqs";
 import { Icon, Input, Avatar, AvatarFallback, AvatarImage } from "@/components";
@@ -70,6 +70,7 @@ export function PageWrapper({
         )}
 
         <div className="flex items-center mr-4 space-x-2 md:space-x-4">
+          <TutorialsModal />
           {onboardingTourId && <OnboardingTourButton tourId={onboardingTourId} />}
           <ChatbotSheet />
           <NotificationDropdown />
