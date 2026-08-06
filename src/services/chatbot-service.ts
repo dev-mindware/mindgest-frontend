@@ -1,16 +1,20 @@
 import { ChatbotMessageRequest, ChatbotResponse } from "@/types";
 import api from "./api";
 
-const CHATBOT_API_URL = process.env.NEXT_PUBLIC_CHATBOT_API_URL;
+const getChatbotUrl = (): string => {
+  const raw = process.env.NEXT_PUBLIC_CHATBOT_API_URL || "https://chatbot.mindware-vps.cloud/chat";
+  const clean = raw.trim().replace(/\/+$/, "");
+  return clean.endsWith("/chat") ? clean : `${clean}/chat`;
+};
 
 export const ChatbotService = {
   sendChatMessage: async (
     data: ChatbotMessageRequest,
   ): Promise<ChatbotResponse> => {
-    if (!CHATBOT_API_URL) throw new Error("CHATBOT_API_URL is not defined");
+    const url = getChatbotUrl();
 
     try {
-      const response = await api.post<ChatbotResponse>(CHATBOT_API_URL, data);
+      const response = await api.post<ChatbotResponse>(url, data);
       return response.data;
     } catch (err: any) {
       const detail =
