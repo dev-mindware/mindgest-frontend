@@ -22,7 +22,7 @@ export function SalesSummaryCards({ summary }: SalesSummaryCardsProps) {
   // }
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
       <DynamicMetricCard
         title={formatCurrency(summary.totalRevenue)}
         subtitle="Receita Total"

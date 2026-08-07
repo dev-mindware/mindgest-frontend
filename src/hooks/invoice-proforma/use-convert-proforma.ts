@@ -10,17 +10,23 @@ function mapItems(
   defaultType: "PRODUCT" | "SERVICE" = "PRODUCT",
 ): InvoicePayload["items"] {
   return items.map((item) => {
+    const itemPrice = Number(item.unitPrice ?? item.price ?? 0);
+    const taxId = item.taxId || item.item?.taxId || undefined;
+
     if (item.itemsId) {
       return {
         id: item.itemsId,
         quantity: item.quantity,
-      };
+        price: itemPrice,
+        ...(taxId && { taxId }),
+      } as any;
     }
     return {
       name: item.name,
-      price: item.unitPrice,
+      price: itemPrice,
       quantity: item.quantity,
       type: (item.item?.type as "PRODUCT" | "SERVICE") || defaultType,
+      ...(taxId && { taxId }),
     };
   });
 }
@@ -35,13 +41,26 @@ async function createDocument(type: ConversionType, proforma: InvoiceResponse) {
         address: proforma.client?.address ?? undefined,
       };
 
+  const total = Number(proforma.total);
+  const taxAmount = Number(proforma.taxAmount || 0);
+  const discountAmount = Number(proforma.discountAmount || 0);
+  const retentionAmount = Number((proforma as any).retentionAmount || 0);
+
+  // Calculate subtotal accurately if not explicitly present on the proforma object
+  const subtotal = Number(
+    proforma.subtotal ?? (total - taxAmount + discountAmount + retentionAmount)
+  );
+
   const basePayload = {
     issueDate,
     client,
     items: mapItems(proforma.items),
-    total: Number(proforma.total),
-    taxAmount: Number(proforma.taxAmount),
-    discountAmount: Number(proforma.discountAmount),
+    subtotal: subtotal,
+    total: total,
+    taxAmount: taxAmount,
+    discountAmount: discountAmount,
+    retentionAmount: retentionAmount,
+    notes: proforma.notes || undefined,
   };
 
   if (type === "invoice") {

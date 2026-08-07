@@ -40,7 +40,7 @@ export function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
     ];
 
     return (
-        <div className="grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
             {stats.map((stat, i) => (
                 <DynamicMetricCard key={i} {...(stat as any)} />
             ))}

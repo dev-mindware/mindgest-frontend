@@ -44,8 +44,16 @@ export const ItemSchema = z.object({
     .nullable(),
 
   isFromAPI: z.boolean().optional(),
-  taxId: z.string().trim().min(1, "Seleccione um imposto"),
+  taxId: z.string().trim().optional().or(z.literal("")),
   apiId: z.string().trim().optional(),
+}).superRefine((data, ctx) => {
+  if (!data.isFromAPI && !data.apiId && !data.taxId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["taxId"],
+      message: "Seleccione um imposto",
+    });
+  }
 });
 
 export const taxNumberSchema = z

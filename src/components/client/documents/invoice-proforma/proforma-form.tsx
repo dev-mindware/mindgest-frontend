@@ -67,13 +67,13 @@ export function ProformaForm({
         },
         items:
           initialData.items?.map((item: any) => ({
-            apiId: item.item?.id || item.id,
+            apiId: item.item?.id || item.itemsId || item.id,
             description: item.item?.name || item.description || item.name,
             unitPrice: Number(item.price || item.unitPrice || 0),
             quantity: Number(item.quantity || 1),
             type: item.item?.type || item.type || "PRODUCT",
             tax: Number(item.tax || item.taxRate || item.item?.tax?.rate || 0),
-            taxId: item.taxId || item.item?.tax?.id || item.item?.taxId || "",
+            taxId: item.taxId || item.item?.tax?.id || item.item?.taxId || item.tax?.id || "",
             isFromAPI: true,
           })) || [],
         globalRetention: retentionPercent,
@@ -220,6 +220,7 @@ export function ProformaForm({
               id: item.apiId,
               quantity: item.quantity,
               price: item.unitPrice,
+              ...(item.taxId ? { taxId: item.taxId } : {}),
             };
           }
           return {
@@ -227,7 +228,7 @@ export function ProformaForm({
             price: item.unitPrice,
             quantity: item.quantity,
             type: item.type,
-            taxId: item.taxId,
+            ...(item.taxId ? { taxId: item.taxId } : {}),
           };
         });
 

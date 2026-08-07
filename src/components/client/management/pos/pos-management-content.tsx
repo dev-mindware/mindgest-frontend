@@ -70,7 +70,7 @@ export function PosManagementContent() {
     <div>
       <div className="space-y-8">
         <section className="space-y-6" data-tour="pos-management-summary">
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
             {dynamicSummaryCards.map((card, idx) => {
               // Custom card for "Pedidos" with radar animation
               if (card.modalId === "pos-requests") {

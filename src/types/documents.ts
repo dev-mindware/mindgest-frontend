@@ -132,6 +132,8 @@ export type InvoiceReceiptPayload = {
   total: number;
   taxAmount: number;
   discountAmount: number;
+  subtotal?: number;
+  retentionAmount?: number;
   storeId?: string;
   amountReceived?: number;
   change?: number;
