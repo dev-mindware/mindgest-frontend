@@ -9,6 +9,10 @@ import {
   TabsList,
   TabsTrigger,
   Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui";
 import { InvoiceList } from "./invoice-normal";
 import { ProformaList } from "./invoice-proforma";
@@ -74,19 +78,34 @@ export function DocumentList() {
 
           <div data-tour="documents-create">
             <ProtectedAction>
-              <Link
-                className={cn("w-full sm:w-auto", {
-                  "pointer-events-none cursor-not-allowed": activeTab === "credit-notes",
-                })}
-                href={`/documents/new-doc?tab=${activeTab}`}
-              >
-                <Button
-                  className="w-full sm:w-auto disabled:cursor-not-allowed"
-                  disabled={activeTab === "credit-notes"}
+              {activeTab === "credit-notes" ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-block w-full sm:w-auto">
+                        <Button
+                          className="w-full sm:w-auto disabled:cursor-not-allowed opacity-75"
+                          disabled
+                        >
+                          Criar Documento
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs text-center p-2.5">
+                      Para emitir uma Nota de Crédito, aceda à aba <strong>Factura</strong> ou <strong>Factura Recibo</strong> e clique nos 3 pontos (<strong>...</strong>) da factura pretendida.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <Link
+                  className="w-full sm:w-auto"
+                  href={`/documents/new-doc?tab=${activeTab}`}
                 >
-                  Criar Documento
-                </Button>
-              </Link>
+                  <Button className="w-full sm:w-auto">
+                    Criar Documento
+                  </Button>
+                </Link>
+              )}
             </ProtectedAction>
           </div>
         </div>
