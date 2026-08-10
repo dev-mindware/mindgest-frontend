@@ -32,8 +32,12 @@ export function useInvoiceTotals({ items, retention, discount }: Params) {
       return acc + itemSubtotal * (taxRate / 100);
     }, 0);
 
+    // Retention applies strictly to services
+    const hasServiceItem = validItems.some((item) => item?.type === "SERVICE");
+    const effectiveRetention = hasServiceItem ? validRetention : 0;
+
     // Calculate retention on taxable base (after discount)
-    const retentionAmount = taxableBase * (validRetention / 100);
+    const retentionAmount = taxableBase * (effectiveRetention / 100);
 
     // Total = taxableBase + taxAmount - retentionAmount
     const total = taxableBase + taxAmount - retentionAmount;

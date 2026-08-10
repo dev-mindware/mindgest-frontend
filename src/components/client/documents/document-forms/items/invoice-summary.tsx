@@ -16,6 +16,7 @@ interface InvoiceSummaryProps {
   setGlobalRetention: (value: number) => void;
   globalDiscount: number;
   setGlobalDiscount: (value: number) => void;
+  hasServiceItem?: boolean;
 }
 
 export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
@@ -25,21 +26,36 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
     setGlobalRetention,
     globalDiscount,
     setGlobalDiscount,
+    hasServiceItem = false,
   }) => {
+    // Reset retention to 0 if there are no service items
+    React.useEffect(() => {
+      if (!hasServiceItem && globalRetention !== 0) {
+        setGlobalRetention(0);
+      }
+    }, [hasServiceItem, globalRetention, setGlobalRetention]);
 
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SelectField
-            label="Retenção na Fonte"
-            value={globalRetention}
-            onValueChange={(v) => setGlobalRetention(Number(v))}
-            options={[
-              { value: 0, label: "Sem retenção (0%)" },
-              { value: 6.5, label: "6.5%" },
-              { value: 10, label: "10%" },
-            ]}
-          />
+          <div className="space-y-1">
+            <SelectField
+              label="Retenção na Fonte"
+              value={hasServiceItem ? globalRetention : 0}
+              onValueChange={(v) => setGlobalRetention(Number(v))}
+              disabled={!hasServiceItem}
+              options={[
+                { value: 0, label: "Sem retenção (0%)" },
+                { value: 6.5, label: "6.5%" },
+                { value: 10, label: "10%" },
+              ]}
+            />
+            {!hasServiceItem && (
+              <p className="text-[11px] text-muted-foreground">
+                Retenção aplicável apenas a serviços.
+              </p>
+            )}
+          </div>
 
           <InputCurrency
             label="Desconto (%)"
@@ -52,7 +68,6 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
             suffix=" %"
             isAllowed={(values) => (values.floatValue ?? 0) <= 100}
           />
-
         </div>
 
 

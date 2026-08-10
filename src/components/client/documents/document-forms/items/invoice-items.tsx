@@ -96,6 +96,11 @@ export function InvoiceItems({
     [fields, update],
   );
 
+  const hasServiceItem = useMemo(
+    () => fields.some((item: any) => item?.type === "SERVICE"),
+    [fields]
+  );
+
   return (
     <div className="space-y-6" data-tour="normal-invoice-items">
       <div className="flex items-center justify-between">
@@ -151,6 +156,7 @@ export function InvoiceItems({
                 setGlobalRetention={setGlobalRetention}
                 globalDiscount={globalDiscount}
                 setGlobalDiscount={setGlobalDiscount}
+                hasServiceItem={hasServiceItem}
               />
             </div>
           </div>
