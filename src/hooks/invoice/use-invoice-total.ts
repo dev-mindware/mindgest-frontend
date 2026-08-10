@@ -39,8 +39,8 @@ export function useInvoiceTotals({ items, retention, discount }: Params) {
     // Calculate retention on taxable base (after discount)
     const retentionAmount = taxableBase * (effectiveRetention / 100);
 
-    // Total = taxableBase + taxAmount - retentionAmount
-    const total = taxableBase + taxAmount - retentionAmount;
+    // Total = taxableBase + taxAmount (retention is an informative withholding tax indicator)
+    const total = taxableBase + taxAmount;
 
     const result = {
       subtotal: Number(subtotal.toFixed(2)),
@@ -78,7 +78,7 @@ export function useInvoiceTotals({ tax, items, retention, discount }: Params) {
     const taxAmount = taxableBase * (Number(tax) / 100);
     const retentionAmount = taxableBase * (Number(retention) / 100);
 
-    const total = taxableBase + taxAmount - retentionAmount;
+    const total = taxableBase + taxAmount;
 
     return {
       subtotal: Number(subtotal.toFixed(2)),

@@ -133,10 +133,10 @@ export function InvoiceTotalsSummary({
 
       {/* Retenção */}
       {retentionPercent > 0 && (
-        <div className="flex justify-between items-center text-red-600">
-          <span className="text-sm">Retenção ({retentionPercent}%)</span>
+        <div className="flex justify-between items-center text-amber-700 font-medium">
+          <span className="text-sm">Retenção na Fonte ({retentionPercent}%)</span>
           <span className="font-mono text-base">
-            -{formatCurrency(retentionAmount)}
+            {formatCurrency(retentionAmount)}
           </span>
         </div>
       )}
