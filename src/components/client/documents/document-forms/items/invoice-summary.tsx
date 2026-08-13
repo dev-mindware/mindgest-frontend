@@ -39,21 +39,22 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
+            {hasServiceItem && (
             <SelectField
               label="Retenção na Fonte"
               value={hasServiceItem ? globalRetention : 0}
               onValueChange={(v) => setGlobalRetention(Number(v))}
-              disabled={!hasServiceItem}
               options={[
                 { value: 0, label: "Sem retenção (0%)" },
                 { value: 6.5, label: "6.5%" },
                 { value: 10, label: "10%" },
               ]}
             />
+            )}
             {!hasServiceItem && (
-              <p className="text-[11px] text-muted-foreground">
+              <h1 className="text-destructive">
                 Retenção aplicável apenas a serviços.
-              </p>
+              </h1>
             )}
           </div>
 
