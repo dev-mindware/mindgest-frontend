@@ -1,7 +1,7 @@
 ARTE 2 — Matriz de Cenários de Manipulação
 Aqui está cada cenário possível, o que acontece, o risco e como o sistema corrigido lida.
 🔴 Cenário 1: Atacante apaga o cookie refresh_token
-EtapaO que aconteceAntesUtilizador logado em /dashboardAçãoBrowser apaga cookie refresh_token (DevTools)Próximo requestMiddleware: hasRefreshToken = false → não autenticadoResultadoRedirect para /auth/login?from=/dashboardRisco⚪ Nenhum — é só logout forçadoUXTela de login normal
+EtapaO que aconteceAntesUtilizador logado em /dashboardAçãoBrowser apaga cookie refresh_token (DevTools)Próximo requestMiddleware: hasRefreshToken = false → não autenticadoResultadoRedirect para /auth/login?from=/dashboardRisco⚪ Nenhum — é só logout forçadoUXTela de login normal, damn.
 
 🔴 Cenário 2: Atacante apaga apenas o access_token, mantém refresh_token
 EtapaO que aconteceAçãoApaga só access_token no DevToolsMiddlewareVê refresh_token válido → autenticado, deixa passarClienteFaz request à API → 401 (sem access token)Interceptor axiosDetecta 401 → chama /auth/refresh com refresh token → recebe novo access token → atualiza cookie → retenta request originalResultado✅ Tudo funciona transparente, utilizador nem notaRisco⚪ Nenhum
