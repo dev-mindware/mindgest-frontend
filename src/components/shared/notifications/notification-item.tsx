@@ -14,11 +14,60 @@ interface NotificationItemProps {
   onDelete: () => void;
 }
 
-const NOTIFICATION_STYLES: Record<string, { icon: keyof typeof icons; colorClass: string }> = {
-  WARNING: { icon: "CircleAlert", colorClass: "bg-yellow-700/15 text-yellow-700" },
-  ERROR: { icon: "OctagonAlert", colorClass: "bg-red-700/15 text-red-700" },
-  INFO: { icon: "Info", colorClass: "bg-primary/15 text-primary-700" },
-  DEFAULT: { icon: "Info", colorClass: "bg-primary/15 text-primary-700" },
+const NOTIFICATION_STYLES: Record<
+  string,
+  { icon: keyof typeof icons; colorClass: string; iconClass: string }
+> = {
+  AI_ALERT: {
+    icon: "Sparkles",
+    colorClass: "bg-primary/20",
+    iconClass: "text-primary animate-pulse",
+  },
+  "MIND AI": {
+    icon: "Sparkles",
+    colorClass: "bg-primary/20",
+    iconClass: "text-primary animate-pulse",
+  },
+  SUCCESS: {
+    icon: "CircleCheck",
+    colorClass: "bg-emerald-500/15",
+    iconClass: "text-emerald-600 dark:text-emerald-400",
+  },
+  SUCESSO: {
+    icon: "CircleCheck",
+    colorClass: "bg-emerald-500/15",
+    iconClass: "text-emerald-600 dark:text-emerald-400",
+  },
+  WARNING: {
+    icon: "CircleAlert",
+    colorClass: "bg-amber-500/15",
+    iconClass: "text-amber-600 dark:text-amber-400",
+  },
+  "ATENÇÃO": {
+    icon: "CircleAlert",
+    colorClass: "bg-amber-500/15",
+    iconClass: "text-amber-600 dark:text-amber-400",
+  },
+  ERROR: {
+    icon: "OctagonAlert",
+    colorClass: "bg-rose-500/15",
+    iconClass: "text-rose-600 dark:text-rose-400",
+  },
+  ERRO: {
+    icon: "OctagonAlert",
+    colorClass: "bg-rose-500/15",
+    iconClass: "text-rose-600 dark:text-rose-400",
+  },
+  INFO: {
+    icon: "Info",
+    colorClass: "bg-sky-500/15",
+    iconClass: "text-sky-600 dark:text-sky-400",
+  },
+  DEFAULT: {
+    icon: "Bell",
+    colorClass: "bg-primary/15",
+    iconClass: "text-primary",
+  },
 };
 
 export function NotificationItem({
@@ -26,57 +75,95 @@ export function NotificationItem({
   onClick,
   onDelete,
 }: NotificationItemProps) {
-  const timeAgo = formatDistanceToNow(parseRawDate(notification.createdAt), {
-    addSuffix: true,
-    locale: ptBR,
-  });
+  let timeAgo = "";
+  try {
+    const date = notification.createdAt
+      ? parseRawDate(notification.createdAt)
+      : new Date();
+    timeAgo = formatDistanceToNow(date, {
+      addSuffix: true,
+      locale: ptBR,
+    });
+  } catch {
+    timeAgo = "recentemente";
+  }
 
-  const style = NOTIFICATION_STYLES[notification.type] || NOTIFICATION_STYLES.DEFAULT;
+  const isAiAlert =
+    notification.isAiAlert ||
+    notification.type === "AI_ALERT" ||
+    String(notification.type || "").toUpperCase() === "AI_ALERT" ||
+    notification.title.toUpperCase().includes("MIND AI") ||
+    notification.title.toUpperCase().includes("ALERTA INTELIGENTE");
+
+  const rawType = isAiAlert
+    ? "AI_ALERT"
+    : String(notification.type || "").toUpperCase();
+
+  const style =
+    NOTIFICATION_STYLES[rawType] ||
+    NOTIFICATION_STYLES[notification.type] ||
+    NOTIFICATION_STYLES.DEFAULT;
 
   return (
     <div
       className={cn(
-        "group flex items-start gap-3 p-4 transition-colors duration-150 relative cursor-pointer",
-        !notification.isRead ? "bg-primary/2" : ""
+        "group flex items-start gap-3 p-4 transition-colors duration-150 relative cursor-pointer hover:bg-muted/40",
+        !notification.isRead ? "bg-primary/5 dark:bg-primary/10" : "",
+        isAiAlert && "border-l-2 border-l-primary/60"
       )}
       onClick={onClick}
     >
       <div
         className={cn(
-          "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center",
+          "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center relative",
           style.colorClass
         )}
       >
-        <Icon name={style.icon} className="w-5 h-5 text-primary" />
+        <Icon name={style.icon} className={cn("w-5 h-5", style.iconClass)} />
       </div>
 
       <div className="flex-1 min-w-0 text-left">
         <div className="flex items-start justify-between gap-2">
-          <h4
-            className={cn(
-              "text-sm font-medium text-foreground line-clamp-1",
-              !notification.isRead && "font-bold text-foreground"
+          <div className="flex items-center gap-1.5 min-w-0">
+            {isAiAlert && (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-primary/15 text-primary shrink-0">
+                <Icon name="Sparkles" className="w-2.5 h-2.5" />
+                MIND AI
+              </span>
             )}
-          >
-            {notification.title}
-          </h4>
+            <h4
+              className={cn(
+                "text-sm line-clamp-1",
+                !notification.isRead
+                  ? "font-semibold text-foreground"
+                  : "font-medium text-muted-foreground"
+              )}
+            >
+              {notification.title}
+            </h4>
+          </div>
           {!notification.isRead && (
-            <div className="flex-shrink-0 w-2 h-2 bg-primary-500 rounded-full mt-1" />
+            <div className="flex-shrink-0 w-2 h-2 bg-primary rounded-full mt-1.5" />
           )}
         </div>
 
-        <p className={cn("text-sm line-clamp-2 mt-1", !notification.isRead ? "text-foreground" : "text-foreground")}>
+        <p
+          className={cn(
+            "text-sm line-clamp-2 mt-1",
+            !notification.isRead ? "text-foreground" : "text-muted-foreground"
+          )}
+        >
           {notification.message}
         </p>
 
-        <p className="text-xs text-foreground mt-2">{timeAgo}</p>
+        <p className="text-xs text-muted-foreground mt-2">{timeAgo}</p>
       </div>
 
       <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full hover:bg-red-600/15 hover:text-red-600"
+          className="h-8 w-8 rounded-full hover:bg-destructive/15 hover:text-destructive"
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
@@ -88,3 +175,4 @@ export function NotificationItem({
     </div>
   );
 }
+

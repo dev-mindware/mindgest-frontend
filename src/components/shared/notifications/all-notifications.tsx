@@ -14,7 +14,7 @@ export function AllNotifications() {
     "all",
   );
   const [filterType, setFilterType] = useState<
-    "all" | "INFO" | "WARNING" | "ERROR"
+    "all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT"
   >("all");
 
   const apiFilters = useMemo(() => {
@@ -43,7 +43,24 @@ export function AllNotifications() {
       n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       n.message.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch;
+    if (!matchesSearch) return false;
+
+    if (filterType === "all") return true;
+
+    const rawType = String(n.type || "").toUpperCase();
+    const isAiAlert =
+      n.isAiAlert ||
+      rawType === "AI_ALERT" ||
+      n.title.toUpperCase().includes("MIND AI") ||
+      n.title.toUpperCase().includes("ALERTA INTELIGENTE");
+
+    if (filterType === "AI_ALERT") return isAiAlert;
+    if (filterType === "SUCCESS") return rawType === "SUCCESS" || rawType === "SUCESSO";
+    if (filterType === "WARNING") return rawType === "WARNING" || rawType === "ATENÇÃO";
+    if (filterType === "ERROR") return rawType === "ERROR" || rawType === "ERRO";
+    if (filterType === "INFO") return rawType === "INFO";
+
+    return rawType === filterType;
   });
 
   const unreadCount = notifications.filter((n) => n.isRead === false).length;

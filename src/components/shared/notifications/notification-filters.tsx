@@ -17,8 +17,8 @@ interface NotificationFiltersProps {
   setSearchTerm: (value: string) => void;
   filterStatus: "all" | "read" | "unread";
   setFilterStatus: (value: "all" | "read" | "unread") => void;
-  filterType: "all" | "INFO" | "WARNING" | "ERROR";
-  setFilterType: (value: "all" | "INFO" | "WARNING" | "ERROR") => void;
+  filterType: "all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT";
+  setFilterType: (value: "all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT") => void;
   compact?: boolean;
 }
 
@@ -28,9 +28,11 @@ const STATUS_LABELS: Record<"all" | "read" | "unread", string> = {
   unread: "Não Lidas",
 };
 
-const TYPE_LABELS: Record<"all" | "INFO" | "WARNING" | "ERROR", string> = {
+const TYPE_LABELS: Record<"all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT", string> = {
   all: "Todos os tipos",
-  INFO: "Info",
+  AI_ALERT: "MIND AI / Inteligentes",
+  INFO: "Informações",
+  SUCCESS: "Sucesso / Validações",
   WARNING: "Avisos",
   ERROR: "Erros",
 };
@@ -118,7 +120,7 @@ export function NotificationFilters({
               Filtrar por tipo
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {(["all", "INFO", "WARNING", "ERROR"] as const).map((type) => (
+            {(["all", "AI_ALERT", "INFO", "SUCCESS", "WARNING", "ERROR"] as const).map((type) => (
               <DropdownMenuCheckboxItem
                 key={type}
                 checked={filterType === type}

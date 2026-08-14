@@ -27,7 +27,7 @@ const SOUND_OPTIONS = [
     label: "Clássico",
   },
   {
-    value: "/notification-2.mp3",
+    value: "/sound-effects/notification-2.mp3",
     label: "Suave",
   },
   {

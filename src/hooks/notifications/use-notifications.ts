@@ -169,43 +169,83 @@ export function useNotifications(
   }, [notifications, alertForNewNotification]);
 
   useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_API_URL) return;
+    let isSubscribed = true;
+    let activeSocket: Socket | null = null;
 
-    socket = io(process.env.NEXT_PUBLIC_API_URL, {
-      transports: ["websocket"],
-    });
+    const setupSocket = async () => {
+      try {
+        const rawUrl =
+          process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api";
+        let socketUrl = rawUrl;
+        try {
+          const parsed = new URL(rawUrl);
+          socketUrl = `${parsed.origin}/notifications`;
+        } catch {
+          socketUrl = `${rawUrl.replace(/\/api\/?$/, "")}/notifications`;
+        }
 
-    socket.on("connect", () => {
-      console.log("Connected to notification socket");
-    });
+        let token: string | null = null;
+        try {
+          const { getAccessToken } = await import("@/actions/token");
+          token = await getAccessToken();
+        } catch (tokenErr) {
+          console.warn("Could not retrieve access token for socket:", tokenErr);
+        }
 
-    socket.on("new_notification", (newNotification: NotificationType) => {
-      queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
-      alertForNewNotification(newNotification);
+        if (!isSubscribed) return;
 
-      queryClient.setQueryData<any>(
-        queryKey,
-        (oldData: any) => {
-          if (!oldData) return oldData;
-          const newPages = [...oldData.pages];
-          if (newPages.length > 0) {
-            const firstPage = newPages[0].data as NotificationType[];
-            if (firstPage.some((notification) => notification.id === newNotification.id)) {
-              return oldData;
-            }
+        activeSocket = io(socketUrl, {
+          transports: ["websocket", "polling"],
+          auth: token ? { token } : undefined,
+          query: token ? { token } : undefined,
+        });
 
-            newPages[0] = {
-              ...newPages[0],
-              data: [newNotification, ...firstPage],
-            };
-          }
-          return { ...oldData, pages: newPages };
-        },
-      );
-    });
+        activeSocket.on("connect", () => {
+          console.log("Connected to notification socket");
+        });
+
+        const handleIncomingNotification = (newNotification: NotificationType) => {
+          if (!newNotification || !newNotification.id) return;
+
+          queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+          alertForNewNotification(newNotification);
+
+          queryClient.setQueryData<any>(
+            queryKey,
+            (oldData: any) => {
+              if (!oldData) return oldData;
+              const newPages = [...oldData.pages];
+              if (newPages.length > 0) {
+                const firstPage = (newPages[0].data || []) as NotificationType[];
+                if (firstPage.some((n) => n.id === newNotification.id)) {
+                  return oldData;
+                }
+
+                newPages[0] = {
+                  ...newPages[0],
+                  data: [newNotification, ...firstPage],
+                };
+              }
+              return { ...oldData, pages: newPages };
+            },
+          );
+        };
+
+        activeSocket.on("notification", handleIncomingNotification);
+        activeSocket.on("new_notification", handleIncomingNotification);
+      } catch (err) {
+        console.warn("Socket initialization error:", err);
+      }
+    };
+
+    void setupSocket();
 
     return () => {
-      if (socket) socket.disconnect();
+      isSubscribed = false;
+      if (activeSocket) {
+        activeSocket.disconnect();
+      }
     };
   }, [alertForNewNotification, queryClient, queryKey]);
 

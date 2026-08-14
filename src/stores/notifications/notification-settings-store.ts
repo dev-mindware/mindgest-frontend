@@ -27,16 +27,20 @@ export const useNotificationSettingsStore = create<NotificationSettingsState>()(
     }),
     {
       name: "notification-settings",
-      version: 2,
-      migrate: (persistedState: any) => ({
-        soundEnabled: persistedState?.soundEnabled ?? true,
-        soundType:
-          persistedState?.soundType === "/notification-1.mp3"
-            ? "/sound-effects/notification-1.mp3"
-            : persistedState?.soundType ?? "/sound-effects/notification-1.mp3",
-        browserNotificationsEnabled: false,
-        badgeEnabled: persistedState?.badgeEnabled ?? true,
-      }),
+      version: 3,
+      migrate: (persistedState: any) => {
+        let sound = persistedState?.soundType ?? "/sound-effects/notification-1.mp3";
+        if (sound === "/notification-1.mp3") sound = "/sound-effects/notification-1.mp3";
+        if (sound === "/notification-2.mp3") sound = "/sound-effects/notification-2.mp3";
+        if (sound === "/notification-3.mp3") sound = "/sound-effects/notification-3.mp3";
+
+        return {
+          soundEnabled: persistedState?.soundEnabled ?? true,
+          soundType: sound,
+          browserNotificationsEnabled: Boolean(persistedState?.browserNotificationsEnabled),
+          badgeEnabled: persistedState?.badgeEnabled ?? true,
+        };
+      },
     },
   ),
 );
