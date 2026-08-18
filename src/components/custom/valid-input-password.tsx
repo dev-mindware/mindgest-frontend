@@ -15,10 +15,11 @@ export default function ValidInputPassword() {
 
   const checkStrength = (pass: string) => {
     const requirements = [
-      { regex: /.{8,}/, text: "At least 8 characters" },
-      { regex: /[0-9]/, text: "At least 1 number" },
-      { regex: /[a-z]/, text: "At least 1 lowercase letter" },
-      { regex: /[A-Z]/, text: "At least 1 uppercase letter" },
+      { regex: /.{8,}/, text: "Pelo menos 8 caracteres" },
+      { regex: /[0-9]/, text: "Pelo menos 1 número" },
+      { regex: /[a-z]/, text: "Pelo menos 1 letra minúscula" },
+      { regex: /[A-Z]/, text: "Pelo menos 1 letra maiúscula" },
+      { regex: /[^A-Za-z0-9]/, text: "Pelo menos 1 carácter especial (!@#$%...)" },
     ]
 
     return requirements.map((req) => ({
@@ -35,17 +36,16 @@ export default function ValidInputPassword() {
 
   const getStrengthColor = (score: number) => {
     if (score === 0) return "bg-border"
-    if (score <= 1) return "bg-red-500"
-    if (score <= 2) return "bg-orange-500"
-    if (score === 3) return "bg-amber-500"
+    if (score <= 2) return "bg-red-500"
+    if (score <= 4) return "bg-amber-500"
     return "bg-emerald-500"
   }
 
   const getStrengthText = (score: number) => {
     if (score === 0) return "Introduza uma palavra-passe"
     if (score <= 2) return "Palavra-passe fraca"
-    if (score === 3) return "Palavra-passe média"
-    return "Strong password"
+    if (score <= 4) return "Palavra-passe média"
+    return "Palavra-passe forte"
   }
 
   return (
@@ -86,12 +86,12 @@ export default function ValidInputPassword() {
         role="progressbar"
         aria-valuenow={strengthScore}
         aria-valuemin={0}
-        aria-valuemax={4}
-        aria-label="Password strength"
+        aria-valuemax={5}
+        aria-label="Segurança da palavra-passe"
       >
         <div
           className={`h-full ${getStrengthColor(strengthScore)} transition-all duration-500 ease-out`}
-          style={{ width: `${(strengthScore / 4) * 100}%` }}
+          style={{ width: `${(strengthScore / 5) * 100}%` }}
         ></div>
       </div>
 
@@ -100,7 +100,7 @@ export default function ValidInputPassword() {
         id={`${id}-description`}
         className="mb-2 text-sm font-medium text-foreground"
       >
-        {getStrengthText(strengthScore)}. Must contain:
+        {getStrengthText(strengthScore)}. Requisitos:
       </p>
 
       {/* Password requirements list */}

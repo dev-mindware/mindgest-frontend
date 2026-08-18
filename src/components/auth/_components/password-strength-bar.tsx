@@ -13,15 +13,29 @@ export interface StrengthConfig {
 export function getStrength(pass: string): StrengthConfig {
   if (!pass) return { level: 0, label: "", color: "", textColor: "" };
 
-  let score = 0;
-  if (pass.length >= 8) score++;
-  if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
-  if (/\d/.test(pass)) score++;
-  if (/[^A-Za-z0-9]/.test(pass)) score++;
+  const hasLength = pass.length >= 8;
+  const hasLower = /[a-z]/.test(pass);
+  const hasUpper = /[A-Z]/.test(pass);
+  const hasNumber = /\d/.test(pass);
+  const hasSpecial = /[^A-Za-z0-9]/.test(pass);
 
-  if (score <= 1) return { level: 1, label: "Fraca",  color: "bg-red-500",    textColor: "text-red-500" };
-  if (score <= 2) return { level: 2, label: "Média",  color: "bg-yellow-400", textColor: "text-yellow-500" };
-  return             { level: 3, label: "Forte",  color: "bg-green-500",  textColor: "text-green-600" };
+  let criteriaMet = 0;
+  if (hasLength) criteriaMet++;
+  if (hasLower && hasUpper) criteriaMet++;
+  if (hasNumber) criteriaMet++;
+  if (hasSpecial) criteriaMet++;
+
+  // Senha forte exige OBRIGATORIAMENTE carácter especial além dos outros requisitos
+  if (hasLength && hasLower && hasUpper && hasNumber && hasSpecial) {
+    return { level: 3, label: "Forte", color: "bg-green-500", textColor: "text-green-600" };
+  }
+
+  // Se atende 2 ou 3 requisitos mas falta carácter especial ou maiúsculas/minúsculas
+  if (hasLength && criteriaMet >= 2) {
+    return { level: 2, label: "Média (adicione símbolos ex: @, #, $)", color: "bg-yellow-400", textColor: "text-yellow-600" };
+  }
+
+  return { level: 1, label: "Fraca", color: "bg-red-500", textColor: "text-red-500" };
 }
 
 export function PasswordStrengthBar({ password }: { password: string }) {
