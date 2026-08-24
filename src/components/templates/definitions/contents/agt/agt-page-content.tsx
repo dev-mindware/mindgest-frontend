@@ -9,6 +9,7 @@ import { AgtSeriesList } from "./agt-series-list";
 import { AgtInvoiceList } from "./agt-invoice-list";
 import { AgtConsultation } from "./agt-consultation";
 import { AgtKeySettings } from "./agt-key-settings";
+import { AgtErrorsList } from "./agt-errors-list";
 
 const AGT_TABS = [
   {
@@ -27,6 +28,12 @@ const AGT_TABS = [
     icon: "FileSearch" as const,
   },
   {
+    value: "errors" as const,
+    label: "Erros Fiscais",
+    icon: "TriangleAlert" as const,
+  },
+
+  {
     value: "settings" as const,
     label: "Configurações",
     icon: "Settings" as const,
@@ -38,9 +45,11 @@ function isAgtTab(value: string | null): value is AgtTab {
     value === "series" ||
     value === "repository" ||
     value === "consultation" ||
+    value === "errors" ||
     value === "settings"
   );
 }
+
 
 export function AgtPageContent() {
   const searchParams = useSearchParams();
@@ -91,6 +100,12 @@ export function AgtPageContent() {
           <AgtConsultation />
         </TabsContent>
         <TabsContent
+          value="errors"
+          className="m-0 border-none p-0 outline-none"
+        >
+          <AgtErrorsList />
+        </TabsContent>
+        <TabsContent
           value="settings"
           className="m-0 border-none p-0 outline-none"
         >
@@ -100,3 +115,4 @@ export function AgtPageContent() {
     </div>
   );
 }
+

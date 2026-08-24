@@ -65,4 +65,67 @@ export interface AgtInvoiceFilters {
   documentType: string | null;
 }
 
-export type AgtTab = "series" | "repository" | "consultation" | "settings";
+export type AgtFiscalStatus =
+  | "PENDING_SUBMISSION"
+  | "SUBMITTED"
+  | "VALIDATED"
+  | "REJECTED"
+  | "TECHNICAL_ERROR";
+
+export interface AgtError {
+  id: string;
+  invoiceId?: string | null;
+  creditNoteId?: string | null;
+  requestId?: string | null;
+  code: string;
+  message: string;
+  type: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" | string;
+  action: "RETRY" | "MANUAL_FIX" | "CONTACT_SUPPORT" | "NONE" | string;
+  origin: "SUBMISSION" | "VALIDATION" | "POLLING" | string;
+  retryable: boolean;
+  payloadSent?: any;
+  agtResponse?: any;
+  agtVersion?: string | null;
+  tenantId?: string | null;
+  createdAt: string;
+  invoice?: {
+    id: string;
+    number: string;
+    type: string;
+    status: string;
+    total: number | string;
+    agtStatus?: string | null;
+  } | null;
+  creditNote?: {
+    id: string;
+    number: string;
+    status: string;
+    total: number | string;
+    agtStatus?: string | null;
+  } | null;
+}
+
+export interface AgtErrorsListResponse {
+  items: AgtError[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface AgtErrorFilters {
+  search?: string;
+  origin?: string;
+  severity?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AgtActionResponse {
+  message: string;
+}
+
+export type AgtTab = "series" | "repository" | "consultation" | "errors" | "settings";
+
+

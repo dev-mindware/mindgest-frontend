@@ -18,6 +18,7 @@ import { useInvoiceActions, useInvoiceFilters } from "@/hooks/invoice";
 import { useRouter } from "next/navigation";
 import { CloneInvoiceModal } from "../modals/clone-invoice-modal";
 import { useAuth } from "@/hooks/auth/use-auth";
+import { useSubmitAgtDocument } from "@/hooks/agt";
 import { useState } from "react";
 import {
   ManagerAuthModal,
@@ -28,7 +29,9 @@ import { useModal } from "@/stores/modal/use-modal-store";
 export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
   const router = useRouter();
   const { user } = useAuth();
+  const { mutate: submitToAgt } = useSubmitAgtDocument();
   const { search } = useURLSearchParams("search_invoice-receipt");
+
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("invoice-receipt");
   const { handlerDetailsInvoice, handlerCloneInvoice } = useInvoiceActions();
@@ -114,9 +117,21 @@ export function InvoiceReceiptList({ storeId }: { storeId?: string }) {
                 } as const,
               ]
               : []),
+            ...(user?.role === "OWNER" || user?.role === "ADMIN"
+              ? [
+                {
+                  label: "Reenviar p/ AGT",
+                  onClick: (item: InvoiceResponse) =>
+                    submitToAgt({ id: item.id, type: "invoice" }),
+                  icon: "Send",
+                  variant: "default",
+                } as const,
+              ]
+              : []),
           ]}
         />
       ),
+
     },
   ];
 
