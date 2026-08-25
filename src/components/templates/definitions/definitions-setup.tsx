@@ -131,7 +131,7 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       icon: "ShieldCheck",
       component: <AgtPageContent />,
       category: "workplace",
-      isVisible: isActive && isOwner,
+      isVisible: isOwner,
     },
   ];
 
