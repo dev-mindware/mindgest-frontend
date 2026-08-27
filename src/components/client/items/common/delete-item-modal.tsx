@@ -3,6 +3,7 @@ import { Button, GlobalModal } from "@/components";
 import { currentProductStore } from "@/stores";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { ErrorMessage } from "@/utils/messages";
+import { extractErrorMessage } from "@/utils/error-handler";
 
 export function DeleteItemModal({ type }: { type: string }) {
   const { closeModal, open } = useModal();
@@ -15,14 +16,10 @@ export function DeleteItemModal({ type }: { type: string }) {
     try {
       await deleteItemMutate(id);
       closeModal("delete-product");
-    } catch (error: any) {
-      if (error?.response) {
-        ErrorMessage(
-          error.response.data.message || "Erro ao apagar o produto."
-        );
-      } else {
-        ErrorMessage("Ocorreu um erro desconhecido. Tente novamente.");
-      }
+    } catch (error: unknown) {
+      ErrorMessage(
+        extractErrorMessage(error, "Não foi possível remover o item. Tente novamente.")
+      );
     }
   }
 

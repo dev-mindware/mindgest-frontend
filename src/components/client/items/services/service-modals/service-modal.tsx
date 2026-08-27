@@ -165,9 +165,8 @@ export function ServiceModal({ action }: ServiceModalProps) {
         });
       }
       handleCancel();
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || "Erro ao processar serviço";
-      ErrorMessage(msg);
+    } catch (err: unknown) {
+      // O onError do hook já exibe a notificação
     }
   };
 
