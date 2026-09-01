@@ -31,6 +31,11 @@ export function OverviewReceivablesCard({
             <p className="text-2xl font-bold tracking-tight">
                 {formatCurrencyCompact(total, currency)}
             </p>
+            {total === 0 && (
+                <p className="mt-0.5 text-xs font-medium text-green-600 dark:text-green-500">
+                    Tudo regularizado
+                </p>
+            )}
 
             {/* A barra usa os montantes, não as percentagens: assim nunca passa
                 dos 100% por causa de arredondamentos vindos da API. */}

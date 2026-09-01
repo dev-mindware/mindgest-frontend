@@ -80,17 +80,25 @@ export function OverviewSalesDonut({ distribution }: OverviewSalesDonutProps) {
                             }
                         />
                         <Pie
-                            data={slices}
+                            data={
+                                distribution.totalSales === 0
+                                    ? [{ key: "empty", label: "Sem dados", count: 1, fill: "var(--muted)" }]
+                                    : slices
+                            }
                             dataKey="count"
                             nameKey="label"
                             innerRadius={62}
                             outerRadius={88}
-                            paddingAngle={3}
+                            paddingAngle={distribution.totalSales === 0 ? 0 : 3}
                             strokeWidth={0}
                         >
-                            {slices.map((slice) => (
-                                <Cell key={slice.key} fill={slice.fill} />
-                            ))}
+                            {distribution.totalSales === 0 ? (
+                                <Cell key="empty" fill="currentColor" className="text-muted/40" />
+                            ) : (
+                                slices.map((slice) => (
+                                    <Cell key={slice.key} fill={slice.fill} />
+                                ))
+                            )}
                             <Label
                                 content={({ viewBox }) => {
                                     if (!viewBox || !("cx" in viewBox)) return null;

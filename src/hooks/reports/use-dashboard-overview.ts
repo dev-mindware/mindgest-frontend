@@ -57,7 +57,9 @@ export function useDashboardOverview() {
       return response.data;
     },
     enabled: isOwner || !!storeId,
+    staleTime: 10_000,
     gcTime: 300_000,
+    refetchOnWindowFocus: true,
     retry: 1,
   });
 

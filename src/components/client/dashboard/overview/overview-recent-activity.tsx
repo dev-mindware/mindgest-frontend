@@ -48,7 +48,7 @@ export function OverviewRecentActivity({
                 </p>
             ) : (
                 <ul className="divide-y divide-border">
-                    {activity.map((item) => (
+                    {activity.slice(0, 5).map((item) => (
                         <li
                             key={item.id}
                             className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0"

@@ -15,7 +15,7 @@ import {
     Icon,
     type ChartConfig,
 } from "@/components";
-import { formatCurrencyCompact } from "@/utils/format-currency";
+import { formatAxisCurrency, formatCurrency } from "@/utils/format-currency";
 import type { DashboardFinancialEvolution } from "@/types";
 
 interface OverviewFinancialChartProps {
@@ -59,7 +59,10 @@ export function OverviewFinancialChart({
                     config={chartConfig}
                     className="aspect-auto h-[280px] w-full"
                 >
-                    <AreaChart data={evolution.series}>
+                    <AreaChart
+                        data={evolution.series}
+                        margin={{ top: 14, right: 12, left: -4, bottom: 0 }}
+                    >
                         <defs>
                             {series.map((key) => (
                                 <linearGradient
@@ -94,9 +97,9 @@ export function OverviewFinancialChart({
                         <YAxis
                             tickLine={false}
                             axisLine={false}
-                            width={90}
-                            tickMargin={8}
-                            tickFormatter={(value: number) => formatCurrencyCompact(value)}
+                            width={65}
+                            tickMargin={4}
+                            tickFormatter={(value: number) => formatAxisCurrency(value)}
                         />
 
                         <ChartTooltip
@@ -111,7 +114,7 @@ export function OverviewFinancialChart({
                                                     name}
                                             </span>
                                             <span className="font-medium tabular-nums text-foreground">
-                                                {formatCurrencyCompact(Number(value))}
+                                                {formatCurrency(Number(value))}
                                             </span>
                                         </div>
                                     )}
