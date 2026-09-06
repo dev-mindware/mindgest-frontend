@@ -50,15 +50,57 @@ export const agtService = {
   },
 
   consultInvoice: async (documentNo: string): Promise<AgtConsultResponse> => {
-    const encodedDocNo = encodeURIComponent(documentNo);
-    const response = await api.get<AgtConsultResponse>(
-      `/agt/invoice/${encodedDocNo}`,
-    );
+    const response = await api.get<AgtConsultResponse>("/agt/invoice", {
+      params: { documentNo: documentNo.trim() },
+    });
     return response.data;
   },
+
 
   validateDocument: async (data: ValidateAgtDocumentFormData) => {
     const response = await api.post("/agt/invoice/validate", data);
     return response.data;
   },
+
+  submitDocument: async (
+    id: string,
+    type: "invoice" | "creditNote" = "invoice",
+  ) => {
+    const response = await api.post<{ message: string }>(
+      `/agt/submit/${id}`,
+      {},
+      { params: { type } },
+    );
+    return response.data;
+  },
+
+  pollDocument: async (
+    id: string,
+    type: "invoice" | "creditNote" = "invoice",
+  ) => {
+    const response = await api.post<{ message: string }>(
+      `/agt/poll/${id}`,
+      {},
+      { params: { type } },
+    );
+    return response.data;
+  },
+
+
+  getErrors: async (params?: {
+    page?: number;
+    limit?: number;
+    invoiceId?: string;
+    search?: string;
+    origin?: string;
+    severity?: string;
+  }): Promise<import("@/types").AgtErrorsListResponse> => {
+    const response = await api.get<import("@/types").AgtErrorsListResponse>(
+      "/agt/errors",
+      { params },
+    );
+    return response.data;
+  },
 };
+
+

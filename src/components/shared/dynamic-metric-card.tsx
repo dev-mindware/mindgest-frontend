@@ -3,6 +3,7 @@
 import { Card, CardContent, Icon } from "@/components";
 import { cn } from "@/lib/utils";
 import { icons } from "lucide-react";
+import { MetricTrendIndicator, type MetricTrend } from "./metric-trend";
 
 interface DynamicMetricCardProps {
     title: string | number;
@@ -11,6 +12,7 @@ interface DynamicMetricCardProps {
     icon?: keyof typeof icons;
     variant?: "default" | "action" | "interactive";
     colors?: "default" | "destructive";
+    trend?: MetricTrend;
     className?: string;
     onClick?: () => void;
 }
@@ -22,6 +24,7 @@ export function DynamicMetricCard({
     icon,
     variant = "default",
     colors = "default",
+    trend,
     className,
     onClick,
 }: DynamicMetricCardProps) {
@@ -66,6 +69,8 @@ export function DynamicMetricCard({
                             {subtitle}
                         </p>
                     </div>
+                    {trend && <MetricTrendIndicator {...trend} className="mt-1.5" />}
+
                     {description && (
                         <p className="text-[11px] md:text-xs text-muted-foreground w-full font-medium mt-1.5 line-clamp-2">
                             {description}

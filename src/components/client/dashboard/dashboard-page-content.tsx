@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  PageWrapper,
-  OwnerDashboardView,
-  ManagerDashboardView,
-  TitleList,
-} from "@/components";
+import { PageWrapper, TitleList } from "@/components";
 import { useAuth } from "@/hooks/auth/use-auth";
+import { DashboardOverview, OverviewPeriodSelect } from "./overview";
 
 export function DashboardPageContent() {
   const { user } = useAuth();
@@ -20,16 +16,19 @@ export function DashboardPageContent() {
     >
       <div data-tour="dashboard-header">
         <TitleList
+          title="Visão Geral"
           suTitle={
             isOwner
-              ? "Painel Consolidado da Empresa"
-              : `Painel da Loja ${user?.store?.name || ""}`
+              ? "Resumo inteligente do desempenho do seu negócio"
+              : `Resumo inteligente da Loja ${user?.store?.name || ""}`
           }
-        />
+        >
+          <OverviewPeriodSelect />
+        </TitleList>
       </div>
 
-      <div className="mt-4">
-        {isOwner ? <OwnerDashboardView /> : <ManagerDashboardView />}
+      <div className="mt-6">
+        <DashboardOverview />
       </div>
     </PageWrapper>
   );

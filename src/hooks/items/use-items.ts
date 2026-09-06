@@ -2,6 +2,7 @@ import { CreateItemData } from "@/types";
 import { itemsService } from "@/services/items-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
+import { extractErrorMessage } from "@/utils/error-handler";
 
 export function useAddItem() {
   const queryClient = useQueryClient();
@@ -11,6 +12,11 @@ export function useAddItem() {
     onSuccess: () => {
       SucessMessage("Item adicionado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    onError: (error: unknown) => {
+      ErrorMessage(
+        extractErrorMessage(error, "Não foi possível adicionar o item. Verifique os dados e tente novamente.")
+      );
     },
   });
 }
@@ -25,6 +31,11 @@ export function useUpdateItem() {
       SucessMessage("Item actualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
+    onError: (error: unknown) => {
+      ErrorMessage(
+        extractErrorMessage(error, "Não foi possível atualizar o item. Verifique os dados e tente novamente.")
+      );
+    },
   });
 }
 
@@ -37,11 +48,9 @@ export function useDeleteItem() {
       SucessMessage("Item removido com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       ErrorMessage(
-        error?.response?.data?.message ||
-        error?.message ||
-        "Erro ao remover o item."
+        extractErrorMessage(error, "Não foi possível remover o item.")
       );
     },
   });
@@ -56,12 +65,11 @@ export function useToggleStatusItem() {
       SucessMessage("Status do item alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       ErrorMessage(
-        error?.response?.data?.message ||
-        error?.message ||
-        "Erro ao alterar o status do item."
+        extractErrorMessage(error, "Não foi possível alterar o estado do item.")
       );
     },
   });
 }
+

@@ -19,3 +19,4 @@ export * from "./credit-note-correction";
 export * from "./credit-note-reasons";
 export * from "./cash-session";
 export * from "./api-error";
+export * from "./error-handler";

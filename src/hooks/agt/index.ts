@@ -7,3 +7,7 @@ export * from "./use-validate-agt-document";
 export * from "./use-agt-status";
 export * from "./use-update-agt-private-key";
 export * from "./use-agt-actions";
+export * from "./use-submit-agt-document";
+export * from "./use-poll-agt-document";
+export * from "./use-agt-errors";
+

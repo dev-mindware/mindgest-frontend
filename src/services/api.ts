@@ -90,6 +90,8 @@ const EXCLUDED_STORE_ROUTES = [
   "global",
   "public",
   "/suppliers",
+  "overview",
+  "reports/dashboard/overview",
 ] as const;
 
 // ============================================================================

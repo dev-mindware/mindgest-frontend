@@ -14,8 +14,8 @@ export function TitleList({
   children,
 }: TitleListProps) {
   return (
-    <div className="flex items-center justify-between">
-      <div>
+    <div className="flex items-center justify-between gap-4">
+      <div className="min-w-0">
         {title && (
           <h2 className="text-2xl text-start md:text-start">{title}</h2>
         )}

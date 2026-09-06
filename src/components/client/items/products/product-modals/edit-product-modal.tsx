@@ -231,10 +231,8 @@ function EditProductFormContent({ product }: EditProductModalProps) {
         data: rest,
       });
       handleCancel();
-    } catch (error: any) {
-      ErrorMessage(
-        error?.response?.data?.message || "Não foi possível actualizar o item",
-      );
+    } catch (error: unknown) {
+      // O onError do hook já exibe a notificação
     }
   }
 

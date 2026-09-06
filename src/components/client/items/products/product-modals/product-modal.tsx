@@ -155,12 +155,9 @@ function AddProductFormContent() {
           currentStore?.id && { storeId: currentStore?.id }),
       });
       handleCancel();
-    } catch (error: any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ErrorMessage(
-        (error as any)?.response?.data?.message ||
-        "Ocorreu um erro ao adicionar o item",
-      );
+    } catch (error: unknown) {
+      // O onError do hook já exibe a notificação — o catch aqui apenas evita
+      // que o unhandled rejection quebre o formulário sem fechar o modal
     }
   }
 
