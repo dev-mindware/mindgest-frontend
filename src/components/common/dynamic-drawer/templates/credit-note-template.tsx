@@ -206,15 +206,6 @@ export function CreditNoteTemplate({ data }: Props) {
         </div>
       </div>
 
-      {/* Assinatura / Hash Fiscal AGT */}
-      {hash && (
-        <div className="text-[11px] font-mono text-muted-foreground bg-muted/30 p-2.5 rounded border">
-          <span className="font-semibold text-foreground">
-            Certificação AGT:{" "}
-          </span>
-          {hash}
-        </div>
-      )}
 
       {data.notes && (
         <div className="bg-muted/20 p-3 rounded-lg border">

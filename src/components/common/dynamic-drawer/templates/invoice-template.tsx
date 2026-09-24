@@ -323,15 +323,6 @@ export function InvoiceTemplate({
         </div>
       </div>
 
-      {/* Assinatura / Hash Fiscal AGT (Apenas se aplicável e não proforma) */}
-      {!isProforma && hash && (
-        <div className="text-[11px] font-mono text-muted-foreground bg-muted/30 p-2.5 rounded border">
-          <span className="font-semibold text-foreground">
-            Certificação AGT:{" "}
-          </span>
-          {hash}
-        </div>
-      )}
 
       {/* Notas e Observações */}
       {data.notes && (
