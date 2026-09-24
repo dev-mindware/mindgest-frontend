@@ -18,7 +18,7 @@ export function AddDocuments() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current_Tab = useSearchParams().get("tab");
-  const { subscriptionStatus, isAuthenticating, user } = useAuth();
+  const { subscriptionStatus, hasActiveSubscription, isAuthenticating, user } = useAuth();
   const { openModal } = useModal();
 
   const [currentTab] = useState<TabsAloweds>(() => {
@@ -41,10 +41,6 @@ export function AddDocuments() {
     if (isAuthenticating) return;
     if (!user) return;
 
-    const hasActiveSubscription =
-      subscriptionStatus === SubscriptionStatus.ACTIVE ||
-      subscriptionStatus === SubscriptionStatus.TRIALING;
-
     if (!hasActiveSubscription) {
       if (subscriptionStatus === SubscriptionStatus.PENDING) {
         openModal("pending-subscription-modal");
@@ -53,7 +49,7 @@ export function AddDocuments() {
       }
       router.replace("/documents");
     }
-  }, [subscriptionStatus, isAuthenticating, user, openModal, router]);
+  }, [subscriptionStatus, hasActiveSubscription, isAuthenticating, user, openModal, router]);
 
   if (isAuthenticating || !user) {
     return (
@@ -62,10 +58,6 @@ export function AddDocuments() {
       </div>
     );
   }
-
-  const hasActiveSubscription =
-    subscriptionStatus === SubscriptionStatus.ACTIVE ||
-    subscriptionStatus === SubscriptionStatus.TRIALING;
 
   if (!hasActiveSubscription) {
     return null;

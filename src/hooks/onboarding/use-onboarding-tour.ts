@@ -31,6 +31,7 @@ const CONDITIONAL_STEP_MARKERS = [
   "credit-note-client",
   "credit-note-items",
   "credit-note-totals",
+  "dashboard-stores-breakdown",
 ];
 
 let activeDriver: Driver | null = null;

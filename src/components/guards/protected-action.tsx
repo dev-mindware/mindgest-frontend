@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { useAuthStore, useModal } from "@/stores";
+import { useModal } from "@/stores";
+import { useAuth } from "@/hooks/auth";
 import { SubscriptionStatus } from "@/types";
 
 interface ProtectedActionProps {
@@ -15,17 +16,11 @@ export function ProtectedAction({
   onAction,
   onClick,
 }: ProtectedActionProps) {
-  const { user } = useAuthStore();
   const { openModal } = useModal();
-
-  const subStatus = user?.company?.subscription?.status;
-
-  const hasActiveSubscription =
-    subStatus === SubscriptionStatus.ACTIVE ||
-    subStatus === SubscriptionStatus.TRIALING;
+  const { subscriptionStatus, hasActiveSubscription } = useAuth();
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
-    if (subStatus === SubscriptionStatus.PENDING) {
+    if (subscriptionStatus === SubscriptionStatus.PENDING) {
       e.preventDefault();
       e.stopPropagation();
       openModal("pending-subscription-modal");

@@ -23,7 +23,9 @@ export function NotificationDropdown() {
     deleteNotification,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
+    markAllAsRead,
+    isMarkingAllAsRead,
   } = useNotifications();
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -59,6 +61,8 @@ export function NotificationDropdown() {
           isFetchingNextPage={isFetchingNextPage}
           deleteNotification={deleteNotification}
           onNotificationClick={handleNotificationClick}
+          onMarkAllAsRead={markAllAsRead}
+          isMarkingAllAsRead={isMarkingAllAsRead}
         />
       </DropdownMenuContent>
     </DropdownMenu>

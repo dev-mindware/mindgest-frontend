@@ -52,7 +52,11 @@ export function MetricTrendIndicator({
                 {isUp ? "+" : ""}
                 {percent.toLocaleString("pt-PT", { maximumFractionDigits: 1 })}%
             </span>
-            {label && <span className="text-muted-foreground">{label}</span>}
+            {label && (
+                <span className="text-muted-foreground truncate hidden sm:inline">
+                    {label}
+                </span>
+            )}
         </span>
     );
 }

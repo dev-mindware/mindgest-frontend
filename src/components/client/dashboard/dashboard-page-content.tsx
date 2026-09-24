@@ -23,7 +23,9 @@ export function DashboardPageContent() {
               : `Resumo inteligente da Loja ${user?.store?.name || ""}`
           }
         >
-          <OverviewPeriodSelect />
+          <div data-tour="dashboard-period">
+            <OverviewPeriodSelect />
+          </div>
         </TitleList>
       </div>
 

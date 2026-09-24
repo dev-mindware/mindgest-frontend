@@ -56,6 +56,7 @@ export function SubscriptionPageContent() {
         extraData: {
           frequency: data.frequency,
           planId: data.planId,
+          ...(data.couponCode ? { couponCode: data.couponCode } : {}),
         },
       });
 

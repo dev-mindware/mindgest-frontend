@@ -18,6 +18,8 @@ import { PaymentInstruction } from "./payment-insctrutions";
 import { PaymentMethodInformation } from "./payment-method-information";
 import { paymentMethods } from "./payment-method";
 import { useCurrentPlanStore } from "@/stores";
+import { couponService, ValidateCouponResponse } from "@/services/coupon-service";
+import { useEffect } from "react";
 
 interface PaymentFormProps {
   form: UseFormReturn<SubscriptionFormData>;
@@ -34,6 +36,68 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
   );
   const frequency = subscriptionData.frequency || "MONTHLY";
   const currentMethod = paymentMethods[paymentMethod];
+
+  const [appliedCoupon, setAppliedCoupon] =
+    useState<ValidateCouponResponse | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+
+  const handleApplyCoupon = async (code: string) => {
+    if (!currentPlanSelected?.id) {
+      setCouponError("Por favor, selecione um plano primeiro.");
+      return;
+    }
+    try {
+      setCouponLoading(true);
+      setCouponError(null);
+      const billingMonths =
+        frequency === "ANNUAL" ? 12 : frequency === "SEMI_ANNUAL" ? 6 : 1;
+      const res = await couponService.validateCoupon(
+        code,
+        currentPlanSelected.id,
+        billingMonths,
+      );
+      setAppliedCoupon(res.data);
+      form.setValue("couponCode", res.data.coupon.code);
+    } catch (err: any) {
+      setAppliedCoupon(null);
+      form.setValue("couponCode", undefined);
+      setCouponError(
+        err?.response?.data?.message ||
+          "Cupão inválido, expirado ou não aplicável ao plano selecionado.",
+      );
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponError(null);
+    form.setValue("couponCode", undefined);
+  };
+
+  // Re-validar cupom se a frequência de faturação mudar
+  useEffect(() => {
+    if (appliedCoupon && currentPlanSelected?.id) {
+      const billingMonths =
+        frequency === "ANNUAL" ? 12 : frequency === "SEMI_ANNUAL" ? 6 : 1;
+      couponService
+        .validateCoupon(
+          appliedCoupon.coupon.code,
+          currentPlanSelected.id,
+          billingMonths,
+        )
+        .then((res) => setAppliedCoupon(res.data))
+        .catch(() => {
+          setAppliedCoupon(null);
+          form.setValue("couponCode", undefined);
+          setCouponError(
+            "O cupão aplicado não cumpre os requisitos da nova frequência selecionada.",
+          );
+        });
+    }
+  }, [frequency, currentPlanSelected?.id]);
 
   async function handleFormSubmit(data: SubscriptionFormData) {
     await onSubmit(data);
@@ -70,12 +134,18 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
                       onValueChange={field.onChange}
                       defaultValue={field.value || "MONTHLY"}
                       value={field.value || "MONTHLY"}
-                      className="flex gap-4"
+                      className="flex flex-wrap gap-4"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="MONTHLY" id="MONTHLY" />
                         <label htmlFor="MONTHLY" className="cursor-pointer">
                           Mensal
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="SEMI_ANNUAL" id="SEMI_ANNUAL" />
+                        <label htmlFor="SEMI_ANNUAL" className="cursor-pointer">
+                          Semestral
                         </label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -160,8 +230,15 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6 self-start">
           <SubscriptionSummary
             frequency={frequency}
-            months={frequency === "ANNUAL" ? 12 : 1}
+            months={
+              frequency === "ANNUAL" ? 12 : frequency === "SEMI_ANNUAL" ? 6 : 1
+            }
             selectedPlan={currentPlanSelected}
+            couponData={appliedCoupon}
+            onApplyCoupon={handleApplyCoupon}
+            onRemoveCoupon={handleRemoveCoupon}
+            couponLoading={couponLoading}
+            couponError={couponError}
           />
           <PaymentTerms />{" "}
         </div>

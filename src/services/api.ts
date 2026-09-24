@@ -92,6 +92,8 @@ const EXCLUDED_STORE_ROUTES = [
   "/suppliers",
   "overview",
   "reports/dashboard/overview",
+  "onboarding",
+  "notifications",
 ] as const;
 
 // ============================================================================

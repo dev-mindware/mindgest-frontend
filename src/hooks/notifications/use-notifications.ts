@@ -279,6 +279,31 @@ export function useNotifications(
     },
   });
 
+  const { mutateAsync: markAllAsRead, isPending: isMarkingAllAsRead } = useMutation({
+    mutationFn: notificationsService.markAllAsRead,
+    onMutate: async () => {
+      queryClient.setQueryData<any>(
+        queryKey,
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((n: NotificationType) => ({
+                ...n,
+                isRead: true,
+              })),
+            })),
+          };
+        },
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+
   const { mutateAsync: deleteNotification } = useMutation({
     mutationFn: notificationsService.deleteNotification,
     onMutate: async (id) => {
@@ -318,6 +343,8 @@ export function useNotifications(
     hasNextPage,
     isFetchingNextPage,
     markAsRead,
+    markAllAsRead,
+    isMarkingAllAsRead,
     deleteNotification,
     handleNotificationClick,
     refetch,

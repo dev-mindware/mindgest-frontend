@@ -66,21 +66,31 @@ export function DashboardOverview() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
-                <OverviewClientsCard clients={overview.clientsOverview} />
-                <OverviewReceivablesCard receivables={overview.accountsReceivable} />
-                <OverviewStockCard stock={overview.stockOverview} />
+                <div data-tour="dashboard-clients">
+                    <OverviewClientsCard clients={overview.clientsOverview} />
+                </div>
+                <div data-tour="dashboard-receivables">
+                    <OverviewReceivablesCard receivables={overview.accountsReceivable} />
+                </div>
+                <div data-tour="dashboard-stock">
+                    <OverviewStockCard stock={overview.stockOverview} />
+                </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2" data-tour="dashboard-recent-sales">
+                <div className="lg:col-span-2" data-tour="dashboard-recent-activity">
                     <OverviewRecentActivity activity={overview.recentActivity} />
                 </div>
-                <OverviewMonthlyGoal goal={overview.monthlyGoal} />
+                <div data-tour="dashboard-monthly-goal">
+                    <OverviewMonthlyGoal goal={overview.monthlyGoal} />
+                </div>
             </div>
 
             {overview.storesBreakdown && overview.storesBreakdown.length > 0 && (
                 <FeatureGate minPlan="Pro" fallback="hidden">
-                    <StoresBreakdownTable data={overview.storesBreakdown} />
+                    <div data-tour="dashboard-stores-breakdown">
+                        <StoresBreakdownTable data={overview.storesBreakdown} />
+                    </div>
                 </FeatureGate>
             )}
         </div>

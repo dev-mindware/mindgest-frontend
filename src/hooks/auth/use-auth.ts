@@ -6,7 +6,33 @@ export function useAuth() {
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthenticating = useAuthStore((state) => state.isAuthenticating);
 
-  const subscriptionStatus = user?.company?.subscription?.status;
+  const subscription = user?.company?.subscription;
+  const rawStatus = subscription?.status;
+  const isTrial = rawStatus === SubscriptionStatus.TRIALING;
+  const endDate = isTrial
+    ? subscription?.trialEndsAt
+    : subscription?.periodEndsAt;
+  const isTimeExpired = endDate ? new Date(endDate) < new Date() : false;
+  const isExpired =
+    rawStatus === SubscriptionStatus.EXPIRED || isTimeExpired;
 
-  return { user, setUser, isAuthenticating, subscriptionStatus };
+  // Se o período já terminou, o status efetivo é EXPIRED
+  const effectiveStatus = isExpired
+    ? SubscriptionStatus.EXPIRED
+    : rawStatus;
+
+  const hasActiveSubscription =
+    !isExpired &&
+    (rawStatus === SubscriptionStatus.ACTIVE ||
+      rawStatus === SubscriptionStatus.TRIALING);
+
+  return {
+    user,
+    setUser,
+    isAuthenticating,
+    subscriptionStatus: effectiveStatus,
+    hasActiveSubscription,
+    isExpired,
+    isTrial,
+  };
 }

@@ -29,6 +29,8 @@ export function AllNotifications() {
     notifications,
     isLoading,
     markAsRead,
+    markAllAsRead,
+    isMarkingAllAsRead,
     handleNotificationClick,
     deleteNotification,
     fetchNextPage,
@@ -65,9 +67,8 @@ export function AllNotifications() {
 
   const unreadCount = notifications.filter((n) => n.isRead === false).length;
 
-  const handleMarkAllAsRead = () => {
-    const unreadFiltered = notifications.filter((n) => n.isRead === false);
-    unreadFiltered.forEach((n) => markAsRead(n.id));
+  const handleMarkAllAsRead = async () => {
+    await markAllAsRead();
   };
 
   return (
@@ -78,7 +79,7 @@ export function AllNotifications() {
       >
         <div className="flex gap-2">
           {unreadCount > 0 && (
-            <Button onClick={handleMarkAllAsRead} variant="outline">
+            <Button onClick={handleMarkAllAsRead} disabled={isMarkingAllAsRead} variant="outline">
               <Icon name="CheckCheck" className="mr-2 h-4 w-4" />
               Marcar tudo como lido
             </Button>

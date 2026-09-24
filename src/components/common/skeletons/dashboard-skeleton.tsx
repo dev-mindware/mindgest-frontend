@@ -8,7 +8,7 @@ export function DashboardSkeleton() {
     return (
         <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-300">
             {/* 1. Summary Metric Cards (4 cards) */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 @5xl/main:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:gap-4 @5xl/main:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, idx) => (
                     <DynamicMetricCardSkeleton key={idx} />
                 ))}

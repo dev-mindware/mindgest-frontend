@@ -29,7 +29,7 @@ export const subscriptionSchema = z.object({
   companyId: z.string().trim().optional(),
 
   planId: z.string().trim(),
-  frequency: z.enum(["MONTHLY", "ANNUAL"]),
+  frequency: z.enum(["MONTHLY", "SEMI_ANNUAL", "ANNUAL"]),
   proofPayment: FileSchema.nullable(),
 
   periodStartsAt: z.string().trim().datetime().optional(),
@@ -45,6 +45,7 @@ export const subscriptionSchema = z.object({
   email: z.string().trim().email().optional().or(z.literal("")),
   company: z.string().trim().optional(),
   phone: z.string().trim().optional(),
+  couponCode: z.string().trim().optional(),
 });
 
 export type SubscriptionFormData = z.infer<typeof subscriptionSchema>;
