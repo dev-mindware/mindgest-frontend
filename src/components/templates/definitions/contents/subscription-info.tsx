@@ -47,9 +47,17 @@ export function SubscriptionInfo() {
     ? subscription.trialEndsAt
     : subscription.periodEndsAt;
 
+  const isExpired =
+    subscription.status === "EXPIRED" ||
+    subscription.status === "CANCELED" ||
+    subscription.status === "PAST_DUE" ||
+    (endDate ? new Date(endDate).getTime() < Date.now() : false);
+
+  const isSubscriptionActive = (subscription.status === "ACTIVE" || isTrial) && !isExpired;
+
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className={isExpired ? "border-destructive/40 ring-1 ring-destructive/20" : ""}>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="space-y-1">
             <CardTitle className="text-2xl">Plano {plan.name}</CardTitle>
@@ -58,10 +66,10 @@ export function SubscriptionInfo() {
             </CardDescription>
           </div>
           <Badge
-            variant={isTrial ? "secondary" : isPending ? "pending" : "default"}
+            variant={isExpired ? "destructive" : isTrial ? "secondary" : isPending ? "pending" : "default"}
             className="px-3 py-1"
           >
-            {isTrial ? "Período de Teste" : isPending ? "Pendente" : "Ativo"}
+            {isExpired ? "Expirado" : isTrial ? "Período de Teste" : isPending ? "Pendente" : "Ativo"}
           </Badge>
         </CardHeader>
 
@@ -76,9 +84,9 @@ export function SubscriptionInfo() {
 
             <div>
               <p className="text-sm text-muted-foreground">
-                {isTrial ? "Expira em" : "Próxima facturação"}
+                {isExpired ? "Expirou em" : isTrial ? "Expira em" : "Próxima facturação"}
               </p>
-              <p className="text-lg font-semibold">
+              <p className={`text-lg font-semibold ${isExpired ? "text-destructive" : ""}`}>
                 {endDate
                   ? format(new Date(endDate), "dd 'de' MMMM, yyyy", {
                     locale: ptBR,
@@ -96,10 +104,14 @@ export function SubscriptionInfo() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <Link href="/plans" className={`${isPending && "pointer-events-none"}`}>
-              <Button className="gap-2" disabled={isPending}>
-                <Icon name="ArrowUpToLine" size={16} />
-                Actualizar plano
+            <Link href="/plans" className={`${isPending ? "pointer-events-none" : ""}`}>
+              <Button
+                className="gap-2"
+                disabled={isPending}
+                variant={isExpired ? "default" : "outline"}
+              >
+                <Icon name={isExpired ? "RotateCw" : "ArrowUpToLine"} size={16} />
+                {isExpired ? "Renovar Subscrição" : "Actualizar Subscrição"}
               </Button>
             </Link>
           </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Icon,
   Badge,
@@ -11,7 +12,7 @@ import {
   CardFooter,
   PlansPageSkeleton,
 } from "@/components";
-import { Plan } from "@/types";
+import { Plan, SubscriptionStatus } from "@/types";
 import { useAuth, usePlans } from "@/hooks";
 import { useCurrentPlanStore } from "@/stores";
 import {
@@ -23,12 +24,36 @@ import { useRouter } from "next/navigation";
 
 export function AvailablePlans() {
   const router = useRouter();
-  const { user, subscriptionStatus } = useAuth();
+  const { user } = useAuth();
   const { plans, isLoading } = usePlans();
   const { setCurrentPlanSelected } = useCurrentPlanStore();
 
-  const currentPlan = user?.company?.subscription.plan;
+  const subscription = user?.company?.subscription;
+  const currentPlan = subscription?.plan;
   const isCurrentPlan = (plan: Plan) => plan.id === currentPlan?.id;
+
+  // Verifica dinamicamente se a subscrição atual está activa ou terminada
+  const isSubscriptionActive = useMemo(() => {
+    if (!subscription) return false;
+    const status = subscription.status;
+
+    // Se o status não for ACTIVE nem TRIALING, a subscrição está terminada
+    if (status !== SubscriptionStatus.ACTIVE && status !== SubscriptionStatus.TRIALING) {
+      return false;
+    }
+
+    // Se houver data de término, valida se já expirou
+    const endDate =
+      status === SubscriptionStatus.TRIALING
+        ? subscription.trialEndsAt
+        : subscription.periodEndsAt;
+
+    if (endDate && new Date(endDate).getTime() < Date.now()) {
+      return false;
+    }
+
+    return true;
+  }, [subscription]);
 
   function onHandlerChoosePlan(plan: Plan) {
     setCurrentPlanSelected(plan);
@@ -58,13 +83,33 @@ export function AvailablePlans() {
                 const isCurrent = isCurrentPlan(plan);
                 const features: string[] = getPlanFeatures(plan);
 
+                // Determina o texto e variante de ação dinamicamente
+                const getButtonLabel = () => {
+                  if (isCurrent) {
+                    return isSubscriptionActive
+                      ? "Actualizar Subscrição"
+                      : "Renovar Subscrição";
+                  }
+                  return isSubscriptionActive
+                    ? `Actualizar para ${plan.name}`
+                    : `Escolher ${plan.name}`;
+                };
+
+                const getButtonVariant = () => {
+                  if (isCurrent && !isSubscriptionActive) {
+                    return "default";
+                  }
+                  return isPopular || isCurrent ? "default" : "outline";
+                };
+
                 return (
                   <Card
                     key={plan.id}
-                    className={`relative border-border rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl ${isPopular
-                      ? "border-2 border-primary-500 bg-primary-300/5 shadow-2xl scale-105"
-                      : "border border-border bg-card"
-                      }`}
+                    className={`relative border-border rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl ${
+                      isPopular
+                        ? "border-2 border-primary-500 bg-primary-300/5 shadow-2xl scale-105"
+                        : "border border-border bg-card"
+                    } ${isCurrent && !isSubscriptionActive ? "ring-2 ring-destructive/40" : ""}`}
                   >
                     {isPopular && (
                       <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -76,6 +121,18 @@ export function AvailablePlans() {
                     )}
 
                     <CardHeader className="text-center pb-4">
+                      {isCurrent && (
+                        <div className="mb-2 flex justify-center">
+                          <Badge
+                            variant={isSubscriptionActive ? "default" : "destructive"}
+                            className="text-xs px-2.5 py-0.5"
+                          >
+                            {isSubscriptionActive
+                              ? "Plano actual (Activo)"
+                              : "Plano actual (Expirado)"}
+                          </Badge>
+                        </div>
+                      )}
                       <CardTitle className="text-2xl font-bold mb-2">
                         {plan.name}
                       </CardTitle>
@@ -108,14 +165,17 @@ export function AvailablePlans() {
                     <CardFooter className="pt-6">
                       <Button
                         size="lg"
-                        className="w-full"
-                        disabled={isCurrent && subscriptionStatus !== "TRIALING"}
-                        variant={isPopular ? "default" : "outline"}
+                        className="w-full gap-2 font-semibold"
+                        variant={getButtonVariant()}
                         onClick={() => onHandlerChoosePlan(plan)}
                       >
-                        {isCurrent && subscriptionStatus !== "TRIALING"
-                          ? "Plano actual"
-                          : `Escolher ${plan.name}`}
+                        {isCurrent && !isSubscriptionActive && (
+                          <Icon name="RotateCw" className="h-4 w-4" />
+                        )}
+                        {isCurrent && isSubscriptionActive && (
+                          <Icon name="ArrowUpToLine" className="h-4 w-4" />
+                        )}
+                        {getButtonLabel()}
                       </Button>
                     </CardFooter>
                   </Card>
