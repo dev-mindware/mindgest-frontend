@@ -43,3 +43,11 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# Graphify Knowledge Graph
+graphify-out/
+.graphify*
+
+# Agents
+.agents/
+
