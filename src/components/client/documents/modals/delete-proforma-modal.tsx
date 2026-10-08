@@ -41,8 +41,16 @@ export function DeleteProformaModal() {
       canClose
       className="!w-max"
       id="delete-proforma"
-      title="Tem certeza que deseja apagar a proforma?"
-      description="Esta acção não pode ser anulada."
+      title={
+        currentProforma?.number
+          ? `Apagar proforma ${currentProforma.number}?`
+          : "Tem certeza que deseja apagar a proforma?"
+      }
+      description={
+        currentProforma?.number
+          ? `Esta ação irá eliminar a proforma ${currentProforma.number} e todos os seus itens associados. Esta ação não pode ser anulada.`
+          : "Esta ação irá eliminar a proforma e todos os seus itens associados. Esta ação não pode ser anulada."
+      }
     >
       <div className="flex justify-end gap-4">
         <Button

@@ -29,4 +29,7 @@ export const subscriptionService = {
       proofPayment: data.proofPayment,
     });
   },
+  getCompanySubscription: async () => {
+    return api.get<any>("/subscriptions/company");
+  },
 };

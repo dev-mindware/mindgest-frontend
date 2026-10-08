@@ -23,7 +23,7 @@ export function ProformaList({ storeId }: { storeId?: string }) {
   const { search } = useURLSearchParams("search_proforma");
   const [debounceSearch] = useDebounce(search, 200);
   const { filters, page, setPage } = useInvoiceFilters("proforma");
-  const { handlerDetailsProforma, handlerConvertProforma } =
+  const { handlerDetailsProforma, handlerConvertProforma, handlerDeleteProforma } =
     useProformaActions();
   const {
     data: proformas,
@@ -93,6 +93,12 @@ export function ProformaList({ storeId }: { storeId?: string }) {
               icon: "Pencil",
               variant: "default",
             },
+            {
+              label: "Apagar",
+              onClick: handlerDeleteProforma,
+              icon: "Trash2",
+              variant: "destructive",
+            },
           ]}
         />
       ),
@@ -143,6 +149,7 @@ export function ProformaList({ storeId }: { storeId?: string }) {
 
       <ProformaPreviewDrawer />
       <ConvertProformaModal />
+      <DeleteProformaModal />
       <DocumentSuccessModal />
     </div>
   );

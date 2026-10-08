@@ -7,11 +7,12 @@ export interface Subscription {
   canceledAt: string;
   createdAt?: string;
   updatedAt?: string;
-  billingInterval: string;
-  paymentProvider: string;
-  providerClientId: string;
-  providerSubscriptionId: string;
-  billingPeriodInMonths: string | null;
+  billingInterval?: string;
+  paymentProvider?: string | null;
+  providerClientId?: string | null;
+  providerSubscriptionId?: string | null;
+  billingPeriodInMonths?: number | string | null;
+  proofFileUrl?: string | null;
   plan: Plan;
 }
 
