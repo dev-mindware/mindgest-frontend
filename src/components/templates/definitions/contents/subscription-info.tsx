@@ -112,12 +112,13 @@ export function SubscriptionInfo() {
         return null;
       }
     },
-    initialData: (user?.company?.subscription as unknown as Subscription) ?? null,
-    staleTime: 60 * 1000,
-    refetchOnWindowFocus: false,
+    placeholderData: (user?.company?.subscription as unknown as Subscription) ?? null,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
-  const subscription = liveSubscription || (user?.company?.subscription as unknown as Subscription);
+  const subscription = liveSubscription ?? (user?.company?.subscription as unknown as Subscription);
   const plan = subscription?.plan;
 
   if (!subscription || !plan) {
@@ -141,8 +142,8 @@ export function SubscriptionInfo() {
     );
   }
 
-  const isTrial = subscription.status === "TRIALING";
   const isPending = subscription.status === "PENDING";
+  const isTrial = subscription.status === "TRIALING";
   const endDateStr = isTrial
     ? subscription.trialEndsAt
     : subscription.periodEndsAt;
@@ -151,10 +152,11 @@ export function SubscriptionInfo() {
   const now = new Date();
 
   const isExpired =
-    subscription.status === "EXPIRED" ||
-    subscription.status === "CANCELED" ||
-    subscription.status === "PAST_DUE" ||
-    (endDate ? endDate.getTime() < now.getTime() : false);
+    !isPending &&
+    (subscription.status === "EXPIRED" ||
+      subscription.status === "CANCELED" ||
+      subscription.status === "PAST_DUE" ||
+      (endDate ? endDate.getTime() < now.getTime() : false));
 
   const daysDiff = endDate ? differenceInDays(endDate, now) : null;
 
@@ -163,29 +165,29 @@ export function SubscriptionInfo() {
 
   return (
     <div className="space-y-6">
-      <Card className={isExpired ? "border-destructive/40 ring-1 ring-destructive/20" : ""}>
+      <Card className={isExpired ? "border-destructive/40 ring-1 ring-destructive/20" : isPending ? "border-amber-500/40 ring-1 ring-amber-500/20" : ""}>
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5 flex-wrap">
               <CardTitle className="text-2xl font-bold">Plano {plan.name}</CardTitle>
               <Badge
                 variant={
-                  isExpired
-                    ? "destructive"
-                    : isTrial
-                      ? "secondary"
-                      : isPending
-                        ? "pending"
+                  isPending
+                    ? "pending"
+                    : isExpired
+                      ? "destructive"
+                      : isTrial
+                        ? "secondary"
                         : "default"
                 }
                 className="px-3 py-1 font-medium text-xs"
               >
-                {isExpired
-                  ? "Expirado"
-                  : isTrial
-                    ? "Período de Teste"
-                    : isPending
-                      ? "Pendente de Aprovação"
+                {isPending
+                  ? "Pendente de Aprovação"
+                  : isExpired
+                    ? "Expirado"
+                    : isTrial
+                      ? "Período de Teste"
                       : "Subscrição Ativa"}
               </Badge>
               <Badge variant="outline" className="text-xs font-medium">
@@ -219,6 +221,21 @@ export function SubscriptionInfo() {
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {/* Alerta de Subscrição Pendente */}
+          {isPending && (
+            <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 flex items-start gap-3">
+              <Icon name="Clock" className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                  Subscrição a Aguardar Validação
+                </p>
+                <p className="text-xs text-amber-800/80 dark:text-amber-300/80 leading-relaxed">
+                  O seu comprovativo de pagamento foi submetido e está a ser verificado pela nossa equipa administrativa. Assim que o pagamento for validado, o novo plano será ativado imediatamente.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Métricas Principais */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Valor da Subscrição */}
