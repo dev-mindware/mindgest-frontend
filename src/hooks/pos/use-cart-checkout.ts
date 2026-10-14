@@ -193,28 +193,28 @@ export function useCartCheckout({
       normalizedNewCustomerPhone.length > 0 &&
       !posPhoneRegex.test(normalizedNewCustomerPhone);
 
-    // if (
-    //   hasInvalidNewPhone ||
-    //   (isCreatingClient && !posPhoneRegex.test(normalizedNewCustomerPhone))
-    // ) {
-    //   ErrorMessage("Insira um número de telemóvel válido para o cliente.");
-    //   return;
-    // }
+    if (
+      hasInvalidNewPhone ||
+      (isCreatingClient && !posPhoneRegex.test(normalizedNewCustomerPhone))
+    ) {
+      ErrorMessage("Insira um número de telemóvel válido para o cliente.");
+      return;
+    }
 
-    // if (isCreatingClient && !isValidAngolanTaxNumber(newCustomerTaxNumber)) {
-    //   ErrorMessage("Introduza um NIF válido para o novo cliente.");
-    //   return;
-    // }
+    if (isCreatingClient && !isValidAngolanTaxNumber(newCustomerTaxNumber)) {
+      ErrorMessage("Introduza um NIF válido para o novo cliente.");
+      return;
+    }
 
-    // if (
-    //   isCreatingClient &&
-    //   ["idle", "checking"].includes(newCustomerVerification)
-    // ) {
-    //   ErrorMessage(
-    //     "Aguarde pela verificação do NIF.",
-    //   );
-    //   return;
-    // }
+    if (
+      isCreatingClient &&
+      ["idle", "checking"].includes(newCustomerVerification)
+    ) {
+      ErrorMessage(
+        "Aguarde pela verificação do NIF.",
+      );
+      return;
+    }
 
     if (
       isCreatingClient &&
