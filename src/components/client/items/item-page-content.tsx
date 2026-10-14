@@ -99,7 +99,7 @@ export function ItemsPageContent() {
                   </DropdownMenuItem>
                 </ProtectedAction>
                 
-                <FeatureGate minPlan="Pro" fallback="disabled">
+                <FeatureGate minPlan="Smart" fallback="disabled">
                   <ProtectedAction>
                     <DropdownMenuItem
                       data-tour="items-create-barcode"
