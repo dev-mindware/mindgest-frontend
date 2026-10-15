@@ -8,8 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubscriptionFormData, subscriptionSchema } from "@/schemas";
 import { useFileUpload } from "@/hooks/common/use-upload";
 import { usePlans } from "@/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function SubscriptionPageContent() {
+  const queryClient = useQueryClient();
   const { openModal } = useModal();
   const { currentPlanSelected, setCurrentPlanSelected } = useCurrentPlanStore();
   const { plans } = usePlans();
@@ -49,7 +51,7 @@ export function SubscriptionPageContent() {
         return;
       }
 
-      await uploadFile({
+      const result = await uploadFile({
         files: {
           proofPayment: data.proofPayment,
         },
@@ -59,6 +61,13 @@ export function SubscriptionPageContent() {
           ...(data.couponCode ? { couponCode: data.couponCode } : {}),
         },
       });
+
+      if (result) {
+        queryClient.setQueryData(["company-subscription"], result);
+      }
+      queryClient.invalidateQueries({ queryKey: ["company-subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
 
       openModal("subscription-created");
       localStorage.removeItem("MGEST-PLAN-STORE");
