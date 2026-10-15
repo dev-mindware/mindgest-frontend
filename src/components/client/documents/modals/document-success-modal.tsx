@@ -7,6 +7,7 @@ import { DocumentType } from "@/types/documents";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import { printDocumentDirectly } from "@/utils";
 
 
 
@@ -60,16 +61,9 @@ export function DocumentSuccessModal() {
     const handlePrint = async () => {
         if (blobUrl) {
             try {
-                // Dynamically import print-js only on the client
-                const printJS = (await import("print-js")).default;
-                printJS({
-                    printable: blobUrl,
-                    type: "pdf",
-                    onPrintDialogClose: () => console.log("The print dialog was closed"),
-                    onError: (err: any) => console.error("Print error:", err)
-                });
+                await printDocumentDirectly(blobUrl);
             } catch (err) {
-                console.error("Failed to load print-js:", err);
+                console.error("Erro ao imprimir documento:", err);
             }
         }
     };
