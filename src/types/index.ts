@@ -6,6 +6,7 @@ export * from "./company";
 export * from "./documents";
 export * from "./entities";
 export * from "./items";
+export * from "./import-items";
 export * from "./manager";
 export * from "./notification";
 export * from "./products";

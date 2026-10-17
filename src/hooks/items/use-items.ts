@@ -73,3 +73,23 @@ export function useToggleStatusItem() {
   });
 }
 
+
+export function useImportItems() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ file, dryRun }: { file: File; dryRun: boolean }) =>
+      itemsService.importExcel(file, dryRun),
+    onSuccess: (result) => {
+      if (!result.dryRun && result.created > 0) {
+        queryClient.invalidateQueries({ queryKey: ["items"] });
+        queryClient.invalidateQueries({ queryKey: ["stocks"] });
+      }
+    },
+    onError: (error: unknown) => {
+      ErrorMessage(
+        extractErrorMessage(error, "Não foi possível processar o ficheiro."),
+      );
+    },
+  });
+}

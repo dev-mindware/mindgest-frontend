@@ -1,4 +1,4 @@
-import type { CreateItemData } from "@/types";
+import type { CreateItemData, ImportItemsResult } from "@/types";
 import { BarCode } from "@/types/bar-code";
 import { api } from "./api";
 
@@ -16,6 +16,26 @@ export const itemsService = {
 
   deleteItem: async (id: string) => {
     return api.delete<CreateItemData>(`/items/${id}`);
+  },
+
+  importExcel: async (file: File, dryRun: boolean) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("dryRun", String(dryRun));
+    // Content-Type multipart (com boundary) é definido pelo browser
+    const response = await api.post<ImportItemsResult>(
+      "/items/import/excel",
+      form,
+      { headers: { "Content-Type": undefined } },
+    );
+    return response.data;
+  },
+
+  downloadImportTemplate: async () => {
+    const response = await api.get<Blob>("/items/import/template", {
+      responseType: "blob",
+    });
+    return response.data;
   },
 
   checkBarcode: async (barcode: string) => {
