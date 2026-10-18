@@ -3,6 +3,7 @@ import { itemsService } from "@/services/items-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import { extractErrorMessage } from "@/utils/error-handler";
+import { currentStoreStore } from "@/stores";
 
 export function useAddItem() {
   const queryClient = useQueryClient();
@@ -76,10 +77,11 @@ export function useToggleStatusItem() {
 
 export function useImportItems() {
   const queryClient = useQueryClient();
+  const currentStore = currentStoreStore((state) => state.currentStore);
 
   return useMutation({
     mutationFn: ({ file, dryRun }: { file: File; dryRun: boolean }) =>
-      itemsService.importExcel(file, dryRun),
+      itemsService.importExcel(file, dryRun, currentStore?.id),
     onSuccess: (result) => {
       if (!result.dryRun && result.created > 0) {
         queryClient.invalidateQueries({ queryKey: ["items"] });

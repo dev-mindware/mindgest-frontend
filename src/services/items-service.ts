@@ -18,10 +18,11 @@ export const itemsService = {
     return api.delete<CreateItemData>(`/items/${id}`);
   },
 
-  importExcel: async (file: File, dryRun: boolean) => {
+  importExcel: async (file: File, dryRun: boolean, storeId?: string) => {
     const form = new FormData();
     form.append("file", file);
     form.append("dryRun", String(dryRun));
+    if (storeId) form.append("storeId", storeId);
     // Content-Type multipart (com boundary) é definido pelo browser
     const response = await api.post<ImportItemsResult>(
       "/items/import/excel",
@@ -31,8 +32,9 @@ export const itemsService = {
     return response.data;
   },
 
-  downloadImportTemplate: async () => {
+  downloadImportTemplate: async (plan?: string) => {
     const response = await api.get<Blob>("/items/import/template", {
+      params: plan ? { plan } : undefined,
       responseType: "blob",
     });
     return response.data;
