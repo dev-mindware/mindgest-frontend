@@ -57,6 +57,34 @@ export function useDeleteItem() {
   });
 }
 
+export function useBulkDeleteItems() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => itemsService.bulkDeleteItems(ids),
+    onSuccess: (result) => {
+      if (result.deleted > 0) {
+        SucessMessage(`${result.deleted} produto(s) eliminado(s) com sucesso!`);
+      }
+      if (result.failed > 0) {
+        ErrorMessage(
+          result.errors[0] ||
+            `${result.failed} produto(s) não puderam ser eliminados.`
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    onError: (error: unknown) => {
+      ErrorMessage(
+        extractErrorMessage(
+          error,
+          "Não foi possível eliminar os produtos selecionados."
+        )
+      );
+    },
+  });
+}
+
 export function useToggleStatusItem() {
   const queryClient = useQueryClient();
 

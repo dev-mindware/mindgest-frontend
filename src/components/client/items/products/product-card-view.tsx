@@ -6,12 +6,22 @@ import { ProductDetails } from "./product-details";
 import { ProductStockInfo } from "./product-stock-info";
 import { Card, CardContent, CardHeader, ButtonOnlyAction } from "@/components";
 import { ItemIcon, ItemStatusBadge, ProductTitle } from "../common";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: ItemResponse;
+  selectable?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
-export function ProductCardView({ product }: ProductCardProps) {
+export function ProductCardView({
+  product,
+  selectable,
+  selected,
+  onToggleSelect,
+}: ProductCardProps) {
   const {
     handlerDeleteProduct,
     handlerDetailsProduct,
@@ -20,10 +30,27 @@ export function ProductCardView({ product }: ProductCardProps) {
   } = useProductActions();
 
   return (
-    <Card className="relative overflow-hidden transition-shadow duration-200 border border-border bg-card hover:shadow-lg hover:border-primary/25">
+    <Card
+      className={cn(
+        "relative overflow-hidden transition-all duration-200 border border-border bg-card hover:shadow-lg hover:border-primary/25",
+        selected && "ring-2 ring-primary border-primary/60 bg-primary/[0.03]"
+      )}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
+            {selectable && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="shrink-0 pt-0.5"
+              >
+                <Checkbox
+                  checked={selected}
+                  onCheckedChange={() => onToggleSelect?.(product.id)}
+                  aria-label={`Selecionar ${product.name}`}
+                />
+              </div>
+            )}
             <ItemIcon type="PRODUCT" />
             <div className="flex-1 min-w-0">
               <ProductTitle name={product.name} />

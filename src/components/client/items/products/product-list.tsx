@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { usePagination, useURLSearchParams } from "@/hooks/common";
 import { ProductCardView } from "./product-card-view";
 import {
@@ -9,10 +10,17 @@ import {
   ButtonOnlyAction,
   ProductCardSkeletonGrid,
   ItemsFiltersSkeleton,
+  Button,
 } from "@/components";
+import { Trash2 } from "lucide-react";
 import { ItemResponse } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
-import { DetailsProductModal, AddProductModal, EditProductModal } from "./product-modals";
+import {
+  DetailsProductModal,
+  AddProductModal,
+  EditProductModal,
+  BulkDeleteProductsModal,
+} from "./product-modals";
 import { useItemsFilters, useProductActions } from "@/hooks";
 import {
   DeleteItemModal,
@@ -25,6 +33,8 @@ import { useDebounce } from "use-debounce";
 import { currentStoreStore, currentProductStore } from "@/stores";
 
 export function ProductList() {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   const { search } = useURLSearchParams(`search_product`);
   const { currentStore } = currentStoreStore();
   const { currentProduct } = currentProductStore();
@@ -165,7 +175,22 @@ export function ProductList() {
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex flex-col w-full items-center gap-3 sm:flex-row sm:justify-between sm:gap-4 sm:items-start">
           <ItemsFiltersTSX prefix="product" />
-          <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            {selectedIds.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setIsBulkDeleteModalOpen(true)}
+                className="flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200 shadow-sm"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="font-semibold text-xs sm:text-sm">
+                  Eliminar ({selectedIds.length})
+                </span>
+              </Button>
+            )}
+            <ItemViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+          </div>
         </div>
       </div>
 
@@ -177,7 +202,19 @@ export function ProductList() {
             </p>
           ) : (
             items.map((product) => (
-              <ProductCardView key={product.id} product={product} />
+              <ProductCardView
+                key={product.id}
+                product={product}
+                selectable={true}
+                selected={selectedIds.includes(product.id)}
+                onToggleSelect={(id) => {
+                  setSelectedIds((prev) =>
+                    prev.includes(id)
+                      ? prev.filter((item) => item !== id)
+                      : [...prev, id]
+                  );
+                }}
+              />
             ))
           )}
         </div>
@@ -191,6 +228,9 @@ export function ProductList() {
           setPage={setPage}
           goToNextPage={goToNextPage}
           goToPreviousPage={goToPreviousPage}
+          selectable={true}
+          selectedIds={selectedIds}
+          onSelectChange={setSelectedIds}
         />
       )}
 
@@ -208,6 +248,12 @@ export function ProductList() {
       <DeleteItemModal type="Produto" />
       <AddProductModal />
       {currentProduct && <EditProductModal product={currentProduct} />}
+      <BulkDeleteProductsModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        selectedIds={selectedIds}
+        onSuccess={() => setSelectedIds([])}
+      />
 
     </div>
   );

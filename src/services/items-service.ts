@@ -18,6 +18,15 @@ export const itemsService = {
     return api.delete<CreateItemData>(`/items/${id}`);
   },
 
+  bulkDeleteItems: async (ids: string[]) => {
+    const response = await api.post<{
+      deleted: number;
+      failed: number;
+      errors: string[];
+    }>('/items/bulk-delete', { ids });
+    return response.data;
+  },
+
   importExcel: async (file: File, dryRun: boolean, storeId?: string) => {
     const form = new FormData();
     form.append("file", file);
