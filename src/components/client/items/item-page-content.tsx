@@ -21,7 +21,8 @@ import {
   ServiceModal,
 } from "@/components/client";
 import { currentProductStore, useModal } from "@/stores";
-import { ChevronDown, Plus, Barcode, Keyboard } from "lucide-react";
+import { ChevronDown, Plus, Barcode, Keyboard, FileSpreadsheet } from "lucide-react";
+import { ImportProductsModal, IMPORT_PRODUCTS_MODAL_ID } from "./products/product-modals/import-products-modal";
 import { BarcodeScannerModal, BARCODE_SCANNER_MODAL_ID } from "./products/product-modals/barcode-scanner-modal";
 import { FeatureGate } from "@/components";
 import { ProtectedAction } from "@/components/guards";
@@ -99,6 +100,16 @@ export function ItemsPageContent() {
                   </DropdownMenuItem>
                 </ProtectedAction>
                 
+                <ProtectedAction>
+                  <DropdownMenuItem
+                    onClick={() => openModal(IMPORT_PRODUCTS_MODAL_ID)}
+                    className="flex items-center gap-2"
+                  >
+                    <FileSpreadsheet className="h-4 w-4" />
+                    Importar Excel
+                  </DropdownMenuItem>
+                </ProtectedAction>
+
                 <FeatureGate minPlan="Smart" fallback="disabled">
                   <ProtectedAction>
                     <DropdownMenuItem
@@ -142,6 +153,7 @@ export function ItemsPageContent() {
       {open["edit-product"] && currentProduct && <EditProductModal product={currentProduct} />}
       {open["add-service"] && <ServiceModal action="add" />}
       <BarcodeScannerModal />
+      <ImportProductsModal />
     </div>
   );
 }

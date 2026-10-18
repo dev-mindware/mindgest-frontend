@@ -3,6 +3,7 @@ import { itemsService } from "@/services/items-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SucessMessage, ErrorMessage } from "@/utils/messages";
 import { extractErrorMessage } from "@/utils/error-handler";
+import { currentStoreStore } from "@/stores";
 
 export function useAddItem() {
   const queryClient = useQueryClient();
@@ -56,6 +57,34 @@ export function useDeleteItem() {
   });
 }
 
+export function useBulkDeleteItems() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => itemsService.bulkDeleteItems(ids),
+    onSuccess: (result) => {
+      if (result.deleted > 0) {
+        SucessMessage(`${result.deleted} produto(s) eliminado(s) com sucesso!`);
+      }
+      if (result.failed > 0) {
+        ErrorMessage(
+          result.errors[0] ||
+            `${result.failed} produto(s) não puderam ser eliminados.`
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    onError: (error: unknown) => {
+      ErrorMessage(
+        extractErrorMessage(
+          error,
+          "Não foi possível eliminar os produtos selecionados."
+        )
+      );
+    },
+  });
+}
+
 export function useToggleStatusItem() {
   const queryClient = useQueryClient();
 
@@ -73,3 +102,24 @@ export function useToggleStatusItem() {
   });
 }
 
+
+export function useImportItems() {
+  const queryClient = useQueryClient();
+  const currentStore = currentStoreStore((state) => state.currentStore);
+
+  return useMutation({
+    mutationFn: ({ file, dryRun }: { file: File; dryRun: boolean }) =>
+      itemsService.importExcel(file, dryRun, currentStore?.id),
+    onSuccess: (result) => {
+      if (!result.dryRun && result.created > 0) {
+        queryClient.invalidateQueries({ queryKey: ["items"] });
+        queryClient.invalidateQueries({ queryKey: ["stocks"] });
+      }
+    },
+    onError: (error: unknown) => {
+      ErrorMessage(
+        extractErrorMessage(error, "Não foi possível processar o ficheiro."),
+      );
+    },
+  });
+}

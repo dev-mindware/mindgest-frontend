@@ -210,6 +210,10 @@ function EditProductFormContent({ product }: EditProductModalProps) {
   const cleanPayload = (data: ItemFormData) => {
     return {
       ...data,
+      barcode: data.barcode?.trim() || null,
+      expiryDate: data.expiryDate?.trim() || null,
+      dimensions: data.dimensions?.trim() || null,
+      description: data.description?.trim() || null,
       taxId: data.taxId,
       cost: data.cost ?? undefined,
       quantity: data.quantity ?? undefined,

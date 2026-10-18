@@ -46,7 +46,7 @@ export function PosOpeningCashierModal({
   } = useForm<PosOpeningCashierFormData>({
     resolver: zodResolver(posOpeningCashierSchema),
     defaultValues: {
-      initialCapital: "",
+      initialCapital: "0",
       workTime: "08:00",
       storeId: currentStore?.id || "",
       fundType: "Coin",
@@ -59,7 +59,7 @@ export function PosOpeningCashierModal({
   useEffect(() => {
     if (user?.id || currentStore?.id) {
       reset({
-        initialCapital: getValues("initialCapital") || "",
+        initialCapital: getValues("initialCapital") ?? "0",
         workTime: getValues("workTime") || "08:00",
         storeId: currentStore?.id || "",
         fundType: getValues("fundType") || "Coin",
@@ -104,7 +104,7 @@ export function PosOpeningCashierModal({
 
     try {
       const payload = {
-        initialCapital: pendingData.initialCapital || "0",
+        initialCapital: pendingData.initialCapital ?? "0",
         workTime: pendingData.workTime || "08:00",
         storeId: currentStore?.id || pendingData.storeId || "",
         fundType: (pendingData.fundType || "COIN").toUpperCase(),
@@ -172,9 +172,9 @@ export function PosOpeningCashierModal({
                       ref={ref}
                       label="Capital Inicial"
                       placeholder="0,00"
-                      value={Number(value || 0)}
+                      value={value !== undefined && value !== "" ? Number(value) : 0}
                       onValueChange={(val) => {
-                        onChange(val.toString());
+                        onChange(val !== undefined && val !== null ? val.toString() : "0");
                       }}
                       error={errors.initialCapital?.message}
                     />

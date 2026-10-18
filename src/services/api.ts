@@ -195,6 +195,12 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
           storeId: config.params?.storeId || currentStore.id,
         };
       }
+      // multipart: spread destruiria o FormData → acrescenta o campo
+      else if (config.data instanceof FormData) {
+        if (!config.data.has("storeId")) {
+          config.data.append("storeId", currentStore.id);
+        }
+      }
       // POST/PUT/PATCH com data objeto → injeta em data
       else if (
         config.data &&

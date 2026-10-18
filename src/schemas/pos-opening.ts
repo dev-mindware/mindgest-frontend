@@ -1,7 +1,17 @@
 import { z } from "zod";
 
 export const posOpeningSchema = z.object({
-  initialCapital: z.string().trim().min(1, "Capital inicial é obrigatório"),
+  initialCapital: z
+    .string()
+    .trim()
+    .refine(
+      (val) => {
+        if (!val || val === "") return true;
+        const num = Number(val.replace(",", "."));
+        return !isNaN(num) && num >= 0;
+      },
+      { message: "Capital inicial deve ser maior ou igual a 0" },
+    ),
   workTime: z.string().trim().min(1, "Tempo de expediente é obrigatório"),
   storeId: z.string().trim().min(1, "Loja é obrigatória"),
   cashierIds: z
@@ -12,7 +22,17 @@ export const posOpeningSchema = z.object({
 });
 
 export const posOpeningCashierSchema = z.object({
-  initialCapital: z.string().trim().min(1, "Capital inicial é obrigatório"),
+  initialCapital: z
+    .string()
+    .trim()
+    .refine(
+      (val) => {
+        if (!val || val === "") return true;
+        const num = Number(val.replace(",", "."));
+        return !isNaN(num) && num >= 0;
+      },
+      { message: "Capital inicial deve ser maior ou igual a 0" },
+    ),
   workTime: z.string().trim().min(1, "Tempo de expediente é obrigatório"),
   storeId: z.string().trim().min(1, "Loja é obrigatória"),
   cashierIds: z

@@ -1,69 +1,97 @@
 import { downloadDocument } from "@/services";
 import type { DocumentType, DownloadType } from "@/types";
 
-type PrintPosDocumentOptions = {
+export type PrintPosDocumentOptions = {
   id: string;
   type: DocumentType;
   thermal: boolean;
 };
 
-function createDocumentUrl(data: BlobPart): string {
-  const blob = data instanceof Blob ? data : new Blob([data], {
-    type: "application/pdf",
-  });
+export function createDocumentUrl(data: BlobPart): string {
+  const blob =
+    data instanceof Blob
+      ? data
+      : new Blob([data], {
+          type: "application/pdf",
+        });
 
   return URL.createObjectURL(blob);
 }
 
-async function printThermalDocument(url: string): Promise<void> {
-  const printJS = (await import("print-js")).default;
-
-  await new Promise<void>((resolve, reject) => {
-    printJS({
-      printable: url,
-      type: "pdf",
-      onPrintDialogClose: resolve,
-      onError: reject,
-    });
-  });
-}
-
-function printWithBrowser(url: string): Promise<void> {
+/**
+ * Imprime um documento PDF de forma directa através de um iframe invisível no DOM,
+ * acionando a impressora/diálogo nativo sem abrir novas abas ou janelas no navegador.
+ */
+export function printDocumentDirectly(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const frame = document.createElement("iframe");
     frame.setAttribute("aria-hidden", "true");
+    frame.setAttribute("tabindex", "-1");
     frame.style.position = "fixed";
-    frame.style.width = "1px";
-    frame.style.height = "1px";
+    frame.style.top = "0";
+    frame.style.left = "0";
+    frame.style.width = "100%";
+    frame.style.height = "100%";
+    frame.style.border = "none";
     frame.style.opacity = "0";
     frame.style.pointerEvents = "none";
+    frame.style.zIndex = "-9999";
 
+    let isCleanedUp = false;
     const cleanup = () => {
-      frame.remove();
-      resolve();
+      if (isCleanedUp) return;
+      isCleanedUp = true;
+      try {
+        if (frame.parentNode) {
+          frame.parentNode.removeChild(frame);
+        }
+      } catch {
+        // Ignora erros caso o elemento já não esteja no DOM
+      }
     };
 
     frame.onload = () => {
-      try {
-        const printWindow = frame.contentWindow;
-        if (!printWindow) {
-          reject(new Error("Não foi possível abrir o recurso de impressão."));
-          return;
-        }
+      // Delay essencial para permitir a inicialização completa do plugin de PDF no Chromium/Edge
+      window.setTimeout(() => {
+        try {
+          const printWindow = frame.contentWindow;
+          if (!printWindow) {
+            cleanup();
+            reject(
+              new Error("Não foi possível aceder ao recurso de impressão da impressora."),
+            );
+            return;
+          }
 
-        printWindow.addEventListener("afterprint", cleanup, { once: true });
-        printWindow.focus();
-        printWindow.print();
-        window.setTimeout(cleanup, 60_000);
-      } catch (error) {
-        frame.remove();
-        reject(error);
-      }
+          printWindow.addEventListener(
+            "afterprint",
+            () => {
+              cleanup();
+              resolve();
+            },
+            { once: true },
+          );
+
+          printWindow.focus();
+          printWindow.print();
+
+          // Timeout de salvaguarda caso afterprint não seja disparado pelo navegador/sistema
+          window.setTimeout(() => {
+            cleanup();
+            resolve();
+          }, 30_000);
+        } catch (error) {
+          cleanup();
+          reject(error);
+        }
+      }, 350);
     };
+
     frame.onerror = () => {
-      frame.remove();
-      reject(new Error("Não foi possível carregar o documento para impressão."));
+      cleanup();
+      reject(new Error("Não foi possível carregar a factura para impressão directa."));
     };
+
     frame.src = url;
     document.body.appendChild(frame);
   });
@@ -79,13 +107,16 @@ export async function printPosDocument({
   const url = createDocumentUrl(response.data);
 
   try {
-    if (thermal) {
-      await printThermalDocument(url);
-      return;
-    }
-
-    await printWithBrowser(url);
+    await printDocumentDirectly(url);
   } finally {
-    URL.revokeObjectURL(url);
+    // Revoga a URL do Blob após 60 segundos com segurança para garantir
+    // que o spooler de impressão da impressora térmica termine o envio dos dados.
+    window.setTimeout(() => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        // Ignora
+      }
+    }, 60_000);
   }
 }

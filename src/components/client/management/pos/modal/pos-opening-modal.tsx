@@ -59,7 +59,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
   } = useForm<PosOpeningFormData>({
     resolver: zodResolver(posOpeningSchema),
     defaultValues: {
-      initialCapital: "",
+      initialCapital: "0",
       workTime: "06:00",
       storeId: "",
       cashierIds: [],
@@ -111,7 +111,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
     if (isFromRequest && currentCashier) {
       // Pre-fill from request: user + store already known
       reset({
-        initialCapital: "",
+        initialCapital: "0",
         workTime: "06:00",
         storeId: (currentCashier as any).storeId || "",
         cashierIds: (currentCashier as any).userId ? [(currentCashier as any).userId] : [],
@@ -120,7 +120,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
       });
     } else if (isEdit && currentCashier) {
       reset({
-        initialCapital: (currentCashier.openingCash || 0).toString(),
+        initialCapital: (currentCashier.openingCash ?? 0).toString(),
         workTime: currentCashier.workTime || "06:00",
         storeId: currentCashier.storeId || "",
         cashierIds: currentCashier.userId ? [currentCashier.userId] : [],
@@ -129,7 +129,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
       });
     } else if (!selfSessionMode) {
       reset({
-        initialCapital: "",
+        initialCapital: "0",
         workTime: "06:00",
         storeId: "",
         cashierIds: [],
@@ -152,7 +152,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
     try {
       if (isEdit && currentCashier) {
         const payload = {
-          initialCapital: data.initialCapital,
+          initialCapital: data.initialCapital?.trim() ? data.initialCapital : "0",
           reason: data.reason || "",
           workTime: data.workTime,
           fundType: data.fundType?.toUpperCase(),
@@ -164,6 +164,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
         const { reason, ...restData } = data;
         const payload = {
           ...restData,
+          initialCapital: data.initialCapital?.trim() ? data.initialCapital : "0",
           fundType: data.fundType?.toUpperCase(),
           ...(isFromRequest && (currentCashier as any)?._requestId
             ? { requestId: (currentCashier as any)._requestId }
@@ -227,7 +228,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
               render={({ field }) => (
                 <InputCurrency
                   ref={field.ref}
-                  value={field.value}
+                  value={field.value !== undefined && field.value !== "" ? Number(field.value) : 0}
                   decimalScale={2}
                   fixedDecimalScale
                   placeholder="0,00 Kz"
@@ -236,7 +237,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
                   startIcon="CircleDollarSign"
                   error={errors.initialCapital?.message}
                   onValueChange={(value) => {
-                    field.onChange(value ? String(value) : "");
+                    field.onChange(value !== undefined && value !== null ? String(value) : "0");
                   }}
                 />
               )}
