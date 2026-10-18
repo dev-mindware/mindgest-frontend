@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   FileSpreadsheet,
@@ -48,50 +48,53 @@ const PLAN_FIELDS_INFO: Record<
 > = {
   Base: {
     label: "Plano Base",
-    description: "Modelo essencial para cadastro rápido de produtos e stock inicial.",
+    description: "Modelo essencial para cadastro rápido de produtos e stock inicial com impostos.",
     fields: [
       { name: "Nome", required: true },
       { name: "Preço de Venda", required: true },
+      { name: "Código do Imposto", required: true },
       { name: "Stock Inicial" },
       { name: "Preço de Custo" },
       { name: "Categoria" },
       { name: "Descrição" },
     ],
-    hint: "Código de Barras, SKU e Stock Mínimo requerem o Plano Smart ou superior.",
+    hint: "Consulte a aba 'Tabela de Impostos' no Excel para ver os códigos (ex: IVA14, M10). Código de Barras e SKU requerem Plano Smart.",
   },
   Smart: {
     label: "Plano Smart",
-    description: "Modelo completo com suporte a leitores de código de barras e alertas de stock.",
+    description: "Modelo completo com suporte a impostos, leitores de código de barras e alertas de stock.",
     fields: [
       { name: "Nome", required: true },
       { name: "Preço de Venda", required: true },
+      { name: "Código do Imposto", required: true },
       { name: "Stock Inicial" },
       { name: "Preço de Custo" },
-      { name: "Categoria" },
-      { name: "Descrição" },
       { name: "Código de Barras" },
       { name: "SKU" },
       { name: "Stock Mínimo" },
+      { name: "Categoria" },
+      { name: "Descrição" },
     ],
-    hint: "Unidade de Medida e Data de Validade por lote requerem o Plano Pro.",
+    hint: "Consulte a aba 'Tabela de Impostos' no Excel para ver os códigos. Unidade e Validade requerem Plano Pro.",
   },
   Pro: {
     label: "Plano Pro",
-    description: "Modelo empresarial com gestão total de catálogo, logística e controlo de validade.",
+    description: "Modelo empresarial com gestão total de catálogo, impostos, logística e controlo de validade.",
     fields: [
       { name: "Nome", required: true },
       { name: "Preço de Venda", required: true },
+      { name: "Código do Imposto", required: true },
       { name: "Stock Inicial" },
       { name: "Preço de Custo" },
-      { name: "Categoria" },
-      { name: "Descrição" },
       { name: "Código de Barras" },
       { name: "SKU" },
       { name: "Stock Mínimo" },
+      { name: "Categoria" },
       { name: "Unidade" },
       { name: "Validade (AAAA-MM-DD)" },
+      { name: "Descrição" },
     ],
-    hint: "Todos os campos do catálogo e gestão de lotes estão desbloqueados no seu plano.",
+    hint: "O ficheiro inclui as abas 'Produtos', 'Tabela de Impostos' e 'Regras e Instruções'.",
   },
 };
 
@@ -120,10 +123,7 @@ export function ImportProductsModal() {
 
   const planInfo = PLAN_FIELDS_INFO[currentPlan];
 
-  if (!open[IMPORT_PRODUCTS_MODAL_ID]) return null;
-
-  const done = !!result && !result.dryRun;
-  const canConfirm = !!result && result.dryRun && result.created > 0 && !isPending;
+  const isOpen = !!open[IMPORT_PRODUCTS_MODAL_ID];
 
   function reset() {
     setFile(null);
@@ -134,6 +134,16 @@ export function ImportProductsModal() {
     reset();
     closeModal(IMPORT_PRODUCTS_MODAL_ID);
   }
+
+  // Reseta estado do upload sempre que o modal for fechado
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+    }
+  }, [isOpen]);
+
+  const done = !!result && !result.dryRun;
+  const canConfirm = !!result && result.dryRun && result.created > 0 && !isPending;
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setResult(null);
@@ -201,34 +211,34 @@ export function ImportProductsModal() {
     <GlobalModal
       canClose
       id={IMPORT_PRODUCTS_MODAL_ID}
-      className="w-full sm:max-w-3xl border-stone-200/80 shadow-soft-lg"
+      className="w-full sm:max-w-3xl border-border shadow-lg"
       title={
         <div className="flex items-center justify-between w-full pr-6 gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-orange-50 border border-orange-200/60 flex items-center justify-center text-[#D85A38] shrink-0 shadow-soft-sm">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 shadow-xs">
               <FileSpreadsheet className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-stone-900 tracking-tight leading-none">
+              <h2 className="text-base font-bold text-foreground tracking-tight leading-none">
                 Importar Stock em Massa
               </h2>
-              <p className="text-xs text-stone-500 font-normal mt-1">
+              <p className="text-xs text-muted-foreground font-normal mt-1">
                 Adicione produtos e stock inicial via folha de cálculo Excel (.xlsx)
               </p>
             </div>
           </div>
           <Badge
             variant="outline"
-            className="border-orange-200 bg-orange-50/60 text-[#D85A38] font-semibold text-xs py-0.5 px-2.5"
+            className="border-primary/30 bg-primary/10 text-primary font-semibold text-xs py-0.5 px-2.5"
           >
             {planInfo.label}
           </Badge>
         </div>
       }
       footer={
-        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-2 pt-2 border-t border-stone-200/70">
-          <div className="text-xs text-stone-500 hidden sm:flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5 text-stone-400" />
+        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-2 pt-2 border-t border-border">
+          <div className="text-xs text-muted-foreground hidden sm:flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5 text-muted-foreground" />
             <span>Valide os dados antes de gravar em definitivo.</span>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -248,7 +258,7 @@ export function ImportProductsModal() {
                 onClick={() => run(true)}
                 disabled={!file || isPending}
                 loading={isPending}
-                className="w-full sm:w-auto bg-[#D85A38] hover:bg-[#C74D2C] text-white shadow-soft-sm"
+                className="w-full sm:w-auto shadow-xs"
               >
                 {isPending ? "A validar dados..." : "Validar Ficheiro"}
               </Button>
@@ -260,7 +270,7 @@ export function ImportProductsModal() {
                 onClick={() => run(false)}
                 disabled={isPending}
                 loading={isPending}
-                className="w-full sm:w-auto bg-[#D85A38] hover:bg-[#C74D2C] text-white shadow-soft-sm font-semibold"
+                className="w-full sm:w-auto shadow-xs font-semibold"
               >
                 {isPending ? "A importar..." : `Confirmar Importação de ${result!.created} Produto(s)`}
               </Button>
@@ -272,16 +282,16 @@ export function ImportProductsModal() {
       <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
         {/* BANNER DO PLANO & MODELO EXCEL */}
         {!done && (
-          <div className="rounded-2xl border border-stone-200/90 bg-[#FBF9F5] p-4 text-stone-900 transition-all shadow-soft-sm">
+          <div className="rounded-xl border border-border bg-muted/40 p-4 transition-all">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#D85A38]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-stone-700">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-foreground">
                     Modelo Adaptado ao seu Plano ({currentPlan})
                   </span>
                 </div>
-                <p className="text-xs text-stone-600 leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   {planInfo.description}
                 </p>
               </div>
@@ -292,17 +302,17 @@ export function ImportProductsModal() {
                 size="sm"
                 onClick={downloadTemplate}
                 loading={isDownloading}
-                className="shrink-0 border-stone-300 bg-white hover:bg-stone-50 hover:text-[#D85A38] text-stone-800 shadow-soft-sm"
+                className="shrink-0"
               >
-                <Download className="mr-1.5 h-4 w-4 text-[#D85A38]" />
+                <Download className="mr-1.5 h-4 w-4 text-primary" />
                 Descarregar Modelo (.xlsx)
               </Button>
             </div>
 
             {/* CHIPS DOS CAMPOS DISPONÍVEIS */}
-            <div className="mt-3 pt-3 border-t border-stone-200/60 flex flex-wrap gap-1.5 items-center">
-              <span className="text-[11px] font-semibold text-stone-500 mr-1 flex items-center gap-1">
-                <Layers className="w-3 h-3 text-stone-400" />
+            <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-1.5 items-center">
+              <span className="text-[11px] font-semibold text-muted-foreground mr-1 flex items-center gap-1">
+                <Layers className="w-3 h-3 text-muted-foreground" />
                 Campos no modelo:
               </span>
               {planInfo.fields.map((f) => (
@@ -311,18 +321,18 @@ export function ImportProductsModal() {
                   className={cn(
                     "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium border",
                     f.required
-                      ? "bg-orange-50/80 text-[#B84324] border-orange-200/70 font-semibold"
-                      : "bg-white text-stone-600 border-stone-200"
+                      ? "bg-primary/10 text-primary border-primary/25 font-semibold"
+                      : "bg-card text-muted-foreground border-border"
                   )}
                 >
                   {f.name}
-                  {f.required && <span className="ml-0.5 text-[#D85A38]">*</span>}
+                  {f.required && <span className="ml-0.5 text-primary">*</span>}
                 </span>
               ))}
             </div>
 
             {planInfo.hint && (
-              <p className="mt-2 text-[11px] text-stone-500 italic">
+              <p className="mt-2 text-[11px] text-muted-foreground italic">
                 * {planInfo.hint}
               </p>
             )}
@@ -336,38 +346,38 @@ export function ImportProductsModal() {
               <div
                 {...getRootProps()}
                 className={cn(
-                  "relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition-all cursor-pointer group",
+                  "relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center transition-all cursor-pointer group",
                   isDragActive
-                    ? "border-[#D85A38] bg-orange-50/40"
-                    : "border-stone-300 bg-stone-50/40 hover:border-[#D85A38]/70 hover:bg-[#FAF8F5]",
-                  isDragReject && "border-red-400 bg-red-50/30"
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-muted/20 hover:border-primary/50 hover:bg-muted/40",
+                  isDragReject && "border-destructive/60 bg-destructive/10"
                 )}
               >
                 <input {...getInputProps()} />
-                <div className="h-12 w-12 rounded-2xl bg-white border border-stone-200 shadow-soft-sm flex items-center justify-center text-[#D85A38] group-hover:scale-105 transition-transform mb-2">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 shadow-xs flex items-center justify-center text-primary group-hover:scale-105 transition-transform mb-2">
                   <UploadCloud className="h-6 w-6" />
                 </div>
-                <p className="text-sm font-semibold text-stone-800">
+                <p className="text-sm font-semibold text-foreground">
                   Arraste o seu ficheiro Excel aqui, ou{" "}
-                  <span className="text-[#D85A38] underline underline-offset-2">
+                  <span className="text-primary underline underline-offset-2">
                     procure no computador
                   </span>
                 </p>
-                <p className="text-xs text-stone-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Apenas ficheiros no formato .xlsx (máximo de 1.000 linhas • até 5MB)
                 </p>
               </div>
             ) : (
-              <div className="flex items-center justify-between p-3.5 rounded-xl border border-stone-200 bg-white shadow-soft-sm">
+              <div className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-emerald-50 border border-emerald-200/60 flex items-center justify-center text-emerald-600">
+                  <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                     <FileSpreadsheet className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-stone-900 leading-tight">
+                    <p className="text-sm font-semibold text-foreground leading-tight">
                       {file.name}
                     </p>
-                    <p className="text-xs text-stone-500 mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       {formatFileSize(file.size)} • Pronto para validação
                     </p>
                   </div>
@@ -379,7 +389,7 @@ export function ImportProductsModal() {
                     variant="ghost"
                     size="sm"
                     onClick={reset}
-                    className="text-stone-500 hover:text-red-600 hover:bg-red-50"
+                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
                     Remover
@@ -395,43 +405,43 @@ export function ImportProductsModal() {
           <div className="space-y-4 animate-in fade-in-50 duration-200">
             {/* CARDS DE RESUMO DE MÉTRICAS */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-emerald-100/80 flex items-center justify-center text-emerald-700 shrink-0">
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3.5 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
                   <CheckCircle2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold tracking-tight text-emerald-800 leading-none">
+                  <div className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 leading-none">
                     {result.created}
                   </div>
-                  <p className="text-xs font-semibold text-emerald-700 mt-1">
+                  <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 mt-1">
                     {result.dryRun ? "Prontos para Gravar" : "Criados com Sucesso"}
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-3.5 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-100/80 flex items-center justify-center text-amber-700 shrink-0">
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3.5 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
                   <AlertTriangle className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold tracking-tight text-amber-800 leading-none">
+                  <div className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400 leading-none">
                     {result.skipped}
                   </div>
-                  <p className="text-xs font-semibold text-amber-700 mt-1">
+                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mt-1">
                     Ignorados (Duplicados)
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-rose-200 bg-rose-50/70 p-3.5 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-rose-100/80 flex items-center justify-center text-rose-700 shrink-0">
+              <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-destructive/20 flex items-center justify-center text-destructive shrink-0">
                   <XCircle className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold tracking-tight text-rose-800 leading-none">
+                  <div className="text-2xl font-bold tracking-tight text-destructive leading-none">
                     {result.failed}
                   </div>
-                  <p className="text-xs font-semibold text-rose-700 mt-1">
+                  <p className="text-xs font-semibold text-destructive mt-1">
                     Linhas com Erro
                   </p>
                 </div>
@@ -441,16 +451,16 @@ export function ImportProductsModal() {
             {/* TABELA DE PROBLEMAS / DUPLICADOS */}
             {problems.length > 0 && (
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-semibold text-stone-700">
+                <div className="flex items-center justify-between text-xs font-semibold text-foreground">
                   <span>Avisos e Erros Detectados ({problems.length})</span>
-                  <span className="text-stone-500 font-normal">
+                  <span className="text-muted-foreground font-normal">
                     Linhas duplicadas ou inválidas não serão gravadas
                   </span>
                 </div>
 
-                <div className="max-h-56 overflow-y-auto rounded-xl border border-stone-200 bg-white text-xs shadow-soft-sm">
+                <div className="max-h-56 overflow-y-auto rounded-xl border border-border bg-card text-xs shadow-xs">
                   <table className="w-full text-left border-collapse">
-                    <thead className="sticky top-0 bg-stone-100 border-b border-stone-200 text-stone-700 font-semibold">
+                    <thead className="sticky top-0 bg-muted/80 backdrop-blur-xs border-b border-border text-foreground font-semibold">
                       <tr>
                         <th className="p-2.5 w-16">Linha</th>
                         <th className="p-2.5 w-44">Produto</th>
@@ -458,15 +468,15 @@ export function ImportProductsModal() {
                         <th className="p-2.5">Motivo detalhado</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-stone-100">
+                    <tbody className="divide-y divide-border">
                       {problems.map((r) => {
                         const statusCfg = STATUS_CONFIG[r.status];
                         return (
-                          <tr key={r.row} className="hover:bg-stone-50/80 transition-colors">
-                            <td className="p-2.5 font-mono font-medium text-stone-600">
+                          <tr key={r.row} className="hover:bg-muted/40 transition-colors">
+                            <td className="p-2.5 font-mono font-medium text-muted-foreground">
                               #{r.row}
                             </td>
-                            <td className="p-2.5 font-medium text-stone-900 truncate max-w-[180px]">
+                            <td className="p-2.5 font-medium text-foreground truncate max-w-[180px]">
                               {r.name ?? "—"}
                             </td>
                             <td className="p-2.5">
@@ -477,7 +487,7 @@ export function ImportProductsModal() {
                                 {statusCfg.label}
                               </Badge>
                             </td>
-                            <td className="p-2.5 text-stone-600 leading-relaxed">
+                            <td className="p-2.5 text-muted-foreground leading-relaxed">
                               {r.reasons?.join("; ") || "Sem detalhes"}
                             </td>
                           </tr>
@@ -491,11 +501,11 @@ export function ImportProductsModal() {
 
             {/* MENSAGEM SE ZERO LINHAS VÁLIDAS */}
             {result.dryRun && result.created === 0 && (
-              <div className="rounded-xl border border-rose-200 bg-rose-50/80 p-3.5 text-xs text-rose-800 flex items-start gap-2.5">
-                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-xs text-destructive flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
                 <div>
                   <p className="font-semibold">Nenhum produto válido para importação.</p>
-                  <p className="mt-0.5 text-rose-700">
+                  <p className="mt-0.5 text-muted-foreground">
                     Corrija os erros assinalados no seu ficheiro Excel e efectue uma nova validação.
                   </p>
                 </div>
@@ -504,12 +514,12 @@ export function ImportProductsModal() {
 
             {/* SE SUCESSO DEFINITIVO */}
             {done && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-center space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-                <h4 className="text-sm font-bold text-emerald-900">
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-center space-y-2">
+                <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                <h4 className="text-sm font-bold text-foreground">
                   Processo de Importação Concluído!
                 </h4>
-                <p className="text-xs text-emerald-700">
+                <p className="text-xs text-muted-foreground">
                   {result.created} produto(s) adicionados ao catálogo com stock inicial actualizado.
                 </p>
               </div>
@@ -524,7 +534,7 @@ export function ImportProductsModal() {
                   size="sm"
                   onClick={reset}
                   disabled={isPending}
-                  className="text-xs text-stone-600 hover:text-stone-900"
+                  className="text-xs text-muted-foreground hover:text-foreground"
                 >
                   Carregar outro ficheiro
                 </Button>
