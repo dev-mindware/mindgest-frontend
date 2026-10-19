@@ -5,7 +5,7 @@ export const bankSchema = z.object({
   bankName: z
     .string()
     .trim()
-    .min(3, "O nome do banco deve ter pelo menos 3 caracteres"),
+    .min(2, "O nome do banco deve ter pelo menos 2 caracteres"),
 
   accountNumber: accountNumberSchema,
   iban: ibanSchema,

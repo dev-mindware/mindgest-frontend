@@ -3,13 +3,15 @@ import { z } from "zod";
 // After removing dots/spaces, accepts:
 // - Full Angola IBAN: AO + 2 check digits + 21 numeric digits (25 chars)
 // - Body only: 21 numeric digits
+// - International IBAN: 2 letters country code + 2 check digits + 10 to 30 alphanumeric characters
 const angolaIbanBodyRegex = /^(AO\d{2})?\d{21}$/;
+const internationalIbanRegex = /^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/;
 
 /** Normalizes an IBAN by stripping dots, spaces and uppercasing. */
 const normalizeIban = (value: string) =>
   value.replace(/[.\s]/g, "").toUpperCase();
 
-const accountNumberRegex = /^\d{14}$/;
+const accountNumberRegex = /^\d{6,24}$/;
 
 export const FileSchema = z.object({
   fieldname: z.string().trim().optional(),
@@ -97,11 +99,25 @@ export const ibanSchema = z
   .string()
   .trim()
   .refine(
-    (val) => val === "" || angolaIbanBodyRegex.test(normalizeIban(val)),
-    "IBAN inválido — utilize o formato AO06.0040.0000.5660.0824.1017.4",
+    (val) => {
+      if (val === "") return true;
+      const normalized = normalizeIban(val);
+      return (
+        angolaIbanBodyRegex.test(normalized) ||
+        internationalIbanRegex.test(normalized)
+      );
+    },
+    "IBAN inválido — utilize o formato padrão AO06.0040.0000.5660.0824.1017.4 ou IBAN internacional válido",
   );
 
 export const accountNumberSchema = z
   .string()
   .trim()
-  .regex(accountNumberRegex, "Número da conta deve conter 14 dígitos");
+  .refine(
+    (val) => {
+      if (!val) return false;
+      const clean = val.replace(/[-\s.]/g, "");
+      return accountNumberRegex.test(clean);
+    },
+    "Número da conta inválido (deve conter entre 6 e 24 dígitos)",
+  );
