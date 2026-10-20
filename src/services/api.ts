@@ -94,6 +94,11 @@ const EXCLUDED_STORE_ROUTES = [
   "reports/dashboard/overview",
   "onboarding",
   "notifications",
+  "bulk-delete",
+  "/bulk-delete",
+  "toggle-status",
+  "check-barcode",
+  "template",
 ] as const;
 
 // ============================================================================
@@ -166,8 +171,14 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   }
 
   // --------------------------------------------------------------------------
-  // 2. INJETA storeId NAS ROTAS QUE DEPENDEM DELE
+  // 2. ANEXA HEADER DA LOJA ATIVA (x-store-id) & INJETA storeId NAS ROTAS ADEQUADAS
   // --------------------------------------------------------------------------
+  const currentStore = currentStoreStore.getState().currentStore;
+
+  if (currentStore?.id && !isPublicAuthRoute(url)) {
+    config.headers["x-store-id"] = currentStore.id;
+  }
+
   const currentMethod = config.method?.toLowerCase() || "";
 
   const matchingRoute = STORE_DEPENDENT_ROUTES.find((route) => {
@@ -184,41 +195,37 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
     (typeof matchingRoute === "string" ||
       matchingRoute.methods.includes(currentMethod));
 
-  if (shouldInject) {
-    const currentStore = currentStoreStore.getState().currentStore;
-
-    if (currentStore?.id) {
-      // GET → injeta em params
-      if (currentMethod === "get") {
-        config.params = {
-          ...config.params,
-          storeId: config.params?.storeId || currentStore.id,
-        };
+  if (shouldInject && currentStore?.id) {
+    // GET → injeta em params
+    if (currentMethod === "get") {
+      config.params = {
+        ...config.params,
+        storeId: config.params?.storeId || currentStore.id,
+      };
+    }
+    // multipart: spread destruiria o FormData → acrescenta o campo
+    else if (config.data instanceof FormData) {
+      if (!config.data.has("storeId")) {
+        config.data.append("storeId", currentStore.id);
       }
-      // multipart: spread destruiria o FormData → acrescenta o campo
-      else if (config.data instanceof FormData) {
-        if (!config.data.has("storeId")) {
-          config.data.append("storeId", currentStore.id);
-        }
-      }
-      // POST/PUT/PATCH com data objeto → injeta em data
-      else if (
-        config.data &&
-        typeof config.data === "object" &&
-        !config.data.storeId
-      ) {
-        config.data = {
-          ...config.data,
-          storeId: currentStore.id,
-        };
-      }
-      // POST/PUT/PATCH sem data → cria com storeId
-      else if (
-        !config.data &&
-        ["post", "put", "patch"].includes(currentMethod)
-      ) {
-        config.data = { storeId: currentStore.id };
-      }
+    }
+    // POST/PUT/PATCH com data objeto → injeta em data
+    else if (
+      config.data &&
+      typeof config.data === "object" &&
+      !config.data.storeId
+    ) {
+      config.data = {
+        ...config.data,
+        storeId: currentStore.id,
+      };
+    }
+    // POST/PUT/PATCH sem data → cria com storeId
+    else if (
+      !config.data &&
+      ["post", "put", "patch"].includes(currentMethod)
+    ) {
+      config.data = { storeId: currentStore.id };
     }
   }
 
