@@ -107,7 +107,7 @@ export const ibanSchema = z
         internationalIbanRegex.test(normalized)
       );
     },
-    "IBAN inválido — utilize o formato padrão AO06.0040.0000.5660.0824.1017.4 ou IBAN internacional válido",
+    "IBAN inválido - utilize o formato padrão AO06.0040.0000.5660.0824.1017.4 ou IBAN internacional válido",
   );
 
 export const accountNumberSchema = z

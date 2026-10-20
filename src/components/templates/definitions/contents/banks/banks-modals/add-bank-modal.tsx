@@ -40,7 +40,7 @@ export function BankModal({ action }: BankModalProps) {
   const bankOptions = useMemo(() => {
     const list = ANGOLAN_BANKS.map((b) => ({
       value: b.name,
-      label: `${b.name} — ${b.fullName}`,
+      label: `${b.name} - ${b.fullName}`,
     }));
 
     if (
@@ -60,7 +60,7 @@ export function BankModal({ action }: BankModalProps) {
 
     list.push({
       value: CUSTOM_BANK_VALUE,
-      label: "✏️ Outro Banco (Personalizado)...",
+      label: "Outro Banco (Personalizado)...",
     });
 
     return list;
