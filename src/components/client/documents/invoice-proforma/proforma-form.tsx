@@ -3,7 +3,17 @@ import { ErrorMessage } from "@/utils/messages";
 import { useMemo, useCallback, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, NifVerificationField, RHFSelect, Textarea } from "@/components";
+import {
+  Button,
+  Input,
+  Icon,
+  RHFSelect,
+  Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  NifVerificationField,
+} from "@/components";
 import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { useCreateProforma, useEditProforma, useInvoiceTotals, useNifFormVerification } from "@/hooks";
 import { useClientSelection } from "@/hooks/invoice/use-invoice-client";
@@ -207,12 +217,18 @@ export function ProformaForm({
 
         const clientPayload = data.clientId
           ? { id: data.clientId }
-          : {
-            name: data.client.name,
-            phone: data.client.phone || undefined,
-            address: data.client.address || undefined,
-            taxNumber: data.client.taxNumber || undefined,
-          };
+          : (!data.client?.name
+            ? {
+              name: "Consumidor Final",
+              taxNumber: "999999999",
+              address: currentStore?.address || "Loja",
+            }
+            : {
+              name: data.client.name,
+              phone: data.client.phone || undefined,
+              address: data.client.address || undefined,
+              taxNumber: data.client.taxNumber || undefined,
+            });
 
         const itemsPayload = data.items.map((item) => {
           if (item.isFromAPI && item.apiId) {
@@ -292,6 +308,7 @@ export function ProformaForm({
       setSelectedClient,
       onSuccess,
       user?.role,
+      currentStore?.address,
     ]
   );
 
@@ -332,7 +349,26 @@ export function ProformaForm({
           <AsyncCreatableSelectField
             endpoint="/clients"
             optionFilter={isSelectableClient}
-            label="Cliente"
+            label={
+              <span className="inline-flex items-center gap-1.5">
+                Cliente (opcional)
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Informação sobre o cliente da factura proforma"
+                      className="inline-flex text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Icon name="CircleHelp" className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-64">
+                    Se não seleccionar um cliente, a factura proforma será emitida
+                    para Consumidor Final.
+                  </TooltipContent>
+                </Tooltip>
+              </span>
+            }
             placeholder="Digite o nome do cliente..."
             value={selectedClient}
             onChange={handleClientChange}
