@@ -52,9 +52,9 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
             />
             )}
             {!hasServiceItem && (
-              <h1 className="text-destructive">
+              <p className="text-xs text-muted-foreground pt-1">
                 Retenção aplicável apenas a serviços.
-              </h1>
+              </p>
             )}
           </div>
 
@@ -114,7 +114,7 @@ export function InvoiceTotalsSummary({
   retentionAmount = 0,
 }: InvoiceTotalsSummaryProps) {
   return (
-    <div className="w-full space-y-3 border border-dashed rounded-lg p-6 bg-card">
+    <div className="w-full space-y-3 border border-dashed rounded-lg p-4 sm:p-6 bg-card">
       {/* Subtotal */}
       <div className="flex justify-between items-center text-gray-600">
         <span className="text-sm">Subtotal</span>

@@ -191,11 +191,11 @@ export function InvoiceForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de validação na factura:", errors))}
-      className="p-8 mt-4 space-y-8 border rounded-lg"
+      className="p-4 sm:p-6 md:p-8 mt-4 space-y-6 sm:space-y-8 border rounded-lg bg-card shadow-xs"
       data-tour="normal-invoice-form"
     >
       <div
-        className="grid gap-6 md:grid-cols-3"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
         data-tour="normal-invoice-main-fields"
       >
         <Input
@@ -244,7 +244,7 @@ export function InvoiceForm() {
 
       {clientState.hasClient && (
         <div
-          className="grid gap-6 md:grid-cols-3 animate-in fade-in duration-300"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 animate-in fade-in duration-300"
           data-tour="normal-invoice-client-details"
         >
           <NifVerificationField
@@ -301,7 +301,7 @@ export function InvoiceForm() {
         />
       </div>
 
-      <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-6 border-t">
         <Button
           type="button"
           variant="outline"
@@ -310,13 +310,14 @@ export function InvoiceForm() {
             setSelectedClient(null);
           }}
           disabled={isSubmitting || isPending}
+          className="w-full sm:w-auto"
         >
           Limpar Formulário
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting || isPending}
-          className="min-w-[150px]"
+          className="w-full sm:w-auto min-w-[150px]"
           data-tour="normal-invoice-submit"
         >
           {isPending || isSubmitting ? "A processar..." : "Criar factura"}

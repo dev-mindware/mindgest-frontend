@@ -211,7 +211,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
         data-tour="normal-invoice-item-form"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="lg:col-span-2" data-tour="normal-invoice-item-select">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2" data-tour="normal-invoice-item-select">
             <AsyncCreatableSelectField
               endpoint="/items"
               label="Produto/Serviço"
@@ -325,7 +325,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
           {isAlreadyAdded && (
             <p className="text-sm text-destructive font-medium">
               Este item já foi adicionado à factura.
@@ -340,7 +340,7 @@ export const AddItemForm = React.memo<AddItemFormProps>(
             type="button"
             onClick={handleAddClick}
             disabled={!canAdd}
-            className="ml-auto flex items-center gap-2"
+            className="w-full sm:w-auto sm:ml-auto flex items-center justify-center gap-2"
           >
             <Plus className="h-4 w-4" />
             Adicionar à factura

@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { ItemRow } from "./item-row";
+import { ItemCard } from "./item-card";
 
 interface ItemListProps {
   items: any[];
@@ -14,11 +15,26 @@ export const ItemList = memo<ItemListProps>(
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-medium text-muted-foreground">
-            Lista de itens
+            Lista de itens ({items.length})
           </h4>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-border shadow-sm">
+        {/* Visualização Mobile: Cards (< md) */}
+        <div className="grid grid-cols-1 gap-3 md:hidden">
+          {items.map((item, index) => (
+            <ItemCard
+              key={item.id || index}
+              item={item}
+              index={index}
+              onRemove={onRemove}
+              onQuantityChange={onQuantityChange}
+              onPriceChange={onPriceChange}
+            />
+          ))}
+        </div>
+
+        {/* Visualização Desktop: Tabela (>= md) */}
+        <div className="hidden md:block overflow-x-auto rounded-lg border border-border shadow-sm">
           <table className="w-full">
             <thead className="border-border bg-card">
               <tr className="text-foreground">
@@ -62,5 +78,5 @@ export const ItemList = memo<ItemListProps>(
   },
 );
 
-
 ItemList.displayName = "ItemList";
+

@@ -76,12 +76,18 @@ export function AddDocuments() {
         onValueChange={handleTabChange}
       >
         <TabsList
-          className="flex justify-center md:justify-start"
+          className="flex w-full overflow-x-auto justify-start sm:w-fit p-1 gap-1"
           data-tour="normal-invoice-document-type"
         >
-          <TabsTrigger value="invoice">Factura</TabsTrigger>
-          <TabsTrigger value="invoice-receipt">Factura Recibo</TabsTrigger>
-          <TabsTrigger value="proforma">Proforma</TabsTrigger>
+          <TabsTrigger value="invoice" className="flex-1 sm:flex-initial min-h-[38px] px-3 sm:px-4">
+            Factura
+          </TabsTrigger>
+          <TabsTrigger value="invoice-receipt" className="flex-1 sm:flex-initial min-h-[38px] px-3 sm:px-4">
+            Factura Recibo
+          </TabsTrigger>
+          <TabsTrigger value="proforma" className="flex-1 sm:flex-initial min-h-[38px] px-3 sm:px-4">
+            Proforma
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="invoice">

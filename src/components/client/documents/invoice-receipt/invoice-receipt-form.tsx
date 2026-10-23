@@ -218,9 +218,9 @@ export function InvoiceReceiptForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de validação na factura-recibo:", errors))}
-      className="p-8 mt-4 space-y-8 border rounded-lg"
+      className="p-4 sm:p-6 md:p-8 mt-4 space-y-6 sm:space-y-8 border rounded-lg bg-card shadow-xs"
     >
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Input
           type="date"
           label="Data de Emissão"
@@ -240,43 +240,45 @@ export function InvoiceReceiptForm() {
           ]}
         />
 
-        <AsyncCreatableSelectField
-          endpoint="/clients"
-          optionFilter={isSelectableClient}
-          label={
-            <span className="inline-flex items-center gap-1.5">
-              Cliente (opcional)
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    aria-label="Informação sobre o cliente da factura-recibo"
-                    className="inline-flex text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <Icon name="CircleHelp" className="h-3.5 w-3.5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-64">
-                  Se não seleccionar um cliente, a factura-recibo será emitida
-                  para Consumidor Final.
-                </TooltipContent>
-              </Tooltip>
-            </span>
-          }
-          placeholder="Digite o nome do cliente..."
-          value={selectedClient}
-          onChange={handleClientChange}
-          displayFields={["name", "email"]}
-          minChars={2}
-          formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
-          error={errors.client?.name?.message}
-        />
+        <div className="sm:col-span-2 lg:col-span-1">
+          <AsyncCreatableSelectField
+            endpoint="/clients"
+            optionFilter={isSelectableClient}
+            label={
+              <span className="inline-flex items-center gap-1.5">
+                Cliente (opcional)
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Informação sobre o cliente da factura-recibo"
+                      className="inline-flex text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Icon name="CircleHelp" className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-64">
+                    Se não seleccionar um cliente, a factura-recibo será emitida
+                    para Consumidor Final.
+                  </TooltipContent>
+                </Tooltip>
+              </span>
+            }
+            placeholder="Digite o nome do cliente..."
+            value={selectedClient}
+            onChange={handleClientChange}
+            displayFields={["name", "email"]}
+            minChars={2}
+            formatCreateLabel={(inputValue: string) => `➕ Criar "${inputValue}"`}
+            error={errors.client?.name?.message}
+          />
+        </div>
         <input type="hidden" {...register("clientId")} />
         <input type="hidden" {...register("client.name")} />
       </div>
 
       {clientState.hasClient && (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <NifVerificationField
             label="NIF"
             value={clientTaxNumber}
@@ -307,6 +309,7 @@ export function InvoiceReceiptForm() {
             error={errors.client?.address?.message}
             disabled={!clientState.isNewClient}
             placeholder="Luanda, Angola"
+            className="sm:col-span-2 md:col-span-1"
           />
         </div>
       )}
@@ -328,19 +331,20 @@ export function InvoiceReceiptForm() {
         rows={4}
       />
 
-      <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-6 border-t">
         <Button
           type="button"
           variant="outline"
           onClick={handleClearForm}
           disabled={isSubmitting || isPending}
+          className="w-full sm:w-auto"
         >
           Limpar Formulário
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting || isPending}
-          className="min-w-[150px]"
+          className="w-full sm:w-auto min-w-[150px]"
         >
           {isPending || isSubmitting ? "A processar..." : "Criar factura-recibo"}
         </Button>

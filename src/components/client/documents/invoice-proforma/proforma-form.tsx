@@ -320,9 +320,9 @@ export function ProformaForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => console.log("Erro de Validação na Proforma:", errors))}
-      className="space-y-8 p-8 mt-4 border rounded-lg"
+      className="p-4 sm:p-6 md:p-8 mt-4 space-y-6 sm:space-y-8 border rounded-lg bg-card shadow-xs"
     >
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Input
           type="date"
           label="Data de Emissão"
@@ -339,13 +339,10 @@ export function ProformaForm({
           disabled
         />
 
-        {/*  <div
-        className={cn("grid gap-6 md:grid-cols-2", {
-          "w-full": isEdit,
-          "grid gap-6 md:grid-cols-2": !isEdit,
-        })}
-      > */}
-        <div data-tour={isEdit ? "proforma-edit-client" : undefined}>
+        <div
+          data-tour={isEdit ? "proforma-edit-client" : undefined}
+          className="sm:col-span-2 lg:col-span-1"
+        >
           <AsyncCreatableSelectField
             endpoint="/clients"
             optionFilter={isSelectableClient}
@@ -383,7 +380,7 @@ export function ProformaForm({
       </div>
 
       {clientState.hasClient && (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <NifVerificationField
             label="NIF"
             value={clientTaxNumber}
@@ -414,6 +411,7 @@ export function ProformaForm({
             error={errors.client?.address?.message}
             disabled={!clientState.isNewClient}
             placeholder="Luanda, Angola"
+            className="sm:col-span-2 md:col-span-1"
           />
         </div>
       )}
@@ -439,13 +437,14 @@ export function ProformaForm({
         />
       </div>
 
-      <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-6 border-t">
         {!isEdit && (
           <Button
             type="button"
             variant="outline"
             onClick={handleClearForm}
             disabled={isSubmitting || isLoading}
+            className="w-full sm:w-auto"
           >
             Limpar Formulário
           </Button>
@@ -457,16 +456,17 @@ export function ProformaForm({
             type="button"
             disabled={isSubmitting || isLoading}
             onClick={onSuccess}
+            className="w-full sm:w-auto"
           >
             Cancelar
           </Button>
         )}
 
-        <span data-tour={isEdit ? "proforma-edit-submit" : undefined}>
+        <span data-tour={isEdit ? "proforma-edit-submit" : undefined} className="w-full sm:w-auto">
           <Button
             type="submit"
             disabled={isSubmitting || isLoading}
-            className="min-w-[150px]"
+            className="w-full sm:w-auto min-w-[150px]"
           >
             {isLoading || isSubmitting
               ? "A processar..."
