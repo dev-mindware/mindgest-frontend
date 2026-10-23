@@ -19,6 +19,7 @@ import { BankPageContent } from "./contents/banks";
 import { icons } from "lucide-react";
 import { Security } from "./contents/security";
 import { AgtPageContent } from "./contents/agt";
+import { PluginsPageContent } from "./contents/plugins";
 
 interface DefSetupProps {
   disabledTabs?: string[];
@@ -132,6 +133,14 @@ export function DefSetup({ disabledTabs = [] }: DefSetupProps) {
       component: <AgtPageContent />,
       category: "workplace",
       isVisible: isOwner,
+    },
+    {
+      id: "plugins",
+      label: "Plugins",
+      icon: "Puzzle",
+      component: <PluginsPageContent />,
+      category: "workplace",
+      isVisible: isActive && isOwner,
     },
   ];
 

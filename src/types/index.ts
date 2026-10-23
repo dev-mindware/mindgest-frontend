@@ -27,3 +27,4 @@ export * from "./stock-entries";
 export * from "./audit-trail";
 export * from "./contributor";
 export * from "./agt";
+export * from "./plugins";
