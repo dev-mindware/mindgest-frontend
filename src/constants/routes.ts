@@ -38,6 +38,7 @@ export const PUBLIC_ROUTES = [
   "/auth/forgot-password",
   "/auth/reset-password",
   "/checkout",
+  "/plugins/callback",
   "/unauthorized",
   "/not-found",
 ] as const;
