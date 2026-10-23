@@ -1,6 +1,7 @@
 import {
   callbackChannelName,
   openBlankPopup,
+  readCallbackMessage,
   runConnectFlow,
   type ConnectFlowDeps,
 } from "@/lib/mindschool-connect";
@@ -60,6 +61,27 @@ beforeAll(() => {
   (globalThis as any).BroadcastChannel = FakeChannel;
 });
 beforeEach(() => FakeChannel.channels.clear());
+
+describe("readCallbackMessage", () => {
+  it("lê código e state do redirect", () => {
+    expect(readCallbackMessage("?code=abc&state=xyz")).toEqual({ type: "mindschool-callback", state: "xyz", code: "abc" });
+  });
+
+  it("lê a recusa (error) com a descrição", () => {
+    expect(readCallbackMessage("?error=access_denied&state=xyz&error_description=no")).toEqual({
+      type: "mindschool-callback",
+      state: "xyz",
+      error: "access_denied",
+      errorDescription: "no",
+    });
+  });
+
+  it("devolve null sem state, ou sem code nem error (a barra de endereço já foi limpa)", () => {
+    expect(readCallbackMessage("?code=abc")).toBeNull();
+    expect(readCallbackMessage("?state=xyz")).toBeNull();
+    expect(readCallbackMessage("")).toBeNull();
+  });
+});
 
 describe("openBlankPopup", () => {
   afterEach(() => jest.restoreAllMocks());

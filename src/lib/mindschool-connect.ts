@@ -11,6 +11,25 @@ export function callbackChannelName(state: string) {
   return `mindgest-plugin-callback:${state}`;
 }
 
+/**
+ * Lê `code`/`state`/`error` do redirect do MindSchool. `null` se faltar o `state` ou nem `code` nem `error`.
+ * É pura: a página guarda o resultado, porque a barra de endereço é limpa logo a seguir (o código é de uso único).
+ */
+export function readCallbackMessage(search: string): MindschoolCallbackMessage | null {
+  const params = new URLSearchParams(search);
+  const state = params.get("state");
+  const code = params.get("code");
+  const error = params.get("error");
+  if (!state || (!code && !error)) return null;
+  return {
+    type: "mindschool-callback",
+    state,
+    ...(error
+      ? { error, errorDescription: params.get("error_description") ?? undefined }
+      : { code: code as string }),
+  };
+}
+
 export type ConnectOutcome =
   | { status: "success" }
   | { status: "blocked" }
