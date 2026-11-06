@@ -12,6 +12,8 @@ export function useCreateInvoiceReceipt() {
     onSuccess: (response) => {
       SucessMessage("Factura-recibo criada com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-overview"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
       return response.data;
     },
   });

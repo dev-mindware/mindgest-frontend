@@ -21,6 +21,8 @@ export function useGenerateReceipt() {
       SucessMessage("Recibo gerado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-receipt"] });
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-overview"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });
 }
@@ -33,6 +35,8 @@ export function useCancelInvoice() {
     onSuccess: () => {
       SucessMessage("Factura cancelada com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-overview"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });
 }
@@ -45,6 +49,8 @@ export function useCreateInvoice() {
     onSuccess: (response) => {
       SucessMessage("Factura criada com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-overview"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
       return response.data;
     },
   });
@@ -59,6 +65,8 @@ export function useCreateCreditNote() {
     onSuccess: () => {
       SucessMessage("Nota de crédito criada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-overview"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });
 }
@@ -81,6 +89,8 @@ export function useAnnulationNote() {
     onSuccess: () => {
       SucessMessage("Documento anulado com sucesso.");
       queryClient.invalidateQueries({ queryKey: ["invoice-normal"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-overview"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });
 }
