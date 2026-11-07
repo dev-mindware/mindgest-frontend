@@ -17,11 +17,32 @@ import {
 import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useCreateInvoiceReceipt, useInvoiceTotals, useNifFormVerification } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
-import { useClientSelection } from "@/hooks/invoice";
+import { useClientSelection, useDocumentDraftSync } from "@/hooks/invoice";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { paymentMethods } from "@/constants";
 import { InvoiceItems } from "../document-forms/items";
 import { isSelectableClient } from "@/utils";
+
+function buildDefaultValues(): InvoiceReceiptFormData {
+  return {
+    issueDate: new Date().toISOString().split("T")[0],
+    dueDate: "",
+    items: [],
+    client: {
+      name: "",
+      taxNumber: "",
+      address: "",
+      phone: "",
+    },
+    clientId: "",
+    globalRetention: 0,
+    globalDiscount: 0,
+    notes: "",
+    currencyCode: "AOA" as const,
+    paymentMethod: "CASH",
+    storeId: "",
+  };
+}
 
 export function InvoiceReceiptForm() {
   const { user } = useAuthStore();
@@ -31,24 +52,7 @@ export function InvoiceReceiptForm() {
   const form = useForm<InvoiceReceiptFormData>({
     resolver: zodResolver(InvoiceReceiptSchema),
     mode: "onChange",
-    defaultValues: {
-      issueDate: new Date().toISOString().split("T")[0],
-      dueDate: "",
-      items: [],
-      client: {
-        name: "",
-        taxNumber: "",
-        address: "",
-        phone: "",
-      },
-      clientId: "",
-      globalRetention: 0,
-      globalDiscount: 0,
-      notes: "",
-      currencyCode: "AOA" as const,
-      paymentMethod: "CASH",
-      storeId: "",
-    },
+    defaultValues: buildDefaultValues(),
   });
 
   const {
@@ -65,6 +69,19 @@ export function InvoiceReceiptForm() {
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
+  const {
+    resetKey,
+    initialPendingItem,
+    onPendingItemChange,
+    saveDraftManually,
+    clearDraft,
+  } = useDocumentDraftSync({
+    tab: "invoice-receipt",
+    form,
+    selectedClient,
+    setSelectedClient,
+    defaultValues: buildDefaultValues(),
+  });
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
   const clientTaxNumber = watch("client.taxNumber") || "";
@@ -196,8 +213,7 @@ export function InvoiceReceiptForm() {
           });
         }
 
-        reset();
-        setSelectedClient(null);
+        clearDraft();
       } catch (error: any) {
         const errorMessage =
           error?.response?.data?.message ||
@@ -207,13 +223,10 @@ export function InvoiceReceiptForm() {
         ErrorMessage(errorMessage);
       }
     },
-    [createInvoiceReceipt, reset, setSelectedClient, totals, user?.role]
+    [createInvoiceReceipt, clearDraft, totals, user?.role]
   );
 
-  const handleClearForm = useCallback(() => {
-    reset();
-    setSelectedClient(null);
-  }, [reset, setSelectedClient]);
+  const handleClearForm = clearDraft;
 
   return (
     <form
@@ -321,6 +334,9 @@ export function InvoiceReceiptForm() {
         setGlobalRetention={setGlobalRetention}
         globalDiscount={globalDiscount ?? 0}
         setGlobalDiscount={setGlobalDiscount}
+        initialPendingItem={initialPendingItem}
+        onPendingItemChange={onPendingItemChange}
+        resetKey={resetKey}
       />
 
       <Textarea
@@ -340,6 +356,15 @@ export function InvoiceReceiptForm() {
           className="w-full sm:w-auto"
         >
           Limpar Formulário
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={saveDraftManually}
+          disabled={isSubmitting || isPending}
+          className="w-full sm:w-auto"
+        >
+          Guardar Rascunho
         </Button>
         <Button
           type="submit"

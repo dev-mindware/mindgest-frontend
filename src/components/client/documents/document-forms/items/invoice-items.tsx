@@ -4,7 +4,7 @@ import { Separator } from "@/components";
 import { UseFieldArrayReturn } from "react-hook-form";
 import { ProformaFormData } from "@/schemas";
 import { Package } from "lucide-react";
-import { AddItemForm } from "./add-item-form";
+import { AddItemForm, type PendingItemDraft } from "./add-item-form";
 import { ItemList } from "./item-list";
 import { InvoiceSummary } from "./invoice-summary";
 import { DefaultBankCard } from "./default-bank-card";
@@ -22,6 +22,11 @@ interface InvoiceItemsProps {
     discountAmount: number;
     total: number;
   };
+  /** Item pendente restaurado de um rascunho. */
+  initialPendingItem?: PendingItemDraft | null;
+  onPendingItemChange?: (item: PendingItemDraft | null) => void;
+  /** Muda ao limpar o rascunho para repor o formulário de adição de itens. */
+  resetKey?: number;
 }
 
 export function InvoiceItems({
@@ -31,6 +36,9 @@ export function InvoiceItems({
   globalDiscount,
   setGlobalDiscount,
   totals,
+  initialPendingItem,
+  onPendingItemChange,
+  resetKey = 0,
 }: InvoiceItemsProps) {
 
   const { fields, append, remove, update } = fieldArray;
@@ -117,9 +125,12 @@ export function InvoiceItems({
       <Separator />
 
       <AddItemForm
+        key={resetKey}
         onAdd={handleAddItem}
         globalDiscount={globalDiscount}
         existingItemIds={existingItemIds}
+        initialPendingItem={resetKey === 0 ? initialPendingItem : null}
+        onPendingItemChange={onPendingItemChange}
       />
 
 

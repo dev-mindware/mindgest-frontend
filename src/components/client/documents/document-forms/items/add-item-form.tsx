@@ -32,10 +32,28 @@ interface AddItemFormProps {
   globalDiscount: number;
   /** IDs of items already added to the invoice — prevents duplicates */
   existingItemIds?: Set<string | number>;
+  /** Item seleccionado mas ainda não adicionado (restaurado de um rascunho). */
+  initialPendingItem?: PendingItemDraft | null;
+  /** Notifica o item pendente para que possa ser guardado no rascunho. */
+  onPendingItemChange?: (item: PendingItemDraft | null) => void;
+}
+
+export interface PendingItemDraft {
+  selectedProduct: ProductOption;
+  quantity: number;
+  price: number;
+  type: "PRODUCT" | "SERVICE";
+  taxId: string;
 }
 
 export const AddItemForm = React.memo<AddItemFormProps>(
-  ({ onAdd, globalDiscount, existingItemIds = new Set() }) => {
+  ({
+    onAdd,
+    globalDiscount,
+    existingItemIds = new Set(),
+    initialPendingItem = null,
+    onPendingItemChange,
+  }) => {
     const {
       taxOptions,
       pagination: taxPagination,
@@ -44,7 +62,9 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       setTaxSearch,
     } = useGetTaxes();
     const [selectedProduct, setSelectedProduct] =
-      useState<ProductOption | null>(null);
+      useState<ProductOption | null>(
+        initialPendingItem?.selectedProduct ?? null,
+      );
 
     const {
       control,
@@ -57,10 +77,10 @@ export const AddItemForm = React.memo<AddItemFormProps>(
       formState: { errors },
     } = useForm({
       defaultValues: {
-        quantity: 1,
-        price: 0,
-        type: "PRODUCT" as "PRODUCT" | "SERVICE",
-        taxId: "",
+        quantity: initialPendingItem?.quantity ?? 1,
+        price: initialPendingItem?.price ?? 0,
+        type: (initialPendingItem?.type ?? "PRODUCT") as "PRODUCT" | "SERVICE",
+        taxId: initialPendingItem?.taxId ?? "",
       },
     });
 
@@ -68,6 +88,29 @@ export const AddItemForm = React.memo<AddItemFormProps>(
     const watchedQuantity = watch("quantity");
     const watchedType = watch("type");
     const watchedTaxId = watch("taxId");
+
+    // Reporta o item em selecção ao rascunho (null quando não há selecção).
+    React.useEffect(() => {
+      if (!onPendingItemChange) return;
+      onPendingItemChange(
+        selectedProduct
+          ? {
+              selectedProduct,
+              quantity: watchedQuantity,
+              price: watchedPrice,
+              type: watchedType,
+              taxId: watchedTaxId,
+            }
+          : null,
+      );
+    }, [
+      selectedProduct,
+      watchedQuantity,
+      watchedPrice,
+      watchedType,
+      watchedTaxId,
+      onPendingItemChange,
+    ]);
 
     const handleProductChange = useCallback(
       (option: ProductOption | null) => {

@@ -46,6 +46,8 @@ export const ItemSchema = z.object({
     .nullable(),
 
   isFromAPI: z.boolean().optional(),
+  tax: z.number().min(0).nullish(),
+  availableQuantity: z.number().nullish(),
   taxId: z.string().trim().optional().or(z.literal("")),
   apiId: z.string().trim().optional(),
 }).superRefine((data, ctx) => {

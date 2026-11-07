@@ -4,3 +4,4 @@ export * from "./delete-proforma-modal";
 export * from "./generate-receipt-modal";
 export * from "./document-success-modal";
 export * from "./convert-proforma-modal";
+export * from "./transfer-draft-modal";

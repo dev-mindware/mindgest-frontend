@@ -17,6 +17,7 @@ import {
 import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { useCreateProforma, useEditProforma, useInvoiceTotals, useNifFormVerification } from "@/hooks";
 import { useClientSelection } from "@/hooks/invoice/use-invoice-client";
+import { useDocumentDraftSync } from "@/hooks/invoice/use-document-draft";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
@@ -132,6 +133,20 @@ export function ProformaForm({
 
   const { handleClientChange, selectedClient, setSelectedClient } =
     useClientSelection(setValue);
+  const {
+    resetKey,
+    initialPendingItem,
+    onPendingItemChange,
+    saveDraftManually,
+    clearDraft,
+  } = useDocumentDraftSync({
+    tab: "proforma",
+    form,
+    selectedClient,
+    setSelectedClient,
+    defaultValues: defaultValues as Record<string, any>,
+    enabled: !isEdit,
+  });
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
   const clientTaxNumber = watch("client.taxNumber") || "";
@@ -286,8 +301,7 @@ export function ProformaForm({
         }
 
         if (!isEdit) {
-          reset();
-          setSelectedClient(null);
+          clearDraft();
         }
       } catch (error: any) {
         const errorMessage =
@@ -304,18 +318,14 @@ export function ProformaForm({
       editProforma,
       createProforma,
       totals,
-      reset,
-      setSelectedClient,
+      clearDraft,
       onSuccess,
       user?.role,
       currentStore?.address,
     ]
   );
 
-  const handleClearForm = useCallback(() => {
-    reset();
-    setSelectedClient(null);
-  }, [reset, setSelectedClient]);
+  const handleClearForm = clearDraft;
 
   return (
     <form
@@ -424,6 +434,9 @@ export function ProformaForm({
           setGlobalRetention={setGlobalRetention}
           globalDiscount={globalDiscount ?? 0}
           setGlobalDiscount={setGlobalDiscount}
+          initialPendingItem={initialPendingItem}
+          onPendingItemChange={onPendingItemChange}
+          resetKey={resetKey}
         />
       </div>
 
@@ -439,15 +452,26 @@ export function ProformaForm({
 
       <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-6 border-t">
         {!isEdit && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClearForm}
-            disabled={isSubmitting || isLoading}
-            className="w-full sm:w-auto"
-          >
-            Limpar Formulário
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClearForm}
+              disabled={isSubmitting || isLoading}
+              className="w-full sm:w-auto"
+            >
+              Limpar Formulário
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={saveDraftManually}
+              disabled={isSubmitting || isLoading}
+              className="w-full sm:w-auto"
+            >
+              Guardar Rascunho
+            </Button>
+          </>
         )}
 
         {isEdit && (
