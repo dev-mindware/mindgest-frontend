@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
         timeout: REFRESH_TIMEOUT_MS,
         headers: {
           "Content-Type": "application/json",
-          ...(process.env.NEXT_PUBLIC_API_KEY ? { "x-api-key": process.env.NEXT_PUBLIC_API_KEY } : {}),
+          ...(process.env.API_KEY ? { "x-api-key": process.env.API_KEY } : {}),
         },
       }
     );

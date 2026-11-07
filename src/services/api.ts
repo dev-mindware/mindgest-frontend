@@ -140,12 +140,18 @@ function dispatchSessionExpired() {
 // AXIOS INSTANCE
 // ============================================================================
 
+const isBrowser =
+  typeof window !== "undefined" && process.env.NODE_ENV !== "test";
+
 export const api = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api",
+  baseURL: isBrowser
+    ? "/api/proxy"
+    : process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api",
   headers: {
     "Content-Type": "application/json",
-    ...(process.env.NEXT_PUBLIC_API_KEY ? { "x-api-key": process.env.NEXT_PUBLIC_API_KEY } : {}),
+    ...(typeof window === "undefined" && process.env.API_KEY
+      ? { "x-api-key": process.env.API_KEY }
+      : {}),
   },
   timeout: 30000,
 });
