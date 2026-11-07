@@ -3,9 +3,12 @@ import { useCallback, useState } from "react";
 import { ClientSelectOption } from "@/types/clients";
 import { UseFormSetValue } from "react-hook-form";
 
-export function useClientSelection(setValue: UseFormSetValue<any>) {
+export function useClientSelection(
+  setValue: UseFormSetValue<any>,
+  initialClient: ClientSelectOption | null = null,
+) {
   const [selectedClient, setSelectedClient] =
-    useState<ClientSelectOption | null>(null);
+    useState<ClientSelectOption | null>(initialClient);
 
   const handleClientChange = useCallback(
     (option: ClientSelectOption | null) => {

@@ -11,7 +11,10 @@ import {
   TransferDraftModal,
   MODAL_TRANSFER_DRAFT_ID,
 } from "./modals/transfer-draft-modal";
-import { useDocumentDraftScope } from "@/hooks/invoice/use-document-draft";
+import {
+  flushActiveDocumentDraft,
+  useDocumentDraftScope,
+} from "@/hooks/invoice/use-document-draft";
 import {
   draftHasContent,
   useDocumentDraftStore,
@@ -81,6 +84,8 @@ function AddDocumentsContent() {
       const next = value as TabsAloweds;
       if (next === activeTab) return;
 
+      flushActiveDocumentDraft();
+
       const store = useDocumentDraftStore.getState();
       if (store.hasTabDraftContent(scope, activeTab)) {
         const draft = store.getTabDraft(scope, activeTab);
@@ -99,6 +104,7 @@ function AddDocumentsContent() {
 
   const handleConfirmTransfer = useCallback(() => {
     if (!pendingTab) return;
+    flushActiveDocumentDraft();
     useDocumentDraftStore.getState().copyTabDraft(scope, activeTab, pendingTab);
     switchTab(pendingTab);
     setPendingTab(null);

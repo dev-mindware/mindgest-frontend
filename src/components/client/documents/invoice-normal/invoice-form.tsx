@@ -6,8 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, NifVerificationField, RHFSelect, Textarea } from "@/components";
 import { InvoiceFormData, InvoiceSchema } from "@/schemas";
 import {
+  getHydratedFormDefaults,
+  getHydratedSelectedClient,
   useClientSelection,
   useCreateInvoice,
+  useDocumentDraftScope,
   useDocumentDraftSync,
   useInvoiceTotals,
   useNifFormVerification,
@@ -41,11 +44,16 @@ function buildDefaultValues(): InvoiceFormData {
 
 export function InvoiceForm() {
   const { user } = useAuthStore();
+  const draftScope = useDocumentDraftScope();
   const { mutateAsync: createInvoiceNormal, isPending } = useCreateInvoice();
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(InvoiceSchema),
     mode: "onChange",
-    defaultValues: buildDefaultValues(),
+    defaultValues: getHydratedFormDefaults(
+      draftScope,
+      "invoice",
+      buildDefaultValues(),
+    ),
   });
 
   const {
@@ -54,27 +62,13 @@ export function InvoiceForm() {
     watch,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
     setValue,
     setError,
     clearErrors,
   } = form;
 
   const { handleClientChange, selectedClient, setSelectedClient } =
-    useClientSelection(setValue);
-  const {
-    resetKey,
-    initialPendingItem,
-    onPendingItemChange,
-    saveDraftManually,
-    clearDraft,
-  } = useDocumentDraftSync({
-    tab: "invoice",
-    form,
-    selectedClient,
-    setSelectedClient,
-    defaultValues: buildDefaultValues(),
-  });
+    useClientSelection(setValue, getHydratedSelectedClient(draftScope, "invoice"));
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
   const clientTaxNumber = watch("client.taxNumber") || "";
@@ -89,6 +83,21 @@ export function InvoiceForm() {
   const fieldArray = useFieldArray<InvoiceFormData, "items">({
     control,
     name: "items",
+  });
+
+  const {
+    resetKey,
+    initialPendingItem,
+    onPendingItemChange,
+    saveDraftManually,
+    clearDraft,
+  } = useDocumentDraftSync({
+    tab: "invoice",
+    form,
+    fieldArray: fieldArray as any,
+    selectedClient,
+    setSelectedClient,
+    defaultValues: buildDefaultValues(),
   });
 
   const watchedValues = watch([

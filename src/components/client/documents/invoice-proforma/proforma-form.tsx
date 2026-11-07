@@ -17,7 +17,12 @@ import {
 import { ProformaFormData, ProformaSchema } from "@/schemas";
 import { useCreateProforma, useEditProforma, useInvoiceTotals, useNifFormVerification } from "@/hooks";
 import { useClientSelection } from "@/hooks/invoice/use-invoice-client";
-import { useDocumentDraftSync } from "@/hooks/invoice/use-document-draft";
+import {
+  getHydratedFormDefaults,
+  getHydratedSelectedClient,
+  useDocumentDraftScope,
+  useDocumentDraftSync,
+} from "@/hooks/invoice/use-document-draft";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { InvoiceItems } from "../document-forms/items";
@@ -113,10 +118,17 @@ export function ProformaForm({
     };
   }, [isEdit, initialData]);
 
+  const draftScope = useDocumentDraftScope();
+
   const form = useForm<ProformaFormData>({
     resolver: zodResolver(ProformaSchema),
     mode: "onChange",
-    defaultValues,
+    defaultValues: getHydratedFormDefaults(
+      draftScope,
+      "proforma",
+      defaultValues,
+      !isEdit,
+    ),
   });
 
   const {
@@ -132,21 +144,10 @@ export function ProformaForm({
   } = form;
 
   const { handleClientChange, selectedClient, setSelectedClient } =
-    useClientSelection(setValue);
-  const {
-    resetKey,
-    initialPendingItem,
-    onPendingItemChange,
-    saveDraftManually,
-    clearDraft,
-  } = useDocumentDraftSync({
-    tab: "proforma",
-    form,
-    selectedClient,
-    setSelectedClient,
-    defaultValues: defaultValues as Record<string, any>,
-    enabled: !isEdit,
-  });
+    useClientSelection(
+      setValue,
+      getHydratedSelectedClient(draftScope, "proforma", !isEdit),
+    );
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
   const clientTaxNumber = watch("client.taxNumber") || "";
@@ -174,6 +175,22 @@ export function ProformaForm({
   const fieldArray = useFieldArray<ProformaFormData, "items">({
     control,
     name: "items",
+  });
+
+  const {
+    resetKey,
+    initialPendingItem,
+    onPendingItemChange,
+    saveDraftManually,
+    clearDraft,
+  } = useDocumentDraftSync({
+    tab: "proforma",
+    form,
+    fieldArray: fieldArray as any,
+    selectedClient,
+    setSelectedClient,
+    defaultValues: defaultValues as Record<string, any>,
+    enabled: !isEdit,
   });
 
   const watchedValues = watch([

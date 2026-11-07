@@ -129,7 +129,7 @@ export function InvoiceItems({
         onAdd={handleAddItem}
         globalDiscount={globalDiscount}
         existingItemIds={existingItemIds}
-        initialPendingItem={resetKey === 0 ? initialPendingItem : null}
+        initialPendingItem={initialPendingItem}
         onPendingItemChange={onPendingItemChange}
       />
 

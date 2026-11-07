@@ -37,7 +37,7 @@ export function TransferDraftModal({
       canClose
       id={MODAL_TRANSFER_DRAFT_ID}
       title="Carregar selecções da aba anterior?"
-      description={`Está a mudar de ${DOCUMENT_TAB_LABELS[fromTab]} para ${DOCUMENT_TAB_LABELS[toTab]}. Deseja carregar os dados já preenchidos (cliente, itens, descontos e observações) para a nova aba?`}
+      description={`Deseja carregar os dados já preenchidos para a nova aba?`}
       className="!w-max"
     >
       <div className="space-y-4 sm:w-[26rem]">

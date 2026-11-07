@@ -17,7 +17,13 @@ import {
 import { InvoiceReceiptFormData, InvoiceReceiptSchema } from "@/schemas";
 import { useCreateInvoiceReceipt, useInvoiceTotals, useNifFormVerification } from "@/hooks";
 import { AsyncCreatableSelectField } from "@/components/common/input-fetch/async-select";
-import { useClientSelection, useDocumentDraftSync } from "@/hooks/invoice";
+import {
+  getHydratedFormDefaults,
+  getHydratedSelectedClient,
+  useClientSelection,
+  useDocumentDraftScope,
+  useDocumentDraftSync,
+} from "@/hooks/invoice";
 import { currentStoreStore, useAuthStore, useModal } from "@/stores";
 import { paymentMethods } from "@/constants";
 import { InvoiceItems } from "../document-forms/items";
@@ -46,13 +52,18 @@ function buildDefaultValues(): InvoiceReceiptFormData {
 
 export function InvoiceReceiptForm() {
   const { user } = useAuthStore();
+  const draftScope = useDocumentDraftScope();
   const { mutateAsync: createInvoiceReceipt, isPending } =
     useCreateInvoiceReceipt();
 
   const form = useForm<InvoiceReceiptFormData>({
     resolver: zodResolver(InvoiceReceiptSchema),
     mode: "onChange",
-    defaultValues: buildDefaultValues(),
+    defaultValues: getHydratedFormDefaults(
+      draftScope,
+      "invoice-receipt",
+      buildDefaultValues(),
+    ),
   });
 
   const {
@@ -61,27 +72,16 @@ export function InvoiceReceiptForm() {
     watch,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
     setValue,
     setError,
     clearErrors,
   } = form;
 
   const { handleClientChange, selectedClient, setSelectedClient } =
-    useClientSelection(setValue);
-  const {
-    resetKey,
-    initialPendingItem,
-    onPendingItemChange,
-    saveDraftManually,
-    clearDraft,
-  } = useDocumentDraftSync({
-    tab: "invoice-receipt",
-    form,
-    selectedClient,
-    setSelectedClient,
-    defaultValues: buildDefaultValues(),
-  });
+    useClientSelection(
+      setValue,
+      getHydratedSelectedClient(draftScope, "invoice-receipt"),
+    );
   const { openModal } = useModal();
   const { currentStore } = currentStoreStore();
   const clientTaxNumber = watch("client.taxNumber") || "";
@@ -96,6 +96,21 @@ export function InvoiceReceiptForm() {
   const fieldArray = useFieldArray<InvoiceReceiptFormData, "items">({
     control,
     name: "items",
+  });
+
+  const {
+    resetKey,
+    initialPendingItem,
+    onPendingItemChange,
+    saveDraftManually,
+    clearDraft,
+  } = useDocumentDraftSync({
+    tab: "invoice-receipt",
+    form,
+    fieldArray: fieldArray as any,
+    selectedClient,
+    setSelectedClient,
+    defaultValues: buildDefaultValues(),
   });
 
   const watchedValues = watch([

@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
+import type { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
 import { currentStoreStore, useAuthStore } from "@/stores";
 import {
   draftHasContent,
@@ -10,7 +10,19 @@ import {
 import type { ClientSelectOption } from "@/types/clients";
 import { SucessMessage } from "@/utils/messages";
 
-const SAVE_DEBOUNCE_MS = 400;
+const SAVE_DEBOUNCE_MS = 100;
+
+let activeFormFlushFn: (() => void) | null = null;
+
+/**
+ * Garante que quaisquer alterações pendentes no formulário da aba activa
+ * sejam gravadas imediatamente no store antes de verificar ou copiar o rascunho.
+ */
+export function flushActiveDocumentDraft() {
+  if (activeFormFlushFn) {
+    activeFormFlushFn();
+  }
+}
 
 /** Chave de isolamento do rascunho: empresa + utilizador + loja. */
 export function useDocumentDraftScope() {
@@ -20,25 +32,86 @@ export function useDocumentDraftScope() {
   return `${user?.company?.id ?? "company"}:${user?.id ?? "user"}:${storeId}`;
 }
 
+/**
+ * Hidrata de forma síncrona os defaultValues do useForm a partir do rascunho guardado,
+ * garantindo que useForm e useFieldArray já nascem preenchidos na primeira renderização.
+ */
+export function getHydratedFormDefaults<T extends Record<string, any>>(
+  scope: string,
+  tab: DocumentTabType,
+  baseDefaults: T,
+  enabled = true,
+): T {
+  if (!enabled) return baseDefaults;
+  const draft = useDocumentDraftStore.getState().getTabDraft(scope, tab);
+  if (!draft || !draftHasContent(draft)) return baseDefaults;
+
+  const today = new Date().toISOString().split("T")[0];
+
+  return {
+    ...baseDefaults,
+    client: {
+      ...(baseDefaults.client ?? {}),
+      ...(draft.client ?? {}),
+    },
+    clientId: draft.clientId ?? baseDefaults.clientId ?? "",
+    items: Array.isArray(draft.items)
+      ? draft.items.map((item) => ({ ...item }))
+      : baseDefaults.items,
+    globalRetention:
+      typeof draft.globalRetention === "number"
+        ? draft.globalRetention
+        : baseDefaults.globalRetention,
+    globalDiscount:
+      typeof draft.globalDiscount === "number"
+        ? draft.globalDiscount
+        : baseDefaults.globalDiscount,
+    currencyCode: draft.currencyCode ?? baseDefaults.currencyCode ?? "AOA",
+    notes: draft.notes ?? baseDefaults.notes ?? "",
+    ...(tab === "invoice" && draft.dueDate && draft.dueDate >= today
+      ? { dueDate: draft.dueDate }
+      : {}),
+    ...(tab !== "invoice" && draft.paymentMethod
+      ? { paymentMethod: draft.paymentMethod }
+      : {}),
+  };
+}
+
+/**
+ * Devolve o cliente seleccionado guardado no rascunho de forma síncrona
+ * para inicializar o estado de useClientSelection logo na primeira renderização.
+ */
+export function getHydratedSelectedClient(
+  scope: string,
+  tab: DocumentTabType,
+  enabled = true,
+): ClientSelectOption | null {
+  if (!enabled) return null;
+  const draft = useDocumentDraftStore.getState().getTabDraft(scope, tab);
+  if (!draft || !draftHasContent(draft)) return null;
+  return draft.selectedClient ?? null;
+}
+
 interface UseDocumentDraftSyncParams {
   tab: DocumentTabType;
   form: UseFormReturn<any>;
+  fieldArray?: UseFieldArrayReturn<any, "items">;
   selectedClient: ClientSelectOption | null;
   setSelectedClient: (client: ClientSelectOption | null) => void;
-  /** Valores por omissão usados ao limpar o formulário. */
+  /** Valores por omissão limpos usados ao clicar em "Limpar Formulário". */
   defaultValues: Record<string, any>;
-  /** Desactivado, por exemplo, ao editar uma proforma existente. */
+  /** Desactivado ao editar uma proforma existente. */
   enabled?: boolean;
 }
 
 /**
  * Sincroniza um formulário de emissão de documento com um rascunho guardado
- * em localStorage (100% client-side). Restaura ao montar, grava ao editar,
- * ao desmontar (troca de aba / saída da página) e ao fechar/recarregar o separador.
+ * em localStorage (100% client-side).
  */
 export function useDocumentDraftSync({
   tab,
   form,
+  fieldArray,
   selectedClient,
   setSelectedClient,
   defaultValues,
@@ -48,6 +121,8 @@ export function useDocumentDraftSync({
 
   const formRef = useRef(form);
   formRef.current = form;
+  const fieldArrayRef = useRef(fieldArray);
+  fieldArrayRef.current = fieldArray;
   const setSelectedClientRef = useRef(setSelectedClient);
   setSelectedClientRef.current = setSelectedClient;
   const defaultValuesRef = useRef(defaultValues);
@@ -55,20 +130,26 @@ export function useDocumentDraftSync({
   const selectedClientRef = useRef(selectedClient);
   selectedClientRef.current = selectedClient;
 
-  // Lido de forma síncrona na primeira renderização (o store hidrata do localStorage).
-  const [initialPendingItem] = useState<any | null>(() =>
+  // Lido de forma síncrona na primeira renderização
+  const [initialPendingItem, setInitialPendingItem] = useState<any | null>(() =>
     enabled
       ? (useDocumentDraftStore.getState().getTabDraft(scope, tab)?.pendingItem ?? null)
       : null,
   );
   const pendingItemRef = useRef<any | null>(initialPendingItem);
-  const restoredRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [hasDraft, setHasDraft] = useState(false);
+  const prevClientRef = useRef(selectedClient);
+  const prevFieldsRef = useRef(fieldArray?.fields);
+
+  const [hasDraft, setHasDraft] = useState<boolean>(() =>
+    enabled
+      ? useDocumentDraftStore.getState().hasTabDraftContent(scope, tab)
+      : false,
+  );
   const [resetKey, setResetKey] = useState(0);
 
   const flush = useCallback(() => {
-    if (!enabled || !restoredRef.current) return;
+    if (!enabled) return;
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -93,60 +174,72 @@ export function useDocumentDraftSync({
   }, [enabled, scope, tab]);
 
   const scheduleSave = useCallback(() => {
-    if (!enabled || !restoredRef.current) return;
+    if (!enabled) return;
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(flush, SAVE_DEBOUNCE_MS);
   }, [enabled, flush]);
 
-  // Restaura o rascunho ao montar a aba; grava ao desmontar.
+  // Regista o flush da aba activa e sincroniza o formulário ao montar
   useEffect(() => {
     if (!enabled) return;
-    const draft = useDocumentDraftStore.getState().getTabDraft(scope, tab);
 
+    activeFormFlushFn = () => {
+      flush();
+    };
+
+    const draft = useDocumentDraftStore.getState().getTabDraft(scope, tab);
     if (draft && draftHasContent(draft)) {
-      const current = formRef.current.getValues();
-      const today = new Date().toISOString().split("T")[0];
-      formRef.current.reset({
-        ...current,
-        client: { ...(current.client ?? {}), ...draft.client },
-        clientId: draft.clientId,
-        items: draft.items,
-        globalRetention: draft.globalRetention,
-        globalDiscount: draft.globalDiscount,
-        currencyCode: draft.currencyCode,
-        notes: draft.notes,
-        ...(tab === "invoice" && draft.dueDate && draft.dueDate >= today
-          ? { dueDate: draft.dueDate }
-          : {}),
-        ...(tab !== "invoice" && draft.paymentMethod
-          ? { paymentMethod: draft.paymentMethod }
-          : {}),
-      });
+      const hydrated = getHydratedFormDefaults(
+        scope,
+        tab,
+        formRef.current.getValues(),
+        enabled,
+      );
+      formRef.current.reset(hydrated);
+      if (fieldArrayRef.current && Array.isArray(draft.items)) {
+        fieldArrayRef.current.replace(draft.items.map((item) => ({ ...item })));
+      }
+      selectedClientRef.current = draft.selectedClient ?? null;
       setSelectedClientRef.current(draft.selectedClient ?? null);
       pendingItemRef.current = draft.pendingItem ?? null;
+      setInitialPendingItem(draft.pendingItem ?? null);
       setHasDraft(true);
     }
-    restoredRef.current = true;
 
     return () => {
-      flush();
-      restoredRef.current = false;
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+        flush();
+      }
+      if (activeFormFlushFn) {
+        activeFormFlushFn = null;
+      }
     };
   }, [enabled, scope, tab, flush]);
 
-  // Grava ao editar qualquer campo do formulário.
+  // Grava ao editar qualquer campo do formulário
   useEffect(() => {
     if (!enabled) return;
     const subscription = formRef.current.watch(() => scheduleSave());
     return () => subscription.unsubscribe();
   }, [enabled, scheduleSave]);
 
-  // Grava ao mudar o cliente seleccionado.
+  // Grava ao mudar o cliente seleccionado
   useEffect(() => {
+    if (prevClientRef.current === selectedClient) return;
+    prevClientRef.current = selectedClient;
     scheduleSave();
   }, [selectedClient, scheduleSave]);
 
-  // Grava ao fechar / recarregar o separador ou navegar para fora.
+  // Grava sempre que a lista de itens (useFieldArray) muda
+  useEffect(() => {
+    if (prevFieldsRef.current === fieldArray?.fields) return;
+    prevFieldsRef.current = fieldArray?.fields;
+    scheduleSave();
+  }, [fieldArray?.fields, scheduleSave]);
+
+  // Grava ao fechar / recarregar o separador
   useEffect(() => {
     if (!enabled) return;
     const handler = () => flush();
@@ -160,6 +253,7 @@ export function useDocumentDraftSync({
 
   const onPendingItemChange = useCallback(
     (item: any | null) => {
+      if (pendingItemRef.current === item) return;
       pendingItemRef.current = item;
       scheduleSave();
     },
@@ -178,10 +272,15 @@ export function useDocumentDraftSync({
       timerRef.current = null;
     }
     pendingItemRef.current = null;
+    setInitialPendingItem(null);
+    selectedClientRef.current = null;
     if (enabled) {
       useDocumentDraftStore.getState().clearTabDraft(scope, tab);
     }
     formRef.current.reset(defaultValuesRef.current);
+    if (fieldArrayRef.current) {
+      fieldArrayRef.current.replace([]);
+    }
     setSelectedClientRef.current(null);
     setHasDraft(false);
     setResetKey((key) => key + 1);
@@ -196,4 +295,3 @@ export function useDocumentDraftSync({
     clearDraft,
   };
 }
-
