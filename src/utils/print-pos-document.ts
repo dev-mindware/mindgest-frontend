@@ -21,12 +21,21 @@ export function createDocumentUrl(data: BlobPart): string {
 /**
  * Imprime um documento PDF de forma directa através de um iframe invisível no DOM,
  * acionando a impressora/diálogo nativo sem abrir novas abas ou janelas no navegador.
+ *
+ * @param url URL do Blob do PDF a imprimir.
+ * @param documentTitle Nome/número do documento para que o navegador sugira o nome correto caso o utilizador use "Salvar como PDF".
  */
-export function printDocumentDirectly(url: string): Promise<void> {
+export function printDocumentDirectly(
+  url: string,
+  documentTitle?: string,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const frame = document.createElement("iframe");
     frame.setAttribute("aria-hidden", "true");
     frame.setAttribute("tabindex", "-1");
+    if (documentTitle) {
+      frame.setAttribute("title", documentTitle);
+    }
     frame.style.position = "fixed";
     frame.style.top = "0";
     frame.style.left = "0";
@@ -37,10 +46,14 @@ export function printDocumentDirectly(url: string): Promise<void> {
     frame.style.pointerEvents = "none";
     frame.style.zIndex = "-9999";
 
+    const originalTitle = typeof document !== "undefined" ? document.title : "";
     let isCleanedUp = false;
     const cleanup = () => {
       if (isCleanedUp) return;
       isCleanedUp = true;
+      if (documentTitle && typeof document !== "undefined" && originalTitle) {
+        document.title = originalTitle;
+      }
       try {
         if (frame.parentNode) {
           frame.parentNode.removeChild(frame);
@@ -61,6 +74,20 @@ export function printDocumentDirectly(url: string): Promise<void> {
               new Error("Não foi possível aceder ao recurso de impressão da impressora."),
             );
             return;
+          }
+
+          // Se fornecido um título/número (ex: "FT FTSEDE26CMR/7"), aplica-o temporariamente
+          // ao document.title para que a opção "Salvar como PDF" do navegador sugira o nome do documento.
+          if (documentTitle && typeof document !== "undefined") {
+            const cleanTitle = documentTitle.replace(/[/\\?%*:|"<>]/g, "_");
+            document.title = cleanTitle;
+            try {
+              if (frame.contentDocument) {
+                frame.contentDocument.title = cleanTitle;
+              }
+            } catch {
+              // Ignora restrições de cross-origin caso existam
+            }
           }
 
           printWindow.addEventListener(

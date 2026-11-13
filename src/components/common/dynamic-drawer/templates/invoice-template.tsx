@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   DocumentStatusBadge,
   DownloadDocumentButton,
+  PrintDocumentButton,
 } from "@/components/client";
 import { paymentMethodMap } from "@/constants";
 
@@ -338,7 +339,12 @@ export function InvoiceTemplate({
 
       {/* Botões de Ação */}
       {!hideActions && (
-        <div className="flex justify-end pt-2">
+        <div className="flex justify-end gap-2 pt-2">
+          <PrintDocumentButton
+            id={data.id}
+            documentType={type}
+            filenameBase={data.number}
+          />
           <DownloadDocumentButton
             id={data.id}
             documentType={type}

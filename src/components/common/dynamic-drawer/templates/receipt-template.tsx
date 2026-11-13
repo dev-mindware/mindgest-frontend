@@ -6,6 +6,7 @@ import { paymentMethodMap } from "@/constants";
 import {
   DocumentStatusBadge,
   DownloadDocumentButton,
+  PrintDocumentButton,
 } from "@/components/client";
 
 interface ReceiptTemplateProps {
@@ -180,7 +181,12 @@ export function ReceiptTemplate({ data }: ReceiptTemplateProps) {
         </div>
       )}
 
-      <div className="flex justify-end pt-2">
+      <div className="flex justify-end gap-2 pt-2">
+        <PrintDocumentButton
+          id={data.id}
+          documentType="receipt"
+          filenameBase={data.number}
+        />
         <DownloadDocumentButton
           id={data.id}
           documentType="receipt"
