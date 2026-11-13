@@ -66,6 +66,26 @@ export function formatCurrencyCompact(
   );
 }
 
+/**
+ * Valor com duas casas e espaço como separador de milhares, sem moeda
+ * (ex.: 1 450,00). Usado nos talões térmicos, onde o espaço normal é seguro
+ * em qualquer código de página da impressora.
+ */
+export function formatAmount(value: string | number): string {
+  if (value === undefined || value === null || value === "") return "";
+  const number =
+    typeof value === "number" ? value : parseFloat(value.toString());
+  if (isNaN(number)) return "";
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+    .format(number)
+    .replace(/\./g, " ");
+}
+
 export function formatCurrency(
   value: string | number,
   currencyCode?: string,

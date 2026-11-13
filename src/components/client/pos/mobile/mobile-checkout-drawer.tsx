@@ -56,10 +56,7 @@ export function MobileCheckoutDrawer({
     handleClientChange,
     handleQuickCash,
     handleCheckout,
-    printDocument,
-    handlePrint,
-    dismissPrint,
-    isPrinting,
+    salePrint,
     isPending,
   } = useCartCheckout({ cartItems, type, onSuccess: () => {
     onSuccess?.();
@@ -134,12 +131,7 @@ export function MobileCheckoutDrawer({
         </DrawerContent>
       </Drawer>
 
-      <PrintSaleDialog
-        document={printDocument}
-        isPrinting={isPrinting}
-        onPrint={handlePrint}
-        onDismiss={dismissPrint}
-      />
+      <PrintSaleDialog print={salePrint} />
     </>
   );
 }

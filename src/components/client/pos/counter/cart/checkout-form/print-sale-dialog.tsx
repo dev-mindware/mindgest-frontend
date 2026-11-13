@@ -9,28 +9,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button, Icon } from "@/components";
-import type { DocumentType } from "@/types";
+import type { usePosDocumentPrint } from "@/hooks/pos/use-pos-document-print";
 
 type PrintSaleDialogProps = {
-  document: { id: string; type: DocumentType } | null;
-  isPrinting: boolean;
-  onPrint: () => void;
-  onDismiss: () => void;
+  print: ReturnType<typeof usePosDocumentPrint>;
 };
 
-export function PrintSaleDialog({
-  document,
-  isPrinting,
-  onPrint,
-  onDismiss,
-}: PrintSaleDialogProps) {
+export function PrintSaleDialog({ print }: PrintSaleDialogProps) {
+  const { document, isPrinting, agentError } = print;
   const documentLabel = document?.type === "proforma" ? "proforma" : "factura-recibo";
 
   return (
     <AlertDialog
       open={!!document}
       onOpenChange={(open) => {
-        if (!open && !isPrinting) onDismiss();
+        if (!open) print.close();
       }}
     >
       <AlertDialogContent>
@@ -38,18 +31,32 @@ export function PrintSaleDialog({
           <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
             <Icon name="Printer" size={20} />
           </div>
-          <AlertDialogTitle>Deseja imprimir o documento?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {agentError ? "Não foi possível imprimir" : "Deseja imprimir o documento?"}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            A {documentLabel} foi emitida com sucesso. Pode imprimi-la agora ou continuar sem imprimir.
+            {agentError ??
+              `A ${documentLabel} foi emitida com sucesso. Pode imprimi-la agora ou continuar sem imprimir.`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <Button variant="outline" onClick={onDismiss} disabled={isPrinting}>
+          <Button variant="outline" onClick={print.close} disabled={isPrinting}>
             Agora não
           </Button>
-          <Button onClick={onPrint} disabled={isPrinting} className="gap-2">
+          {agentError && (
+            <Button
+              variant="outline"
+              onClick={print.printInBrowser}
+              disabled={isPrinting}
+              className="gap-2"
+            >
+              <Icon name="Globe" size={16} />
+              Imprimir pelo browser
+            </Button>
+          )}
+          <Button onClick={print.print} disabled={isPrinting} className="gap-2">
             <Icon name="Printer" size={16} />
-            {isPrinting ? "A preparar..." : "Imprimir"}
+            {isPrinting ? "A imprimir…" : agentError ? "Tentar novamente" : "Imprimir"}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

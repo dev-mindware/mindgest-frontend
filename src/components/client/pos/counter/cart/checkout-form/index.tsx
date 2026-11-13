@@ -44,10 +44,7 @@ export function CartCheckoutForm({
         handleClientChange,
         handleQuickCash,
         handleCheckout,
-        printDocument,
-        handlePrint,
-        dismissPrint,
-        isPrinting,
+        salePrint,
         isPending,
     } = useCartCheckout({ cartItems, type, onSuccess, cashSessionId });
 
@@ -112,12 +109,7 @@ export function CartCheckoutForm({
                 </Button>
             </div>
 
-            <PrintSaleDialog
-                document={printDocument}
-                isPrinting={isPrinting}
-                onPrint={handlePrint}
-                onDismiss={dismissPrint}
-            />
+            <PrintSaleDialog print={salePrint} />
         </>
     );
 }

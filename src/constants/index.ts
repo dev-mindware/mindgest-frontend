@@ -11,3 +11,5 @@ export * from "./plan-features"
 export * from "./onboarding-tours"
 export * from "./tutorials"
 export * from "./banks"
+
+export * from "./mindprint"

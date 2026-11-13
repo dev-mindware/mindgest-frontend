@@ -28,3 +28,4 @@ export * from "./audit-trail";
 export * from "./contributor";
 export * from "./agt";
 export * from "./plugins";
+export * from "./mindprint";

@@ -146,7 +146,7 @@ const isBrowser =
 export const api = axios.create({
   baseURL: isBrowser
     ? "/api/proxy"
-    : process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api",
+    : process.env.NEXT_PUBLIC_API_URL || "https://test.mindgest.mindware-vps.cloud/api",
   headers: {
     "Content-Type": "application/json",
     ...(typeof window === "undefined" && process.env.API_KEY

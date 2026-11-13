@@ -10,7 +10,8 @@ import {
   TabsTrigger,
 } from "@/components";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PosGeneralSettings, PosWorkspaceSettings } from "./contents";
+import { PosGeneralSettings, PosPrinterSettings, PosWorkspaceSettings } from "./contents";
+import { MINDPRINT_ENABLED } from "@/constants/mindprint";
 import { currentStoreStore } from "@/stores";
 import { useQuery } from "@tanstack/react-query";
 import { cashSessionsService } from "@/services";
@@ -43,6 +44,16 @@ export function PosSettingsSetup({
       icon: "Monitor",
       component: () => <PosWorkspaceSettings />,
     },
+    ...(MINDPRINT_ENABLED
+      ? [
+          {
+            id: "printer",
+            label: "Impressora",
+            icon: "Printer",
+            component: () => <PosPrinterSettings />,
+          },
+        ]
+      : []),
     {
       id: "appearance",
       label: "Aparência",

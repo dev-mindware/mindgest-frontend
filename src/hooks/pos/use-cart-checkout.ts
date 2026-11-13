@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateInvoiceReceipt, useCreateProforma } from "@/hooks";
 import { currentStoreStore, useAuthStore } from "@/stores";
-import { ErrorMessage, WarningMessage, printPosDocument } from "@/utils";
+import { ErrorMessage, WarningMessage } from "@/utils";
+import { usePosDocumentPrint } from "./use-pos-document-print";
 import { useInvoiceTotals, useClientSelection } from "@/hooks/invoice";
 import { PosSalesFormData, PosSalesSchema } from "@/schemas";
-import { ContributorVerificationStatus, DocumentType, Product } from "@/types";
+import { ContributorVerificationStatus, Product } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { useWorkspaceStore } from "@/stores/pos/workspace-store";
 import { isValidAngolanTaxNumber } from "@/lib/contributor";
 
 export interface CartItem extends Product {
@@ -35,8 +35,8 @@ export function useCartCheckout({
 }: UseCartCheckoutProps) {
   const { user } = useAuthStore();
   const { currentStore } = currentStoreStore();
-  const { useThermalPrinter } = useWorkspaceStore();
   const queryClient = useQueryClient();
+  const salePrint = usePosDocumentPrint();
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("Credit Card");
@@ -50,11 +50,6 @@ export function useCartCheckout({
   const [newCustomerAddress, setNewCustomerAddress] = useState("");
   const [newCustomerVerification, setNewCustomerVerification] =
     useState<ContributorVerificationStatus>("idle");
-  const [printDocument, setPrintDocument] = useState<{
-    id: string;
-    type: DocumentType;
-  } | null>(null);
-  const [isPrinting, setIsPrinting] = useState(false);
 
   const { mutateAsync: createInvoiceReceipt, isPending: isPendingInvoice } =
     useCreateInvoiceReceipt();
@@ -286,7 +281,7 @@ export function useCartCheckout({
         const invoiceId = response?.data?.id;
 
         if (invoiceId) {
-          setPrintDocument({
+          salePrint.open({
             id: invoiceId,
             type: "invoice-receipt",
           });
@@ -306,7 +301,7 @@ export function useCartCheckout({
         const proformaId = response?.data?.id;
 
         if (proformaId) {
-          setPrintDocument({
+          salePrint.open({
             id: proformaId,
             type: "proforma",
           });
@@ -359,27 +354,6 @@ export function useCartCheckout({
     }
   };
 
-  const handlePrint = async () => {
-    if (!printDocument || isPrinting) return;
-
-    setIsPrinting(true);
-    try {
-      await printPosDocument({
-        ...printDocument,
-        thermal: useThermalPrinter,
-      });
-      setPrintDocument(null);
-    } catch (error) {
-      console.error("Erro ao imprimir o documento:", error);
-      ErrorMessage("Não foi possível imprimir o documento. Tente novamente.");
-    } finally {
-      setIsPrinting(false);
-    }
-  };
-
-  const dismissPrint = () => {
-    if (!isPrinting) setPrintDocument(null);
-  };
 
   return {
     form,
@@ -404,10 +378,7 @@ export function useCartCheckout({
     handleClientChange,
     handleQuickCash,
     handleCheckout,
-    printDocument,
-    handlePrint,
-    dismissPrint,
-    isPrinting,
+    salePrint,
     isPending,
   };
 }

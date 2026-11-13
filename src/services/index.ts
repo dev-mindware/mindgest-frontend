@@ -24,3 +24,4 @@ export * from "./contributor-service";
 export * from "./reports-service";
 export * from "./coupon-service";
 export * from "./plugins-service";
+export * from "./mindprint-service";
